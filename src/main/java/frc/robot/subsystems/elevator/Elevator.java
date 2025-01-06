@@ -176,5 +176,11 @@ public class Elevator extends SubsystemBase {
     if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode())) {
       elevator.configurePID(kP.get(), kI.get(), 0);
     }
+    if (kS.hasChanged(hashCode())
+      || kG.hasChanged(hashCode())
+      || kV.hasChanged(hashCode())
+      || kA.hasChanged(hashCode())) {
+      elevatorFFModel = new ElevatorFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
+    }
   }
 }
