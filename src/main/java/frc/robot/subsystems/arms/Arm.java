@@ -81,8 +81,7 @@ public class Arm extends SubsystemBase {
     // setArmCurrent(getArmPositionDegs());
     armCurrentStateDegrees = armProfile.calculate(0, armCurrentStateDegrees, armGoalStateDegrees);
 
-    arm.configurePID(kP.get(), 0, 0);
-    armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
+    updateTunableNumbers();
   }
 
   public void setBrakeMode(boolean bool) {
@@ -147,7 +146,10 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("arm goal", goalDegrees);
     // This method will be called once per scheduler run
 
+    updateTunableNumbers();
+  }
 
+  private void updateTunableNumbers() {
     if (kP.hasChanged(hashCode())) {
       arm.configurePID(kP.get(), 0, 0);
     }

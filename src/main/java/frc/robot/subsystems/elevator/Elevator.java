@@ -99,8 +99,7 @@ public class Elevator extends SubsystemBase {
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
 
-    this.elevator.configurePID(kP.get(), 0, 0);
-    elevatorFFModel = new ElevatorFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
+    updateTunableNumbers();
   }
 
   public boolean atGoal() {
@@ -172,7 +171,10 @@ public class Elevator extends SubsystemBase {
 
     Logger.processInputs("Elevator", eInputs);
 
-    
+    updateTunableNumbers();
+  }
+
+  private void updateTunableNumbers() {
     if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode())) {
       elevator.configurePID(kP.get(), kI.get(), 0);
     }

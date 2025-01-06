@@ -77,8 +77,7 @@ public class Indexer extends SubsystemBase {
     indexerCurrentStateRotations =
         indexerProfile.calculate(0, indexerCurrentStateRotations, indexerGoalStateRotations);
 
-    indexer.configurePID(kP.get(), 0, 0);
-    ff = new ElevatorFeedforward(0, kG.get(), kV.get());
+    updateTunableNumbers();
   }
 
   public boolean indexerAtGoal(double thersholdInches) {
@@ -106,6 +105,10 @@ public class Indexer extends SubsystemBase {
 
     Logger.processInputs("Indexer", iInputs);
 
+    updateTunableNumbers();
+  }
+
+  private void updateTunableNumbers() {
     if (kP.hasChanged(hashCode())) {
       indexer.configurePID(kP.get(), 0, 0);
     }
