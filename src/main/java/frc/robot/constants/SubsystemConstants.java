@@ -47,6 +47,7 @@ public final class SubsystemConstants {
 
     public static final double ARM_ZERO_ANGLE = 0;
     public static final double STOW_SETPOINT_DEG = 0;
+    public static final double CORAL_DETECTION_THRESHOLD_INCHES = 0; //threshold for stating coral is in scoring arm; inches
   }
 
   public static class LEDConstants {
