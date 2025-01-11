@@ -1,4 +1,4 @@
-package frc.robot.subsystems.arms;
+package frc.robot.subsystems.coralScoring;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
