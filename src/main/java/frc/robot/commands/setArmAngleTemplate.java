@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.arms.Arm;
+import frc.robot.subsystems.coralScoring.Arm;
 
 public class setArmAngleTemplate extends Command {
   /** Creates a new setArmAngle. */
