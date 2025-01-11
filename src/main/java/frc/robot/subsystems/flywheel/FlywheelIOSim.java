@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.coralIntake;
+package frc.robot.subsystems.flywheel;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -20,7 +20,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.constants.SubsystemConstants;
 
-public class CoralIntakeRollerIOSim implements CoralIntakeRollerIO {
+public class FlywheelIOSim implements FlywheelIO {
   // CHANGE THESE VALUES TO MATCH YOUR MOTOR AND GEARBOX
   private int gearBoxMotorCount = 1;
   private double gearing = 1;
@@ -42,7 +42,7 @@ public class CoralIntakeRollerIOSim implements CoralIntakeRollerIO {
   private double clampedValueHighVolts = 12.0;
 
   @Override
-  public void updateInputs(CoralIntakeRollerIOInputs inputs) {
+  public void updateInputs(FlywheelIOInputs inputs) {
     if (closedLoop) {
       appliedVolts =
           MathUtil.clamp(
@@ -57,7 +57,7 @@ public class CoralIntakeRollerIOSim implements CoralIntakeRollerIO {
     inputs.positionRad = 0.0;
     inputs.velocityRadPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
-    inputs.currentAmps = sim.getCurrentDrawAmps();
+    inputs.currentAmps = new double[] {sim.getCurrentDrawAmps()};
   }
 
   @Override

@@ -2,29 +2,20 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.coralIntake;
-
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.Volts;
+package frc.robot.subsystems.arms;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.algaeIntake.SensorIO;
-
 import org.littletonrobotics.junction.Logger;
 
-public class CoralIntake extends SubsystemBase {
-  private final CoralIntakePivotIO arm;
-  
-  private final CoralIntakePivotIOInputsAutoLogged pInputs = new CoralIntakePivotIOInputsAutoLogged();
+public class Arm extends SubsystemBase {
+  private final ArmIO arm;
+  private final ArmIOInputsAutoLogged pInputs = new ArmIOInputsAutoLogged();
 
   private static double kP;
   private static double kG;
@@ -44,7 +35,7 @@ public class CoralIntake extends SubsystemBase {
   private ArmFeedforward armFFModel;
 
   /** Creates a new Arm. */
-  public CoralIntake(CoralIntakePivotIO arm, SensorIO sensor) {
+  public Arm(ArmIO arm) {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
@@ -105,12 +96,7 @@ public class CoralIntake extends SubsystemBase {
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
     arm.setPositionSetpointDegs(
-        positionDegs,
-        armFFModel
-            .calculate(
-                positionDegs,
-                velocityDegsPerSec)
-            );
+        positionDegs, armFFModel.calculate(positionDegs, velocityDegsPerSec));
   }
 
   public void armStop() {
@@ -124,10 +110,6 @@ public class CoralIntake extends SubsystemBase {
 
   public void setArmCurrent(double currentDegrees) {
     armCurrentStateDegrees = new TrapezoidProfile.State(currentDegrees, 0);
-  }
-
-  public boolean onCoralDetected() {
-    return (sInputs.distance <= SubsystemConstants.ArmConstants.CORAL_DETECTION_THRESHOLD_INCHES);
   }
 
   public Command setArmTarget(double goalDegrees, double thresholdDegrees) {

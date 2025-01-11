@@ -1,19 +1,15 @@
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class Elevator extends SubsystemBase {
 
@@ -21,15 +17,15 @@ public class Elevator extends SubsystemBase {
 
   private final ElevatorIOInputsAutoLogged eInputs = new ElevatorIOInputsAutoLogged();
 
-  private static final LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP");
-  private static final LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI");
+  private static final LoggedNetworkNumber kP = new LoggedNetworkNumber("Elevator/kP");
+  private static final LoggedNetworkNumber kI = new LoggedNetworkNumber("Elevator/kI");
 
-  private static final LoggedTunableNumber kS = new LoggedTunableNumber("Elevator/kS");
-  private static final LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG");
-  private static final LoggedTunableNumber kV = new LoggedTunableNumber("Elevator/kV");
-  private static final LoggedTunableNumber kA = new LoggedTunableNumber("Elevator/kA");
+  private static final LoggedNetworkNumber kS = new LoggedNetworkNumber("Elevator/kS");
+  private static final LoggedNetworkNumber kG = new LoggedNetworkNumber("Elevator/kG");
+  private static final LoggedNetworkNumber kV = new LoggedNetworkNumber("Elevator/kV");
+  private static final LoggedNetworkNumber kA = new LoggedNetworkNumber("Elevator/kA");
 
-  private static final LoggedTunableNumber barkG = new LoggedTunableNumber("Bar/kG");
+  private static final LoggedNetworkNumber barkG = new LoggedNetworkNumber("Bar/kG");
 
   // CHANGE THESE VALUES TO MATCH THE ELEVATOR
   private static final int maxVelocityExtender = 1;
@@ -49,48 +45,48 @@ public class Elevator extends SubsystemBase {
 
     switch (SimConstants.currentMode) {
       case REAL:
-        kS.initDefault(0);
-        kG.initDefault(0);
-        kV.initDefault(0);
-        kA.initDefault(0);
+        kS.setDefault(0);
+        kG.setDefault(0);
+        kV.setDefault(0);
+        kA.setDefault(0);
 
-        kP.initDefault(0);
-        kI.initDefault(0);
+        kP.setDefault(0);
+        kI.setDefault(0);
 
-        barkG.initDefault(0);
+        barkG.setDefault(0);
         break;
       case REPLAY:
-        kS.initDefault(0);
-        kG.initDefault(0);
-        kV.initDefault(0);
-        kA.initDefault(0);
+        kS.setDefault(0);
+        kG.setDefault(0);
+        kV.setDefault(0);
+        kA.setDefault(0);
 
-        kP.initDefault(0);
-        kI.initDefault(0);
+        kP.setDefault(0);
+        kI.setDefault(0);
 
-        barkG.initDefault(0);
+        barkG.setDefault(0);
         break;
       case SIM:
-        kS.initDefault(0);
-        kG.initDefault(0);
-        kV.initDefault(0);
-        kA.initDefault(0);
+        kS.setDefault(0);
+        kG.setDefault(0);
+        kV.setDefault(0);
+        kA.setDefault(0);
 
-        kP.initDefault(1);
-        kI.initDefault(0);
+        kP.setDefault(1);
+        kI.setDefault(0);
 
-        barkG.initDefault(0);
+        barkG.setDefault(0);
         break;
       default:
-        kS.initDefault(0);
-        kG.initDefault(0);
-        kV.initDefault(0);
-        kA.initDefault(0);
+        kS.setDefault(0);
+        kG.setDefault(0);
+        kV.setDefault(0);
+        kA.setDefault(0);
 
-        kP.initDefault(0);
-        kI.initDefault(0);
+        kP.setDefault(0);
+        kI.setDefault(0);
 
-        barkG.initDefault(0);
+        barkG.setDefault(0);
         break;
     }
 
@@ -99,7 +95,8 @@ public class Elevator extends SubsystemBase {
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
 
-    updateTunableNumbers();
+    this.elevator.configurePID(kP.get(), 0, 0);
+    elevatorFFModel = new ElevatorFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
   }
 
   public boolean atGoal() {
@@ -125,9 +122,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setPositionExtend(double position, double velocity) {
-    elevator.setPositionSetpoint(
-        position,
-        elevatorFFModel.calculate(LinearVelocity.ofBaseUnits(velocity, InchesPerSecond)).in(Volts));
+    elevator.setPositionSetpoint(position, elevatorFFModel.calculate(velocity));
   }
 
   public void elevatorStop() {
@@ -170,19 +165,5 @@ public class Elevator extends SubsystemBase {
     setPositionExtend(extenderCurrent.position, extenderCurrent.velocity);
 
     Logger.processInputs("Elevator", eInputs);
-
-    updateTunableNumbers();
-  }
-
-  private void updateTunableNumbers() {
-    if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode())) {
-      elevator.configurePID(kP.get(), kI.get(), 0);
-    }
-    if (kS.hasChanged(hashCode())
-      || kG.hasChanged(hashCode())
-      || kV.hasChanged(hashCode())
-      || kA.hasChanged(hashCode())) {
-      elevatorFFModel = new ElevatorFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
-    }
   }
 }
