@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.coralIntake;
+package frc.robot.subsystems.algaeIntake;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
@@ -27,17 +27,17 @@ import frc.robot.constants.SimConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Flywheel extends SubsystemBase {
-  private final FlywheelIO io;
+public class AlgaeIntakeRoller extends SubsystemBase {
+  private final AlgaeIntakeRollerIO io;
   private final SensorIO sensor;
   private boolean coralDetected;
   private final SensorIOInputsAutoLogged sInputs = new SensorIOInputsAutoLogged();
-  private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
+  private final AlgaeIntakeRollerIOInputsAutoLogged inputs = new AlgaeIntakeRollerIOInputsAutoLogged();
   private final SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
 
   /** Creates a new Flywheel. */
-  public Flywheel(FlywheelIO io) {
+  public AlgaeIntakeRoller(AlgaeIntakeRollerIO io, SensorIO sensor) {
     this.io = io;
     this.sensor = sensor;
 
@@ -91,8 +91,7 @@ public class Flywheel extends SubsystemBase {
     io.setVelocity(
         velocityRadPerSec,
         ffModel
-            .calculate(AngularVelocity.ofBaseUnits(velocityRadPerSec, RadiansPerSecond))
-            .in(Volts));
+            .calculate(velocityRadPerSec));
 
     // Log flywheel setpoint
     Logger.recordOutput("Flywheel/SetpointRPM", velocityRPM);

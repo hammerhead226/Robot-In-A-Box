@@ -3,7 +3,10 @@ package frc.robot.util;
 //import frc.robot.Constants;
 import java.util.HashMap;
 import java.util.Map;
-import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+
+import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants;
 
 /**
  * Class for a tunable number. Gets value from dashboard in tuning mode, returns default if not or
@@ -15,7 +18,7 @@ public class LoggedTunableNumber {
   private final String key;
   private boolean hasDefault = false;
   private double defaultValue;
-  private LoggedDashboardNumber dashboardNumber;
+  private LoggedNetworkNumber dashboardNumber;
   private Map<Integer, Double> lastHasChangedValues = new HashMap<>();
 
   /**
@@ -24,7 +27,7 @@ public class LoggedTunableNumber {
    * @param dashboardKey Key on dashboard
    */
   public LoggedTunableNumber(String dashboardKey) {
-    this.key = tableKey + "/" + dashboardKey;
+    this.key = tableKey + "/SmartDashboard/" + dashboardKey;
     // this.key = dashboardKey;
   }
 
@@ -48,8 +51,8 @@ public class LoggedTunableNumber {
     if (!hasDefault) {
       hasDefault = true;
       this.defaultValue = defaultValue;
-      if (Constants.tuningMode) {
-        dashboardNumber = new LoggedDashboardNumber(key, defaultValue);
+      if (SubsystemConstants.tuningMode) {
+        dashboardNumber = new LoggedNetworkNumber(key, defaultValue);
       }
     }
   }
@@ -63,7 +66,7 @@ public class LoggedTunableNumber {
     if (!hasDefault) {
       return 0.0;
     } else {
-      return Constants.tuningMode ? dashboardNumber.get() : defaultValue;
+      return SubsystemConstants.tuningMode ? dashboardNumber.get() : defaultValue;
     }
   }
 

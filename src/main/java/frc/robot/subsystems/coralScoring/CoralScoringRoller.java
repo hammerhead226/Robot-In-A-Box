@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.algaeIntake;
+package frc.robot.subsystems.coralScoring;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
@@ -24,20 +24,22 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
+import frc.robot.subsystems.algaeIntake.SensorIO;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Flywheel extends SubsystemBase {
-  private final FlywheelIO io;
+public class CoralScoringRoller extends SubsystemBase {
+  private final CoralScoringRollerIO io;
   private final SensorIO sensor;
   private boolean coralDetected;
   private final SensorIOInputsAutoLogged sInputs = new SensorIOInputsAutoLogged();
-  private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
+  private final CoralScoringRollerIOInputsAutoLogged inputs = new CoralScoringRollerIOInputsAutoLogged();
   private final SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
 
   /** Creates a new Flywheel. */
-  public Flywheel(FlywheelIO io) {
+  public CoralScoringRoller(CoralScoringRollerIO io) {
     this.io = io;
     this.sensor = sensor;
 
@@ -91,8 +93,8 @@ public class Flywheel extends SubsystemBase {
     io.setVelocity(
         velocityRadPerSec,
         ffModel
-            .calculate(AngularVelocity.ofBaseUnits(velocityRadPerSec, RadiansPerSecond))
-            .in(Volts));
+            .calculate(velocityRadPerSec)
+            );
 
     // Log flywheel setpoint
     Logger.recordOutput("Flywheel/SetpointRPM", velocityRPM);

@@ -5,16 +5,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.arms.Arm;
+import frc.robot.subsystems.algaeIntake.AlgaeIntake;
 
 public class setArmAngleTemplate extends Command {
   /** Creates a new setArmAngle. */
-  private final Arm arm;
+  private final AlgaeIntake arm;
 
   private final double setpointDegs;
   private final double thresholdDegs;
 
-  public setArmAngleTemplate(Arm arm, double setpointDegs, double thresholdDegs) {
+  public setArmAngleTemplate(AlgaeIntake arm, double setpointDegs, double thresholdDegs) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.arm = arm;
     this.setpointDegs = setpointDegs;

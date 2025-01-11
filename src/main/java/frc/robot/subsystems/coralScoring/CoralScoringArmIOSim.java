@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.coralIntake;
+package frc.robot.subsystems.coralScoring;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.constants.SubsystemConstants;
 
 /** Add your docs here. */
-public class ArmIOSim implements ArmIO {
+public class CoralScoringArmIOSim implements CoralScoringArmIO {
 
   // SIM VARIABLES (CHANGE)
   private int gearBoxMotorCount = 1;

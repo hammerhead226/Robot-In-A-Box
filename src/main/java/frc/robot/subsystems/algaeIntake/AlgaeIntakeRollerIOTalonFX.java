@@ -27,7 +27,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 //removed follower flywheel motor instances
-public class FlywheelIOTalonFX implements FlywheelIO {
+public class AlgaeIntakeRollerIOTalonFX implements AlgaeIntakeRollerIO {
   private static final double GEAR_RATIO = 1.5;
 
   private final TalonFX leader = new TalonFX(0);
@@ -37,7 +37,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final StatusSignal<Voltage> leaderAppliedVolts = leader.getMotorVoltage();
   private final StatusSignal<Current> leaderCurrent = leader.getSupplyCurrent();
 
-  public FlywheelIOTalonFX() {
+  public AlgaeIntakeRollerIOTalonFX() {
     var config = new TalonFXConfiguration();
     config.CurrentLimits.SupplyCurrentLimit = 30.0;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -51,7 +51,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   }
 
   @Override
-  public void updateInputs(FlywheelIOInputs inputs) {
+  public void updateInputs(AlgaeIntakeRollerIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         leaderPosition, leaderVelocity, leaderAppliedVolts, leaderCurrent);
     inputs.positionRad = Units.rotationsToRadians(leaderPosition.getValueAsDouble()) / GEAR_RATIO;

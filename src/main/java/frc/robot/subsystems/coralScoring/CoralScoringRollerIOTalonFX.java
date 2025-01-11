@@ -11,13 +11,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.flywheel;
+package frc.robot.subsystems.coralScoring;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -27,44 +26,39 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-
-public class FlywheelIOTalonFX implements FlywheelIO {
+//removed follower flywheel motor instances
+public class CoralScoringRollerIOTalonFX implements CoralScoringRollerIO {
   private static final double GEAR_RATIO = 1.5;
 
   private final TalonFX leader = new TalonFX(0);
-  private final TalonFX follower = new TalonFX(1);
 
   private final StatusSignal<Angle> leaderPosition = leader.getPosition();
   private final StatusSignal<AngularVelocity> leaderVelocity = leader.getVelocity();
   private final StatusSignal<Voltage> leaderAppliedVolts = leader.getMotorVoltage();
   private final StatusSignal<Current> leaderCurrent = leader.getSupplyCurrent();
-  private final StatusSignal<Current> followerCurrent = follower.getSupplyCurrent();
 
-  public FlywheelIOTalonFX() {
+  public CoralScoringRollerIOTalonFX() {
     var config = new TalonFXConfiguration();
     config.CurrentLimits.SupplyCurrentLimit = 30.0;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     leader.getConfigurator().apply(config);
-    follower.getConfigurator().apply(config);
-    follower.setControl(new Follower(leader.getDeviceID(), false));
+
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, leaderPosition, leaderVelocity, leaderAppliedVolts, leaderCurrent, followerCurrent);
+        50.0, leaderPosition, leaderVelocity, leaderAppliedVolts, leaderCurrent);
     leader.optimizeBusUtilization();
-    follower.optimizeBusUtilization();
   }
 
   @Override
-  public void updateInputs(FlywheelIOInputs inputs) {
+  public void updateInputs(CoralScoringRollerIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        leaderPosition, leaderVelocity, leaderAppliedVolts, leaderCurrent, followerCurrent);
+        leaderPosition, leaderVelocity, leaderAppliedVolts, leaderCurrent);
     inputs.positionRad = Units.rotationsToRadians(leaderPosition.getValueAsDouble()) / GEAR_RATIO;
     inputs.velocityRadPerSec =
         Units.rotationsToRadians(leaderVelocity.getValueAsDouble()) / GEAR_RATIO;
     inputs.appliedVolts = leaderAppliedVolts.getValueAsDouble();
-    inputs.currentAmps =
-        new double[] {leaderCurrent.getValueAsDouble(), followerCurrent.getValueAsDouble()};
+    inputs.currentAmps = leaderCurrent.getValueAsDouble();
   }
 
   @Override

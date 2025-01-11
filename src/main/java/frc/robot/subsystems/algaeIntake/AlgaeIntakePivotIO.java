@@ -2,9 +2,9 @@ package frc.robot.subsystems.algaeIntake;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ArmIO {
+public interface AlgaeIntakePivotIO {
   @AutoLog
-  public static class ArmIOInputs {
+  public static class AlgaeIntakePivotIOInputs {
     public double velocityDegsPerSec = 0;
     public double positionDegs = 0;
     public double currentAmps = 0;
@@ -15,7 +15,7 @@ public interface ArmIO {
     public double pitch = 0;
   }
 
-  public default void updateInputs(ArmIOInputs inputs) {}
+  public default void updateInputs(AlgaeIntakePivotIOInputs inputs) {}
 
   public default void setBrakeMode(boolean bool) {}
 

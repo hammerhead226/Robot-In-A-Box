@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.algaeIntake;
+package frc.robot.subsystems.coralScoring;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
@@ -17,16 +17,19 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.coralIntake.CoralIntakePivotIO;
+import frc.robot.util.LoggedTunableNumber;
+
 import org.littletonrobotics.junction.Logger;
 
-public class Arm extends SubsystemBase {
-  private final ArmIO arm;
+public class CoralScoring extends SubsystemBase {
+  private final CoralScoringArmIO arm;
   
-  private final ArmIOInputsAutoLogged pInputs = new ArmIOInputsAutoLogged();
+  private final CoralScoringArmIOInputsAutoLogged pInputs = new CoralScoringArmIOInputsAutoLogged();
 
-  private static double kP;
-  private static double kG;
-  private static double kV;
+  private static LoggedTunableNumber kP;
+  private static LoggedTunableNumber kG;
+  private static LoggedTunableNumber kV;
 
   private static double maxVelocityDegPerSec;
   private static double maxAccelerationDegPerSecSquared;
@@ -42,28 +45,28 @@ public class Arm extends SubsystemBase {
   private ArmFeedforward armFFModel;
 
   /** Creates a new Arm. */
-  public Arm(ArmIO arm, SensorIO sensor) {
+  public CoralScoring(CoralScoringArmIO arm, SensorIO sensor) {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
-        kG = 0.29;
-        kV = 1;
-        kP = 1.123;
+        kG.initDefault(0.29);
+        kV.initDefault(1);
+        kP.initDefault(1.123);
         break;
       case REPLAY:
-        kG = 0.29;
-        kV = 1;
-        kP = 1.123;
+        kG.initDefault(0.29);
+        kV.initDefault(1);
+        kP.initDefault(1.123);
         break;
       case SIM:
-        kG = 0.29;
-        kV = 1;
-        kP = 1.123;
+        kG.initDefault(0.29);
+        kV.initDefault(1);
+        kP.initDefault(1.123);
         break;
       default:
-        kG = 0.29;
-        kV = 1;
-        kP = 1.123;
+        kG.initDefault(0.29);
+        kV.initDefault(1);
+        kP.initDefault(1.123);
         break;
     }
 
@@ -80,8 +83,7 @@ public class Arm extends SubsystemBase {
     // setArmCurrent(getArmPositionDegs());
     armCurrentStateDegrees = armProfile.calculate(0, armCurrentStateDegrees, armGoalStateDegrees);
 
-    arm.configurePID(kP, 0, 0);
-    armFFModel = new ArmFeedforward(0, kG, kV, 0);
+    updateTunableNumbers();
   }
 
   public void setBrakeMode(boolean bool) {
@@ -106,9 +108,9 @@ public class Arm extends SubsystemBase {
         positionDegs,
         armFFModel
             .calculate(
-                Angle.ofBaseUnits(positionDegs, Degrees),
-                AngularVelocity.ofBaseUnits(velocityDegsPerSec, DegreesPerSecond))
-            .in(Volts));
+                positionDegs,
+                velocityDegsPerSec)
+            );
   }
 
   public void armStop() {
@@ -149,5 +151,16 @@ public class Arm extends SubsystemBase {
 
     Logger.recordOutput("arm goal", goalDegrees);
     // This method will be called once per scheduler run
+
+    updateTunableNumbers();
+  }
+
+  private void updateTunableNumbers() {
+    if (kP.hasChanged(hashCode())) {
+      arm.configurePID(kP.get(), 0, 0);
+    }
+    if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode())) {
+      armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
+    }
   }
 }

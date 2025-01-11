@@ -17,12 +17,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.algaeIntake.SensorIO;
+
 import org.littletonrobotics.junction.Logger;
 
-public class Arm extends SubsystemBase {
-  private final ArmIO arm;
+public class CoralIntake extends SubsystemBase {
+  private final CoralIntakePivotIO arm;
   
-  private final ArmIOInputsAutoLogged pInputs = new ArmIOInputsAutoLogged();
+  private final CoralIntakePivotIOInputsAutoLogged pInputs = new CoralIntakePivotIOInputsAutoLogged();
 
   private static double kP;
   private static double kG;
@@ -42,7 +44,7 @@ public class Arm extends SubsystemBase {
   private ArmFeedforward armFFModel;
 
   /** Creates a new Arm. */
-  public Arm(ArmIO arm, SensorIO sensor) {
+  public CoralIntake(CoralIntakePivotIO arm, SensorIO sensor) {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
@@ -106,9 +108,9 @@ public class Arm extends SubsystemBase {
         positionDegs,
         armFFModel
             .calculate(
-                Angle.ofBaseUnits(positionDegs, Degrees),
-                AngularVelocity.ofBaseUnits(velocityDegsPerSec, DegreesPerSecond))
-            .in(Volts));
+                positionDegs,
+                velocityDegsPerSec)
+            );
   }
 
   public void armStop() {

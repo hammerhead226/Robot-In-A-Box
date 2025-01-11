@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.constants.SubsystemConstants;
 
 /** Add your docs here. */
-public class ArmIOSim implements ArmIO {
+public class AlgaeIntakePivotIOSim implements AlgaeIntakePivotIO {
 
   // SIM VARIABLES (CHANGE)
   private int gearBoxMotorCount = 1;
@@ -47,7 +47,7 @@ public class ArmIOSim implements ArmIO {
   private double clampedValueHighVolts = 12.0;
 
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
+  public void updateInputs(AlgaeIntakePivotIOInputs inputs) {
     positionSetpointRads = pid.getSetpoint();
 
     appliedVolts +=

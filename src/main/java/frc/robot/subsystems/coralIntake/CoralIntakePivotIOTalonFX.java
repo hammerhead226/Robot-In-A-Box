@@ -1,4 +1,4 @@
-package frc.robot.subsystems.algaeIntake;
+package frc.robot.subsystems.coralIntake;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
@@ -20,7 +20,7 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 
-public class ArmIOTalonFX implements ArmIO {
+public class CoralIntakePivotIOTalonFX implements CoralIntakePivotIO {
   private final TalonFX leader;
   private final TalonFX follower;
 
@@ -36,7 +36,7 @@ public class ArmIOTalonFX implements ArmIO {
   private final StatusSignal<Current> currentAmps;
   private final StatusSignal<Angle> pitch;
 
-  public ArmIOTalonFX(int leadID, int followID, int gyroID) {
+  public CoralIntakePivotIOTalonFX(int leadID, int followID, int gyroID) {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ArmConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
@@ -87,7 +87,7 @@ public class ArmIOTalonFX implements ArmIO {
   }
 
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
+  public void updateInputs(CoralIntakePivotIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps, pitch);
     inputs.gyroConnected = BaseStatusSignal.refreshAll(pitch).equals(StatusCode.OK);
