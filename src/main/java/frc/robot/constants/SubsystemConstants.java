@@ -20,8 +20,6 @@ public final class SubsystemConstants {
   public static final String CANBUS = "CAN Bus 2";
   public static final double LOOP_PERIOD_SECONDS = 0.02;
 
-  public static final boolean tuningMode = true;
-
   public static class IntakeConstants {
     public static final double CURRENT_LIMIT = 40.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
@@ -49,7 +47,6 @@ public final class SubsystemConstants {
 
     public static final double ARM_ZERO_ANGLE = 0;
     public static final double STOW_SETPOINT_DEG = 0;
-    public static final double CORAL_DETECTION_THRESHOLD_INCHES = 0; //threshold for stating coral is in scoring arm; inches
   }
 
   public static class LEDConstants {

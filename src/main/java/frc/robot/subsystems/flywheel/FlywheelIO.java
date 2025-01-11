@@ -11,21 +11,21 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.coralIntake;
+package frc.robot.subsystems.flywheel;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface CoralIntakeRollerIO {
+public interface FlywheelIO {
   @AutoLog
-  public static class CoralIntakeRollerIOInputs {
+  public static class FlywheelIOInputs {
     public double positionRad = 0.0;
     public double velocityRadPerSec = 0.0;
     public double appliedVolts = 0.0;
-    public double currentAmps = 0.0;
+    public double[] currentAmps = new double[] {};
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(CoralIntakeRollerIOInputs inputs) {}
+  public default void updateInputs(FlywheelIOInputs inputs) {}
 
   /** Run open loop at the specified voltage. */
   public default void setVoltage(double volts) {}

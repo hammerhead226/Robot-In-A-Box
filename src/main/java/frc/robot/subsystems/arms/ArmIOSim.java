@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.coralScoring;
+package frc.robot.subsystems.arms;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.constants.SubsystemConstants;
 
 /** Add your docs here. */
-public class CoralIntakePivotIOSim implements CoralIntakePivotIO {
+public class ArmIOSim implements ArmIO {
 
   // SIM VARIABLES (CHANGE)
   private int gearBoxMotorCount = 1;
@@ -47,7 +47,7 @@ public class CoralIntakePivotIOSim implements CoralIntakePivotIO {
   private double clampedValueHighVolts = 12.0;
 
   @Override
-  public void updateInputs(CoralIntakePivotIOInputs inputs) {
+  public void updateInputs(ArmIOInputs inputs) {
     positionSetpointRads = pid.getSetpoint();
 
     appliedVolts +=

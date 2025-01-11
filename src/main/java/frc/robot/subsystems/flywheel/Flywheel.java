@@ -11,14 +11,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.algaeIntake;
+package frc.robot.subsystems.flywheel;
 
-import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,19 +25,15 @@ import frc.robot.constants.SimConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class AlgaeIntakeRoller extends SubsystemBase {
-  private final AlgaeIntakeRollerIO io;
-  private final SensorIO sensor;
-  private boolean coralDetected;
-  private final SensorIOInputsAutoLogged sInputs = new SensorIOInputsAutoLogged();
-  private final AlgaeIntakeRollerIOInputsAutoLogged inputs = new AlgaeIntakeRollerIOInputsAutoLogged();
+public class Flywheel extends SubsystemBase {
+  private final FlywheelIO io;
+  private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
   private final SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
 
   /** Creates a new Flywheel. */
-  public AlgaeIntakeRoller(AlgaeIntakeRollerIO io, SensorIO sensor) {
+  public Flywheel(FlywheelIO io) {
     this.io = io;
-    this.sensor = sensor;
 
     // Switch constants based on mode (the physics simulator is treated as a
     // separate robot with different tuning)
@@ -67,17 +61,12 @@ public class AlgaeIntakeRoller extends SubsystemBase {
                 null,
                 (state) -> Logger.recordOutput("Flywheel/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
-            coralDetected = false;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    sensor.updateInputs(sInputs);
-
     Logger.processInputs("Flywheel", inputs);
-    Logger.processInput("Sensor", sInputs);
-    Logger.recordOutput("Coral Detected In Scoring Claw", coralDetected);
   }
 
   /** Run open loop at the specified voltage. */
@@ -88,10 +77,7 @@ public class AlgaeIntakeRoller extends SubsystemBase {
   /** Run closed loop at the specified velocity. */
   public void runVelocity(double velocityRPM) {
     var velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(velocityRPM);
-    io.setVelocity(
-        velocityRadPerSec,
-        ffModel
-            .calculate(velocityRadPerSec));
+    io.setVelocity(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
 
     // Log flywheel setpoint
     Logger.recordOutput("Flywheel/SetpointRPM", velocityRPM);
