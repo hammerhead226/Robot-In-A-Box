@@ -125,7 +125,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean onCoralDetected() {
-    return (sInputs.distance <= SubsystemConstants.ArmConstants.CORAL_DETECTION_THRESHOLD_INCHES) || ;
+    return (sInputs.distance <= SubsystemConstants.ArmConstants.CORAL_DETECTION_THRESHOLD_INCHES);
   }
 
   public Command setArmTarget(double goalDegrees, double thresholdDegrees) {

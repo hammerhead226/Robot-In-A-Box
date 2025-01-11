@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.coralScoring;
+package frc.robot.subsystems.coralIntake;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
@@ -125,7 +125,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean onCoralDetected() {
-    return (sInputs.distance <= SubsystemConstants.ArmConstants.CORAL_DETECTION_THRESHOLD_INCHES) || ;
+    return (sInputs.distance <= SubsystemConstants.ArmConstants.CORAL_DETECTION_THRESHOLD_INCHES);
   }
 
   public Command setArmTarget(double goalDegrees, double thresholdDegrees) {

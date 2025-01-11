@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.arms;
+package frc.robot.subsystems.coralScoring;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
@@ -21,6 +21,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
   private final ArmIO arm;
+  
   private final ArmIOInputsAutoLogged pInputs = new ArmIOInputsAutoLogged();
 
   private static double kP;
@@ -41,7 +42,7 @@ public class Arm extends SubsystemBase {
   private ArmFeedforward armFFModel;
 
   /** Creates a new Arm. */
-  public Arm(ArmIO arm) {
+  public Arm(ArmIO arm, SensorIO sensor) {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
@@ -121,6 +122,10 @@ public class Arm extends SubsystemBase {
 
   public void setArmCurrent(double currentDegrees) {
     armCurrentStateDegrees = new TrapezoidProfile.State(currentDegrees, 0);
+  }
+
+  public boolean onCoralDetected() {
+    return (sInputs.distance <= SubsystemConstants.ArmConstants.CORAL_DETECTION_THRESHOLD_INCHES);
   }
 
   public Command setArmTarget(double goalDegrees, double thresholdDegrees) {
