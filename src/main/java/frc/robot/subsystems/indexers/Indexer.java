@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.util.LoggedTunableNumber;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
@@ -19,9 +21,9 @@ public class Indexer extends SubsystemBase {
 
   private final IndexerIOInputsAutoLogged iInputs = new IndexerIOInputsAutoLogged();
 
-  private static double kP;
-  private static double kG;
-  private static double kV;
+  private static LoggedTunableNumber kP;
+  private static LoggedTunableNumber kG;
+  private static LoggedTunableNumber kV;
 
   private static double maxVelocityRotPerSec;
   private static double maxAccelerationRotPerSecSquared;
@@ -39,24 +41,24 @@ public class Indexer extends SubsystemBase {
 
     switch (SimConstants.currentMode) {
       case REAL:
-        kG = 0.0;
-        kV = 0.0;
-        kP = 0.0;
+        kG.initDefault(0.0);
+        kV.initDefault(0.0);
+        kP.initDefault(0.0);
         break;
       case REPLAY:
-        kG = 0.0;
-        kV = 0.0;
-        kP = 0.0;
+        kG.initDefault(0.0);
+        kV.initDefault(0.0);
+        kP.initDefault(0.0);
         break;
       case SIM:
-        kG = 0.0;
-        kV = 0.0;
-        kP = 0.0;
+        kG.initDefault(0.0);
+        kV.initDefault(0.0);
+        kP.initDefault(0.0);
         break;
       default:
-        kG = 0.0;
-        kV = 0.0;
-        kP = 0.0;
+        kG.initDefault(0.0);
+        kV.initDefault(0.0);
+        kP.initDefault(0.0);
         break;
     }
 
@@ -71,8 +73,7 @@ public class Indexer extends SubsystemBase {
     indexerCurrentStateRotations =
         indexerProfile.calculate(0, indexerCurrentStateRotations, indexerGoalStateRotations);
 
-    indexer.configurePID(kP, 0, 0);
-    ff = new ElevatorFeedforward(0, kG, kV);
+    updateTunableNumbers();
   }
 
   public boolean indexerAtGoal(double thersholdInches) {
@@ -94,9 +95,21 @@ public class Indexer extends SubsystemBase {
 
     indexer.setPositionSetpoint(
         indexerCurrentStateRotations.position * 360,
-        ff.calculate(indexerCurrentStateRotations.velocity));
+        ff.calculate(
+                indexerCurrentStateRotations.velocity));
 
     Logger.processInputs("Indexer", iInputs);
+
+    updateTunableNumbers();
+  }
+
+  private void updateTunableNumbers() {
+    if (kP.hasChanged(hashCode())) {
+      indexer.configurePID(kP.get(), 0, 0);
+    }
+    if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode())) {
+      ff = new ElevatorFeedforward(0, kG.get(), kV.get());
+    }
   }
 
   public void index(double linearDistanceInches) {

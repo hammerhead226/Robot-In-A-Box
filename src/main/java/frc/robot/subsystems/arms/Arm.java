@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.arms;
 
+
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -11,15 +12,17 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.util.LoggedTunableNumber;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
   private final ArmIO arm;
   private final ArmIOInputsAutoLogged pInputs = new ArmIOInputsAutoLogged();
 
-  private static double kP;
-  private static double kG;
-  private static double kV;
+  private static LoggedTunableNumber kP;
+  private static LoggedTunableNumber kG;
+  private static LoggedTunableNumber kV;
 
   private static double maxVelocityDegPerSec;
   private static double maxAccelerationDegPerSecSquared;
@@ -39,24 +42,24 @@ public class Arm extends SubsystemBase {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
-        kG = 0.29;
-        kV = 1;
-        kP = 1.123;
+        kG.initDefault(0.29);
+        kV.initDefault(1);
+        kP.initDefault(1.123);
         break;
       case REPLAY:
-        kG = 0.29;
-        kV = 1;
-        kP = 1.123;
+        kG.initDefault(0.29);
+        kV.initDefault(1);
+        kP.initDefault(1.123);
         break;
       case SIM:
-        kG = 0.29;
-        kV = 1;
-        kP = 1.123;
+        kG.initDefault(0.29);
+        kV.initDefault(1);
+        kP.initDefault(1.123);
         break;
       default:
-        kG = 0.29;
-        kV = 1;
-        kP = 1.123;
+        kG.initDefault(0.29);
+        kV.initDefault(1);
+        kP.initDefault(1.123);
         break;
     }
 
@@ -73,8 +76,7 @@ public class Arm extends SubsystemBase {
     // setArmCurrent(getArmPositionDegs());
     armCurrentStateDegrees = armProfile.calculate(0, armCurrentStateDegrees, armGoalStateDegrees);
 
-    arm.configurePID(kP, 0, 0);
-    armFFModel = new ArmFeedforward(0, kG, kV, 0);
+    updateTunableNumbers();
   }
 
   public void setBrakeMode(boolean bool) {
@@ -96,7 +98,12 @@ public class Arm extends SubsystemBase {
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
     arm.setPositionSetpointDegs(
-        positionDegs, armFFModel.calculate(positionDegs, velocityDegsPerSec));
+        positionDegs,
+        armFFModel
+            .calculate(
+               positionDegs,
+               velocityDegsPerSec)
+           );
   }
 
   public void armStop() {
@@ -133,5 +140,16 @@ public class Arm extends SubsystemBase {
 
     Logger.recordOutput("arm goal", goalDegrees);
     // This method will be called once per scheduler run
+
+    updateTunableNumbers();
+  }
+
+  private void updateTunableNumbers() {
+    if (kP.hasChanged(hashCode())) {
+      arm.configurePID(kP.get(), 0, 0);
+    }
+    if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode())) {
+      armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
+    }
   }
 }
