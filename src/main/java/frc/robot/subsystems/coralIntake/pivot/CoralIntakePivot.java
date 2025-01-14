@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.arms;
+package frc.robot.subsystems.coralIntake.pivot;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -11,13 +11,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.commoniolayers.ArmIO;
-import frc.robot.subsystems.commoniolayers.ArmIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
-public class Arm extends SubsystemBase {
-  private final ArmIO arm;
+public class CoralIntakePivot extends SubsystemBase {
+  private final CoralIntakePivotIO arm;
   private final ArmIOInputsAutoLogged pInputs = new ArmIOInputsAutoLogged();
 
   private static LoggedTunableNumber kP;
@@ -38,7 +36,7 @@ public class Arm extends SubsystemBase {
   private ArmFeedforward armFFModel;
 
   /** Creates a new Arm. */
-  public Arm(ArmIO arm) {
+  public CoralIntakePivot(CoralIntakePivotIO arm) {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
