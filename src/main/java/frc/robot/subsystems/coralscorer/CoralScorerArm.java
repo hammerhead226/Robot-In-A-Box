@@ -1,4 +1,4 @@
-package frc.robot.TSubsystems.CoralScorer;
+package frc.robot.subsystems.coralscorer;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.arms.ArmIO;
-import frc.robot.subsystems.arms.ArmIOInputsAutoLogged;
+import frc.robot.subsystems.commoniolayers.ArmIO;
+import frc.robot.subsystems.commoniolayers.ArmIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 

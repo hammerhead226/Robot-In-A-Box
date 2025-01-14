@@ -1,4 +1,4 @@
-package frc.robot.TSubsystems.CoralScorer;
+package frc.robot.subsystems.coralscorer;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -13,7 +13,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.subsystems.flywheel.FlywheelIO;
+import frc.robot.subsystems.commoniolayers.FlywheelIO;
 
 public class CoralScorerFlywheelIOTalonFX implements FlywheelIO {
   private static final double GEAR_RATIO = 1.5;

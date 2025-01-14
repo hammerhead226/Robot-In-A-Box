@@ -19,6 +19,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.commoniolayers.FlywheelIO;
 
 public class FlywheelIOSim implements FlywheelIO {
   // CHANGE THESE VALUES TO MATCH YOUR MOTOR AND GEARBOX

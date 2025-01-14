@@ -1,4 +1,4 @@
-package frc.robot.TSubsystems.CoralScorer;
+package frc.robot.subsystems.coralscorer;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -14,7 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.arms.ArmIO;
+import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 

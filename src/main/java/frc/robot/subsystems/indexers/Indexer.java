@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.commoniolayers.IndexerIO;
+import frc.robot.subsystems.commoniolayers.IndexerIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 

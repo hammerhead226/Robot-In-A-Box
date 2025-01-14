@@ -1,4 +1,4 @@
-package frc.robot.TSubsystems.CoralScorer;
+package frc.robot.subsystems.coralscorer;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
-import frc.robot.subsystems.flywheel.FlywheelIO;
-import frc.robot.subsystems.flywheel.FlywheelIOInputsAutoLogged;
+import frc.robot.subsystems.commoniolayers.FlywheelIO;
+import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 

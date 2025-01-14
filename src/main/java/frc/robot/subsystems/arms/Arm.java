@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.commoniolayers.ArmIO;
+import frc.robot.subsystems.commoniolayers.ArmIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -102,7 +104,7 @@ public class Arm extends SubsystemBase {
   public void armStop() {
     arm.stop();
   }
-
+  // what does this do?
   public void setArmGoal(double goalDegrees) {
     this.goalDegrees = goalDegrees;
     armGoalStateDegrees = new TrapezoidProfile.State(goalDegrees, 0);
