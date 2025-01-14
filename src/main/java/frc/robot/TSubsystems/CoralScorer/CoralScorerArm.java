@@ -1,8 +1,4 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
-package frc.robot.subsystems.arms;
+package frc.robot.TSubsystems.CoralScorer;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -11,12 +7,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.arms.ArmIO;
+import frc.robot.subsystems.arms.ArmIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
-public class Arm extends SubsystemBase {
-  private final ArmIO arm;
-  private final ArmIOInputsAutoLogged pInputs = new ArmIOInputsAutoLogged();
+public class CoralScorerArm extends SubsystemBase {
+  private final ArmIO coralScorerArm;
+  private final ArmIOInputsAutoLogged csaInputs = new ArmIOInputsAutoLogged();
 
   private static LoggedTunableNumber kP;
   private static LoggedTunableNumber kG;
@@ -36,8 +34,8 @@ public class Arm extends SubsystemBase {
   private ArmFeedforward armFFModel;
 
   /** Creates a new Arm. */
-  public Arm(ArmIO arm) {
-    this.arm = arm;
+  public CoralScorerArm(ArmIO arm) {
+    this.coralScorerArm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
         kG.initDefault(0.29);
@@ -78,29 +76,29 @@ public class Arm extends SubsystemBase {
   }
 
   public void setBrakeMode(boolean bool) {
-    arm.setBrakeMode(bool);
+    coralScorerArm.setBrakeMode(bool);
   }
 
   public double getArmPositionDegs() {
-    return pInputs.positionDegs;
+    return csaInputs.positionDegs;
   }
 
   public boolean atGoal(double threshold) {
-    return (Math.abs(pInputs.positionDegs - goalDegrees) <= threshold);
+    return (Math.abs(csaInputs.positionDegs - goalDegrees) <= threshold);
   }
 
   private double getArmError() {
-    return pInputs.positionSetpointDegs - pInputs.positionDegs;
+    return csaInputs.positionSetpointDegs - csaInputs.positionDegs;
   }
 
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
-    arm.setPositionSetpointDegs(
+    coralScorerArm.setPositionSetpointDegs(
         positionDegs, armFFModel.calculate(positionDegs, velocityDegsPerSec));
   }
 
   public void armStop() {
-    arm.stop();
+    coralScorerArm.stop();
   }
 
   public void setArmGoal(double goalDegrees) {
@@ -120,7 +118,7 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
-    arm.updateInputs(pInputs);
+    coralScorerArm.updateInputs(csaInputs);
 
     armCurrentStateDegrees =
         armProfile.calculate(
@@ -128,7 +126,7 @@ public class Arm extends SubsystemBase {
 
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
-    Logger.processInputs("Arm", pInputs);
+    Logger.processInputs("Arm", csaInputs);
     Logger.recordOutput("arm error", getArmError());
 
     Logger.recordOutput("arm goal", goalDegrees);
@@ -139,7 +137,7 @@ public class Arm extends SubsystemBase {
 
   private void updateTunableNumbers() {
     if (kP.hasChanged(hashCode())) {
-      arm.configurePID(kP.get(), 0, 0);
+      coralScorerArm.configurePID(kP.get(), 0, 0);
     }
     if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode())) {
       armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
