@@ -35,20 +35,20 @@ public class AutoAlignToSource extends Command {
 
     Translation2d targetTranslation2d = drive.getPose() > FieldConstants.HEIGHT / 2.0 ? FieldConstants.Sources.Lower.Position : FieldConstants.Sources.Higher.Position;
     Rotation2d targetRotation2d = new Rotation2d(
-        targetTranslation2d.getX()-drive.getPose().getX(),
-        targetTranslation2d.getY()-drive.getPose().getY()
-        );
+      targetTranslation2d.getX()-drive.getPose().getX(),
+      targetTranslation2d.getY()-drive.getPose().getY()
+      );
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        drive.getPose(),
-        new Pose2d(targetTranslation2d, targetRotation2d)
+      drive.getPose(),
+      new Pose2d(targetTranslation2d, targetRotation2d)
     );
 
     PathPlannerPath path = new PathPlannerPath(
-        waypoints,
-        new PathConstraints(3.5, 2.7, 100, 180), // these numbers from last year's code
-        null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
-        new GoalEndState(0.5, targetRotation2d)
+      waypoints,
+      new PathConstraints(3.5, 2.7, 100, 180), // these numbers from last year's code
+      null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
+      new GoalEndState(0.5, targetRotation2d)
     );
     path.preventFlipping = true;
 
