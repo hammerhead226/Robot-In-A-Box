@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 

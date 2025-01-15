@@ -10,9 +10,10 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.commoniolayers.ArmIO;
 
 /** Add your docs here. */
-public class CoralIntakePivotIOSim implements CoralIntakePivotIO {
+public class CoralIntakePivotIOSim implements ArmIO {
 
   // SIM VARIABLES (CHANGE)
   private int gearBoxMotorCount = 1;

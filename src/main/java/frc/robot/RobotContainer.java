@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.coralIntake.pivot.CoralIntakePivot;
+import frc.robot.subsystems.coralIntake.pivot.CoralIntakePivotIOSim;
+import frc.robot.subsystems.coralIntake.pivot.CoralIntakePivotIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -42,7 +45,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-
+  private final CoralIntakePivot ciArm;
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
@@ -61,6 +64,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        ciArm = new CoralIntakePivot(new CoralIntakePivotIOTalonFX(1, 0, 0));
         break;
 
       case SIM:
@@ -72,6 +76,8 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
+
         break;
 
       default:
@@ -83,6 +89,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
+
         break;
     }
 
@@ -106,7 +114,8 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
-    configureButtonBindings();
+    // configureButtonBindings(); removed to replace with test().
+    test();
   }
 
   /**
@@ -115,6 +124,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+  private void test() {
+    controller.y().whileTrue(ciArm.setArmTarget(60, 1));
+  }
+
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
