@@ -16,21 +16,20 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.arms.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.LED;
+import frc.robot.subsystems.vision.ObjectDetection;
 import frc.robot.subsystems.vision.Vision;
 
-//UNFINISHED
-/*
 public class AutoPickupCoral extends Command {
     private final Drive drive;
     private final LED led;
-    private final Vision vision;
+    private final ObjectDetection objectDetection;
     private final CoralIntake coralIntake;
 
     Command pathCommand;
 
-    public AutoPickupCoral(CoralIntake coralIntake, Vision vision, Drive drive, LED led) {
+    public AutoPickupCoral(CoralIntake coralIntake, ObjectDetection objectDetection, Drive drive, LED led) {
         this.coralIntake = coralIntake;
-        this.vision = vision;
+        this.objectDetection = objectDetection;
         this.drive = drive;
         this.led = led;
 
@@ -39,12 +38,13 @@ public class AutoPickupCoral extends Command {
 
     @Override
     public void initialize() {
-        
-        led.setState(SubsystemConstants.LED_STATE.ALIGNING);
+        //led.setState(SubsystemConstants.LED_STATE.ALIGNING);
 
+        // TODO once coralIntake is done change this to be legit
         coralIntake.runFlywheel();
 
-        Translation2d targetTranslation2d = vision.getCoralFieldPosition();
+        Translation2d targetTranslation2d = objectDetection.getNotePositionRobotRelative().plus(drive.getPose().getTranslation());
+        
         Rotation2d targetRotation2d = new Rotation2d(
             targetTranslation2d.getX()-drive.getPose().getX(),
             targetTranslation2d.getY()-drive.getPose().getY()
@@ -79,7 +79,18 @@ public class AutoPickupCoral extends Command {
 
     @Override
     public boolean isFinished() {
-        //detect if object has been grabbed
+        return coralIntake.hasCoral();
+
+        // TODO in coralIntake, implment hasCoral
+        // see last year's code for comparing the currentAmps to a threshold
+        /*
+        if (feedInputs.currentAmps
+        > 13) { // TODo add additional check to filter out false positives
+        // } else if (feedInputs.currentAmps > 10000) {
+        Logger.recordOutput("see note val", "current");
+        lastNoteState = NoteState.CURRENT;
+        return NoteState.CURRENT;
+         */
     }
 }
-*/
+
