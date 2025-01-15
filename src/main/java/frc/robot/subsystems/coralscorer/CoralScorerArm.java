@@ -16,9 +16,12 @@ public class CoralScorerArm extends SubsystemBase {
   private final ArmIO coralScorerArm;
   private final ArmIOInputsAutoLogged csaInputs = new ArmIOInputsAutoLogged();
 
-  private static LoggedTunableNumber kP;
-  private static LoggedTunableNumber kG;
-  private static LoggedTunableNumber kV;
+  private static LoggedTunableNumber kP = new LoggedTunableNumber("CoralScoringArm/kP");
+  ;
+  private static LoggedTunableNumber kG = new LoggedTunableNumber("CoralScoringArm/kG");
+  ;
+  private static LoggedTunableNumber kV = new LoggedTunableNumber("CoralScoringArm/kV");
+  ;
 
   private static double maxVelocityDegPerSec;
   private static double maxAccelerationDegPerSecSquared;
@@ -71,7 +74,7 @@ public class CoralScorerArm extends SubsystemBase {
     // setArmGoal(90);
     // setArmCurrent(getArmPositionDegs());
     armCurrentStateDegrees = armProfile.calculate(0, armCurrentStateDegrees, armGoalStateDegrees);
-
+    armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
     updateTunableNumbers();
   }
 
@@ -126,7 +129,7 @@ public class CoralScorerArm extends SubsystemBase {
 
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
-    Logger.processInputs("Arm", csaInputs);
+    Logger.processInputs("Coral Arm", csaInputs);
     Logger.recordOutput("arm error", getArmError());
 
     Logger.recordOutput("arm goal", goalDegrees);
@@ -139,8 +142,8 @@ public class CoralScorerArm extends SubsystemBase {
     if (kP.hasChanged(hashCode())) {
       coralScorerArm.configurePID(kP.get(), 0, 0);
     }
-    if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode())) {
-      armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
-    }
+    // if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode())) {
+    //   armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
+    // }
   }
 }
