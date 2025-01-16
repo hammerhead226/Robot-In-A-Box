@@ -9,6 +9,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.drive.Drive;
@@ -56,13 +57,16 @@ public class AlignToReefAuto extends Command {
     }
 
     private Pose2d getNearestReefSide() {
-        Translation2d start = getAllianceReefPosition();
+        Translation2d start = FieldConstants.Reef.center;
         Translation2d end = drive.getPose().getTranslation(); 
         Translation2d v = start.minus(end);
         Rotation2d angle = new Rotation2d(v.getX(),v.getY());
 
-        // might look something like
-        // return new ReefSide(Math.floor(getRevolutions * 6));
+        // https://www.desmos.com/calculator/c9wwp3aaol
+        double adjustedRotations = -angle.getRotations() + 7/12;
+        int index = (int)Math.floor((adjustedRotations % 1) * 12);
+
+        return FieldConstants.Reef.branchPositions.get(index).get(FieldConstants.Reef.ReefHeight.L1).toPose2d();
     }
 
     @Override
