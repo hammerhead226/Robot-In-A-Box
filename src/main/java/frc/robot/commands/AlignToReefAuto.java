@@ -62,8 +62,14 @@ public class AlignToReefAuto extends Command {
         Translation2d v = start.minus(end);
         Rotation2d angle = new Rotation2d(v.getX(),v.getY());
 
-        // https://www.desmos.com/calculator/c9wwp3aaol
+        // https://www.desmos.com/calculator/44dd9koglh
+
+        // negate since branchPositions is CW not CCW
+        // +7/12 since branchPositions starts at branch B not the +x axis
         double adjustedRotations = -angle.getRotations() + 7/12;
+
+        // % 1 to just get the fractional part of the rotation
+        // multiply by 12 before flooring so [0,1) maps to 0,1,2...10,11 evenly
         int index = (int)Math.floor((adjustedRotations % 1) * 12);
 
         return FieldConstants.Reef.branchPositions.get(index).get(FieldConstants.Reef.ReefHeight.L1).toPose2d();
