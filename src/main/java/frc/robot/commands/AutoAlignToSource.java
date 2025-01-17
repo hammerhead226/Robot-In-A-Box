@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -33,22 +34,30 @@ public class AutoAlignToSource extends Command {
   public void initialize() {
     //led.setState(SubsystemConstants.LED_STATE.ALIGNING);
 
-    Translation2d targetTranslation2d = drive.getPose() > FieldConstants.HEIGHT / 2.0 ? FieldConstants.Sources.Lower.Position : FieldConstants.Sources.Higher.Position;
-    Rotation2d targetRotation2d = new Rotation2d(
-      targetTranslation2d.getX()-drive.getPose().getX(),
-      targetTranslation2d.getY()-drive.getPose().getY()
-      );
+    // Translation2d targetTranslation2d = drive.getPose() > FieldConstants.HEIGHT / 2.0 ? FieldConstants.Sources.Lower.Position : FieldConstants.Sources.Higher.Position;
+    // Rotation2d targetRotation2d = new Rotation2d(
+    //   targetTranslation2d.getX()-drive.getPose().getX(),
+    //   targetTranslation2d.getY()-drive.getPose().getY()
+    //   );
+    
+    // List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+    //   drive.getPose(),
+    //   new Pose2d(targetTranslation2d, targetRotation2d)
+    // );
 
+    // TODO rewrite this with the correct names onces FieldConstants is done
+    Pose2d targetPose = drive.getPose() > FieldConstants.HEIGHT / 2.0 ? FieldConstants.Sources.Lower.Position : FieldConstants.Sources.Higher.Position;
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-      drive.getPose(),
-      new Pose2d(targetTranslation2d, targetRotation2d)
+      drive.getPose(), 
+      targetPose
     );
+
 
     PathPlannerPath path = new PathPlannerPath(
       waypoints,
       new PathConstraints(3.5, 2.7, 100, 180), // these numbers from last year's code
       null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
-      new GoalEndState(0.5, targetRotation2d)
+      new GoalEndState(0.5, targetPose.getRotation())
     );
     path.preventFlipping = true;
 
