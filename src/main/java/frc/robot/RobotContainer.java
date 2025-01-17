@@ -25,9 +25,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
-import frc.robot.subsystems.coralscorer.CoralScorerArm;
-import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
-import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -45,7 +42,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final CoralScorerArm csArm;
+  // private final CoralScorerArm csArm;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -66,7 +63,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
+        // csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
         break;
 
       case SIM:
@@ -79,7 +76,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        // csArm = new CoralScorerArm(new CoralScorerArmIOSim());
         break;
 
       default:
@@ -92,7 +89,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        // csArm = new CoralScorerArm(new CoralScorerArmIOSim());
         break;
     }
 
@@ -147,7 +144,7 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller.y().onTrue(csArm.setArmTarget(30, 0));
+    // controller.y().onTrue(csArm.setArmTarget(30, 0));
 
     // Reset gyro to 0° when B button is pressed
     controller
