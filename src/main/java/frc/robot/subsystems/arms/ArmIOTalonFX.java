@@ -54,7 +54,7 @@ public class ArmIOTalonFX implements ArmIO {
 
     follower.setControl(new Follower(leadID, true));
 
-    pitch = pigeon.getRoll(); //rename and get abs encoder (replace)
+    pitch = pigeon.getRoll(); // rename and get abs encoder (replace)
     // turnAbsolutePosition = cancoder.getAbsolutePosition();
 
     // startAngleDegs = turnAbsolutePosition.getValueAsDouble();

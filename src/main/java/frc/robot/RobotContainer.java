@@ -48,7 +48,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final CoralIntakePivot ciArm;  
+  private final CoralIntakePivot ciArm;
   private final CoralScorerArm csArm;
 
   // Controller
@@ -83,8 +83,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-                ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
-
+        ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
         break;
@@ -99,7 +98,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
-
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
         break;
