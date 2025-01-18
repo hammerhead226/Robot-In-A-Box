@@ -26,7 +26,18 @@ public final class SubsystemConstants {
     public static final boolean CURRENT_LIMIT_ENABLED = true;
   }
 
-  public static final class shooterConstants {}
+  public static class AlgaeIntakeConstants {
+    public static class FeederConstants {
+      public static final double CURRENT_LIMIT = 40.0;
+      public static final boolean CURRENT_LIMIT_ENABLED = true;
+
+      public static final double THRESHOLD = 0;
+    }
+
+    public static class ArmConstants {
+
+    }
+  }
 
   public static class ElevatorConstants {
     public static final double CURRENT_LIMIT = 40.0;
