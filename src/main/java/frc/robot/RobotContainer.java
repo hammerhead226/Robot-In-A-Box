@@ -111,6 +111,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
 
     // Configure the button bindings
     configureButtonBindings();
