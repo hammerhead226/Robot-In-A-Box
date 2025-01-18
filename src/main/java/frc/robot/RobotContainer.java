@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.coralIntake.pivot.CoralIntakePivot;
+import frc.robot.subsystems.coralIntake.pivot.CoralIntakePivotIOSim;
+import frc.robot.subsystems.coralIntake.pivot.CoralIntakePivotIOTalonFX;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
@@ -45,6 +48,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final CoralIntakePivot ciArm;  
   private final CoralScorerArm csArm;
 
   // Controller
@@ -65,6 +69,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        ciArm = new CoralIntakePivot(new CoralIntakePivotIOTalonFX(1, 0, 0));
 
         csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
         break;
@@ -78,6 +83,8 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+                ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
+
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
         break;
@@ -91,6 +98,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
+
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
         break;
@@ -116,7 +125,8 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
-    configureButtonBindings();
+    // configureButtonBindings(); removed to replace with test().
+    test();
   }
 
   /**
@@ -125,6 +135,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+  private void test() {
+    controller.y().whileTrue(ciArm.setArmTarget(60, 1));
+  }
+
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
