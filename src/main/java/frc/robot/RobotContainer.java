@@ -47,8 +47,6 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Elevator elevator;
-  //   private final Arm arm;
-  private final Flywheel flywheel;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -159,7 +157,8 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.x().onTrue(elevator.setElevatorTarget(10, 1));
+    controller.y().onTrue(elevator.setElevatorTarget(10, 1));
+    controller.y().onFalse(elevator.setElevatorTarget(4, 1));
   }
 
   /**
