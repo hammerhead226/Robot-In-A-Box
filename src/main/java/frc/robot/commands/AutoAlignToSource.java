@@ -6,10 +6,14 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.FieldConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.LED;
 import java.util.List;
+import org.littletonrobotics.junction.Logger;
 
 public class AutoAlignToSource extends Command {
   private final Drive drive;
@@ -22,6 +26,8 @@ public class AutoAlignToSource extends Command {
     this.led = led;
 
     drive.getPose().getTranslation();
+
+    addRequirements(drive, led);
   }
 
   @Override
@@ -40,8 +46,8 @@ public class AutoAlignToSource extends Command {
     //   new Pose2d(targetTranslation2d, targetRotation2d)
     // );
 
-    // TODO rewrite this with the correct names onces FieldConstants is done
-    Pose2d targetPose = null; // drive.getPose() > FieldConstants.HEIGHT / 2.0 ?
+    Pose2d targetPose = getNearestSourceSide();
+
     // FieldConstants.Sources.Lower.Position : FieldConstants.Sources.Higher.Position;
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), targetPose);
 
@@ -56,6 +62,27 @@ public class AutoAlignToSource extends Command {
 
     pathCommand = AutoBuilder.followPath(path);
     pathCommand.initialize();
+  }
+
+  private Pose2d getNearestSourceSide() {
+    Pose2d result =
+        drive.getPose().getY() > FieldConstants.fieldWidth / 2.0
+            ? FieldConstants.CoralStation.leftCenterFace
+            : FieldConstants.CoralStation.rightCenterFace;
+
+    // flip rotation
+    Rotation2d rotation2d = result.getRotation().rotateBy(new Rotation2d(Math.PI));
+
+    // back up target position (so it doesn't clip)
+    // x is nearer/farther, y is sideways
+    Translation2d offsetFromBranch = new Translation2d(-0.7, 0);
+    offsetFromBranch = offsetFromBranch.rotateBy(rotation2d);
+    Translation2d translation2d = result.getTranslation().plus(offsetFromBranch);
+
+    result = new Pose2d(translation2d, rotation2d);
+
+    Logger.recordOutput("align to reef target Pose2d", result);
+    return result;
   }
 
   @Override

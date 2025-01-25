@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlignToReefAuto;
+import frc.robot.commands.AutoAlignToSource;
 import frc.robot.commands.DriveCommands;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
@@ -37,6 +38,7 @@ import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
 import frc.robot.subsystems.led.LED_IOSim;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -116,7 +118,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
-    autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
+    // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -135,6 +137,36 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+
+    controller
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  if (drive.getCurrentCommand() instanceof AlignToReefAuto) {
+                    drive.getCurrentCommand().cancel();
+                  } else {
+                    new AlignToReefAuto(drive, led).schedule();
+                  }
+                }));
+
+    controller
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  if (drive.getCurrentCommand() instanceof AutoAlignToSource) {
+                    drive.getCurrentCommand().cancel();
+                  } else {
+                    new AutoAlignToSource(drive, led).schedule();
+                  }
+                }));
+
+    if (drive.getCurrentCommand() == null) {
+      Logger.recordOutput("drive current command", "currently null");
+    } else {
+      Logger.recordOutput("drive current command", drive.getCurrentCommand().getName());
+    }
 
     // Lock to 0° when A button is held
     controller

@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "point path"
+            "pathName": "point path 3"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "AlignToReefAuto"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
           }
         }
       ]
