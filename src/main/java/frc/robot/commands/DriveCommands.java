@@ -14,6 +14,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -33,8 +34,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import com.google.flatbuffers.Constants;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -46,6 +50,26 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+  private static PIDController rotationPID =
+      new PIDController(2.54, 0, 0, SConstants.LOOP_PERIOD_SECS);
+      private static final double NOTE_FORWARD_OFFSET = -0.36;
+      private static double sideWaysError = 0;
+      private static double wantedSidewaysVelocity = 0;
+      private static double wantedRotationVelocity = 0;
+      private static double sidewaysAssistEffort = 0;
+      private static double rotationAssistEffort = 0;
+      private static double forwardConstantVelocity = 0;
+      private static PIDController sidewaysPID =
+          new PIDController(1.5, 0, 0, Constants.LOOP_PERIOD_SECS);
+
+    public static PIDController getRotationPID() {
+        return rotationPID;
+    }
+
+    public static void setRotationPID(PIDController rotationPID) {
+        DriveCommands.rotationPID = rotationPID;
+    }
+
 
   private DriveCommands() {}
 
@@ -70,7 +94,8 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
+      DoubleSupplier omegaSupplier,
+      BooleanSupplier turnToAmpSupplier) {
     return Commands.run(
         () -> {
           // Get linear velocity
@@ -98,8 +123,43 @@ public class DriveCommands {
                   isFlipped
                       ? drive.getRotation().plus(new Rotation2d(Math.PI))
                       : drive.getRotation()));
+                      if (turnToAmpSupplier.getAsBoolean()){
+                        Rotation2d curreRotation2d = drive.getRotation();
+                        Rotation2d targeRotation2d;
+                        // if (DriverStation.getAlliance().get() == Alliance.Blue) {
+                        //   targeRotation2d = Rotation2d.fromDegrees(-60); //-60 for blue source
+                        // } else {
+                        //   targeRotation2d = Rotation2d.fromDegrees(240); //240 for red sjkource
+                        // }
+                        targeRotation2d = Rotation2d.fromDegrees(-88); // TODO 90 or -90 for amp, need to test
+                        rotationPID.setSetpoint(targeRotation2d.getDegrees());
+              
+              wantedRotationVelocity = Math.toRadians(rotationPID.calculate(curreRotation2d.getDegrees()));
+              
+                        rotationAssistEffort = wantedRotationVelocity - rotationSpeed * 0.1690;
+              
+                      } else {
+                        wantedRotationVelocity = rotationSpeed;
+              int rotationAssistEffort = 0;
+                            }
+                      drive.runVelocity(
+                        new ChassisSpeeds(
+                            MathUtil.clamp(
+                                forwardSpeed + forwardConstantVelocity,
+                                -drive.getMaxLinearSpeedMetersPerSec(),
+                                drive.getMaxLinearSpeedMetersPerSec()),
+                            MathUtil.clamp(
+                                sidewaysSpeed + sidewaysAssistEffort,
+                                -drive.getMaxLinearSpeedMetersPerSec(),
+                                drive.getMaxLinearSpeedMetersPerSec()),
+                            MathUtil.clamp(
+                                rotationSpeed + rotationAssistEffort,
+                                -drive.getMaxAngularSpeedRadPerSec(),
+                                drive.getMaxAngularSpeedRadPerSec())));
+               
         },
         drive);
+
   }
 
   /**
@@ -111,7 +171,8 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      Supplier<Rotation2d> rotationSupplier) {
+      Supplier<Rotation2d> rotationSupplierr,
+      ){
 
     // Create PID controller
     ProfiledPIDController angleController =
@@ -149,11 +210,14 @@ public class DriveCommands {
                       isFlipped
                           ? drive.getRotation().plus(new Rotation2d(Math.PI))
                           : drive.getRotation()));
+        double rotationSpeed;
+
             },
             drive)
 
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+
   }
 
   /**
@@ -293,4 +357,15 @@ public class DriveCommands {
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
   }
+
+    private static class rotationPID {
+
+        private static void setSetpoint(double degrees) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public rotationPID() {
+        }
+    }
 }
+
