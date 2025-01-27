@@ -143,6 +143,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
+                  //System.out.println(drive.getCurrentCommand().getName());
                   if (drive.getCurrentCommand() instanceof AlignToReefAuto) {
                     drive.getCurrentCommand().cancel();
                   } else {
@@ -155,6 +156,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
+                  //System.out.println(drive.getCurrentCommand().getName());
                   if (drive.getCurrentCommand() instanceof AutoAlignToSource) {
                     drive.getCurrentCommand().cancel();
                   } else {
