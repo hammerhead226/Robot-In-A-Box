@@ -1,7 +1,5 @@
 package frc.robot.subsystems.newalgaeintake;
 
-import java.security.AlgorithmConstraints;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -9,15 +7,12 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeIntakeConstants;
-import frc.robot.constants.SubsystemConstants.CoralIntakeConstants;
 
 public class AlgaeIntakeFeederIOTalonFX implements AlgaeIntakeFeederIO {
 
@@ -35,7 +30,7 @@ public class AlgaeIntakeFeederIOTalonFX implements AlgaeIntakeFeederIO {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = AlgaeIntakeConstants.FeederConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
-     AlgaeIntakeConstants.FeederConstants.CURRENT_LIMIT_ENABLED;
+        AlgaeIntakeConstants.FeederConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     feeder = new TalonFX(id, SubsystemConstants.CANBUS);
