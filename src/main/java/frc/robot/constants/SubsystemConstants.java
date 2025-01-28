@@ -26,7 +26,7 @@ public final class SubsystemConstants {
     public static final boolean CURRENT_LIMIT_ENABLED = true;
   }
 
-  public static final class shooterConstants {}
+  public static final class ShooterConstants {}
 
   public static class ElevatorConstants {
     public static final double CURRENT_LIMIT = 40.0;
@@ -81,4 +81,10 @@ public final class SubsystemConstants {
     SIM,
     REPLAY
   }
+  public static enum CoralState {
+    NO_CORAL,
+    SENSOR,
+    CURRENT
+  }
+  public static final double CORAL_DIST = 1300; // CHANGE THIS
 }
