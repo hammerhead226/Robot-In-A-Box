@@ -150,6 +150,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
 
     // Configure the button bindings
     // configureButtonBindings(); removed to replace with test().
@@ -188,7 +189,7 @@ public class RobotContainer {
     // // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller.y().onTrue(csArm.setArmTarget(30, 0));
+    // controller.y().onTrue(csArm.setArmTarget(30, 0));
 
     // // Reset gyro to 0° when B button is pressed
     // controller
