@@ -18,10 +18,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.constants.SimConstants;
@@ -38,6 +40,12 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.util.KeyboardInputs;
+
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -52,12 +60,13 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final CoralIntakePivot ciArm;
-  private final CoralScorerArm csArm;
-  private final Vision vision;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+//   private final CommandXboxController controller = new CommandXboxController(0);
+    private final Joystick joystikc = new Joystick(0);
+    private final JoystickButton btn = new JoystickButton(joystikc, 4);
+    private final KeyboardInputs keyboard = new KeyboardInputs(0);
+
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -85,6 +94,8 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
+        // TODO change lead, follower, gyro IDs, etc.
+        elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
         break;
 
       case SIM:
@@ -96,16 +107,6 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
-
-        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
-        vision =
-            new Vision(
-                drive.getToPoseEstimatorConsumer(),
-                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-                new VisionIOPhotonVision("photon", new Transform3d()));
         break;
 
       default:
@@ -127,6 +128,7 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
+        elevator = new Elevator(new ElevatorIO() {});
         break;
     }
 
@@ -166,38 +168,41 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -controller.getLeftY(),
+    //         () -> -controller.getLeftX(),
+    //         () -> -controller.getRightX()));
 
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    // // Lock to 0° when A button is held
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     controller.y().onTrue(csArm.setArmTarget(30, 0));
 
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // // Reset gyro to 0° when B button is pressed
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
+
+    keyboard.getVButton().onTrue(elevator.setElevatorTarget(10, 1));
+    keyboard.getVButton().onFalse(elevator.setElevatorTarget(4, 1));
   }
 
   /**
