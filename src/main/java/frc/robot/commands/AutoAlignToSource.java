@@ -71,11 +71,11 @@ public class AutoAlignToSource extends Command {
             : FieldConstants.CoralStation.rightCenterFace;
 
     // flip rotation
-    Rotation2d rotation2d = result.getRotation().rotateBy(new Rotation2d(Math.PI));
+    Rotation2d rotation2d = result.getRotation(); // .rotateBy(new Rotation2d(Math.PI));
 
     // back up target position (so it doesn't clip)
     // x is nearer/farther, y is sideways
-    Translation2d offsetFromBranch = new Translation2d(-0.7, 0);
+    Translation2d offsetFromBranch = new Translation2d(0.7, 0);
     offsetFromBranch = offsetFromBranch.rotateBy(rotation2d);
     Translation2d translation2d = result.getTranslation().plus(offsetFromBranch);
 
