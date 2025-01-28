@@ -34,9 +34,7 @@ public final class SubsystemConstants {
       public static final double THRESHOLD = 0;
     }
 
-    public static class ArmConstants {
-
-    }
+    public static class ArmConstants {}
   }
 
   public static class ElevatorConstants {

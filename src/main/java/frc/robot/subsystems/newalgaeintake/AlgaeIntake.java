@@ -1,7 +1,5 @@
 package frc.robot.subsystems.newalgaeintake;
 
-import com.google.flatbuffers.Constants;
-
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
@@ -54,7 +52,7 @@ public class AlgaeIntake extends SubsystemBase {
         break;
       default:
         feederFFModel = new SimpleMotorFeedforward(0, 0.03);
-        
+
         armkG.initDefault(0.29);
         armkV.initDefault(1);
         armkP.initDefault(1.123);
@@ -85,6 +83,7 @@ public class AlgaeIntake extends SubsystemBase {
   }
 
   public boolean atFeederSetpoint() {
-    return Math.abs(getFeederError()) <= SubsystemConstants.AlgaeIntakeConstants.FeederConstants.THRESHOLD;
+    return Math.abs(getFeederError())
+        <= SubsystemConstants.AlgaeIntakeConstants.FeederConstants.THRESHOLD;
   }
 }
