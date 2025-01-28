@@ -1,11 +1,10 @@
-package frc.robot.subsystems.arms;
+package frc.robot.subsystems.coralIntake.pivot;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -21,9 +20,8 @@ import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 
-public class ArmIOTalonFX implements ArmIO {
+public class CoralIntakePivotIOTalonFX implements ArmIO {
   private final TalonFX leader;
-  private final TalonFX follower;
 
   private final Pigeon2 pigeon;
 
@@ -37,7 +35,7 @@ public class ArmIOTalonFX implements ArmIO {
   private final StatusSignal<Current> currentAmps;
   private final StatusSignal<Angle> pitch;
 
-  public ArmIOTalonFX(int leadID, int followID, int gyroID) {
+  public CoralIntakePivotIOTalonFX(int leadID, int followID, int gyroID) {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ArmConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
@@ -46,24 +44,16 @@ public class ArmIOTalonFX implements ArmIO {
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
-    follower = new TalonFX(followID, SubsystemConstants.CANBUS);
-    pigeon = new Pigeon2(gyroID, SubsystemConstants.CANBUS); // use encoder here
+    pigeon = new Pigeon2(gyroID, SubsystemConstants.CANBUS);
     pigeon.reset();
 
     leader.getConfigurator().apply(config);
 
-    follower.setControl(new Follower(leadID, true));
+    pitch = pigeon.getRoll();
 
-    pitch = pigeon.getRoll(); // rename and get abs encoder (replace)
-    // turnAbsolutePosition = cancoder.getAbsolutePosition();
-
-    // startAngleDegs = turnAbsolutePosition.getValueAsDouble();
+    startAngleDegs = pitch.getValueAsDouble();
 
     leader.setPosition(
-        Conversions.degreesToFalcon(
-            startAngleDegs, SubsystemConstants.ArmConstants.ARM_GEAR_RATIO));
-
-    follower.setPosition(
         Conversions.degreesToFalcon(
             startAngleDegs, SubsystemConstants.ArmConstants.ARM_GEAR_RATIO));
 
@@ -80,7 +70,6 @@ public class ArmIOTalonFX implements ArmIO {
 
     pigeon.optimizeBusUtilization();
     leader.optimizeBusUtilization();
-    follower.optimizeBusUtilization();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         100, leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps, pitch);
@@ -116,7 +105,6 @@ public class ArmIOTalonFX implements ArmIO {
     }
 
     leader.getConfigurator().apply(config);
-    follower.getConfigurator().apply(config);
   }
 
   @Override

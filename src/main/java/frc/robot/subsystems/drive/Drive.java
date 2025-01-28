@@ -52,9 +52,11 @@ import frc.robot.constants.SimConstants.Mode;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.vision.ObjectDetection;
+import frc.robot.subsystems.vision.Vision.VisionConsumer;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -391,5 +393,31 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+
+  private class toPoseEstimatorConsumer implements VisionConsumer {
+    @Override
+    public void accept(
+        Pose2d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs) {
+      poseEstimator.addVisionMeasurement(
+          visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+    }
+  }
+
+  public VisionConsumer getToPoseEstimatorConsumer() {
+    return new toPoseEstimatorConsumer();
+  }
+
+  private class rawGyroRotationSupplier implements Supplier<Rotation2d> {
+    @Override
+    public Rotation2d get() {
+      return rawGyroRotation;
+    }
+  }
+
+  public rawGyroRotationSupplier getRawGyroRotationSupplier() {
+    return new rawGyroRotationSupplier();
   }
 }

@@ -16,6 +16,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +26,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.coralIntake.pivot.CoralIntakePivot;
+import frc.robot.subsystems.coralIntake.pivot.CoralIntakePivotIOSim;
+import frc.robot.subsystems.coralIntake.pivot.CoralIntakePivotIOTalonFX;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
@@ -34,6 +38,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -45,7 +52,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final CoralIntakePivot ciArm;
   private final CoralScorerArm csArm;
+  private final Vision vision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -65,8 +74,17 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        ciArm = new CoralIntakePivot(new CoralIntakePivotIOTalonFX(1, 0, 0));
 
         csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
+
+        vision =
+            new Vision(
+                drive.getToPoseEstimatorConsumer(),
+                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                new VisionIOPhotonVision("photon", new Transform3d()));
         break;
 
       case SIM:
@@ -78,8 +96,16 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        vision =
+            new Vision(
+                drive.getToPoseEstimatorConsumer(),
+                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                new VisionIOPhotonVision("photon", new Transform3d()));
         break;
 
       default:
@@ -91,8 +117,16 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        vision =
+            new Vision(
+                drive.getToPoseEstimatorConsumer(),
+                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                new VisionIOPhotonVision("photon", new Transform3d()));
         break;
     }
 
@@ -116,7 +150,8 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
-    configureButtonBindings();
+    // configureButtonBindings(); removed to replace with test().
+    test();
   }
 
   /**
@@ -125,6 +160,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+  private void test() {
+    controller.y().whileTrue(ciArm.setArmTarget(60, 1));
+  }
+
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
