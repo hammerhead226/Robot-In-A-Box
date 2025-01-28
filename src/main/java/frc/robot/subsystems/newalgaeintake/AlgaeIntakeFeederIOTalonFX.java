@@ -60,7 +60,7 @@ public class AlgaeIntakeFeederIOTalonFX implements AlgaeIntakeFeederIO {
   @Override
   public void setVelocityRPS(double velocityRPS, double ffVolts) {
     this.velocitySetpointRPS = velocityRPS;
-    feeder.setControl(new VelocityVoltage(velocityRPS, 0, false, ffVolts, 0, false, false, false));
+    feeder.setControl(new VelocityVoltage(velocityRPS));
   }
 
   @Override

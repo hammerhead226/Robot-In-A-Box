@@ -47,7 +47,7 @@ public class AlgaeIntakeArmIOSim implements AlgaeIntakeArmIO {
   private double clampedValueHighVolts = 12.0;
 
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
+  public void updateInputs(AlgaeIntakeArmIOInputs inputs) {
     positionSetpointRads = pid.getSetpoint();
 
     appliedVolts +=

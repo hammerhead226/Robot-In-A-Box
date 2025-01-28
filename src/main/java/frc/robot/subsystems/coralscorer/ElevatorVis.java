@@ -20,16 +20,18 @@ public class ElevatorVis {
     this.elevatorKey = elevatorKey;
     this.elevatorPanel = new LoggedMechanism2d(100, 100, new Color8Bit(Color.kWhite));
     this.elevatorRoot = elevatorPanel.getRoot("elevator", 50, 0);
-    this.elevatorMecha = elevatorRoot.append(new LoggedMechanismLigament2d("elevator", 2, 0, 10, new Color8Bit(color)));
+    this.elevatorMecha =
+        elevatorRoot.append(
+            new LoggedMechanismLigament2d("elevator", 2, 0, 10, new Color8Bit(color)));
 
     Logger.recordOutput("ElevatorVis/mechanism2d/" + elevatorKey, this.elevatorPanel);
   }
-  //Updates the position of the root and the extedning length of the elevator
-  public void update (double position, double length) {
-    //Sets the extending length of the elevator
+  // Updates the position of the root and the extedning length of the elevator
+  public void update(double position, double length) {
+    // Sets the extending length of the elevator
     elevatorRoot.setPosition(50, position);
     elevatorMecha.setLength(length);
-    //elevatorRoot.setPosition(50, position);
+    // elevatorRoot.setPosition(50, position);
     Logger.recordOutput("ElevatorVis/mechanism2d/" + elevatorKey, this.elevatorPanel);
   }
 }

@@ -39,13 +39,9 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.Vision.VisionConsumer;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -59,7 +55,6 @@ public class RobotContainer {
   private final CoralIntakePivot ciArm;
   private final CoralScorerArm csArm;
   private final Vision vision;
-
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -83,12 +78,13 @@ public class RobotContainer {
 
         csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
 
-        vision = new Vision(
-          drive.getToPoseEstimatorConsumer(),
-          new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-          new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-          new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-          new VisionIOPhotonVision("photon", new Transform3d()));
+        vision =
+            new Vision(
+                drive.getToPoseEstimatorConsumer(),
+                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                new VisionIOPhotonVision("photon", new Transform3d()));
         break;
 
       case SIM:
@@ -103,12 +99,13 @@ public class RobotContainer {
         ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
-        vision = new Vision(
-          drive.getToPoseEstimatorConsumer(),
-          new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-          new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-          new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-          new VisionIOPhotonVision("photon", new Transform3d()));
+        vision =
+            new Vision(
+                drive.getToPoseEstimatorConsumer(),
+                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                new VisionIOPhotonVision("photon", new Transform3d()));
         break;
 
       default:
@@ -123,12 +120,13 @@ public class RobotContainer {
         ciArm = new CoralIntakePivot(new CoralIntakePivotIOSim());
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
-        vision = new Vision(
-          drive.getToPoseEstimatorConsumer(),
-          new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-          new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-          new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-          new VisionIOPhotonVision("photon", new Transform3d()));
+        vision =
+            new Vision(
+                drive.getToPoseEstimatorConsumer(),
+                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                new VisionIOPhotonVision("photon", new Transform3d()));
         break;
     }
 
@@ -210,5 +208,4 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
-  
 }
