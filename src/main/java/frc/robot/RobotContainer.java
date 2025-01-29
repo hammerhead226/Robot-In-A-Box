@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -54,7 +55,7 @@ public class RobotContainer {
   private final Drive drive;
 
   // Controller
-  //   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController controller = new CommandXboxController(0);
   private final Joystick joystikc = new Joystick(0);
   private final JoystickButton btn = new JoystickButton(joystikc, 4);
   private final KeyboardInputs keyboard = new KeyboardInputs(0);
@@ -168,12 +169,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -controller.getLeftY(),
-    //         () -> -controller.getLeftX(),
-    //         () -> -controller.getRightX()));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
+            () -> -controller.getRightX()));
 
     // // Lock to 0° when A button is held
     // controller
@@ -201,8 +202,8 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
 
-    keyboard.getVButton().onTrue(elevator.setElevatorTarget(10, 1));
-    keyboard.getVButton().onFalse(elevator.setElevatorTarget(4, 1));
+    controller.y().whileTrue(elevator.setElevatorTarget(10, 1));
+    controller.y().whileFalse(elevator.setElevatorTarget(4, 1));
   }
 
   /**

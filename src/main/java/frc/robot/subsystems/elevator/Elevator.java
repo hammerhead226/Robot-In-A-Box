@@ -3,6 +3,7 @@ package frc.robot.subsystems.elevator;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,6 +40,8 @@ public class Elevator extends SubsystemBase {
 
   private double goal;
   private ElevatorFeedforward elevatorFFModel;
+  public static ElevatorVis measuredVisualizer;
+  public static ElevatorVis setpointVisualizer;
 
   public Elevator(ElevatorIO elevator) {
     this.elevator = elevator;
@@ -94,6 +97,9 @@ public class Elevator extends SubsystemBase {
     setExtenderGoal(1);
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
+
+    measuredVisualizer = new ElevatorVis("measured", Color.kRed);
+    setpointVisualizer = new ElevatorVis("setpoint", Color.kGreen);
 
     updateTunableNumbers();
   }
@@ -164,6 +170,8 @@ public class Elevator extends SubsystemBase {
     setPositionExtend(extenderCurrent.position, extenderCurrent.velocity);
 
     Logger.processInputs("Elevator", eInputs);
+    measuredVisualizer.update(extenderCurrent.position);
+    setpointVisualizer.update(extenderGoal.position);
 
     updateTunableNumbers();
   }

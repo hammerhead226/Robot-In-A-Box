@@ -1,4 +1,4 @@
-package frc.robot.subsystems.coralscorer;
+package frc.robot.subsystems.elevator;
 
 // import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -27,9 +27,9 @@ public class ElevatorVis {
     Logger.recordOutput("ElevatorVis/mechanism2d/" + elevatorKey, this.elevatorPanel);
   }
   // Updates the position of the root and the extedning length of the elevator
-  public void update(double position, double length) {
+  public void update(/*double position,*/ double length) {
     // Sets the extending length of the elevator
-    elevatorRoot.setPosition(50, position);
+    // elevatorRoot.setPosition(50, position);
     elevatorMecha.setLength(length);
     // elevatorRoot.setPosition(50, position);
     Logger.recordOutput("ElevatorVis/mechanism2d/" + elevatorKey, this.elevatorPanel);
