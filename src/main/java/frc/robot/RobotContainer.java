@@ -203,7 +203,10 @@ public class RobotContainer {
     //             .ignoringDisable(true));
 
     controller.y().whileTrue(elevator.setElevatorTarget(10, 1));
-    controller.y().whileFalse(elevator.setElevatorTarget(4, 1));
+    controller.y().whileFalse(elevator.setElevatorTarget(1, 1));
+
+    controller.x().whileTrue(csArm.setArmTarget(90, 1));
+    controller.x().whileFalse(csArm.setArmTarget(0, 1));
   }
 
   /**

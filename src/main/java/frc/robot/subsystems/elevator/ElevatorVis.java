@@ -22,7 +22,7 @@ public class ElevatorVis {
     this.elevatorRoot = elevatorPanel.getRoot("elevator", 50, 0);
     this.elevatorMecha =
         elevatorRoot.append(
-            new LoggedMechanismLigament2d("elevator", 2, 0, 10, new Color8Bit(color)));
+            new LoggedMechanismLigament2d("elevator", 2, 90, 10, new Color8Bit(color)));
 
     Logger.recordOutput("ElevatorVis/mechanism2d/" + elevatorKey, this.elevatorPanel);
   }
