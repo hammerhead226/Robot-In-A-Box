@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -22,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AlignToReefAuto;
+import frc.robot.commands.AutoAlignToSource;
 import frc.robot.commands.DriveCommands;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
@@ -31,6 +34,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.led.LED;
+import frc.robot.subsystems.led.LED_IO;
+import frc.robot.subsystems.led.LED_IOCANdle;
+import frc.robot.subsystems.led.LED_IOSim;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -42,6 +50,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final LED led;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -61,6 +70,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        led = new LED(new LED_IOCANdle(0, ""));
         break;
 
       case SIM:
@@ -72,6 +82,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        led = new LED(new LED_IOSim());
         break;
 
       default:
@@ -83,6 +94,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        led = new LED(new LED_IO() {});
         break;
     }
 
@@ -105,6 +117,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
+    // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -123,6 +137,38 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+
+    controller
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  //System.out.println(drive.getCurrentCommand().getName());
+                  if (drive.getCurrentCommand() instanceof AlignToReefAuto) {
+                    drive.getCurrentCommand().cancel();
+                  } else {
+                    new AlignToReefAuto(drive, led).schedule();
+                  }
+                }));
+
+    controller
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  //System.out.println(drive.getCurrentCommand().getName());
+                  if (drive.getCurrentCommand() instanceof AutoAlignToSource) {
+                    drive.getCurrentCommand().cancel();
+                  } else {
+                    new AutoAlignToSource(drive, led).schedule();
+                  }
+                }));
+
+    if (drive.getCurrentCommand() == null) {
+      Logger.recordOutput("drive current command", "currently null");
+    } else {
+      Logger.recordOutput("drive current command", drive.getCurrentCommand().getName());
+    }
 
     // Lock to 0° when A button is held
     controller
