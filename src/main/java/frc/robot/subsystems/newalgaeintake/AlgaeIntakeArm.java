@@ -6,11 +6,14 @@ package frc.robot.subsystems.newalgaeintake;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.coralscorer.ArmVis;
+import frc.robot.subsystems.coralscorer.PivotVis;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -18,9 +21,9 @@ public class AlgaeIntakeArm extends SubsystemBase {
   private final AlgaeIntakeArmIO arm;
   private final AlgaeIntakeArmIOInputsAutoLogged pInputs = new AlgaeIntakeArmIOInputsAutoLogged();
 
-  private static LoggedTunableNumber kP;
-  private static LoggedTunableNumber kG;
-  private static LoggedTunableNumber kV;
+  private static LoggedTunableNumber kP = new LoggedTunableNumber("algaeArmkP");
+  private static LoggedTunableNumber kG = new LoggedTunableNumber("algaeArmkG");
+  private static LoggedTunableNumber kV = new LoggedTunableNumber("algaeArmkV");
 
   private static double maxVelocityDegPerSec;
   private static double maxAccelerationDegPerSecSquared;
@@ -34,6 +37,8 @@ public class AlgaeIntakeArm extends SubsystemBase {
   double goalDegrees;
 
   private ArmFeedforward armFFModel;
+  private final PivotVis measuredVisualizer;
+  private final PivotVis setpointVisualizer;
 
   /** Creates a new Arm. */
   public AlgaeIntakeArm(AlgaeIntakeArmIO arm) {
@@ -62,18 +67,19 @@ public class AlgaeIntakeArm extends SubsystemBase {
     }
 
     // CHANGE PER ARM
-    maxVelocityDegPerSec = 1;
-    maxAccelerationDegPerSecSquared = 1;
+    maxVelocityDegPerSec = 500;
+    maxAccelerationDegPerSecSquared = 500;
     // maxAccelerationDegPerSecSquared = 180;
 
     armConstraints =
         new TrapezoidProfile.Constraints(maxVelocityDegPerSec, maxAccelerationDegPerSecSquared);
     armProfile = new TrapezoidProfile(armConstraints);
 
-    // setArmGoal(90);
+    setArmGoal(20);
     // setArmCurrent(getArmPositionDegs());
     armCurrentStateDegrees = armProfile.calculate(0, armCurrentStateDegrees, armGoalStateDegrees);
-
+    measuredVisualizer = new PivotVis("intake vis ", Color.kBrown);
+    setpointVisualizer = new PivotVis("intake setpoint vis", Color.kGreen);
     updateTunableNumbers();
   }
 
@@ -133,7 +139,10 @@ public class AlgaeIntakeArm extends SubsystemBase {
 
     Logger.recordOutput("arm goal", goalDegrees);
     // This method will be called once per scheduler run
-
+    measuredVisualizer.update(armCurrentStateDegrees.position);
+    setpointVisualizer.update(armGoalStateDegrees.position);
+    measuredVisualizer.updateLength(0.8);
+    setpointVisualizer.updateLength(0.8);
     updateTunableNumbers();
   }
 

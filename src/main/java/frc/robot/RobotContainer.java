@@ -38,6 +38,9 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArm;
+import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIOSim;
+import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -62,6 +65,7 @@ public class RobotContainer {
 
   private final CoralScorerArm csArm;
   private final Elevator elevator;
+  private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
 
   // Dashboard inputs
@@ -91,6 +95,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         // TODO change lead, follower, gyro IDs, etc.
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
+        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOTalonFX(0, 0, 0));
         break;
 
       case SIM:
@@ -112,7 +117,7 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIOSim());
-
+        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
         break;
 
       default:
@@ -134,6 +139,7 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIO() {});
+        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
         break;
     }
 
@@ -202,11 +208,14 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
 
-    controller.y().whileTrue(elevator.setElevatorTarget(10, 1));
+    controller.y().whileTrue(elevator.setElevatorTarget(1.83, 1));
     controller.y().whileFalse(elevator.setElevatorTarget(1, 1));
 
     controller.x().whileTrue(csArm.setArmTarget(90, 1));
-    controller.x().whileFalse(csArm.setArmTarget(0, 1));
+    controller.x().whileFalse(csArm.setArmTarget(-90, 1));
+
+    controller.b().whileTrue(algaeArm.setArmTarget(70, 2));
+    controller.b().whileFalse(algaeArm.setArmTarget(20, 2));
   }
 
   /**
