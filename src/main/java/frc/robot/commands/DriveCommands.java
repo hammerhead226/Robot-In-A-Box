@@ -115,9 +115,11 @@ public class DriveCommands {
           double speedDebuf = 0.2;
 
           if (reefAlignAssistSupplier.getAsBoolean()) {
+            Logger.recordOutput("Ran-Reef-Assist", true);
             wantedSidewaysVelocity =
                 calculateWantedSidewaysVelocity(drive, sideWaysError, forwardSpeed);
             sidewaysAssistEffort = wantedSidewaysVelocity - sidewaysSpeed * speedDebuf;
+            Logger.recordOutput("SidewaysError", sidewaysAssistEffort);
           } else {
             forwardConstantVelocity = 0;
             wantedSidewaysVelocity = sidewaysSpeed;
