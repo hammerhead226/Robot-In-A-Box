@@ -14,6 +14,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,11 +29,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.constants.*;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -47,6 +50,14 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+  private static double sideWaysError = 0;
+  private static double wantedSidewaysVelocity = 0;
+  private static double wantedRotationVelocity = 0;
+  private static double sidewaysAssistEffort = 0;
+  private static double rotationAssistEffort = 0;
+  private static double forwardConstantVelocity = 0;
+  private static PIDController sidewaysPID =
+      new PIDController(1.5, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
 
   private DriveCommands() {}
 
@@ -71,7 +82,8 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
+      DoubleSupplier omegaSupplier,
+      BooleanSupplier reefAlignAssistSupplier) {
     return Commands.run(
         () -> {
           // Get linear velocity
@@ -93,12 +105,46 @@ public class DriveCommands {
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
+
+          double forwardSpeed = speeds.vxMetersPerSecond;
+
+          double sidewaysSpeed = speeds.vyMetersPerSecond;
+
+          double rotationSpeed = speeds.omegaRadiansPerSecond;
+
+          double speedDebuf = 0.2;
+
+          if (reefAlignAssistSupplier.getAsBoolean()) {
+            wantedSidewaysVelocity =
+                calculateWantedSidewaysVelocity(drive, sideWaysError, forwardSpeed);
+            sidewaysAssistEffort = wantedSidewaysVelocity - sidewaysSpeed * speedDebuf;
+          } else {
+            forwardConstantVelocity = 0;
+            wantedSidewaysVelocity = sidewaysSpeed;
+            sidewaysAssistEffort = 0;
+          }
+
+          // drive.runVelocity(
+          //     ChassisSpeeds.fromFieldRelativeSpeeds(
+          //         speeds,
+          //         isFlipped //WHY DO WE HAVE THIS "IS FLIPPED"
+          //             ? drive.getRotation().plus(new Rotation2d(Math.PI))
+          //             : drive.getRotation()));
+
           drive.runVelocity(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  speeds,
-                  isFlipped
-                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getRotation()));
+              new ChassisSpeeds(
+                  MathUtil.clamp(
+                      forwardSpeed + forwardConstantVelocity,
+                      -drive.getMaxLinearSpeedMetersPerSec(),
+                      drive.getMaxLinearSpeedMetersPerSec()),
+                  MathUtil.clamp(
+                      sidewaysSpeed + sidewaysAssistEffort,
+                      -drive.getMaxLinearSpeedMetersPerSec(),
+                      drive.getMaxLinearSpeedMetersPerSec()),
+                  MathUtil.clamp(
+                      rotationSpeed + rotationAssistEffort,
+                      -drive.getMaxAngularSpeedRadPerSec(),
+                      drive.getMaxAngularSpeedRadPerSec())));
         },
         drive);
   }
@@ -293,5 +339,87 @@ public class DriveCommands {
     double[] positions = new double[4];
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
+  }
+
+  private static double calculateWantedSidewaysVelocity(
+      Drive drive, double sidewaysError, double forwardSpeed) {
+    double wantedSidewaysVelocityPID = sidewaysPID.calculate(sidewaysError);
+
+    double forwardDisplacementToNote = getNearestReefSide(drive).getX(); // add Note_Forward_offset
+    double maxTime;
+    double minVelocity;
+    if (forwardSpeed > 0 && forwardDisplacementToNote > 0) {
+      maxTime = calculateTime(forwardSpeed, forwardDisplacementToNote);
+      minVelocity = calculateVelocity(maxTime, getNearestReefSide(drive).getY());
+
+      double wantedSidewaysVelocity =
+          Math.max(Math.abs(wantedSidewaysVelocityPID), Math.abs(minVelocity))
+              * (minVelocity / Math.abs(minVelocity));
+
+      wantedSidewaysVelocity =
+          MathUtil.clamp(
+              wantedSidewaysVelocity,
+              0.51 * -drive.getMaxLinearSpeedMetersPerSec(),
+              0.51 * drive.getMaxLinearSpeedMetersPerSec());
+
+      return wantedSidewaysVelocity;
+    } else {
+      return wantedSidewaysVelocityPID;
+    }
+  }
+
+  private static double calculateTime(double velocity, double displacement) {
+    double time = displacement / velocity;
+    Logger.recordOutput("Time to note", time);
+
+    return time;
+  }
+
+  private static double calculateVelocity(double time, double displacement) {
+    double velocity = displacement / time;
+    Logger.recordOutput("Velocity needed to note", velocity);
+
+    return velocity;
+  }
+
+  private static Pose2d getNearestReefSide(Drive drive) {
+    Translation2d start = FieldConstants.Reef.center;
+    Translation2d end = drive.getPose().getTranslation();
+    Translation2d v = end.minus(start);
+    Rotation2d angle = new Rotation2d(v.getX(), v.getY());
+
+    // https://www.desmos.com/calculator/44dd9koglh
+
+    // negate since branchPositions is CW not CCW
+    // +6/12 since branchPositions starts at branch B not the +x axis
+    double rawRotations = angle.getRotations();
+    double adjustedRotations = -rawRotations + (7.0 / 12.0);
+
+    // % 1 to just get the fractional part of the rotation
+    // multiply by 12 before flooring so [0,1) maps to 0,1,2...10,11 evenly
+    double fractionalRotation = adjustedRotations % 1;
+    if (fractionalRotation < 0) {
+      fractionalRotation++;
+    }
+    int index = (int) Math.floor(fractionalRotation * 12);
+
+    Logger.recordOutput("align to reef target index", index);
+
+    Pose2d result =
+        FieldConstants.Reef.branchPositions.get(index).get(FieldConstants.ReefHeight.L1).toPose2d();
+
+    // flip rotation
+    Rotation2d rotation2d = result.getRotation().rotateBy(new Rotation2d(Math.PI));
+
+    // back up target position (so it doesn't clip)
+    // x is nearer/farther, y is sideways
+    Translation2d offsetFromBranch = new Translation2d(-0.7, 0);
+    offsetFromBranch = offsetFromBranch.rotateBy(rotation2d);
+    Translation2d translation2d = result.getTranslation().plus(offsetFromBranch);
+
+    result = new Pose2d(translation2d, rotation2d);
+
+    Logger.recordOutput("align to reef target Pose2d", result);
+    return result;
   }
 }
