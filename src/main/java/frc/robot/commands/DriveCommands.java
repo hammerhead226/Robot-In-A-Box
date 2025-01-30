@@ -56,6 +56,8 @@ public class DriveCommands {
   private static double sidewaysAssistEffort = 0;
   private static double rotationAssistEffort = 0;
   private static double forwardConstantVelocity = 0;
+  private static Pose2d nearestReefSide = null;
+  private static boolean previousReefAlignAssistState = false;
   private static PIDController sidewaysPID =
       new PIDController(1.5, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
 
@@ -114,7 +116,13 @@ public class DriveCommands {
 
           double speedDebuf = 0.2;
 
-          if (reefAlignAssistSupplier.getAsBoolean()) {
+          boolean currentReefAlignAssistState = reefAlignAssistSupplier.getAsBoolean();
+          if (currentReefAlignAssistState && !previousReefAlignAssistState) {
+            nearestReefSide = getNearestReefSide(drive);
+          }
+          previousReefAlignAssistState = currentReefAlignAssistState;
+
+          if (currentReefAlignAssistState) {
             Logger.recordOutput("Ran-Reef-Assist", true);
             wantedSidewaysVelocity =
                 calculateWantedSidewaysVelocity(drive, sideWaysError, forwardSpeed);
@@ -125,13 +133,6 @@ public class DriveCommands {
             wantedSidewaysVelocity = sidewaysSpeed;
             sidewaysAssistEffort = 0;
           }
-
-          // drive.runVelocity(
-          //     ChassisSpeeds.fromFieldRelativeSpeeds(
-          //         speeds,
-          //         isFlipped //WHY DO WE HAVE THIS "IS FLIPPED"
-          //             ? drive.getRotation().plus(new Rotation2d(Math.PI))
-          //             : drive.getRotation()));
 
           drive.runVelocity(
               new ChassisSpeeds(
@@ -345,14 +346,17 @@ public class DriveCommands {
 
   private static double calculateWantedSidewaysVelocity(
       Drive drive, double sidewaysError, double forwardSpeed) {
+
+    sideWaysError = nearestReefSide.getY() - drive.getPose().getY();
+
     double wantedSidewaysVelocityPID = sidewaysPID.calculate(sidewaysError);
 
-    double forwardDisplacementToNote = getNearestReefSide(drive).getX(); // add Note_Forward_offset
+    double forwardDisplacementToNote = nearestReefSide.getX(); // add Note_Forward_offset
     double maxTime;
     double minVelocity;
     if (forwardSpeed > 0 && forwardDisplacementToNote > 0) {
       maxTime = calculateTime(forwardSpeed, forwardDisplacementToNote);
-      minVelocity = calculateVelocity(maxTime, getNearestReefSide(drive).getY());
+      minVelocity = calculateVelocity(maxTime, nearestReefSide.getY());
 
       double wantedSidewaysVelocity =
           Math.max(Math.abs(wantedSidewaysVelocityPID), Math.abs(minVelocity))
