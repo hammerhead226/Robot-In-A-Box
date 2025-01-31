@@ -95,7 +95,8 @@ public class DriveCommands {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
-      BooleanSupplier reefAlignAssistSupplier) {
+      BooleanSupplier reefAlignAssistSupplier,
+      BooleanSupplier sourceAlignSupplier) {
     return Commands.run(
         () -> {
           rotationPID.setTolerance(1);
@@ -128,7 +129,7 @@ public class DriveCommands {
 
           double rotationSpeed = speeds.omegaRadiansPerSecond;
 
-          double speedDebuf = 0.2;
+          double speedDebuf = 0.7;
 
           if (reefAlignAssistSupplier.getAsBoolean()) {
             nearestReefSide = drive.getNearestSide();
@@ -148,15 +149,31 @@ public class DriveCommands {
             wantedRotationVelocity =
                 Math.toRadians(rotationPID.calculate(rotationError));
             rotationAssistEffort = wantedRotationVelocity - rotationSpeed * 0.1690;
+          } else if (sourceAlignSupplier.getAsBoolean()) {
+            wantedForwardsVelocity = forwardSpeed;
+            forwardsAssistEffort = 0;
+            wantedSidewaysVelocity = sidewaysSpeed;
+            sidewaysAssistEffort = 0;
+            Rotation2d curreRotation2d = drive.getRotation();
+            Rotation2d targeRotation2d;
+
+            targeRotation2d = FieldConstants.CoralStation.leftCenterFace.getRotation();
+            Logger.recordOutput(" turn to left source target", new Pose2d(FieldConstants.CoralStation.leftCenterFace.getTranslation(), targeRotation2d));
+
+            rotationPID.setSetpoint(targeRotation2d.getDegrees());
+
+            wantedRotationVelocity =
+                Math.toRadians(rotationPID.calculate(curreRotation2d.getDegrees()));
+            rotationAssistEffort = wantedRotationVelocity - rotationSpeed * 0.1690;
           } else {
             wantedForwardsVelocity = forwardSpeed;
             forwardsAssistEffort = 0;
 
             wantedSidewaysVelocity = sidewaysSpeed;
             sidewaysAssistEffort = 0;
-
             wantedRotationVelocity = rotationSpeed;
             rotationAssistEffort = 0;
+
           }
 
           Logger.recordOutput("Wanted Sideways Velocity", wantedSidewaysVelocity);
