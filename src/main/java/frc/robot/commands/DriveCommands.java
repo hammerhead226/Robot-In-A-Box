@@ -53,13 +53,21 @@ public class DriveCommands {
   private static double sideWaysError = 0;
   private static double wantedSidewaysVelocity = 0;
   private static double wantedRotationVelocity = 0;
+
+  private static double wantedForwardsVelocity = 0;
+  private static double forwardsAssistEffort = 0;
   private static double sidewaysAssistEffort = 0;
   private static double rotationAssistEffort = 0;
   private static double forwardConstantVelocity = 0;
   private static Pose2d nearestReefSide = null;
   private static boolean previousReefAlignAssistState = false;
+
   private static PIDController sidewaysPID =
       new PIDController(1.5, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
+      private static PIDController forwardsPID =
+      new PIDController(1.5, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
+  private static PIDController rotationPID =
+      new PIDController(2.54, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
 
   private DriveCommands() {}
 
@@ -88,6 +96,10 @@ public class DriveCommands {
       BooleanSupplier reefAlignAssistSupplier) {
     return Commands.run(
         () -> {
+          rotationPID.setTolerance(1);
+          rotationPID.enableContinuousInput(-180, 180);
+          sidewaysPID.setTolerance(0.05460);
+
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
@@ -116,38 +128,69 @@ public class DriveCommands {
 
           double speedDebuf = 0.2;
 
-          boolean currentReefAlignAssistState = reefAlignAssistSupplier.getAsBoolean();
-          if (currentReefAlignAssistState && !previousReefAlignAssistState) {
-            nearestReefSide = getNearestReefSide(drive);
-          }
-          previousReefAlignAssistState = currentReefAlignAssistState;
+          // boolean currentReefAlignAssistState = reefAlignAssistSupplier.getAsBoolean();
+          // if (currentReefAlignAssistState && !previousReefAlignAssistState) {
+          //   nearestReefSide = getNearestReefSide(drive);
 
-          if (currentReefAlignAssistState) {
+          // }
+          // previousReefAlignAssistState = currentReefAlignAssistState;
+
+          Logger.recordOutput("balls", sideWaysError);
+
+          if (reefAlignAssistSupplier.getAsBoolean()) {
+            nearestReefSide = drive.getNearestSide();
+            sideWaysError = drive.getNearestSide().getY() - drive.getPose().getY();
             Logger.recordOutput("Ran-Reef-Assist", true);
-            wantedSidewaysVelocity =
-                calculateWantedSidewaysVelocity(drive, sideWaysError, forwardSpeed);
+            wantedSidewaysVelocity = -sidewaysPID.calculate(sideWaysError);
+                // calculateWantedSidewaysVelocity(drive, sideWaysError, forwardSpeed);
             sidewaysAssistEffort = wantedSidewaysVelocity - sidewaysSpeed * speedDebuf;
+
+            wantedForwardsVelocity = -forwardsPID.calculate(nearestReefSide.getX() - drive.getPose().getX());
+            forwardsAssistEffort = wantedForwardsVelocity - forwardSpeed * 0.1690;
+
+
             Logger.recordOutput("SidewaysError", sidewaysAssistEffort);
+            Rotation2d curreRotation2d = drive.getRotation();
+            Rotation2d targeRotation2d;
+          
+            targeRotation2d = nearestReefSide.getRotation();
+            rotationPID.setSetpoint(targeRotation2d.getDegrees());
+
+            wantedRotationVelocity =
+                Math.toRadians(rotationPID.calculate(curreRotation2d.getDegrees()));
+
+            rotationAssistEffort = wantedRotationVelocity - rotationSpeed * 0.1690;
           } else {
-            forwardConstantVelocity = 0;
+            wantedForwardsVelocity = forwardSpeed;
+            forwardsAssistEffort = 0;
             wantedSidewaysVelocity = sidewaysSpeed;
             sidewaysAssistEffort = 0;
+
+            wantedRotationVelocity = rotationSpeed;
+            rotationAssistEffort = 0;
           }
+          
+          Logger.recordOutput("Wanted Sideways Velocity", wantedSidewaysVelocity);
+          Logger.recordOutput("Note Assist Error", sideWaysError);
+
+          Logger.recordOutput("Sideways Assist Effort", sidewaysAssistEffort);
+          Logger.recordOutput("Rotation Assist Effort", rotationAssistEffort);
+
 
           drive.runVelocity(
-              new ChassisSpeeds(
-                  MathUtil.clamp(
-                      forwardSpeed + forwardConstantVelocity,
-                      -drive.getMaxLinearSpeedMetersPerSec(),
-                      drive.getMaxLinearSpeedMetersPerSec()),
-                  MathUtil.clamp(
-                      sidewaysSpeed + sidewaysAssistEffort,
-                      -drive.getMaxLinearSpeedMetersPerSec(),
-                      drive.getMaxLinearSpeedMetersPerSec()),
-                  MathUtil.clamp(
-                      rotationSpeed + rotationAssistEffort,
-                      -drive.getMaxAngularSpeedRadPerSec(),
-                      drive.getMaxAngularSpeedRadPerSec())));
+              ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(
+                MathUtil.clamp(
+                    forwardSpeed + forwardsAssistEffort,
+                    -drive.getMaxLinearSpeedMetersPerSec(),
+                    drive.getMaxLinearSpeedMetersPerSec()),
+                MathUtil.clamp(
+                    sidewaysSpeed + sidewaysAssistEffort, //
+                    -drive.getMaxLinearSpeedMetersPerSec(),
+                    drive.getMaxLinearSpeedMetersPerSec()),
+                MathUtil.clamp(
+                    rotationSpeed + rotationAssistEffort,
+                    -drive.getMaxAngularSpeedRadPerSec(),
+                    drive.getMaxAngularSpeedRadPerSec())), drive.getRotation()));
         },
         drive);
   }
@@ -347,11 +390,11 @@ public class DriveCommands {
   private static double calculateWantedSidewaysVelocity(
       Drive drive, double sidewaysError, double forwardSpeed) {
 
-    sideWaysError = nearestReefSide.getY() - drive.getPose().getY();
+    // sideWaysError = nearestReefSide.getY() - drive.getPose().getY();
 
-    double wantedSidewaysVelocityPID = sidewaysPID.calculate(sidewaysError);
+    double wantedSidewaysVelocityPID = -sidewaysPID.calculate(sidewaysError);
 
-    double forwardDisplacementToNote = nearestReefSide.getX(); // add Note_Forward_offset
+    double forwardDisplacementToNote = nearestReefSide.getX() - drive.getPose().getX(); // add Note_Forward_offset
     double maxTime;
     double minVelocity;
     if (forwardSpeed > 0 && forwardDisplacementToNote > 0) {
@@ -386,46 +429,5 @@ public class DriveCommands {
     Logger.recordOutput("Velocity needed to note", velocity);
 
     return velocity;
-  }
-
-  private static Pose2d getNearestReefSide(Drive drive) {
-    Translation2d start = FieldConstants.Reef.center;
-    Translation2d end = drive.getPose().getTranslation();
-    Translation2d v = end.minus(start);
-    Rotation2d angle = new Rotation2d(v.getX(), v.getY());
-
-    // https://www.desmos.com/calculator/44dd9koglh
-
-    // negate since branchPositions is CW not CCW
-    // +6/12 since branchPositions starts at branch B not the +x axis
-    double rawRotations = angle.getRotations();
-    double adjustedRotations = -rawRotations + (7.0 / 12.0);
-
-    // % 1 to just get the fractional part of the rotation
-    // multiply by 12 before flooring so [0,1) maps to 0,1,2...10,11 evenly
-    double fractionalRotation = adjustedRotations % 1;
-    if (fractionalRotation < 0) {
-      fractionalRotation++;
-    }
-    int index = (int) Math.floor(fractionalRotation * 12);
-
-    Logger.recordOutput("align to reef target index", index);
-
-    Pose2d result =
-        FieldConstants.Reef.branchPositions.get(index).get(FieldConstants.ReefHeight.L1).toPose2d();
-
-    // flip rotation
-    Rotation2d rotation2d = result.getRotation().rotateBy(new Rotation2d(Math.PI));
-
-    // back up target position (so it doesn't clip)
-    // x is nearer/farther, y is sideways
-    Translation2d offsetFromBranch = new Translation2d(-0.7, 0);
-    offsetFromBranch = offsetFromBranch.rotateBy(rotation2d);
-    Translation2d translation2d = result.getTranslation().plus(offsetFromBranch);
-
-    result = new Pose2d(translation2d, rotation2d);
-
-    Logger.recordOutput("align to reef target Pose2d", result);
-    return result;
   }
 }

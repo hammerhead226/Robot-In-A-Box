@@ -48,6 +48,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SimConstants.Mode;
 import frc.robot.constants.SubsystemConstants;
@@ -107,6 +108,8 @@ public class Drive extends SubsystemBase {
 
   private final TimeInterpolatableBuffer<Pose2d> gamePieceBuffer =
       TimeInterpolatableBuffer.createBuffer(OBJECT_BUFFER_SIZE_SECONDS);
+
+  private Pose2d nearestSide = new Pose2d();
 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
@@ -420,5 +423,51 @@ public class Drive extends SubsystemBase {
 
   public rawGyroRotationSupplier getRawGyroRotationSupplier() {
     return new rawGyroRotationSupplier();
+  }
+
+  public Pose2d getNearestSide() {
+    return nearestSide;
+  }
+
+  public void setNearestReefSide() {
+    Translation2d start = FieldConstants.Reef.center;
+    Translation2d end = getPose().getTranslation();
+    Translation2d v = end.minus(start);
+    Rotation2d angle = new Rotation2d(v.getX(), v.getY());
+
+    // https://www.desmos.com/calculator/44dd9koglh
+
+    // negate since branchPositions is CW not CCW
+    // +6/12 since branchPositions starts at branch B not the +x axis
+    double rawRotations = angle.getRotations();
+    double adjustedRotations = -rawRotations + (7.0 / 12.0);
+
+    // % 1 to just get the fractional part of the rotation
+    // multiply by 12 before flooring so [0,1) maps to 0,1,2...10,11 evenly
+    double fractionalRotation = adjustedRotations % 1;
+    if (fractionalRotation < 0) {
+      fractionalRotation++;
+    }
+    int index = (int) Math.floor(fractionalRotation * 12);
+
+    Logger.recordOutput("align to reef target index", index);
+
+    Pose2d result =
+        FieldConstants.Reef.branchPositions.get(index).get(FieldConstants.ReefHeight.L1).toPose2d();
+
+    // flip rotation
+    Rotation2d rotation2d = result.getRotation().rotateBy(new Rotation2d(Math.PI));
+
+    // back up target position (so it doesn't clip)
+    // x is nearer/farther, y is sideways
+    Translation2d offsetFromBranch = new Translation2d(-0.7, 0);
+    offsetFromBranch = offsetFromBranch.rotateBy(rotation2d);
+    Translation2d translation2d = result.getTranslation().plus(offsetFromBranch);
+
+    result = new Pose2d(translation2d, rotation2d);
+
+    Logger.recordOutput("align to reef target Pose2d", result);
+    // return result;
+    nearestSide = result;
   }
 }
