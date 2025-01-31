@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ReleaseClaw;
+import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
@@ -157,7 +159,8 @@ public class RobotContainer {
     autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
 
     // Configure the button bindings
-    configureButtonBindings();
+    // configureButtonBindings();
+    test();
   }
 
   /**
@@ -166,6 +169,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+  private void test() {
+    keyboard.getCButton().onTrue(new ReleaseClaw(ReefHeight.L4, elevator));
+    keyboard.getVButton().onTrue(new ReleaseClaw(ReefHeight.L1, elevator));
+  }
+
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     // drive.setDefaultCommand(
