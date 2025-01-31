@@ -96,8 +96,7 @@ public class DriveCommands {
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
       BooleanSupplier reefAlignAssistSupplier,
-      BooleanSupplier sourceAlignSupplier,
-      BooleanSupplier sourceAlignSupplierRight) {
+      BooleanSupplier sourceAlignSupplier) {
     return Commands.run(
         () -> {
           rotationPID.setTolerance(1);
@@ -146,7 +145,7 @@ public class DriveCommands {
             forwardsAssistEffort = wantedForwardsVelocity - forwardSpeed * speedDebuf;
 
             rotationError =
-                drive.getRotation().getDegrees() - nearestReefSide.getRotation().getDegrees();
+                drive.getRotation().getDegrees() - nearestReefSide.getRotation().getDegrees() + 0;
             Logger.recordOutput("Rotation Error", rotationError);
             wantedRotationVelocity = Math.toRadians(rotationPID.calculate(rotationError));
             rotationAssistEffort = wantedRotationVelocity - rotationSpeed * 0.1690;
@@ -158,27 +157,7 @@ public class DriveCommands {
             Rotation2d curreRotation2d = drive.getRotation();
             Rotation2d targeRotation2d;
 
-            targeRotation2d = FieldConstants.CoralStation.leftCenterFace.getRotation();
-            Logger.recordOutput(
-                " turn to left source target",
-                new Pose2d(
-                    FieldConstants.CoralStation.leftCenterFace.getTranslation(), targeRotation2d));
-
-            rotationPID.setSetpoint(targeRotation2d.getDegrees());
-
-            wantedRotationVelocity =
-                Math.toRadians(rotationPID.calculate(curreRotation2d.getDegrees()));
-            rotationAssistEffort = wantedRotationVelocity - rotationSpeed * 0.1690;
-          } else if (sourceAlignSupplierRight.getAsBoolean()) {
-
-            wantedForwardsVelocity = forwardSpeed;
-            forwardsAssistEffort = 0;
-            wantedSidewaysVelocity = sidewaysSpeed;
-            sidewaysAssistEffort = 0;
-            Rotation2d curreRotation2d = drive.getRotation();
-            Rotation2d targeRotation2d;
-
-            targeRotation2d = FieldConstants.CoralStation.rightCenterFace.getRotation();
+            targeRotation2d = getClosestSource(drive);
             Logger.recordOutput(
                 " turn to left source target",
                 new Pose2d(
@@ -417,5 +396,22 @@ public class DriveCommands {
     double[] positions = new double[4];
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
+  }
+
+  public static Rotation2d getClosestSource(Drive drive) {
+
+    if (drive
+            .getPose()
+            .getTranslation()
+            .getDistance(FieldConstants.CoralStation.leftCenterFace.getTranslation())
+        < drive
+            .getPose()
+            .getTranslation()
+            .getDistance(FieldConstants.CoralStation.rightCenterFace.getTranslation())) {
+      return FieldConstants.CoralStation.leftCenterFace.getRotation();
+
+    } else {
+      return FieldConstants.CoralStation.rightCenterFace.getRotation();
+    }
   }
 }
