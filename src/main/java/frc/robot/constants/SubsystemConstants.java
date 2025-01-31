@@ -111,7 +111,14 @@ public final class SubsystemConstants {
       public static final double ARM_GEAR_RATIO = 1;
 
       public static final double ARM_ZERO_ANGLE = 0;
+      public static final double INTAKE_SETPOINT_DEG = 0;
       public static final double STOW_SETPOINT_DEG = 0;
+
+      public static final double ARM_VELOCITY_DEGPERSEC = 0;
+    }
+
+    public static class CoralScorerFlywheelConstants {
+      public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 0; 
     }
   }
 }
