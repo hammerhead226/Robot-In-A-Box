@@ -50,21 +50,23 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
-  private static double sideWaysError = 0;
+  private static double sidewaysError = 0;
+  private static double forwardsError = 0;
+  private static double rotationError = 0;
+
   private static double wantedSidewaysVelocity = 0;
   private static double wantedRotationVelocity = 0;
-
   private static double wantedForwardsVelocity = 0;
+
   private static double forwardsAssistEffort = 0;
   private static double sidewaysAssistEffort = 0;
   private static double rotationAssistEffort = 0;
-  private static double forwardConstantVelocity = 0;
+
   private static Pose2d nearestReefSide = null;
-  private static boolean previousReefAlignAssistState = false;
 
   private static PIDController sidewaysPID =
       new PIDController(1.5, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
-      private static PIDController forwardsPID =
+  private static PIDController forwardsPID =
       new PIDController(1.5, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
   private static PIDController rotationPID =
       new PIDController(2.54, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
@@ -128,69 +130,59 @@ public class DriveCommands {
 
           double speedDebuf = 0.2;
 
-          // boolean currentReefAlignAssistState = reefAlignAssistSupplier.getAsBoolean();
-          // if (currentReefAlignAssistState && !previousReefAlignAssistState) {
-          //   nearestReefSide = getNearestReefSide(drive);
-
-          // }
-          // previousReefAlignAssistState = currentReefAlignAssistState;
-
-          Logger.recordOutput("balls", sideWaysError);
-
           if (reefAlignAssistSupplier.getAsBoolean()) {
             nearestReefSide = drive.getNearestSide();
-            sideWaysError = drive.getNearestSide().getY() - drive.getPose().getY();
-            Logger.recordOutput("Ran-Reef-Assist", true);
-            wantedSidewaysVelocity = -sidewaysPID.calculate(sideWaysError);
-                // calculateWantedSidewaysVelocity(drive, sideWaysError, forwardSpeed);
+
+            sidewaysError = drive.getPose().getY()- drive.getNearestSide().getY();
+            Logger.recordOutput("Sideways Error", sidewaysError);
+            wantedSidewaysVelocity = sidewaysPID.calculate(sidewaysError);
             sidewaysAssistEffort = wantedSidewaysVelocity - sidewaysSpeed * speedDebuf;
 
-            wantedForwardsVelocity = -forwardsPID.calculate(nearestReefSide.getX() - drive.getPose().getX());
-            forwardsAssistEffort = wantedForwardsVelocity - forwardSpeed * 0.1690;
+            forwardsError = drive.getPose().getX() - nearestReefSide.getX();
+            Logger.recordOutput("Forwards Error", forwardsError);
+            wantedForwardsVelocity = forwardsPID.calculate(forwardsError);
+            forwardsAssistEffort = wantedForwardsVelocity - forwardSpeed * speedDebuf;
 
-
-            Logger.recordOutput("SidewaysError", sidewaysAssistEffort);
-            Rotation2d curreRotation2d = drive.getRotation();
-            Rotation2d targeRotation2d;
-          
-            targeRotation2d = nearestReefSide.getRotation();
-            rotationPID.setSetpoint(targeRotation2d.getDegrees());
-
+            rotationError = drive.getRotation().getDegrees() - nearestReefSide.getRotation().getDegrees();
+            Logger.recordOutput("Rotation Error", rotationError);
             wantedRotationVelocity =
-                Math.toRadians(rotationPID.calculate(curreRotation2d.getDegrees()));
-
+                Math.toRadians(rotationPID.calculate(rotationError));
             rotationAssistEffort = wantedRotationVelocity - rotationSpeed * 0.1690;
           } else {
             wantedForwardsVelocity = forwardSpeed;
             forwardsAssistEffort = 0;
+
             wantedSidewaysVelocity = sidewaysSpeed;
             sidewaysAssistEffort = 0;
 
             wantedRotationVelocity = rotationSpeed;
             rotationAssistEffort = 0;
           }
-          
-          Logger.recordOutput("Wanted Sideways Velocity", wantedSidewaysVelocity);
-          Logger.recordOutput("Note Assist Error", sideWaysError);
 
+          Logger.recordOutput("Wanted Sideways Velocity", wantedSidewaysVelocity);
+          Logger.recordOutput("Wanted Forwards Velocity", wantedForwardsVelocity);
+          Logger.recordOutput("Wanted Rotation Velocity", wantedRotationVelocity);
+
+          Logger.recordOutput("Forwards Assist Effort", forwardsAssistEffort);
           Logger.recordOutput("Sideways Assist Effort", sidewaysAssistEffort);
           Logger.recordOutput("Rotation Assist Effort", rotationAssistEffort);
 
-
           drive.runVelocity(
-              ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(
-                MathUtil.clamp(
-                    forwardSpeed + forwardsAssistEffort,
-                    -drive.getMaxLinearSpeedMetersPerSec(),
-                    drive.getMaxLinearSpeedMetersPerSec()),
-                MathUtil.clamp(
-                    sidewaysSpeed + sidewaysAssistEffort, //
-                    -drive.getMaxLinearSpeedMetersPerSec(),
-                    drive.getMaxLinearSpeedMetersPerSec()),
-                MathUtil.clamp(
-                    rotationSpeed + rotationAssistEffort,
-                    -drive.getMaxAngularSpeedRadPerSec(),
-                    drive.getMaxAngularSpeedRadPerSec())), drive.getRotation()));
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  new ChassisSpeeds(
+                      MathUtil.clamp(
+                          forwardSpeed + forwardsAssistEffort,
+                          -drive.getMaxLinearSpeedMetersPerSec(),
+                          drive.getMaxLinearSpeedMetersPerSec()),
+                      MathUtil.clamp(
+                          sidewaysSpeed + sidewaysAssistEffort, //
+                          -drive.getMaxLinearSpeedMetersPerSec(),
+                          drive.getMaxLinearSpeedMetersPerSec()),
+                      MathUtil.clamp(
+                          rotationSpeed + rotationAssistEffort,
+                          -drive.getMaxAngularSpeedRadPerSec(),
+                          drive.getMaxAngularSpeedRadPerSec())),
+                  drive.getRotation()));
         },
         drive);
   }
@@ -385,49 +377,5 @@ public class DriveCommands {
     double[] positions = new double[4];
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
-  }
-
-  private static double calculateWantedSidewaysVelocity(
-      Drive drive, double sidewaysError, double forwardSpeed) {
-
-    // sideWaysError = nearestReefSide.getY() - drive.getPose().getY();
-
-    double wantedSidewaysVelocityPID = -sidewaysPID.calculate(sidewaysError);
-
-    double forwardDisplacementToNote = nearestReefSide.getX() - drive.getPose().getX(); // add Note_Forward_offset
-    double maxTime;
-    double minVelocity;
-    if (forwardSpeed > 0 && forwardDisplacementToNote > 0) {
-      maxTime = calculateTime(forwardSpeed, forwardDisplacementToNote);
-      minVelocity = calculateVelocity(maxTime, nearestReefSide.getY());
-
-      double wantedSidewaysVelocity =
-          Math.max(Math.abs(wantedSidewaysVelocityPID), Math.abs(minVelocity))
-              * (minVelocity / Math.abs(minVelocity));
-
-      wantedSidewaysVelocity =
-          MathUtil.clamp(
-              wantedSidewaysVelocity,
-              0.51 * -drive.getMaxLinearSpeedMetersPerSec(),
-              0.51 * drive.getMaxLinearSpeedMetersPerSec());
-
-      return wantedSidewaysVelocity;
-    } else {
-      return wantedSidewaysVelocityPID;
-    }
-  }
-
-  private static double calculateTime(double velocity, double displacement) {
-    double time = displacement / velocity;
-    Logger.recordOutput("Time to note", time);
-
-    return time;
-  }
-
-  private static double calculateVelocity(double time, double displacement) {
-    double velocity = displacement / time;
-    Logger.recordOutput("Velocity needed to note", velocity);
-
-    return velocity;
   }
 }

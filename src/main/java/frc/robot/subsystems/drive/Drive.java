@@ -467,7 +467,6 @@ public class Drive extends SubsystemBase {
     result = new Pose2d(translation2d, rotation2d);
 
     Logger.recordOutput("align to reef target Pose2d", result);
-    // return result;
     nearestSide = result;
   }
 }
