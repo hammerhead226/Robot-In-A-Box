@@ -19,14 +19,20 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.commoniolayers.FlywheelIO;
+import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIO;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -37,6 +43,8 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.flywheel.FlywheelIOSim;
+import frc.robot.subsystems.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -55,13 +63,17 @@ public class RobotContainer {
 
   // Controller
   //   private final CommandXboxController controller = new CommandXboxController(0);
-  private final Joystick joystikc = new Joystick(0);
-  private final JoystickButton btn = new JoystickButton(joystikc, 4);
-  private final KeyboardInputs keyboard = new KeyboardInputs(0);
+  private final Joystick joystick = new Joystick(0);
+  private final JoystickButton btn = new JoystickButton(joystick, 4);
+  private final KeyboardInputs keyboard = new KeyboardInputs(1);
 
   private final CoralScorerArm csArm;
+  private final CoralScorerFlywheel coralIntake;
   private final Elevator elevator;
   private final Vision vision;
+
+  private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController manipController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -90,6 +102,9 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         // TODO change lead, follower, gyro IDs, etc.
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
+        coralIntake =
+            new CoralScorerFlywheel(
+                new FlywheelIOTalonFX(), new CoralIntakeSensorIO() {}, CoralState.DEFAULT);
         break;
 
       case SIM:
@@ -112,6 +127,10 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIOSim());
 
+        coralIntake =
+            new CoralScorerFlywheel(
+                new FlywheelIOSim(), new CoralIntakeSensorIO() {}, CoralState.DEFAULT);
+
         break;
 
       default:
@@ -133,6 +152,10 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIO() {});
+
+        coralIntake =
+            new CoralScorerFlywheel(
+                new FlywheelIO() {}, new CoralIntakeSensorIO() {}, CoralState.DEFAULT);
         break;
     }
 
@@ -168,12 +191,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -controller.getLeftY(),
-    //         () -> -controller.getLeftX(),
-    //         () -> -controller.getRightX()));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX()));
 
     // // Lock to 0° when A button is held
     // controller
@@ -203,8 +226,9 @@ public class RobotContainer {
 
     keyboard.getVButton().onTrue(elevator.setElevatorTarget(10, 1));
     keyboard.getVButton().onFalse(elevator.setElevatorTarget(4, 1));
-  }
 
+    keyboard.getCButton().onTrue(new IntakeFromSource(coralIntake));
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

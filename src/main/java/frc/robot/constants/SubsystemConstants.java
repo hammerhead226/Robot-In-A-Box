@@ -66,6 +66,10 @@ public final class SubsystemConstants {
     public static final double COLOR_VIOLET = 0.91;
   }
 
+  public static class CoralIntakeFlywheelConstants {
+    public static final double CORAL_DIST = 13;
+  }
+
   public static enum LED_STATE {
     BLUE,
     RED,
@@ -89,6 +93,13 @@ public final class SubsystemConstants {
     REAL,
     SIM,
     REPLAY
+  }
+
+  public static enum CoralState {
+    NO_CORAL,
+    SENSOR,
+    CURRENT,
+    DEFAULT
   }
 
   public static class CoralScorerConstants {
