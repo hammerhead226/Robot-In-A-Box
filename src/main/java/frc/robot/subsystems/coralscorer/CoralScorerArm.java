@@ -2,6 +2,7 @@ package frc.robot.subsystems.coralscorer;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,6 +37,8 @@ public class CoralScorerArm extends SubsystemBase {
 
   private ArmFeedforward armFFModel;
 
+  public static PivotVis measured;
+
   /** Creates a new Arm. */
   public CoralScorerArm(ArmIO arm) {
     this.coralScorerArm = arm;
@@ -62,9 +65,10 @@ public class CoralScorerArm extends SubsystemBase {
         break;
     }
 
+    measured = new PivotVis("measured", Color.kRed);
     // CHANGE PER ARM
-    maxVelocityDegPerSec = 1;
-    maxAccelerationDegPerSecSquared = 1;
+    maxVelocityDegPerSec = 10;
+    maxAccelerationDegPerSecSquared = 5;
     // maxAccelerationDegPerSecSquared = 180;
 
     armConstraints =
@@ -122,7 +126,7 @@ public class CoralScorerArm extends SubsystemBase {
   @Override
   public void periodic() {
     coralScorerArm.updateInputs(csaInputs);
-
+    measured.update(armCurrentStateDegrees.position);
     armCurrentStateDegrees =
         armProfile.calculate(
             SubsystemConstants.LOOP_PERIOD_SECONDS, armCurrentStateDegrees, armGoalStateDegrees);

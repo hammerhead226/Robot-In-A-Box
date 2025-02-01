@@ -3,11 +3,14 @@ package frc.robot.subsystems.elevator;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.coralscorer.CoralScorerArm;
+import frc.robot.subsystems.coralscorer.ElevatorVis;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -39,6 +42,7 @@ public class Elevator extends SubsystemBase {
 
   private double goal;
   private ElevatorFeedforward elevatorFFModel;
+  private final ElevatorVis measured;
 
   public Elevator(ElevatorIO elevator) {
     this.elevator = elevator;
@@ -89,6 +93,7 @@ public class Elevator extends SubsystemBase {
         barkG.initDefault(0);
         break;
     }
+    measured = new ElevatorVis("measured", Color.kRed);
 
     // CHANGE THIS VALUE TO MATCH THE ELEVATOR
     setExtenderGoal(1);
@@ -156,6 +161,8 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Alliance", DriverStation.getAlliance().isPresent());
 
     elevator.updateInputs(eInputs);
+    measured.update(extenderCurrent.position);
+    CoralScorerArm.measured.updateVertical(extenderCurrent.position);
 
     extenderCurrent =
         extenderProfile.calculate(

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -56,14 +57,15 @@ public class RobotContainer {
   private final Drive drive;
 
   // Controller
-  //   private final CommandXboxController controller = new CommandXboxController(0);
-  private final Joystick joystikc = new Joystick(0);
-  private final JoystickButton btn = new JoystickButton(joystikc, 4);
+  private final CommandXboxController controller = new CommandXboxController(0);
+  private final Joystick joystick = new Joystick(0);
+  private final JoystickButton btn = new JoystickButton(joystick, 4);
   private final KeyboardInputs keyboard = new KeyboardInputs(0);
 
   private final CoralScorerArm csArm;
   private final Elevator elevator;
   private final Vision vision;
+  // private final CoralScorerFlywheel flywheel;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -137,7 +139,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIO() {});
         break;
     }
-
+    // flywheel = new CoralScorerFlywheel(new FlywheelIOSim());
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -170,8 +172,13 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void test() {
-    keyboard.getCButton().onTrue(new ReleaseClaw(ReefHeight.L4, elevator));
-    keyboard.getVButton().onTrue(new ReleaseClaw(ReefHeight.L1, elevator));
+    keyboard.getXButton().whileTrue(new ReleaseClaw(ReefHeight.L2, elevator, csArm));
+    keyboard.getZButton().whileTrue(new ReleaseClaw(ReefHeight.L1, elevator, csArm));
+    // keyboard.getXButton().whileTrue(elevator.setElevatorTarget(10, 1));
+    // keyboard.getZButton().whileTrue(elevator.setElevatorTarget(1, 1));
+    // controller.a().onTrue(new ReleaseClaw(ReefHeight.L4, elevator));
+    // controller.y().whileTrue(elevator.setElevatorTarget(10, 1));
+
   }
 
   private void configureButtonBindings() {
