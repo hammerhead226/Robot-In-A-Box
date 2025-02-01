@@ -19,11 +19,17 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.Stow;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.arms.Arm;
+import frc.robot.subsystems.arms.ArmIOSim;
+import frc.robot.subsystems.arms.ArmIOTalonFX;
+import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
@@ -41,6 +47,9 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.KeyboardInputs;
+
+import java.lang.ModuleLayer.Controller;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -52,9 +61,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Arm arm;
 
   // Controller
-  //   private final CommandXboxController controller = new CommandXboxController(0);
+   private final CommandXboxController controller = new CommandXboxController(0);
   private final Joystick joystikc = new Joystick(0);
   private final JoystickButton btn = new JoystickButton(joystikc, 4);
   private final KeyboardInputs keyboard = new KeyboardInputs(0);
@@ -90,6 +100,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         // TODO change lead, follower, gyro IDs, etc.
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
+        arm = new Arm(new ArmIOTalonFX(0, 0, 0));
         break;
 
       case SIM:
@@ -111,7 +122,8 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIOSim());
-
+        arm = new Arm(new ArmIOSim());
+        
         break;
 
       default:
@@ -133,6 +145,8 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIO() {});
+
+        arm = new Arm(new ArmIO() {});
         break;
     }
 
@@ -167,6 +181,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    controller.a().onTrue(new Stow(arm, elevator));
     // Default command, normal field-relative drive
     // drive.setDefaultCommand(
     //     DriveCommands.joystickDrive(
