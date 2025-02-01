@@ -1,18 +1,19 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.elevator.Elevator;
 
-public class ReleaseClaw extends Command {
+public class ReleaseClawParallel extends ParallelCommandGroup {
   private final Elevator elevator;
   private final CoralScorerArm pivot;
   private final CoralScorerFlywheel flywheel;
   private final ReefHeight scoringLevel;
 
-  public ReleaseClaw(
+  public ReleaseClawParallel(
       ReefHeight scoringLevel,
       Elevator elevator,
       CoralScorerArm pivot,
@@ -21,22 +22,9 @@ public class ReleaseClaw extends Command {
     this.elevator = elevator;
     this.flywheel = flywheel;
     this.scoringLevel = scoringLevel;
-    addRequirements(elevator, pivot);
-  }
-
-  @Override
-  public void initialize() {
-    elevator.setExtenderGoal(scoringLevel.height);
-    pivot.setArmGoal(scoringLevel.pitch);
-    flywheel.runVolts(12);
-    end(true);
-  }
-
-  @Override
-  public void execute() {}
-
-  @Override
-  public boolean isFinished() {
-    return false;
+    addCommands(
+        elevator.setElevatorTarget(scoringLevel.height, 0.5),
+        pivot.setArmTarget(scoringLevel.pitch, 1),
+        flywheel.runVoltsCommmand(12));
   }
 }

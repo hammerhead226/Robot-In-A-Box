@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ReleaseClaw;
+import frc.robot.commands.ReleaseClawParallel;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
@@ -97,7 +97,10 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         // TODO change lead, follower, gyro IDs, etc.
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
-        flywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOTalonFX(0)); //TODO Modify this ID to suit the ID of the ClawFly
+        flywheel =
+            new CoralScorerFlywheel(
+                new CoralScorerFlywheelIOTalonFX(
+                    0)); // TODO Modify this ID to suit the ID of the ClawFly
 
         break;
 
@@ -122,7 +125,6 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         flywheel = new CoralScorerFlywheel(new FlywheelIOSim());
 
-
         break;
 
       default:
@@ -137,7 +139,7 @@ public class RobotContainer {
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
         flywheel = new CoralScorerFlywheel(new FlywheelIOSim());
-        
+
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
@@ -180,9 +182,19 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void test() {
-    keyboard.getXButton().whileTrue(new ReleaseClaw(ReefHeight.L2, elevator, csArm, flywheel));
-    keyboard.getZButton().whileTrue(new ReleaseClaw(ReefHeight.L1, elevator, csArm, flywheel));
+    keyboard
+        .getXButton()
+        .onTrue(new ReleaseClawParallel(ReefHeight.L2, elevator, csArm, flywheel));
+    keyboard
+        .getZButton()
+        .onTrue(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm, flywheel));
 
+    keyboard
+        .getXButton()
+        .whileFalse(new ReleaseClawParallel(ReefHeight.L2, elevator, csArm, flywheel));
+    keyboard
+        .getZButton()
+        .whileFalse(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm, flywheel));
   }
 
   private void configureButtonBindings() {
