@@ -101,7 +101,9 @@ public class DriveCommands {
         () -> {
           rotationPID.setTolerance(1);
           rotationPID.enableContinuousInput(-180, 180);
-          sidewaysPID.setTolerance(0.05460);
+          sidewaysPID.setTolerance(0.1);
+          forwardsPID.setTolerance(0.1);
+          
 
           // Get linear velocity
           Translation2d linearVelocity =
@@ -129,7 +131,7 @@ public class DriveCommands {
 
           double rotationSpeed = speeds.omegaRadiansPerSecond;
 
-          double speedDebuf = 0.7;
+          double speedDebuf = 0.1;
 
           if (reefAlignAssistSupplier.getAsBoolean()) {
             nearestReefSide = drive.getNearestSide();
@@ -137,37 +139,40 @@ public class DriveCommands {
             sidewaysError = drive.getPose().getY() - drive.getNearestSide().getY();
             Logger.recordOutput("Sideways Error", sidewaysError);
             wantedSidewaysVelocity = sidewaysPID.calculate(sidewaysError);
-            sidewaysAssistEffort = wantedSidewaysVelocity - sidewaysSpeed * speedDebuf;
+            sidewaysAssistEffort = (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuf;
 
             forwardsError = drive.getPose().getX() - nearestReefSide.getX();
             Logger.recordOutput("Forwards Error", forwardsError);
             wantedForwardsVelocity = forwardsPID.calculate(forwardsError);
-            forwardsAssistEffort = wantedForwardsVelocity - forwardSpeed * speedDebuf;
+            forwardsAssistEffort = (wantedForwardsVelocity - forwardSpeed) * speedDebuf;
 
             rotationError =
                 drive.getRotation().getDegrees() - nearestReefSide.getRotation().getDegrees() + 0;
             Logger.recordOutput("Rotation Error", rotationError);
             wantedRotationVelocity = Math.toRadians(rotationPID.calculate(rotationError));
-            rotationAssistEffort = wantedRotationVelocity - rotationSpeed * 0.1690;
+            rotationAssistEffort = (wantedRotationVelocity - rotationSpeed);
           } else if (sourceAlignSupplier.getAsBoolean()) {
-            wantedForwardsVelocity = forwardSpeed;
-            forwardsAssistEffort = 0;
-            wantedSidewaysVelocity = sidewaysSpeed;
-            sidewaysAssistEffort = 0;
+            forwardsError = drive.getPose().getX() - (getClosestSource(drive).getX() + 0.4);
+            wantedForwardsVelocity = forwardsPID.calculate(forwardsError);
+            forwardsAssistEffort = (wantedForwardsVelocity - forwardSpeed) * speedDebuf;
+
+            sidewaysError = drive.getPose().getY() - (getClosestSource(drive).getY() + 0.4);
+            wantedSidewaysVelocity = sidewaysPID.calculate(sidewaysError);
+            sidewaysAssistEffort = (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuf;
+
             Rotation2d curreRotation2d = drive.getRotation();
             Rotation2d targeRotation2d;
 
-            targeRotation2d = getClosestSource(drive);
+            targeRotation2d = getClosestSource(drive).getRotation();
             Logger.recordOutput(
                 " turn to left source target",
                 new Pose2d(
                     FieldConstants.CoralStation.leftCenterFace.getTranslation(), targeRotation2d));
+            rotationError = drive.getRotation().getDegrees() - targeRotation2d.getDegrees();
+            // rotationPID.setSetpoint(targeRotation2d.getDegrees());
 
-            rotationPID.setSetpoint(targeRotation2d.getDegrees());
-
-            wantedRotationVelocity =
-                Math.toRadians(rotationPID.calculate(curreRotation2d.getDegrees()));
-            rotationAssistEffort = wantedRotationVelocity - rotationSpeed * 0.1690;
+            wantedRotationVelocity = Math.toRadians(rotationPID.calculate(rotationError));
+            rotationAssistEffort = (wantedRotationVelocity - rotationSpeed) ;
           } else {
             wantedForwardsVelocity = forwardSpeed;
             forwardsAssistEffort = 0;
@@ -398,7 +403,7 @@ public class DriveCommands {
     double gyroDelta = 0.0;
   }
 
-  public static Rotation2d getClosestSource(Drive drive) {
+  public static Pose2d getClosestSource(Drive drive) {
 
     if (drive
             .getPose()
@@ -408,10 +413,45 @@ public class DriveCommands {
             .getPose()
             .getTranslation()
             .getDistance(FieldConstants.CoralStation.rightCenterFace.getTranslation())) {
-      return FieldConstants.CoralStation.leftCenterFace.getRotation();
+      return FieldConstants.CoralStation.leftCenterFace;
 
     } else {
-      return FieldConstants.CoralStation.rightCenterFace.getRotation();
+      return FieldConstants.CoralStation.rightCenterFace;
     }
   }
+
+  /*
+    private static double calculateWantedSidewaysVelocity(
+      Drive drive, double sidewaysError, double forwardSpeed) {
+    double wantedSidewaysVelocityPID = sidewaysPID.calculate(sidewaysError);
+    double forwardDisplacementToNote = getNearestReefSide(drive).getX(); // add Note_Forward_offset
+    double maxTime;
+    double minVelocity;
+    if (forwardSpeed > 0 && forwardDisplacementToNote > 0) {
+      maxTime = calculateTime(forwardSpeed, forwardDisplacementToNote);
+      minVelocity = calculateVelocity(maxTime, getNearestReefSide(drive).getY());
+      double wantedSidewaysVelocity =
+          Math.max(Math.abs(wantedSidewaysVelocityPID), Math.abs(minVelocity))
+              * (minVelocity / Math.abs(minVelocity));
+      wantedSidewaysVelocity =
+          MathUtil.clamp(
+              wantedSidewaysVelocity,
+              0.51 * -drive.getMaxLinearSpeedMetersPerSec(),
+              0.51 * drive.getMaxLinearSpeedMetersPerSec());
+      return wantedSidewaysVelocity;
+    } else {
+      return wantedSidewaysVelocityPID;
+    }
+  }
+  private static double calculateTime(double velocity, double displacement) {
+    double time = displacement / velocity;
+    Logger.recordOutput("Time to note", time);
+    return time;
+  }
+  private static double calculateVelocity(double time, double displacement) {
+    double velocity = displacement / time;
+    Logger.recordOutput("Velocity needed to note", velocity);
+    return velocity;
+  }
+  */
 }
