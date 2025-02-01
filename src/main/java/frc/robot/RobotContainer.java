@@ -30,6 +30,8 @@ import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheelIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -40,6 +42,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -65,7 +68,7 @@ public class RobotContainer {
   private final CoralScorerArm csArm;
   private final Elevator elevator;
   private final Vision vision;
-  // private final CoralScorerFlywheel flywheel;
+  private final CoralScorerFlywheel flywheel;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -94,6 +97,8 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         // TODO change lead, follower, gyro IDs, etc.
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
+        flywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOTalonFX(0)); //TODO Modify this ID to suit the ID of the ClawFly
+
         break;
 
       case SIM:
@@ -115,6 +120,8 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIOSim());
+        flywheel = new CoralScorerFlywheel(new FlywheelIOSim());
+
 
         break;
 
@@ -129,6 +136,8 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        flywheel = new CoralScorerFlywheel(new FlywheelIOSim());
+        
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
@@ -139,7 +148,6 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIO() {});
         break;
     }
-    // flywheel = new CoralScorerFlywheel(new FlywheelIOSim());
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -172,12 +180,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void test() {
-    keyboard.getXButton().whileTrue(new ReleaseClaw(ReefHeight.L2, elevator, csArm));
-    keyboard.getZButton().whileTrue(new ReleaseClaw(ReefHeight.L1, elevator, csArm));
-    // keyboard.getXButton().whileTrue(elevator.setElevatorTarget(10, 1));
-    // keyboard.getZButton().whileTrue(elevator.setElevatorTarget(1, 1));
-    // controller.a().onTrue(new ReleaseClaw(ReefHeight.L4, elevator));
-    // controller.y().whileTrue(elevator.setElevatorTarget(10, 1));
+    keyboard.getXButton().whileTrue(new ReleaseClaw(ReefHeight.L2, elevator, csArm, flywheel));
+    keyboard.getZButton().whileTrue(new ReleaseClaw(ReefHeight.L1, elevator, csArm, flywheel));
 
   }
 
