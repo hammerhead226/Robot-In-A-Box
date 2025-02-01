@@ -11,8 +11,11 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+
+import frc.robot.constants.SubsystemConstants;
 
 public class CoralScorerFlywheel extends SubsystemBase {
   private final FlywheelIO io;
@@ -99,6 +102,20 @@ public class CoralScorerFlywheel extends SubsystemBase {
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysId.dynamic(direction);
+  }
+
+  public AlgaeState seesAlgae() {
+    Logger.recordOutput("see note val", "default");
+    if (feedInputs.currentAmps > 13) {
+      Logger.recordOutput("see note val", "current");
+      lastAlgaeState = AlgaeState.CURRENT;
+      return AlgaeState.CURRENT;
+
+    } else {
+      Logger.recordOutput("see note val", "no note");
+      lastAlgaeState = AlgaeState.NO_ALGAE;
+      return AlgaeState.NO_ALGAE;
+    }
   }
 
   /** Returns the current velocity in RPM. */
