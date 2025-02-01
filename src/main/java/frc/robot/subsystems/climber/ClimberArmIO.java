@@ -1,8 +1,8 @@
-package frc.robot.subsystems.newalgaeintake;
+package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface AlgaeIntakeArmIO {
+public interface ClimberArmIO {
   @AutoLog
   public static class AlgaeIntakeArmIOInputs {
     public double velocityDegsPerSec = 0;

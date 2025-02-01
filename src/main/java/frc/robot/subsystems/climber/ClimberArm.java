@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.newalgaeintake;
+package frc.robot.subsystems.climber;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -11,11 +11,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
-public class AlgaeIntakeArm extends SubsystemBase {
-  private final AlgaeIntakeArmIO arm;
+public class ClimberArm extends SubsystemBase {
+  private final ClimberArmIO arm;
   private final AlgaeIntakeArmIOInputsAutoLogged pInputs = new AlgaeIntakeArmIOInputsAutoLogged();
 
   private static LoggedTunableNumber kP;
@@ -36,7 +37,7 @@ public class AlgaeIntakeArm extends SubsystemBase {
   private ArmFeedforward armFFModel;
 
   /** Creates a new Arm. */
-  public AlgaeIntakeArm(AlgaeIntakeArmIO arm) {
+  public ClimberArm(ClimberArmIO arm) {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:

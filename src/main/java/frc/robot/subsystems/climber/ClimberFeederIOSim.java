@@ -1,4 +1,4 @@
-package frc.robot.subsystems.newalgaeintake;
+package frc.robot.subsystems.climber;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -7,7 +7,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.constants.SubsystemConstants;
 
-public class AlgaeIntakeFeederIOSim implements AlgaeIntakeFeederIO {
+public class ClimberFeederIOSim implements ClimberFeederIO {
   private final DCMotor motor = DCMotor.getKrakenX60(1);
   // 1
   private DCMotorSim sim =

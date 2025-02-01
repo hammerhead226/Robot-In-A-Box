@@ -1,4 +1,4 @@
-package frc.robot.subsystems.newalgaeintake;
+package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
@@ -10,7 +10,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signrals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -21,7 +21,7 @@ import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 
-public class AlgaeIntakeArmIOTalonFX implements ArmIO {
+public class ClimberArmIOTalonFX implements ArmIO {
   private final TalonFX leader;
   private final TalonFX follower;
 
@@ -37,7 +37,7 @@ public class AlgaeIntakeArmIOTalonFX implements ArmIO {
   private final StatusSignal<Current> currentAmps;
   private final StatusSignal<Angle> pitch;
 
-  public AlgaeIntakeArmIOTalonFX(int leadID, int followID, int gyroID) {
+  public ClimberArmIOTalonFX(int leadID, int followID, int gyroID) {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ArmConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
