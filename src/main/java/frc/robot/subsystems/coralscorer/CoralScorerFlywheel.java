@@ -9,23 +9,25 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
-
+import frc.robot.subsystems.newalgaeintake.FeederIOInputsAutoLogged;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-
-import frc.robot.constants.SubsystemConstants;
 
 public class CoralScorerFlywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
   private final SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
+  private AlgaeState lastAlgaeState;
+  private final FeederIOInputsAutoLogged feedInputs = new FeederIOInputsAutoLogged();
 
   /** Creates a new Flywheel. */
-  public CoralScorerFlywheel(FlywheelIO io) {
+  public CoralScorerFlywheel(FlywheelIO io, AlgaeState lastAlgaeState) {
     this.io = io;
+    this.lastAlgaeState = lastAlgaeState;
 
     // Switch constants based on mode (the physics simulator is treated as a
     // separate robot with different tuning)

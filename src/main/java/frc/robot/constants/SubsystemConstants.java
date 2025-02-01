@@ -115,7 +115,7 @@ public final class SubsystemConstants {
     }
 
     public static class AlgaeScorerFlywheelConstants {
-      public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 0;
+      public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 10;
     }
   }
 }

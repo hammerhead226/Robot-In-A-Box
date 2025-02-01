@@ -19,15 +19,21 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheelIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -67,6 +73,7 @@ public class RobotContainer {
   private final Elevator elevator;
   private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
+  private final CoralScorerFlywheel csFlywheel;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -96,6 +103,7 @@ public class RobotContainer {
         // TODO change lead, follower, gyro IDs, etc.
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
         algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOTalonFX(0, 0, 0));
+        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim(), AlgaeState.DEFAULT);
         break;
 
       case SIM:
@@ -118,6 +126,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIOSim());
         algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
+        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim(), AlgaeState.DEFAULT);
         break;
 
       default:
@@ -140,6 +149,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIO() {});
         algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
+        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim(), AlgaeState.DEFAULT);
         break;
     }
 
@@ -208,20 +218,29 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
 
-    controller.y().whileTrue(elevator.setElevatorTarget(1.83, 1));
-    controller.y().whileFalse(elevator.setElevatorTarget(1, 1));
+    // controller.y().whileTrue(elevator.setElevatorTarget(1.83, 1));
+    // controller.y().whileFalse(elevator.setElevatorTarget(1, 1));
 
     controller.x().whileTrue(csArm.setArmTarget(90, 1));
     controller.x().whileFalse(csArm.setArmTarget(-90, 1));
 
     controller.b().whileTrue(algaeArm.setArmTarget(70, 2));
     controller.b().whileFalse(algaeArm.setArmTarget(20, 2));
+
+    controller.a().onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
+    controller
+        .a()
+        .onFalse(
+            new ParallelCommandGroup(
+                csArm.setArmTarget(60, 4),
+                elevator.setElevatorTarget(0.2, 0.05),
+                new InstantCommand(() -> csFlywheel.runVolts(12))));
   }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
-   * @return the command to run in autonomous
+   * @return the command to run in autonomous.
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
