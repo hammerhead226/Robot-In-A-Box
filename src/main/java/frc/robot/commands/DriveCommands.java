@@ -13,6 +13,7 @@
 
 package frc.robot.commands;
 
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -63,7 +64,16 @@ public class DriveCommands {
   private static double rotationAssistEffort = 0;
 
   private static Pose2d nearestReefSide = null;
+  // private static ProfiledPIDController goof = new ProfiledPIDController(1.5, 0, 0, )
+ 
 
+  // profiled controllers
+
+  private static ProfiledPIDController profileSideways;
+  private static ProfiledPIDController profileForward;
+  private static ProfiledPIDController profileRotation;
+
+  // regular controller
   private static PIDController sidewaysPID =
       new PIDController(1.5, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
   private static PIDController forwardsPID =
@@ -103,8 +113,31 @@ public class DriveCommands {
           rotationPID.enableContinuousInput(-180, 180);
           sidewaysPID.setTolerance(0.1);
           forwardsPID.setTolerance(0.1);
-          
 
+          profileSideways =
+              new ProfiledPIDController(
+                  5,
+                  0,
+                  0,
+                  new TrapezoidProfile.Constraints(drive.getMaxLinearSpeedMetersPerSec(), 15));
+          profileForward =
+              new ProfiledPIDController(
+                  5,
+                  0,
+                  0,
+                  new TrapezoidProfile.Constraints(drive.getMaxLinearSpeedMetersPerSec(), 15));
+          profileRotation =
+              new ProfiledPIDController(
+                  2.54,
+                  0,
+                  0,
+                  new TrapezoidProfile.Constraints(
+                      Math.toDegrees(drive.getMaxAngularSpeedRadPerSec()), 1500));
+
+          profileForward.setTolerance(0.1);
+          profileSideways.setTolerance(0.1);
+          profileRotation.setTolerance(1);
+          profileRotation.enableContinuousInput(-180, 180);
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
@@ -121,9 +154,11 @@ public class DriveCommands {
                   linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                   linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                   omega * drive.getMaxAngularSpeedRadPerSec());
-          boolean isFlipped =
-              DriverStation.getAlliance().isPresent()
-                  && DriverStation.getAlliance().get() == Alliance.Red;
+
+         
+    
+       
+       
 
           double forwardSpeed = speeds.vxMetersPerSecond;
 
@@ -131,36 +166,40 @@ public class DriveCommands {
 
           double rotationSpeed = speeds.omegaRadiansPerSecond;
 
-          double speedDebuf = 0.1;
+          double speedDebuf = 0.9;
 
           if (reefAlignAssistSupplier.getAsBoolean()) {
             nearestReefSide = drive.getNearestSide();
 
             sidewaysError = drive.getPose().getY() - drive.getNearestSide().getY();
             Logger.recordOutput("Sideways Error", sidewaysError);
-            wantedSidewaysVelocity = sidewaysPID.calculate(sidewaysError);
+            wantedSidewaysVelocity = profileSideways.calculate(sidewaysError);
             sidewaysAssistEffort = (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuf;
+            // sidewaysAssistEffort = (wantedSpeeds.vyMetersPerSecond - sidewaysSpeed) * speedDebuf;
 
             forwardsError = drive.getPose().getX() - nearestReefSide.getX();
             Logger.recordOutput("Forwards Error", forwardsError);
-            wantedForwardsVelocity = forwardsPID.calculate(forwardsError);
+            wantedForwardsVelocity = profileForward.calculate(forwardsError);
             forwardsAssistEffort = (wantedForwardsVelocity - forwardSpeed) * speedDebuf;
-
+            // forwardsAssistEffort = (wantedSpeeds.vxMetersPerSecond - forwardSpeed) * speedDebuf;
             rotationError =
                 drive.getRotation().getDegrees() - nearestReefSide.getRotation().getDegrees() + 0;
             Logger.recordOutput("Rotation Error", rotationError);
-            wantedRotationVelocity = Math.toRadians(rotationPID.calculate(rotationError));
+            wantedRotationVelocity = Math.toRadians(profileRotation.calculate(rotationError));
             rotationAssistEffort = (wantedRotationVelocity - rotationSpeed);
+            // rotationAssistEffort =
+            //  (wantedSpeeds.omegaRadiansPerSecond - rotationSpeed) * speedDebuf;
+
           } else if (sourceAlignSupplier.getAsBoolean()) {
             forwardsError = drive.getPose().getX() - (getClosestSource(drive).getX() + 0.4);
-            wantedForwardsVelocity = forwardsPID.calculate(forwardsError);
+            wantedForwardsVelocity = profileForward.calculate(forwardsError);
             forwardsAssistEffort = (wantedForwardsVelocity - forwardSpeed) * speedDebuf;
 
             sidewaysError = drive.getPose().getY() - (getClosestSource(drive).getY() + 0.4);
-            wantedSidewaysVelocity = sidewaysPID.calculate(sidewaysError);
+            wantedSidewaysVelocity = profileSideways.calculate(sidewaysError);
             sidewaysAssistEffort = (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuf;
 
-            Rotation2d curreRotation2d = drive.getRotation();
+          
             Rotation2d targeRotation2d;
 
             targeRotation2d = getClosestSource(drive).getRotation();
@@ -171,8 +210,8 @@ public class DriveCommands {
             rotationError = drive.getRotation().getDegrees() - targeRotation2d.getDegrees();
             // rotationPID.setSetpoint(targeRotation2d.getDegrees());
 
-            wantedRotationVelocity = Math.toRadians(rotationPID.calculate(rotationError));
-            rotationAssistEffort = (wantedRotationVelocity - rotationSpeed) ;
+            wantedRotationVelocity = Math.toRadians(profileRotation.calculate(rotationError));
+            rotationAssistEffort = (wantedRotationVelocity);
           } else {
             wantedForwardsVelocity = forwardSpeed;
             forwardsAssistEffort = 0;
