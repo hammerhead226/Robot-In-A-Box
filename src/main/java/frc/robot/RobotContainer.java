@@ -22,11 +22,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.algaeintosource.AlgaeIntoSource;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheelIOSim;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheelIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -60,6 +64,7 @@ public class RobotContainer {
   private final KeyboardInputs keyboard = new KeyboardInputs(0);
 
   private final CoralScorerArm csArm;
+  private final CoralScorerFlywheel csFlywheel;
   private final Elevator elevator;
   private final Vision vision;
 
@@ -80,6 +85,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
         csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
+        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOTalonFX(1));
 
         vision =
             new Vision(
@@ -103,6 +109,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim());
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
@@ -125,6 +132,7 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim());
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
@@ -201,8 +209,20 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
 
+<<<<<<< Updated upstream
     keyboard.getVButton().onTrue(elevator.setElevatorTarget(10, 1));
     keyboard.getVButton().onFalse(elevator.setElevatorTarget(4, 1));
+=======
+    controller.y().whileTrue(elevator.setElevatorTarget(1.83, 1));
+    controller.y().whileFalse(elevator.setElevatorTarget(1, 1));
+
+    controller.x().whileTrue(csArm.setArmTarget(90, 1));
+    controller.x().whileFalse(csArm.setArmTarget(-90, 1));
+
+    // controller.b().whileTrue(algaeArm.setArmTarget(70, 2));
+    // controller.b().whileFalse(algaeArm.setArmTarget(20, 2));
+    controller.b().onTrue(new AlgaeIntoSource(elevator, csArm, csFlywheel));
+>>>>>>> Stashed changes
   }
 
   /**

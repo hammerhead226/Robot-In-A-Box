@@ -342,6 +342,37 @@ public class Drive extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
+<<<<<<< Updated upstream
+=======
+  @AutoLogOutput(key = "bodo")
+  public Pose2d boof() {
+    return new Pose2d(
+        poseEstimator.getEstimatedPosition().getX(),
+        poseEstimator.getEstimatedPosition().getY() + 0.25,
+        poseEstimator.getEstimatedPosition().getRotation());
+  }
+
+  @AutoLogOutput(key = "godo")
+  public Pose2d doof() {
+    return new Pose2d(
+        poseEstimator.getEstimatedPosition().getX(),
+        poseEstimator.getEstimatedPosition().getY() - 0.25,
+        poseEstimator.getEstimatedPosition().getRotation());
+  }
+
+  @AutoLogOutput(key = "flipped odo")
+  public Pose3d goof() {
+    return new Pose3d(
+        new Translation3d(
+            poseEstimator.getEstimatedPosition().getTranslation().getX(),
+            poseEstimator.getEstimatedPosition().getTranslation().getY(),
+            0.2),
+        new Rotation3d(
+            Math.toRadians(90),
+            0,
+            poseEstimator.getEstimatedPosition().getRotation().getRadians()));
+  }
+>>>>>>> Stashed changes
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();

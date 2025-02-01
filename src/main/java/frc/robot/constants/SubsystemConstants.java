@@ -46,6 +46,8 @@ public final class SubsystemConstants {
     public static final double DEFAULT_THRESHOLD = 1;
 
     public static final double ELEVATOR_GEAR_RATIO = 1;
+
+    public static final double SCORING_SETPOINT_POS = 0.4;
   }
 
   public static final class ArmConstants {
@@ -101,6 +103,12 @@ public final class SubsystemConstants {
 
       public static final double ARM_ZERO_ANGLE = 0;
       public static final double STOW_SETPOINT_DEG = 0;
+
+      public static final double SCORING_SETPOINT_DEG = 0;
+    }
+
+    public static class CoralScorerFlywheelConstants {
+      public static final double DEFAULT_VOLTS = 5;
     }
   }
 }

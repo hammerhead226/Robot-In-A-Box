@@ -91,7 +91,7 @@ public class Elevator extends SubsystemBase {
     }
 
     // CHANGE THIS VALUE TO MATCH THE ELEVATOR
-    setExtenderGoal(1);
+    setExtenderGoal(1.3);
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
 
