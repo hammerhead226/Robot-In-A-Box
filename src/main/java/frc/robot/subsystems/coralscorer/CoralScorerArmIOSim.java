@@ -47,7 +47,7 @@ public class CoralScorerArmIOSim implements ArmIO {
   public void updateInputs(ArmIOInputs inputs) {
     positionSetpointRads = pid.getSetpoint();
 
-    appliedVolts +=
+    appliedVolts =
         MathUtil.clamp(
             pid.calculate(sim.getAngleRads(), positionSetpointRads),
             clampedValueLowVolts,
