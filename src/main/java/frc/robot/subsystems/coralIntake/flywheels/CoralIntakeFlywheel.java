@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.flywheel;
+package frc.robot.subsystems.coralIntake.flywheels;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -27,15 +27,19 @@ import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Flywheel extends SubsystemBase {
+public class CoralIntakeFlywheel extends SubsystemBase {
   private final FlywheelIO io;
+  private final CoralIntakeSensorIO sensor;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
+  private final CoralIntakeSensorIOInputsAutoLogged sInputs =
+      new CoralIntakeSensorIOInputsAutoLogged();
   private final SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
 
   /** Creates a new Flywheel. */
-  public Flywheel(FlywheelIO io) {
+  public CoralIntakeFlywheel(FlywheelIO io, CoralIntakeSensorIO sensor) {
     this.io = io;
+    this.sensor = sensor;
 
     // Switch constants based on mode (the physics simulator is treated as a
     // separate robot with different tuning)
@@ -68,7 +72,9 @@ public class Flywheel extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    sensor.updateInputs(sInputs);
     Logger.processInputs("Flywheel", inputs);
+    Logger.processInputs("Sensor", sInputs);
   }
 
   /** Run open loop at the specified voltage. */

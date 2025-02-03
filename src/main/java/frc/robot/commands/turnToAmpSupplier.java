@@ -5,11 +5,9 @@
 
 package frc.robot.commands;
 
-
 class turnToAmpSupplier {
 
-    static boolean getAsBoolean() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
+  static boolean getAsBoolean() {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

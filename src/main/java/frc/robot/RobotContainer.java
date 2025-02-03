@@ -15,30 +15,40 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlignToReefAuto;
-import frc.robot.commands.AutoAlignToSource;
 import frc.robot.commands.DriveCommands;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.coralscorer.CoralScorerArm;
+import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
+import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
 import frc.robot.subsystems.led.LED_IOSim;
-import org.littletonrobotics.junction.Logger;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.util.KeyboardInputs;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -53,7 +63,17 @@ public class RobotContainer {
   private final LED led;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  //   private final CommandXboxController controller = new CommandXboxController(0);
+  private final Joystick joystikc = new Joystick(0);
+  private final JoystickButton btn = new JoystickButton(joystikc, 4);
+  private final KeyboardInputs keyboard = new KeyboardInputs(0);
+
+  private final CoralScorerArm csArm;
+  private final Elevator elevator;
+  private final Vision vision;
+
+  private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController manipController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -70,6 +90,18 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+
+        csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
+
+        vision =
+            new Vision(
+                drive.getToPoseEstimatorConsumer(),
+                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                new VisionIOPhotonVision("photon", new Transform3d()));
+        // TODO change lead, follower, gyro IDs, etc.
+        elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
         led = new LED(new LED_IOCANdle(0, ""));
         break;
 
@@ -82,6 +114,17 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+
+        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        vision =
+            new Vision(
+                drive.getToPoseEstimatorConsumer(),
+                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                new VisionIOPhotonVision("photon", new Transform3d()));
+        elevator = new Elevator(new ElevatorIOSim());
+
         led = new LED(new LED_IOSim());
         break;
 
@@ -94,6 +137,16 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+
+        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        vision =
+            new Vision(
+                drive.getToPoseEstimatorConsumer(),
+                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                new VisionIOPhotonVision("photon", new Transform3d()));
+        elevator = new Elevator(new ElevatorIO() {});
         led = new LED(new LED_IO() {});
         break;
     }
@@ -116,6 +169,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
 
     NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
@@ -134,65 +188,40 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX(),
+            () -> driveController.leftBumper().getAsBoolean(),
+            () -> driveController.rightBumper().getAsBoolean()));
+    driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
+    // // Lock to 0° when A button is held
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
-    controller
-        .rightBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  //System.out.println(drive.getCurrentCommand().getName());
-                  if (drive.getCurrentCommand() instanceof AlignToReefAuto) {
-                    drive.getCurrentCommand().cancel();
-                  } else {
-                    new AlignToReefAuto(drive, led).schedule();
-                  }
-                }));
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller
-        .leftBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  //System.out.println(drive.getCurrentCommand().getName());
-                  if (drive.getCurrentCommand() instanceof AutoAlignToSource) {
-                    drive.getCurrentCommand().cancel();
-                  } else {
-                    new AutoAlignToSource(drive, led).schedule();
-                  }
-                }));
+    // controller.y().onTrue(csArm.setArmTarget(30, 0));
 
-    if (drive.getCurrentCommand() == null) {
-      Logger.recordOutput("drive current command", "currently null");
-    } else {
-      Logger.recordOutput("drive current command", drive.getCurrentCommand().getName());
-    }
+    // // Reset gyro to 0° when B button is pressed
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
-
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    keyboard.getVButton().onTrue(elevator.setElevatorTarget(10, 1));
+    keyboard.getVButton().onFalse(elevator.setElevatorTarget(4, 1));
   }
 
   /**

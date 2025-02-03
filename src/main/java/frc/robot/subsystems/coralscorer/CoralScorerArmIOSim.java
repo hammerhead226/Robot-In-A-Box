@@ -1,8 +1,4 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
-package frc.robot.subsystems.arms;
+package frc.robot.subsystems.coralscorer;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -13,7 +9,7 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.ArmIO;
 
 /** Add your docs here. */
-public class ArmIOSim implements ArmIO {
+public class CoralScorerArmIOSim implements ArmIO {
 
   // SIM VARIABLES (CHANGE)
   private int gearBoxMotorCount = 1;
@@ -73,7 +69,6 @@ public class ArmIOSim implements ArmIO {
   }
 
   @Override
-  // runs the motion profile but doesn't generate it
   public void setPositionSetpointDegs(double positionDegs, double ffVolts) {
     appliedVolts = ffVolts;
     pid.setSetpoint(Math.toRadians(positionDegs));

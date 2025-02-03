@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.arms;
+package frc.robot.subsystems.newalgaeintake;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -10,10 +10,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.commoniolayers.ArmIO;
 
 /** Add your docs here. */
-public class ArmIOSim implements ArmIO {
+public class AlgaeIntakeArmIOSim implements AlgaeIntakeArmIO {
 
   // SIM VARIABLES (CHANGE)
   private int gearBoxMotorCount = 1;
@@ -48,7 +47,7 @@ public class ArmIOSim implements ArmIO {
   private double clampedValueHighVolts = 12.0;
 
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
+  public void updateInputs(AlgaeIntakeArmIOInputs inputs) {
     positionSetpointRads = pid.getSetpoint();
 
     appliedVolts +=
@@ -73,7 +72,6 @@ public class ArmIOSim implements ArmIO {
   }
 
   @Override
-  // runs the motion profile but doesn't generate it
   public void setPositionSetpointDegs(double positionDegs, double ffVolts) {
     appliedVolts = ffVolts;
     pid.setSetpoint(Math.toRadians(positionDegs));

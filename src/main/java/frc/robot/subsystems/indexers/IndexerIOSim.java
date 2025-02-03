@@ -6,6 +6,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.commoniolayers.IndexerIO;
 
 /** Add your docs here. */
 public class IndexerIOSim implements IndexerIO {

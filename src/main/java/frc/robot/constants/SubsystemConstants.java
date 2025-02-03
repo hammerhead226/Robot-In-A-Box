@@ -26,7 +26,16 @@ public final class SubsystemConstants {
     public static final boolean CURRENT_LIMIT_ENABLED = true;
   }
 
-  public static final class shooterConstants {}
+  public static class AlgaeIntakeConstants {
+    public static class FeederConstants {
+      public static final double CURRENT_LIMIT = 40.0;
+      public static final boolean CURRENT_LIMIT_ENABLED = true;
+
+      public static final double THRESHOLD = 0;
+    }
+
+    public static class ArmConstants {}
+  }
 
   public static class ElevatorConstants {
     public static final double CURRENT_LIMIT = 40.0;
@@ -80,5 +89,18 @@ public final class SubsystemConstants {
     REAL,
     SIM,
     REPLAY
+  }
+
+  public static class CoralScorerConstants {
+    public static class CoralScorerArmConstants {
+      public static final double CURRENT_LIMIT = 35.0;
+      public static final boolean CURRENT_LIMIT_ENABLED = true;
+
+      public static final double DEFAULT_THRESHOLD = 1;
+      public static final double ARM_GEAR_RATIO = 1;
+
+      public static final double ARM_ZERO_ANGLE = 0;
+      public static final double STOW_SETPOINT_DEG = 0;
+    }
   }
 }

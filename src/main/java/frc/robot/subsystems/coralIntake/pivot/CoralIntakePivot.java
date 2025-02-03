@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.arms;
+package frc.robot.subsystems.coralIntake.pivot;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -16,13 +16,13 @@ import frc.robot.subsystems.commoniolayers.ArmIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
-public class Arm extends SubsystemBase {
+public class CoralIntakePivot extends SubsystemBase {
   private final ArmIO arm;
   private final ArmIOInputsAutoLogged pInputs = new ArmIOInputsAutoLogged();
 
-  private static LoggedTunableNumber kP;
-  private static LoggedTunableNumber kG;
-  private static LoggedTunableNumber kV;
+  private static LoggedTunableNumber kP = new LoggedTunableNumber("Coral Intake/kP:");
+  private static LoggedTunableNumber kG = new LoggedTunableNumber("Coral Intake/kG:");
+  private static LoggedTunableNumber kV = new LoggedTunableNumber("Coral Intake/kV:");
 
   private static double maxVelocityDegPerSec;
   private static double maxAccelerationDegPerSecSquared;
@@ -38,13 +38,13 @@ public class Arm extends SubsystemBase {
   private ArmFeedforward armFFModel;
 
   /** Creates a new Arm. */
-  public Arm(ArmIO arm) {
+  public CoralIntakePivot(ArmIO arm) {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
-        kG.initDefault(0.29);
+        kG.initDefault(0.3);
         kV.initDefault(1);
-        kP.initDefault(1.123);
+        kP.initDefault(2.65);
         break;
       case REPLAY:
         kG.initDefault(0.29);
@@ -104,7 +104,7 @@ public class Arm extends SubsystemBase {
   public void armStop() {
     arm.stop();
   }
-  // what does this do?
+
   public void setArmGoal(double goalDegrees) {
     this.goalDegrees = goalDegrees;
     armGoalStateDegrees = new TrapezoidProfile.State(goalDegrees, 0);
@@ -130,7 +130,7 @@ public class Arm extends SubsystemBase {
 
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
-    Logger.processInputs("Arm", pInputs);
+    Logger.processInputs("Coral Pivot", pInputs);
     Logger.recordOutput("arm error", getArmError());
 
     Logger.recordOutput("arm goal", goalDegrees);
