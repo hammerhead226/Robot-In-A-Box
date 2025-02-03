@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
+
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -41,6 +42,7 @@ public class Elevator extends SubsystemBase {
 
   private double goal;
   private ElevatorFeedforward elevatorFFModel;
+  private final ElevatorVis measured;
 
   private ElevatorVis measuredVisualizer;
   private ElevatorVis setpointVisualizer;
@@ -94,6 +96,7 @@ public class Elevator extends SubsystemBase {
         barkG.initDefault(0);
         break;
     }
+    measured = new ElevatorVis("measured", Color.kRed);
 
     // CHANGE THIS VALUE TO MATCH THE ELEVATOR
     setExtenderGoal(1);
@@ -164,6 +167,8 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Alliance", DriverStation.getAlliance().isPresent());
 
     elevator.updateInputs(eInputs);
+    measured.update(extenderCurrent.position);
+    CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position);
 
     extenderCurrent =
         extenderProfile.calculate(

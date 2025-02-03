@@ -91,6 +91,7 @@ public class CoralScorerFlywheel extends SubsystemBase {
     return new InstantCommand(() -> stop(), this);
   }
 
+  
   /** Stops the flywheel. */
   public void stop() {
     io.stop();

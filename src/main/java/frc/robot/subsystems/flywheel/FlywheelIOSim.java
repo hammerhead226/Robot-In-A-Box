@@ -31,7 +31,7 @@ public class FlywheelIOSim implements FlywheelIO {
 
   private DCMotorSim sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(motor, gearBoxMotorCount, gearing), motor, 0.0);
+          LinearSystemId.createDCMotorSystem(motor, gearBoxMotorCount, gearing), motor, 0.0, 0.1);
 
   private PIDController pid = new PIDController(0.0, 0.0, 0.0);
 

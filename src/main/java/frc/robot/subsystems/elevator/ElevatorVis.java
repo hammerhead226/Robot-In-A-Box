@@ -23,6 +23,7 @@ public class ElevatorVis {
     this.elevatorMecha =
         elevatorRoot.append(
             new LoggedMechanismLigament2d("elevator", 2, 90, 10, new Color8Bit(color)));
+            new LoggedMechanismLigament2d("elevator", 2, 90, 10, new Color8Bit(color));
 
     Logger.recordOutput("ElevatorVis/mechanism2d/" + elevatorKey, this.elevatorPanel);
   }
@@ -30,6 +31,7 @@ public class ElevatorVis {
   public void update(double length) {
 
     // Sets the extending length of the elevator
+    // elevatorRoot.setPosition(50, position);
     // elevatorRoot.setPosition(50, position);
     elevatorMecha.setLength(length);
     // elevatorRoot.setPosition(50, position);

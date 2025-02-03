@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakingAlgaeParallel;
+import frc.robot.commands.ReleaseClawParallel;
+import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.TunerConstants;
@@ -36,6 +38,8 @@ import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheelIOSim;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheelIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -53,6 +57,7 @@ import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
 import frc.robot.subsystems.led.LED_IOSim;
+import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -152,6 +157,8 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        
+
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
@@ -165,7 +172,6 @@ public class RobotContainer {
         led = new LED(new LED_IO() {});
         break;
     }
-
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -189,7 +195,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
-    configureButtonBindings();
+    // configureButtonBindings();
+    test();
   }
 
   /**
@@ -198,6 +205,22 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+  private void test() {
+    keyboard
+        .getXButton()
+        .onTrue(new ReleaseClawParallel(ReefHeight.L2, elevator, csArm, csFlywheel));
+    keyboard
+        .getZButton()
+        .onTrue(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm, csFlywheel));
+
+    keyboard
+        .getXButton()
+        .whileFalse(new ReleaseClawParallel(ReefHeight.L2, elevator, csArm,csFlywheel));
+    keyboard
+        .getZButton()
+        .whileFalse(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm, csFlywheel));
+  }
+
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(

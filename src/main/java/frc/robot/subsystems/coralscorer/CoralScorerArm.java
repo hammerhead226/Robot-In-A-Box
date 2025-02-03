@@ -66,9 +66,10 @@ public class CoralScorerArm extends SubsystemBase {
         break;
     }
 
+    measuredVisualizer = new PivotVis("measured", Color.kRed);
     // CHANGE PER ARM
-    maxVelocityDegPerSec = 500;
-    maxAccelerationDegPerSecSquared = 500;
+    maxVelocityDegPerSec = 90;
+    maxAccelerationDegPerSecSquared = 180;
     // maxAccelerationDegPerSecSquared = 180;
 
     armConstraints =
@@ -130,7 +131,7 @@ public class CoralScorerArm extends SubsystemBase {
   @Override
   public void periodic() {
     coralScorerArm.updateInputs(csaInputs);
-
+    measuredVisualizer.update(armCurrentStateDegrees.position);
     armCurrentStateDegrees =
         armProfile.calculate(
             SubsystemConstants.LOOP_PERIOD_SECONDS, armCurrentStateDegrees, armGoalStateDegrees);
