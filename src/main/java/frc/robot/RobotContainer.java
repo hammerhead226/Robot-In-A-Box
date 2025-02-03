@@ -32,6 +32,7 @@ import frc.robot.commands.ReleaseClawParallel;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.commands.IntakeFromSource;
 import frc.robot.commands.algaeintosource.AlgaeIntoSource;
+import frc.robot.commands.Stow;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
@@ -68,6 +69,9 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.KeyboardInputs;
+
+import java.lang.ModuleLayer.Controller;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -236,6 +240,8 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+
+    controller.a().onTrue(new Stow(csArm, elevator));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
