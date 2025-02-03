@@ -29,8 +29,11 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -346,6 +349,34 @@ public class Drive extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
+  @AutoLogOutput(key = "bodo")
+  public Pose2d boof() {
+    return new Pose2d(
+        poseEstimator.getEstimatedPosition().getX(),
+        poseEstimator.getEstimatedPosition().getY() + 0.25,
+        poseEstimator.getEstimatedPosition().getRotation());
+  }
+
+  @AutoLogOutput(key = "godo")
+  public Pose2d doof() {
+    return new Pose2d(
+        poseEstimator.getEstimatedPosition().getX(),
+        poseEstimator.getEstimatedPosition().getY() - 0.25,
+        poseEstimator.getEstimatedPosition().getRotation());
+  }
+
+  @AutoLogOutput(key = "flipped odo")
+  public Pose3d goof() {
+    return new Pose3d(
+        new Translation3d(
+            poseEstimator.getEstimatedPosition().getTranslation().getX(),
+            poseEstimator.getEstimatedPosition().getTranslation().getY(),
+            0.2),
+        new Rotation3d(
+            Math.toRadians(90),
+            0,
+            poseEstimator.getEstimatedPosition().getRotation().getRadians()));
+  }
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();

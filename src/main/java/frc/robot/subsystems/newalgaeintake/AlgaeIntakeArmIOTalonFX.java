@@ -17,11 +17,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 
-public class AlgaeIntakeArmIOTalonFX implements ArmIO {
+public class AlgaeIntakeArmIOTalonFX implements AlgaeIntakeArmIO {
   private final TalonFX leader;
   private final TalonFX follower;
 
@@ -88,7 +87,7 @@ public class AlgaeIntakeArmIOTalonFX implements ArmIO {
   }
 
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
+  public void updateInputs(AlgaeIntakeArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps, pitch);
     inputs.gyroConnected = BaseStatusSignal.refreshAll(pitch).equals(StatusCode.OK);

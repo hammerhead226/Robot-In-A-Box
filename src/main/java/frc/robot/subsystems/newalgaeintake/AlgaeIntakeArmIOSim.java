@@ -15,8 +15,8 @@ import frc.robot.constants.SubsystemConstants;
 public class AlgaeIntakeArmIOSim implements AlgaeIntakeArmIO {
 
   // SIM VARIABLES (CHANGE)
-  private int gearBoxMotorCount = 1;
-  private double gearing = 1;
+  private int gearBoxMotorCount = 2;
+  private double gearing = 12;
   private double armLength = Units.inchesToMeters(1); // CHANGE PER ARM
   private double momentOfInertia = SingleJointedArmSim.estimateMOI(armLength, 1); // CHANGE PER ARM
   private double minAngleRadians = 0;
