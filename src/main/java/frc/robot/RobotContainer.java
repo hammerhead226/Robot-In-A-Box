@@ -31,6 +31,7 @@ import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.ReleaseClawParallel;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.commands.IntakeFromSource;
+import frc.robot.commands.algaeintosource.AlgaeIntoSource;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
@@ -88,6 +89,7 @@ public class RobotContainer {
 
   private final CoralScorerArm csArm;
  // private final CoralScorerFlywheel coralIntake;
+ 
   private final Elevator elevator;
   private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
@@ -113,6 +115,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
         csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
+       
 
         vision =
             new Vision(
@@ -141,6 +144,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+   
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
@@ -167,8 +171,6 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
-        
-
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
