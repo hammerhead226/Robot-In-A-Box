@@ -122,6 +122,7 @@ public final class SubsystemConstants {
 
       public static final double ARM_ZERO_ANGLE = 0;
       public static final double STOW_SETPOINT_DEG = 50;
+      public static final double SCORING_SETPOINT_DEG = 0;
     }
 
     public static class AlgaeScorerFlywheelConstants {
