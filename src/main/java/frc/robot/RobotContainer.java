@@ -30,9 +30,13 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.ReleaseClawParallel;
 import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
+import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.commoniolayers.FlywheelIO;
+import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIO;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
@@ -58,6 +62,7 @@ import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
 import frc.robot.subsystems.led.LED_IOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
+import frc.robot.subsystems.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -82,6 +87,7 @@ public class RobotContainer {
   private final KeyboardInputs keyboard = new KeyboardInputs(0);
 
   private final CoralScorerArm csArm;
+ // private final CoralScorerFlywheel coralIntake;
   private final Elevator elevator;
   private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
@@ -118,7 +124,9 @@ public class RobotContainer {
         // TODO change lead, follower, gyro IDs, etc.
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
         algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOTalonFX(0, 0, 0));
-        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim(), AlgaeState.DEFAULT);
+        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim(), new CoralIntakeSensorIO() {
+          
+        }, CoralState.DEFAULT, AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, ""));
         break;
 
@@ -142,7 +150,9 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIOSim());
         algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
-        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim(), AlgaeState.DEFAULT);
+        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim(), new CoralIntakeSensorIO() {
+          
+        }, CoralState.DEFAULT, AlgaeState.DEFAULT);
         led = new LED(new LED_IOSim());
         break;
 
@@ -168,7 +178,9 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIO() {});
         algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
-        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim(), AlgaeState.DEFAULT);
+        csFlywheel = new CoralScorerFlywheel(new CoralScorerFlywheelIOSim(), new CoralIntakeSensorIO() {
+          
+        }, CoralState.DEFAULT, AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
         break;
     }
@@ -196,7 +208,7 @@ public class RobotContainer {
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
     // configureButtonBindings();
-    test();
+    configureButtonBindings();
   }
 
   /**
@@ -276,7 +288,6 @@ public class RobotContainer {
                 elevator.setElevatorTarget(0.2, 0.05),
                 new InstantCommand(() -> csFlywheel.runVolts(12))));
   }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

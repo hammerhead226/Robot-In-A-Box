@@ -66,6 +66,10 @@ public final class SubsystemConstants {
     public static final double COLOR_VIOLET = 0.91;
   }
 
+  public static class CoralIntakeFlywheelConstants {
+    public static final double CORAL_DIST = 13;
+  }
+
   public static enum LED_STATE {
     BLUE,
     RED,
@@ -93,6 +97,10 @@ public final class SubsystemConstants {
 
   public static enum AlgaeState {
     NO_ALGAE,
+    CURRENT, DEFAULT
+  }
+  public static enum CoralState {
+    NO_CORAL,
     SENSOR,
     CURRENT,
     DEFAULT
@@ -116,6 +124,14 @@ public final class SubsystemConstants {
 
     public static class AlgaeScorerFlywheelConstants {
       public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 10;
+      public static final double INTAKE_SETPOINT_DEG = 0;
+      public static final double STOW_SETPOINT_DEG = 0;
+
+      public static final double ARM_VELOCITY_DEGPERSEC = 0;
+    }
+
+    public static class CoralScorerFlywheelConstants {
+      public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 0; 
     }
   }
 }
