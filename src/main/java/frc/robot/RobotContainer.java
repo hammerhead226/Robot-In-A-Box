@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -66,7 +67,10 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.KeyboardInputs;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -304,7 +308,7 @@ public class RobotContainer {
     driveController.rightBumper().onTrue(new AlignToReefAuto(drive, led));
 
     driveController.leftBumper().onTrue(new AutoAlignToSource(drive, led));
-    driveController.rightTrigger().onTrue(new ReleaseAlgae(csFlywheel));
+    driveController.rightTrigger().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
 
     // manipController.a().onTrue(new InstantCommand(() ->
     // elevator.setElevatorTarget(FieldConstants.ReefHeight.L1.height, 1)));
@@ -327,6 +331,13 @@ public class RobotContainer {
     driveController
         .y()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
+
+    controller.leftBumper().onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
+    controller.leftBumper().onFalse(
+        new ParallelCommandGroup(
+            csArm.setArmTarget(60, 4),
+            elevator.setElevatorTarget(0.2, 0.05),
+            new InstantCommand(() -> csFlywheel.runVolts(0))));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
