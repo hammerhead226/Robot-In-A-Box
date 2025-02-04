@@ -327,6 +327,13 @@ public class RobotContainer {
     driveController
         .y()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
+
+    controller.leftBumper().onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
+    controller.leftBumper().onFalse(
+        new ParallelCommandGroup(
+            csArm.setArmTarget(60, 4),
+            elevator.setElevatorTarget(0.2, 0.05),
+            new InstantCommand(() -> csFlywheel.runVolts(0))));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
