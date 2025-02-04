@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeFlywheel;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.LED;
@@ -67,7 +68,7 @@ public class AutoPickupCoral extends Command {
 
   @Override
   public void execute() {
-    
+    led.setState(LED_STATE.FLASHING_YELLOW);
     pathCommand.execute();
   }
 
@@ -78,6 +79,7 @@ public class AutoPickupCoral extends Command {
 
   @Override
   public boolean isFinished() {
+    led.setState(LED_STATE.PAPAYA_ORANGE);
     return false;
 
     // TODO in coralIntake, implment hasCoral

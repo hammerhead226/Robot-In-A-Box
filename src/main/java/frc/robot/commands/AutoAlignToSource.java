@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.LED;
 import java.util.List;
@@ -88,15 +89,19 @@ public class AutoAlignToSource extends Command {
   @Override
   public void execute() {
     pathCommand.execute();
+    led.setState(LED_STATE.FLASHING_YELLOW);
   }
 
   @Override
   public void end(boolean interrupted) {
     pathCommand.cancel();
+    led.setState(LED_STATE.RED);
   }
 
   @Override
   public boolean isFinished() {
+    led.setState(LED_STATE.PURPLE);
     return false;
+    
   }
 }

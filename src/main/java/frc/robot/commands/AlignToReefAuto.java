@@ -106,11 +106,12 @@ public class AlignToReefAuto extends Command {
   @Override
   public void end(boolean interrupted) {
     pathCommand.cancel();
+    led.setState(LED_STATE.RED);
   }
 
   @Override
   public boolean isFinished() {
-    // or any other way we can measure "close enough" to desired position
-    return false;
+  led.setState(LED_STATE.GREEN);   
+ return false;
   }
 }
