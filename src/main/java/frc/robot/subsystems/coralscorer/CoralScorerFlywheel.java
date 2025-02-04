@@ -9,10 +9,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
-import frc.robot.constants.SubsystemConstants.AlgaeState;
-import frc.robot.subsystems.commoniolayers.FlywheelIO;
-import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
@@ -35,12 +33,12 @@ public class CoralScorerFlywheel extends SubsystemBase {
 
   private CoralState lastCoralState;
 
- 
-
   /** Creates a new Flywheel. */
- 
   public CoralScorerFlywheel(
-      FlywheelIO flywheel, CoralIntakeSensorIO sensor, CoralState lastCoralState, AlgaeState lastAlgaeState) {
+      FlywheelIO flywheel,
+      CoralIntakeSensorIO sensor,
+      CoralState lastCoralState,
+      AlgaeState lastAlgaeState) {
     this.flywheel = flywheel;
     this.sensor = sensor;
     this.lastCoralState = lastCoralState;
@@ -107,7 +105,6 @@ public class CoralScorerFlywheel extends SubsystemBase {
     return new InstantCommand(() -> stop(), this);
   }
 
-  
   /** Stops the flywheel. */
   public void stop() {
     flywheel.stop();
@@ -150,7 +147,7 @@ public class CoralScorerFlywheel extends SubsystemBase {
 
   public CoralState seesCoral() {
     Logger.recordOutput("see note val", "default");
-    if ((sInputs.distance < SubsystemConstants.CoralIntakeFlywheelConstants.CORAL_DIST)) {
+    if ((sInputs.distance < SubsystemConstants.CORAL_DIST)) {
       Logger.recordOutput("see note val", "sensor");
       lastCoralState = CoralState.SENSOR;
       return CoralState.SENSOR;

@@ -5,24 +5,21 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.arms.Arm;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.elevator.Elevator;
-
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Stow extends Command {
   private final CoralScorerArm arm;
-private final Elevator elevator;
-private double elevatorpos;
-private double armangle;
+  private final Elevator elevator;
+  private double elevatorpos;
+  private double armangle;
 
   /** Creates a new Stow. */
   public Stow(CoralScorerArm arm, Elevator elevator) {
 
-this.arm = arm;
-this.elevator = elevator;
-
+    this.arm = arm;
+    this.elevator = elevator;
   }
 
   // Called when the command is initially scheduled.
@@ -46,6 +43,6 @@ this.elevator = elevator;
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   return Math.abs(elevatorpos - 10)>= 2 && Math.abs(armangle - 10)>= 2;
+    return Math.abs(elevatorpos - 10) >= 2 && Math.abs(armangle - 10) >= 2;
   }
 }

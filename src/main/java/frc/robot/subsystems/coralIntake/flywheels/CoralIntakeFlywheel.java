@@ -141,7 +141,7 @@ public class CoralIntakeFlywheel extends SubsystemBase {
 
   public CoralState seesCoral() {
     Logger.recordOutput("see note val", "default");
-    if ((sInputs.distance < SubsystemConstants.CoralIntakeFlywheelConstants.CORAL_DIST)) {
+    if ((sInputs.distance < SubsystemConstants.CORAL_DIST)) {
       Logger.recordOutput("see note val", "sensor");
       lastCoralState = CoralState.SENSOR;
       return CoralState.SENSOR;

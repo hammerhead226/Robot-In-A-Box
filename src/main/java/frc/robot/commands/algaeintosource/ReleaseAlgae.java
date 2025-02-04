@@ -1,7 +1,6 @@
 package frc.robot.commands.algaeintosource;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 
 public class ReleaseAlgae extends Command {
@@ -17,8 +16,7 @@ public class ReleaseAlgae extends Command {
 
   @Override
   public void initialize() {
-    coralScorerFlywheel.runVolts(
-        SubsystemConstants.CoralScorerConstants.CoralScorerFlywheelConstants.DEFAULT_VOLTS);
+    coralScorerFlywheel.runVolts(12);
   }
 
   @Override

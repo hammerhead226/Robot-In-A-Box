@@ -84,6 +84,6 @@ public class AlgaeIntake extends SubsystemBase {
 
   public boolean atFeederSetpoint() {
     return Math.abs(getFeederError())
-        <= SubsystemConstants.AlgaeIntakeConstants.FeederConstants.THRESHOLD;
+        <= SubsystemConstants.CoralScorerConstants.AlgaeScorerFlywheelConstants.THRESHOLD;
   }
 }

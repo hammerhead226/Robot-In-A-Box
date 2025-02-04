@@ -96,12 +96,9 @@ public class AlignToReefAuto extends Command {
   public void execute() {
     // we could switch to PID as we get closer to the wall? for instance
     // if both CANRanges measure a short distance
-   led.setState(LED_STATE.FLASHING_YELLOW);
+    led.setState(LED_STATE.FLASHING_YELLOW);
     pathCommand.execute();
-
   }
-
-
 
   @Override
   public void end(boolean interrupted) {
