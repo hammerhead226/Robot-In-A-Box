@@ -1,15 +1,15 @@
-package frc.robot.subsystems.commoniolayers;
+package frc.robot.subsystems.indexers;
 
 import org.littletonrobotics.junction.AutoLog;
 
 public interface IndexerIO {
   @AutoLog
   public static class IndexerIOInputs {
-    public double indexerPositionInch = 0;
-    public double indexerVelocityInchesPerSecond = 0;
-    public double currentAmps = 0;
-    public double appliedVolts = 0;
-    public double positionSetpointInch = 0;
+    double indexerPositionInch = 0;
+    double indexerVelocityInchesPerSecond = 0;
+    double currentAmps = 0;
+    double appliedVolts = 0;
+    double positionSetpointInch = 0;
   }
 
   default void updateInputs(IndexerIOInputs inputs) {}

@@ -3,14 +3,11 @@ package frc.robot.subsystems.elevator;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.coralscorer.CoralScorerArm;
-
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -42,10 +39,6 @@ public class Elevator extends SubsystemBase {
 
   private double goal;
   private ElevatorFeedforward elevatorFFModel;
-  private final ElevatorVis measured;
-
-  private ElevatorVis measuredVisualizer;
-  private ElevatorVis setpointVisualizer;
 
   public Elevator(ElevatorIO elevator) {
     this.elevator = elevator;
@@ -96,15 +89,11 @@ public class Elevator extends SubsystemBase {
         barkG.initDefault(0);
         break;
     }
-    measured = new ElevatorVis("measured", Color.kRed);
 
     // CHANGE THIS VALUE TO MATCH THE ELEVATOR
-    setExtenderGoal(1.3);
+    setExtenderGoal(1);
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
-
-    measuredVisualizer = new ElevatorVis("measured", Color.kRed);
-    setpointVisualizer = new ElevatorVis("setpoint", Color.kGreen);
 
     updateTunableNumbers();
   }
@@ -167,8 +156,6 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Alliance", DriverStation.getAlliance().isPresent());
 
     elevator.updateInputs(eInputs);
-    measured.update(extenderCurrent.position);
-    CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position);
 
     extenderCurrent =
         extenderProfile.calculate(
@@ -177,12 +164,6 @@ public class Elevator extends SubsystemBase {
     setPositionExtend(extenderCurrent.position, extenderCurrent.velocity);
 
     Logger.processInputs("Elevator", eInputs);
-
-    measuredVisualizer.update(0.55 + extenderCurrent.position);
-    setpointVisualizer.update(0.55 + extenderGoal.position);
-
-    CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position - 0.1);
-    CoralScorerArm.setpointVisualizer.updateVertical(extenderGoal.position - 0.1);
 
     updateTunableNumbers();
   }
