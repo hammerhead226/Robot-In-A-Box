@@ -1,4 +1,4 @@
-package frc.robot.commands.algaeintosource;
+package frc.robot.commands.algaeintoprocesser;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -6,14 +6,14 @@ import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.elevator.Elevator;
 
-public class AlgaeIntoSource extends Command {
+public class AlgaeIntoProcesser extends Command {
   Elevator elevator;
   CoralScorerArm coralScorerArm;
   CoralScorerFlywheel coralScorerFlywheel;
 
   Command sequence;
 
-  public AlgaeIntoSource(
+  public AlgaeIntoProcesser(
       Elevator elevator, CoralScorerArm coralScorerArm, CoralScorerFlywheel coralScorerFlywheel) {
     this.elevator = elevator;
     this.coralScorerArm = coralScorerArm;
