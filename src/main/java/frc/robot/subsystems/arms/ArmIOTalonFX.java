@@ -17,6 +17,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 
@@ -46,16 +47,17 @@ public class ArmIOTalonFX implements ArmIO {
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
     follower = new TalonFX(followID, SubsystemConstants.CANBUS);
-    pigeon = new Pigeon2(gyroID, SubsystemConstants.CANBUS);
+    pigeon = new Pigeon2(gyroID, SubsystemConstants.CANBUS); // use encoder here
     pigeon.reset();
 
     leader.getConfigurator().apply(config);
 
     follower.setControl(new Follower(leadID, true));
 
-    pitch = pigeon.getRoll();
+    pitch = pigeon.getRoll(); // rename and get abs encoder (replace)
+    // turnAbsolutePosition = cancoder.getAbsolutePosition();
 
-    startAngleDegs = pitch.getValueAsDouble();
+    // startAngleDegs = turnAbsolutePosition.getValueAsDouble();
 
     leader.setPosition(
         Conversions.degreesToFalcon(

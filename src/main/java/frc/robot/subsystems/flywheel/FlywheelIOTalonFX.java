@@ -27,6 +27,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.subsystems.commoniolayers.FlywheelIO;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
   private static final double GEAR_RATIO = 1.5;
@@ -63,8 +64,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     inputs.velocityRadPerSec =
         Units.rotationsToRadians(leaderVelocity.getValueAsDouble()) / GEAR_RATIO;
     inputs.appliedVolts = leaderAppliedVolts.getValueAsDouble();
-    inputs.currentAmps =
-        new double[] {leaderCurrent.getValueAsDouble(), followerCurrent.getValueAsDouble()};
+    inputs.currentAmps = leaderCurrent.getValueAsDouble();
   }
 
   @Override

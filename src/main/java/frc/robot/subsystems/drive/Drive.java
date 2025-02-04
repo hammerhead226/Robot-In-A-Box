@@ -29,8 +29,11 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -40,6 +43,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.Units.*;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -47,14 +51,17 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SimConstants.Mode;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.vision.ObjectDetection;
+import frc.robot.subsystems.vision.Vision.VisionConsumer;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -104,6 +111,8 @@ public class Drive extends SubsystemBase {
 
   private final TimeInterpolatableBuffer<Pose2d> gamePieceBuffer =
       TimeInterpolatableBuffer.createBuffer(OBJECT_BUFFER_SIZE_SECONDS);
+
+  private Pose2d nearestSide = new Pose2d();
 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
@@ -335,11 +344,12 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the current odometry pose. */
+ 
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
-
+ 
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
@@ -391,5 +401,76 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+
+  private class toPoseEstimatorConsumer implements VisionConsumer {
+    @Override
+    public void accept(
+        Pose2d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs) {
+      poseEstimator.addVisionMeasurement(
+          visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+    }
+  }
+
+  public VisionConsumer getToPoseEstimatorConsumer() {
+    return new toPoseEstimatorConsumer();
+  }
+
+  private class rawGyroRotationSupplier implements Supplier<Rotation2d> {
+    @Override
+    public Rotation2d get() {
+      return rawGyroRotation;
+    }
+  }
+
+  public rawGyroRotationSupplier getRawGyroRotationSupplier() {
+    return new rawGyroRotationSupplier();
+  }
+
+  public Pose2d getNearestSide() {
+    return nearestSide;
+  }
+
+  public void setNearestReefSide() {
+    Translation2d start = FieldConstants.Reef.center;
+    Translation2d end = getPose().getTranslation();
+    Translation2d v = end.minus(start);
+    Rotation2d angle = new Rotation2d(v.getX(), v.getY());
+
+    // https://www.desmos.com/calculator/44dd9koglh
+
+    // negate since branchPositions is CW not CCW
+    // +6/12 since branchPositions starts at branch B not the +x axis
+    double rawRotations = angle.getRotations();
+    double adjustedRotations = -rawRotations + (7.0 / 12.0);
+
+    // % 1 to just get the fractional part of the rotation
+    // multiply by 12 before flooring so [0,1) maps to 0,1,2...10,11 evenly
+    double fractionalRotation = adjustedRotations % 1;
+    if (fractionalRotation < 0) {
+      fractionalRotation++;
+    }
+    int index = (int) Math.floor(fractionalRotation * 12);
+
+    Logger.recordOutput("align to reef target index", index);
+
+    Pose2d result =
+        FieldConstants.Reef.branchPositions.get(index).get(FieldConstants.ReefHeight.L1).toPose2d();
+
+    // flip rotation
+    Rotation2d rotation2d = result.getRotation().rotateBy(new Rotation2d(Math.PI));
+
+    // back up target position (so it doesn't clip)
+    // x is nearer/farther, y is sideways
+    Translation2d offsetFromBranch = new Translation2d(-0.7, 0);
+    offsetFromBranch = offsetFromBranch.rotateBy(rotation2d);
+    Translation2d translation2d = result.getTranslation().plus(offsetFromBranch);
+
+    result = new Pose2d(translation2d, rotation2d);
+
+    Logger.recordOutput("align to reef target Pose2d", result);
+    nearestSide = result;
   }
 }
