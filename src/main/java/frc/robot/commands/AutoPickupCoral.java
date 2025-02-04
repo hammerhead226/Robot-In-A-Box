@@ -66,6 +66,7 @@ public class AutoPickupCoral extends Command {
 
   @Override
   public void execute() {
+
     pathCommand.execute();
   }
 
