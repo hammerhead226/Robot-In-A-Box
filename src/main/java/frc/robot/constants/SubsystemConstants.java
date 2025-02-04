@@ -125,6 +125,9 @@ public final class SubsystemConstants {
       public static final double CURRENT_LIMIT = 0;
     }
 
-    public static final String CoralScorerFlywheelConstants = null;
+    public static class CoralScorerFlywheelConstants {
+      public static final String CoralScorerFlywheelConstants = null;
+      public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 10;
+    }
   }
 }
