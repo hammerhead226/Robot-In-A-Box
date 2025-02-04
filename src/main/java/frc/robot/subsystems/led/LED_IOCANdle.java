@@ -23,10 +23,10 @@ public class LED_IOCANdle implements LED_IO {
   StrobeAnimation flashGreen = new StrobeAnimation(0, 204, 0, 0, 0.01, 57 + 24);
   StrobeAnimation flashRed = new StrobeAnimation(204, 0, 0, 0, 0.01, 57 + 24);
   StrobeAnimation flashBlue = new StrobeAnimation(0, 0, 255, 0, 0.01, 57 + 24);
-  StrobeAnimation flashYellow = new StrobeAnimation(255, 255, 0, 0, 0.01, 57 + 24);
+  StrobeAnimation fashYellow = new StrobeAnimation(255, 255, 0, 0, 0.01, 57 + 24);
   StrobeAnimation flashWhite = new StrobeAnimation(255, 255, 255, 255, 0.01, 57 + 24);
   StrobeAnimation halfFlashWhite = new StrobeAnimation(255, 255, 255, 255, 0.01, 28 + 24, 0);
- 
+
   FireAnimation rainbow = new FireAnimation(0.3, 0.03, 57 + 24, 0.1, 0.1);
   // ColorFlowAnimation rainbow = new ColorFlowAnimation(0, 0, 255, 0, 0.343, 57,
   // Direction.Forward);
@@ -129,9 +129,6 @@ public class LED_IOCANdle implements LED_IO {
       case FLASHING_WHITE:
         // TODO:: SIGNAL TO HUMAN PLAYER | FLASHING WHITE
         candle.animate(flashWhite, 0);
-        break;
-        case FLASHING_YELLOW:
-        candle.animate(flashYellow, 0);
         break;
       case FLASHING_GREEN:
         // TODO:: AIMBOT | FLASHING GREEN
