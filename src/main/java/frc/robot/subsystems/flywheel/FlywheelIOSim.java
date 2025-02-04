@@ -19,6 +19,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.commoniolayers.FlywheelIO;
 
 public class FlywheelIOSim implements FlywheelIO {
   // CHANGE THESE VALUES TO MATCH YOUR MOTOR AND GEARBOX
@@ -30,7 +31,7 @@ public class FlywheelIOSim implements FlywheelIO {
 
   private DCMotorSim sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(motor, gearBoxMotorCount, gearing), motor, 0.0);
+          LinearSystemId.createDCMotorSystem(motor, gearBoxMotorCount, gearing), motor, 0.0, 0.1);
 
   private PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
@@ -57,7 +58,7 @@ public class FlywheelIOSim implements FlywheelIO {
     inputs.positionRad = 0.0;
     inputs.velocityRadPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
-    inputs.currentAmps = new double[] {sim.getCurrentDrawAmps()};
+    inputs.currentAmps = sim.getCurrentDrawAmps();
   }
 
   @Override

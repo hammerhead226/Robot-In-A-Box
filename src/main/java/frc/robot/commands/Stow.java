@@ -5,29 +5,39 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.flywheeler.Flywheeler;
+import frc.robot.subsystems.arms.Arm;
+import frc.robot.subsystems.coralscorer.CoralScorerArm;
+import frc.robot.subsystems.elevator.Elevator;
+
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class IntakingFromTheSource extends Command {
+public class Stow extends Command {
+  private final CoralScorerArm arm;
+private final Elevator elevator;
+private double elevatorpos;
+private double armangle;
 
-  private final Flywheel flywheel;
+  /** Creates a new Stow. */
+  public Stow(CoralScorerArm arm, Elevator elevator) {
 
-  /** Creates a new IntakingFromTheSource. */
-  public IntakingFromTheSource() {
-    // Use addRequirements() here to declare subsystem dependencies.
+this.arm = arm;
+this.elevator = elevator;
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
-    DigitalInput input = new DigitalInput(0);
-
+    elevator.setPositionExtend(5, 20);
+    arm.setPositionDegs(0, 20);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    elevatorpos = elevator.getElevatorPosition();
+    armangle = arm.getArmPositionDegs();
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -36,6 +46,6 @@ public class IntakingFromTheSource extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+   return Math.abs(elevatorpos - 10)>= 2 && Math.abs(armangle - 10)>= 2;
   }
 }
