@@ -21,10 +21,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AlignToProcessor;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.AutoAlignToSource;
 import frc.robot.commands.DriveCommands;
@@ -93,7 +93,6 @@ public class RobotContainer {
   private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
 
-  
   private final CoralScorerFlywheel csFlywheel;
 
   // Dashboard inputs
@@ -255,17 +254,17 @@ public class RobotContainer {
 
     driveController.leftTrigger().onTrue(new Stow(csArm, elevator));
 
-    //driveController.a().onTrue(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm, csFlywheel));
+    // driveController.a().onTrue(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm,
+    // csFlywheel));
     driveController.b().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
 
-    //why is this like this?
+    // why is this like this?
     driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
 
     driveController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     driveController.rightBumper().whileTrue(new AlignToReefAuto(drive, led));
-    //TODO: impliment align to processer
-    //driveController.rightTrigger().whileTrue();
-    
+    driveController.rightTrigger().whileTrue(new AlignToProcessor(drive, led));
+
     // // Lock to 0° when A button is held
     // controller
     //     .a()
@@ -301,7 +300,6 @@ public class RobotContainer {
     /*controller.b().whileTrue(algaeArm.setArmTarget(70, 2));
     controller.b().whileFalse(algaeArm.setArmTarget(20, 2));*/
 
-
     manipController.rightTrigger().onTrue(new Stow(csArm, elevator));
     // driveController.a().whileTrue(new ReleaseClawParallel(scoringLevel, elevator, csArm,
     // csFlywheel));
@@ -328,9 +326,7 @@ public class RobotContainer {
         .y()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
 
-    manipController
-        .leftBumper()
-        .whileTrue(new AutoAlignToSource(drive, led));
+    manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     manipController
         .rightBumper()
         .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
