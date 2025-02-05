@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.SubsystemConstants.ElevatorConstants;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
@@ -20,14 +21,17 @@ public class IntakingAlgaeParallel extends ParallelCommandGroup {
   private final CoralScorerFlywheel algaeIntake;
   /** Creates a new IntakingAlgaeParallel. */
   public IntakingAlgaeParallel(
-      Elevator elevator, CoralScorerArm arm, CoralScorerFlywheel algaeIntake) {
+      Elevator elevator,
+      CoralScorerArm arm,
+      CoralScorerFlywheel algaeIntake,
+      ReefHeight scoringLevel) {
     this.elevator = elevator;
     this.arm = arm;
     this.algaeIntake = algaeIntake;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        elevator.setElevatorTarget(1, ElevatorConstants.DEFAULT_THRESHOLD),
+        elevator.setElevatorTarget(scoringLevel.height, ElevatorConstants.DEFAULT_THRESHOLD),
         arm.setArmTarget(70, 2),
         new InstantCommand(() -> algaeIntake.runVolts(5)));
   }
