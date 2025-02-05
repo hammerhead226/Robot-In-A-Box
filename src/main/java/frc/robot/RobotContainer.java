@@ -27,11 +27,14 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.AutoAlignToSource;
+import frc.robot.commands.AutoPickupCoral;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeFromSourceParallel;
 import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.ReleaseClawParallel;
 import frc.robot.commands.Stow;
 import frc.robot.commands.algaeintosource.ReleaseAlgae;
+import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 import frc.robot.constants.FieldConstants;
 // import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.FieldConstants.ReefHeight;
@@ -91,6 +94,9 @@ public class RobotContainer {
   private final Elevator elevator;
   private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
+  // private final ObjectDetection objectDetection;
+  // private final ObjectDetectionConsumer odConsumer;
+  // private final ObjectDetectionIO odIO;
 
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final CommandXboxController manipController = new CommandXboxController(1);
@@ -132,6 +138,10 @@ public class RobotContainer {
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, ""));
         break;
+        // coralIntake = new IntakeFromSource(new CoralScorerFlywheel(), new CoralScorerArm(), new
+        // Elevator());
+        // objectDetection = new ObjectDetection(new ObjectDetectionConsumer() {}, new
+        // ObjectDetectionIO() {});
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -161,6 +171,10 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOSim());
+
+        // objectDetection = new ObjectDetection(new ObjectDetectionConsumer() {}, new
+        // ObjectDetectionIO() {});
+
         break;
 
       default:
@@ -190,6 +204,10 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
+
+        // objectDetection = new ObjectDetection(new ObjectDetectionConsumer() {}, new
+        // ObjectDetectionIO() {});
+
         break;
     }
     // Set up auto routines
@@ -213,6 +231,30 @@ public class RobotContainer {
     autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
 
     NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
+    NamedCommands.registerCommand("AutoAlignToSource", new AutoAlignToSource(drive, led));
+    NamedCommands.registerCommand(
+        "IntakeFromSource", new IntakeFromSourceParallel(csFlywheel, csArm, elevator));
+    NamedCommands.registerCommand(
+        "IntakingAlgae", new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
+    NamedCommands.registerCommand("Stow", new Stow(csArm, elevator));
+
+    NamedCommands.registerCommand(
+        "AlgaeIntoProcessor", new AlgaeIntoSource(elevator, csArm, csFlywheel));
+    NamedCommands.registerCommand("ReadyForAlgaeScore", new ReadyForAlgaeScore(elevator, csArm));
+    NamedCommands.registerCommand("ReleaseAlgae", new ReleaseAlgae(csFlywheel));
+    NamedCommands.registerCommand(
+        "ReleaseClawL1",
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
+    NamedCommands.registerCommand(
+        "ReleaseClawL2",
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
+    NamedCommands.registerCommand(
+        "ReleaseClawL3",
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
+    NamedCommands.registerCommand(
+        "ReleaseClawL4",
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+    NamedCommands.registerCommand("AutoPickupCoral", new AutoPickupCoral(null, drive, led));
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
     // configureButtonBindings();
@@ -243,7 +285,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
 
-    controller.a().onTrue(new Stow(csArm, elevator));
+    // controller.a().onTrue(new Stow(csArm, elevator));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -321,11 +363,23 @@ public class RobotContainer {
     driveController
         .b()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
     driveController
         .x()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
     driveController
         .y()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+
+    controller.leftBumper().onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
+    controller
+        .leftBumper()
+        .onFalse(
+            new ParallelCommandGroup(
+                csArm.setArmTarget(60, 4),
+                elevator.setElevatorTarget(0.2, 0.05),
+                new InstantCommand(() -> csFlywheel.runVolts(0))));
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
   }
   /**
