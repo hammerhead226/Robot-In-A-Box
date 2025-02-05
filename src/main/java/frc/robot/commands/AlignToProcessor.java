@@ -6,6 +6,8 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
@@ -31,6 +33,18 @@ public class AlignToProcessor extends Command {
   @Override
   public void initialize() {
     Pose2d targetPose = FieldConstants.Processor.centerFace;
+
+    // flip rotation
+    Rotation2d rotation2d = targetPose.getRotation().rotateBy(new Rotation2d(Math.PI));
+
+    // back up target position (so it doesn't clip)
+    // x is nearer/farther, y is sideways
+    Translation2d offsetFromBranch = new Translation2d(-0.7, 0);
+    offsetFromBranch = offsetFromBranch.rotateBy(rotation2d);
+    Translation2d translation2d = targetPose.getTranslation().plus(offsetFromBranch);
+
+    targetPose = new Pose2d(translation2d, rotation2d);
+
     Logger.recordOutput("align to reef target Pose2d", targetPose);
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), targetPose);
