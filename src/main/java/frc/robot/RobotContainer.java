@@ -250,7 +250,8 @@ public class RobotContainer {
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
             () -> driveController.leftBumper().getAsBoolean(),
-            () -> driveController.rightBumper().getAsBoolean()));
+            () -> driveController.rightBumper().getAsBoolean(),
+            () -> driveController.b().getAsBoolean()));
 
     driveController.leftTrigger().onTrue(new Stow(csArm, elevator));
 

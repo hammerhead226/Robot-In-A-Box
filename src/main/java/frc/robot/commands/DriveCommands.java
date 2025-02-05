@@ -104,7 +104,8 @@ public class DriveCommands {
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
       BooleanSupplier reefAlignAssistSupplier,
-      BooleanSupplier sourceAlignSupplier) {
+      BooleanSupplier sourceAlignSupplier,
+      BooleanSupplier processorAlignSupplier) {
     return Commands.run(
         () -> {
           rotationPID.setTolerance(1);
@@ -199,6 +200,27 @@ public class DriveCommands {
                 " turn to left source target",
                 new Pose2d(
                     FieldConstants.CoralStation.leftCenterFace.getTranslation(), targeRotation2d));
+            rotationError = drive.getRotation().getDegrees() - targeRotation2d.getDegrees();
+            // rotationPID.setSetpoint(targeRotation2d.getDegrees());
+
+            wantedRotationVelocity = Math.toRadians(profileRotation.calculate(rotationError));
+            rotationAssistEffort = (wantedRotationVelocity);
+          } else if (processorAlignSupplier.getAsBoolean()) {
+
+            forwardsError =
+                drive.getPose().getX() - (FieldConstants.Processor.centerFace.getX() + 0.2);
+            wantedForwardsVelocity = profileForward.calculate(forwardsError);
+            forwardsAssistEffort = (wantedForwardsVelocity - forwardSpeed) * speedDebuf * 0.5;
+
+            sidewaysError =
+                drive.getPose().getY() - (FieldConstants.Processor.centerFace.getY() + 0.4);
+            wantedSidewaysVelocity = profileSideways.calculate(sidewaysError);
+            sidewaysAssistEffort = (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuf * 0.5;
+
+            Rotation2d targeRotation2d;
+
+            targeRotation2d = FieldConstants.Processor.centerFace.getRotation();
+
             rotationError = drive.getRotation().getDegrees() - targeRotation2d.getDegrees();
             // rotationPID.setSetpoint(targeRotation2d.getDegrees());
 
