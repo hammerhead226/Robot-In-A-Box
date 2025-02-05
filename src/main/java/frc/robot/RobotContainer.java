@@ -80,7 +80,8 @@ public class RobotContainer {
   private final LED led;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController manipController = new CommandXboxController(1);
   private final Joystick joystikc = new Joystick(0);
   private final JoystickButton btn = new JoystickButton(joystikc, 4);
   private final KeyboardInputs keyboard = new KeyboardInputs(0);
@@ -92,8 +93,7 @@ public class RobotContainer {
   private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
 
-  private final CommandXboxController driveController = new CommandXboxController(0);
-  private final CommandXboxController manipController = new CommandXboxController(1);
+  
   private final CoralScorerFlywheel csFlywheel;
 
   // Dashboard inputs
@@ -243,7 +243,6 @@ public class RobotContainer {
         .getZButton()
         .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
 
-    controller.a().onTrue(new Stow(csArm, elevator));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -253,7 +252,20 @@ public class RobotContainer {
             () -> -driveController.getRightX(),
             () -> driveController.leftBumper().getAsBoolean(),
             () -> driveController.rightBumper().getAsBoolean()));
+
+    driveController.leftTrigger().onTrue(new Stow(csArm, elevator));
+
+    //driveController.a().onTrue(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm, csFlywheel));
+    driveController.b().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
+
+    //why is this like this?
     driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
+
+    driveController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
+    driveController.rightBumper().whileTrue(new AlignToReefAuto(drive, led));
+    //TODO: impliment align to processer
+    //driveController.rightTrigger().whileTrue();
+    
     // // Lock to 0° when A button is held
     // controller
     //     .a()
@@ -283,26 +295,16 @@ public class RobotContainer {
     // controller.y().whileTrue(elevator.setElevatorTarget(1.83, 1));
     // controller.y().whileFalse(elevator.setElevatorTarget(1, 1));
 
-    controller.x().whileTrue(csArm.setArmTarget(90, 1));
-    controller.x().whileFalse(csArm.setArmTarget(-90, 1));
+    // controller.x().whileTrue(csArm.setArmTarget(90, 1));
+    // controller.x().whileFalse(csArm.setArmTarget(-90, 1));
 
     /*controller.b().whileTrue(algaeArm.setArmTarget(70, 2));
     controller.b().whileFalse(algaeArm.setArmTarget(20, 2));*/
 
-    manipController
-        .rightBumper()
-        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
-    manipController
-        .rightBumper()
-        .onFalse(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
 
     manipController.rightTrigger().onTrue(new Stow(csArm, elevator));
     // driveController.a().whileTrue(new ReleaseClawParallel(scoringLevel, elevator, csArm,
     // csFlywheel));
-    driveController.rightBumper().onTrue(new AlignToReefAuto(drive, led));
-
-    driveController.leftBumper().onTrue(new AutoAlignToSource(drive, led));
-    driveController.rightTrigger().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
 
     // manipController.a().onTrue(new InstantCommand(() ->
     // elevator.setElevatorTarget(FieldConstants.ReefHeight.L1.height, 1)));
@@ -313,29 +315,25 @@ public class RobotContainer {
     // manipController.y().onTrue(new InstantCommand(() ->
     // elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 1)));
 
-    driveController
+    manipController
         .a()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
-    driveController
+    manipController
         .b()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
-    driveController
+    manipController
         .x()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
-    driveController
+    manipController
         .y()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
 
-    controller
+    manipController
         .leftBumper()
+        .whileTrue(new AutoAlignToSource(drive, led));
+    manipController
+        .rightBumper()
         .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
-    controller
-        .leftBumper()
-        .onFalse(
-            new ParallelCommandGroup(
-                csArm.setArmTarget(60, 4),
-                elevator.setElevatorTarget(0.2, 0.05),
-                new InstantCommand(() -> csFlywheel.runVolts(0))));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
