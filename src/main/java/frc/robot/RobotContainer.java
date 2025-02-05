@@ -24,12 +24,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AlignToProcessor;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.AutoAlignToSource;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakingAlgaeParallel;
-import frc.robot.commands.ReleaseClawParallel;
+import frc.robot.commands.SetClawLevel;
 import frc.robot.commands.Stow;
 import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 import frc.robot.constants.FieldConstants;
@@ -224,15 +223,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void test() {
-    keyboard
-        .getXButton()
-        .onTrue(new ReleaseClawParallel(ReefHeight.L2, elevator, csArm, csFlywheel));
-    keyboard
-        .getZButton()
-        .onTrue(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm, csFlywheel));
-  }
-
   private void configureButtonBindings() {
 
     keyboard
@@ -253,18 +243,19 @@ public class RobotContainer {
             () -> driveController.rightBumper().getAsBoolean(),
             () -> driveController.b().getAsBoolean()));
 
-    driveController.leftTrigger().onTrue(new Stow(csArm, elevator));
+    // driveController.x().onTrue(new Stow(elevator, csArm));
 
-    // driveController.a().onTrue(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm,
-    // csFlywheel));
+    driveController.a().onTrue(new SetClawLevel(ReefHeight.L1, elevator, csArm));
+    driveController.a().onFalse(new Stow(elevator, csArm));
     driveController.b().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
+    driveController.b().onFalse(new Stow(elevator, csArm));
 
     // why is this like this?
     driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
 
-    driveController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
-    driveController.rightBumper().whileTrue(new AlignToReefAuto(drive, led));
-    driveController.rightTrigger().whileTrue(new AlignToProcessor(drive, led));
+    // driveController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
+    // driveController.rightBumper().whileTrue(new AlignToReefAuto(drive, led));
+    // driveController.rightTrigger().whileTrue(new AlignToProcessor(drive, led));
 
     // // Lock to 0° when A button is held
     // controller
@@ -301,7 +292,7 @@ public class RobotContainer {
     /*controller.b().whileTrue(algaeArm.setArmTarget(70, 2));
     controller.b().whileFalse(algaeArm.setArmTarget(20, 2));*/
 
-    manipController.rightTrigger().onTrue(new Stow(csArm, elevator));
+    // manipController.rightTrigger().onTrue(new Stow(elevator, csArm));
     // driveController.a().whileTrue(new ReleaseClawParallel(scoringLevel, elevator, csArm,
     // csFlywheel));
 
@@ -314,18 +305,14 @@ public class RobotContainer {
     // manipController.y().onTrue(new InstantCommand(() ->
     // elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 1)));
 
-    manipController
-        .a()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
-    manipController
-        .b()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
-    manipController
-        .x()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
-    manipController
-        .y()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+    manipController.a().onTrue(new SetClawLevel(FieldConstants.ReefHeight.L1, elevator, csArm));
+    manipController.b().onTrue(new SetClawLevel(FieldConstants.ReefHeight.L2, elevator, csArm));
+    manipController.x().onTrue(new SetClawLevel(FieldConstants.ReefHeight.L3, elevator, csArm));
+    manipController.y().onTrue(new SetClawLevel(FieldConstants.ReefHeight.L4, elevator, csArm));
+    manipController.a().onFalse(new Stow(elevator, csArm));
+    manipController.b().onFalse(new Stow(elevator, csArm));
+    manipController.x().onFalse(new Stow(elevator, csArm));
+    manipController.y().onFalse(new Stow(elevator, csArm));
 
     manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     manipController

@@ -180,8 +180,8 @@ public class Elevator extends SubsystemBase {
     measuredVisualizer.update(0.55 + extenderCurrent.position);
     setpointVisualizer.update(0.55 + extenderGoal.position);
 
-    CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position - 0.1);
-    CoralScorerArm.setpointVisualizer.updateVertical(extenderGoal.position - 0.1);
+    CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position + 0.1);
+    CoralScorerArm.setpointVisualizer.updateVertical(extenderGoal.position + 0.1);
 
     updateTunableNumbers();
   }
