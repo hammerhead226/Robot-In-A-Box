@@ -19,12 +19,12 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.AutoAlignToSource;
 import frc.robot.commands.AutoPickupCoral;
@@ -34,7 +34,7 @@ import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.ReleaseClawParallel;
 import frc.robot.commands.Stow;
 import frc.robot.commands.algaeintosource.ReleaseAlgae;
-import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
+// import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 import frc.robot.constants.FieldConstants;
 // import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.FieldConstants.ReefHeight;
@@ -81,6 +81,9 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final LED led;
+
+  // Autos
+  private final SendableChooser autos;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -211,37 +214,9 @@ public class RobotContainer {
         break;
     }
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
 
-    NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
-    NamedCommands.registerCommand("AutoAlignToSource", new AutoAlignToSource(drive, led));
-    NamedCommands.registerCommand(
-        "IntakeFromSource", new IntakeFromSourceParallel(csFlywheel, csArm, elevator));
-    NamedCommands.registerCommand(
-        "IntakingAlgae", new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
-    NamedCommands.registerCommand("Stow", new Stow(csArm, elevator));
-
-    NamedCommands.registerCommand(
-        "AlgaeIntoProcessor", new AlgaeIntoSource(elevator, csArm, csFlywheel));
-    NamedCommands.registerCommand("ReadyForAlgaeScore", new ReadyForAlgaeScore(elevator, csArm));
-    NamedCommands.registerCommand("ReleaseAlgae", new ReleaseAlgae(csFlywheel));
     NamedCommands.registerCommand(
         "ReleaseClawL1",
         new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
@@ -254,8 +229,46 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "ReleaseClawL4",
         new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+
+    NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
+    NamedCommands.registerCommand("AutoAlignToSource", new AutoAlignToSource(drive, led));
+    NamedCommands.registerCommand(
+        "IntakeFromSource", new IntakeFromSourceParallel(csFlywheel, csArm, elevator));
+    NamedCommands.registerCommand(
+        "IntakingAlgae", new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
+    NamedCommands.registerCommand("Stow", new Stow(csArm, elevator));
+
+    // NamedCommands.registerCommand(
+    // "AlgaeIntoProcessor", new AlgaeIntoProcessor(elevator, csArm, csFlywheel));
+    // NamedCommands.registerCommand("ReadyForAlgaeScore", new ReadyForAlgaeScore(elevator, csArm));
+
+    NamedCommands.registerCommand("ReleaseAlgae", new ReleaseAlgae(csFlywheel));
+
     NamedCommands.registerCommand("AutoPickupCoral", new AutoPickupCoral(null, drive, led));
-    // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
+
+    autos = new SendableChooser<>();
+
+    autos.addOption("AutoTest", AutoBuilder.buildAuto("Bottom-R5a(L4)-S3c-R6a(L4)-F2-R6b(L4)-S2c"));
+    autos.addOption("AutoTestTwo", AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+
+    //     autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Forward)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Reverse)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
+    // // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
+
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
     // Configure the button bindings
     // configureButtonBindings();
     configureButtonBindings();
@@ -363,11 +376,17 @@ public class RobotContainer {
     driveController
         .b()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
+    driveController
+        .b()
+        .onFalse(
+            new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
     driveController
         .x()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
+    driveController
+        .x()
+        .onFalse(
+            new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
     driveController
         .y()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
@@ -380,6 +399,8 @@ public class RobotContainer {
                 csArm.setArmTarget(60, 4),
                 elevator.setElevatorTarget(0.2, 0.05),
                 new InstantCommand(() -> csFlywheel.runVolts(0))));
+    controller
+        .leftBumper()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
   }
   /**
