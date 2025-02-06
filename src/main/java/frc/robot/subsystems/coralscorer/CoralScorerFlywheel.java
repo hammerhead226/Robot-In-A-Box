@@ -74,7 +74,7 @@ public class CoralScorerFlywheel extends SubsystemBase {
   @Override
   public void periodic() {
     flywheel.updateInputs(inputs);
-    Logger.processInputs("Flywheel", inputs);
+    Logger.processInputs(" ballsFlywheel", inputs);
   }
 
   /** Run open loop at the specified voltage. */
@@ -152,7 +152,7 @@ public class CoralScorerFlywheel extends SubsystemBase {
       lastCoralState = CoralState.SENSOR;
       return CoralState.SENSOR;
 
-    } else if (feedInputs.currentAmps > 13) {
+    } else if (feedInputs.currentAmps > 1399999999) {
       Logger.recordOutput("see note val", "current");
       lastCoralState = CoralState.CURRENT;
       return CoralState.CURRENT;

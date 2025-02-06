@@ -25,8 +25,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlignToReefAuto;
-import frc.robot.commands.AutoAlignToSource;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeFromSourceParallel;
 import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.SetClawLevel;
 import frc.robot.commands.Stow;
@@ -54,6 +54,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
@@ -246,9 +247,12 @@ public class RobotContainer {
     // driveController.x().onTrue(new Stow(elevator, csArm));
 
     driveController.a().onTrue(new SetClawLevel(ReefHeight.L1, elevator, csArm));
-    driveController.a().onFalse(new Stow(elevator, csArm));
-    driveController.b().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
-    driveController.b().onFalse(new Stow(elevator, csArm));
+    driveController.a().onFalse(/*csFlywheel
+                    .runVelocityCommand(2000)
+                    .until(() -> csFlywheel.getLastCoralState() != CoralState.NO_CORAL).andThen*/ (new Stow(elevator, csArm)));
+
+    driveController.y().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
+    driveController.y().onFalse(new Stow(elevator, csArm));
 
     // why is this like this?
     driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
@@ -314,10 +318,15 @@ public class RobotContainer {
     manipController.x().onFalse(new Stow(elevator, csArm));
     manipController.y().onFalse(new Stow(elevator, csArm));
 
-    manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
+    // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
+    manipController
+        .leftBumper()
+        .onTrue(new IntakeFromSourceParallel(csFlywheel, csArm, elevator));
+    manipController.leftBumper().onFalse(new Stow(elevator, csArm));
     manipController
         .rightBumper()
         .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
+    manipController.rightBumper().onFalse(new Stow(elevator, csArm));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

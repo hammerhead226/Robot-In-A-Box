@@ -224,7 +224,7 @@ public class DriveCommands {
             rotationError = drive.getRotation().getDegrees() - targeRotation2d.getDegrees();
             // rotationPID.setSetpoint(targeRotation2d.getDegrees());
 
-            wantedRotationVelocity = Math.toRadians(profileRotation.calculate(rotationError));
+            wantedRotationVelocity = Math.toRadians(profileRotation.calculate(rotationError + 180));
             rotationAssistEffort = (wantedRotationVelocity);
           } else {
             wantedForwardsVelocity = forwardSpeed;

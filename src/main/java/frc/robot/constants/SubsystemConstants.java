@@ -34,10 +34,10 @@ public final class SubsystemConstants {
 
     public static final double RETRACT_SETPOINT_INCH = 0;
     public static final double EXTEND_SETPOINT_INCH = 0;
-    public static final double DEFAULT_THRESHOLD = 1;
+    public static final double DEFAULT_THRESHOLD = 0.1;
 
     public static final double ELEVATOR_GEAR_RATIO = 1;
-    public static final double SCORING_SETPOINT_POS = 0;
+    public static final double SCORING_SETPOINT_POS = 0.3;
   }
 
   @Deprecated
@@ -99,7 +99,7 @@ public final class SubsystemConstants {
     CURRENT,
   }
 
-  public static final double CORAL_DIST = 1300; // CHANGE THIS
+  public static final double CORAL_DIST = -1234; // 1300; // CHANGE THIS
 
   public static class CoralScorerConstants {
     public static class CoralScorerArmConstants {
@@ -116,7 +116,7 @@ public final class SubsystemConstants {
 
       public static final double ARM_ZERO_ANGLE = 0;
       public static final double STOW_SETPOINT_DEG = 50;
-      public static final double SCORING_SETPOINT_DEG = 0;
+      public static final double SCORING_SETPOINT_DEG = 15;
     }
 
     public static class AlgaeScorerFlywheelConstants {
