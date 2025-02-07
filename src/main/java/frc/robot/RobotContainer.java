@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeFromSource;
-import frc.robot.commands.IntakingAlgaeParallel;
+import frc.robot.commands.IntakingAlgae;
 import frc.robot.commands.SetClawLevel;
 import frc.robot.commands.Stow;
 import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
@@ -226,10 +226,10 @@ public class RobotContainer {
 
     keyboard
         .getXButton()
-        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
+        .onTrue(new IntakingAlgae(elevator, csFlywheel, csArm));
     keyboard
         .getZButton()
-        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
+        .onTrue(new IntakingAlgae(elevator, csFlywheel, csArm));
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -316,12 +316,11 @@ public class RobotContainer {
     manipController.y().onFalse(new Stow(elevator, csArm));
 
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
-    manipController.leftBumper().onTrue(new IntakeFromSource(csFlywheel, csArm,
-    elevator));
+    manipController.leftBumper().onTrue(new IntakeFromSource(csFlywheel, csArm, elevator));
     manipController.leftBumper().onFalse(new Stow(elevator, csArm));
     manipController
         .rightBumper()
-        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
+        .onTrue(new IntakingAlgae(elevator, csFlywheel, csArm));
     manipController.rightBumper().onFalse(new Stow(elevator, csArm));
   }
   /**

@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralScorerConstants.AlgaeScorerFlywheelConstants;
 import frc.robot.constants.SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants;
@@ -18,7 +19,6 @@ public class IntakingAlgae extends Command {
   private final Elevator elevator;
   private final CoralScorerFlywheel algaeIntake;
   private final CoralScorerArm arm;
-
   /** Creates a new IntakingAlgae. */
   public IntakingAlgae(Elevator elevator, CoralScorerFlywheel algaeIntake, CoralScorerArm arm) {
     this.elevator = elevator;
@@ -31,10 +31,9 @@ public class IntakingAlgae extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevator.setElevatorTarget(12, ElevatorConstants.DEFAULT_THRESHOLD);
-    arm.setPositionDegs(
-        CoralScorerArmConstants.INTAKE_SETPOINT_DEG,
-        CoralScorerArmConstants.ARM_VELOCITY_DEGPERSEC);
+    elevator.setExtenderGoal(12);
+    arm.setArmGoal(
+        CoralScorerArmConstants.INTAKE_SETPOINT_DEG);
     algaeIntake.runVelocity(AlgaeScorerFlywheelConstants.FLYWHEEL_VELOCITY_DEGPERSEC);
   }
 
@@ -45,10 +44,10 @@ public class IntakingAlgae extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    algaeIntake.flywheelStop();
-    arm.setPositionDegs(
-        CoralScorerArmConstants.STOW_SETPOINT_DEG, CoralScorerArmConstants.ARM_VELOCITY_DEGPERSEC);
-    elevator.setElevatorTarget(0, ElevatorConstants.DEFAULT_THRESHOLD);
+    algaeIntake.stop();
+    arm.setArmGoal(
+        CoralScorerArmConstants.STOW_SETPOINT_DEG);
+    elevator.setExtenderGoal(0);
   }
 
   // Returns true when the command should end.

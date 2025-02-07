@@ -95,7 +95,6 @@ public final class SubsystemConstants {
   public static enum AlgaeState {
     DEFAULT,
     NO_ALGAE,
-    SENSOR,
     CURRENT,
   }
 
