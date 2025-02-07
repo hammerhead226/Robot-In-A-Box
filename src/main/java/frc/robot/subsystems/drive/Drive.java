@@ -106,6 +106,10 @@ public class Drive extends SubsystemBase {
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Rotation2d rawGyroRotation = new Rotation2d();
 
+  public static double speedX;
+  public static double speedY;
+  public static double rotationDegs;
+
   private final TimeInterpolatableBuffer<Pose2d> gamePieceBuffer =
       TimeInterpolatableBuffer.createBuffer(OBJECT_BUFFER_SIZE_SECONDS);
 
@@ -162,6 +166,8 @@ public class Drive extends SubsystemBase {
         });
 
     // Configure SysId
+    speedX = 0;
+    speedY = 0;
     sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -174,6 +180,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Pose2d getPoseAtTimeStamp(double seconds) {
+
     return poseEstimator.sampleAt(seconds).orElse(new Pose2d());
   }
 
@@ -182,6 +189,7 @@ public class Drive extends SubsystemBase {
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
+
     for (var module : modules) {
       module.periodic();
     }
@@ -230,6 +238,9 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      speedX = getChassisSpeeds().vxMetersPerSecond;
+      speedY = getChassisSpeeds().vyMetersPerSecond;
+      rotationDegs = Math.toDegrees(getChassisSpeeds().omegaRadiansPerSecond);
     }
 
     // Update gyro alert
@@ -256,6 +267,8 @@ public class Drive extends SubsystemBase {
       modules[i].runSetpoint(setpointStates[i]);
     }
 
+    // this.speedX = speeds.vxMetersPerSecond;
+    // this.speedY = speeds.vyMetersPerSecond;
     // Log optimized setpoints (runSetpoint mutates each state)
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }

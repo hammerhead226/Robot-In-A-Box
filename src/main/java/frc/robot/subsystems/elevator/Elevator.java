@@ -1,16 +1,22 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.ElevatorState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
@@ -45,6 +51,8 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorVis measuredVisualizer;
   private ElevatorVis setpointVisualizer;
+  private ElevatorState currentState;
+  private ElevatorState wantedState;
 
   public Elevator(ElevatorIO elevator) {
     this.elevator = elevator;
@@ -75,10 +83,10 @@ public class Elevator extends SubsystemBase {
       case SIM:
         kS.initDefault(0);
         kG.initDefault(0);
-        kV.initDefault(0);
+        kV.initDefault(1);
         kA.initDefault(0);
 
-        kP.initDefault(1);
+        kP.initDefault(3);
         kI.initDefault(0);
 
         barkG.initDefault(0);
@@ -105,6 +113,8 @@ public class Elevator extends SubsystemBase {
     measuredVisualizer = new ElevatorVis("measured", Color.kRed);
     setpointVisualizer = new ElevatorVis("setpoint", Color.kGreen);
 
+    currentState = ElevatorState.STOW;
+    wantedState = ElevatorState.STOW;
     updateTunableNumbers();
   }
 
@@ -143,6 +153,19 @@ public class Elevator extends SubsystemBase {
     return angle;
   }
 
+  public void setWantedState(ElevatorState wantedState) {
+
+    this.wantedState = wantedState;
+  }
+
+  public ElevatorState getCurrentState() {
+    return currentState;
+  }
+
+  public ElevatorState getWantedState() {
+    return wantedState;
+  }
+
   public void setConstraints(
       double maxVelocityMetersPerSec, double maxAccelerationMetersPerSecSquared) {
     extenderConstraints =
@@ -161,10 +184,51 @@ public class Elevator extends SubsystemBase {
         .until(() -> elevatorAtSetpoint(thersholdInches));
   }
 
+  public void handleStates() {
+
+    switch (currentState) {
+      case ZERO:
+        setExtenderGoal(0);
+        break;
+      case STOW:
+        setExtenderGoal(0.4);
+        break;
+      case L1:
+        setExtenderGoal(FieldConstants.ReefHeight.L1.height);
+        break;
+      case L2:
+        setExtenderGoal(FieldConstants.ReefHeight.L2.height);
+        break;
+      case L3:
+        setExtenderGoal(FieldConstants.ReefHeight.L3.height);
+        break;
+      case L4:
+        setExtenderGoal(FieldConstants.ReefHeight.L4.height);
+        break;
+      case SOURCE:
+        setExtenderGoal(SubsystemConstants.ElevatorConstants.INTAKE_SETPOINT_INCHES);
+        break;
+      case PROCESSOR:
+        setExtenderGoal(SubsystemConstants.ElevatorConstants.PROCESSOR_SETPOINT_INCHES);
+        break;
+    }
+  }
+
+  @AutoLogOutput(key = "elevator")
+  public Pose3d getElevatorPose() {
+    return new Pose3d(0, 0, extenderCurrent.position + 0.55, new Rotation3d());
+  }
+
   @Override
   public void periodic() {
     Logger.recordOutput("Alliance", DriverStation.getAlliance().isPresent());
+    if (Drive.speedX > 0.05 || Drive.speedY > 0.05 || Drive.rotationDegs > 4) {
+      this.currentState = ElevatorState.STOW;
+    } else {
+      this.currentState = getWantedState();
+    }
 
+    handleStates();
     elevator.updateInputs(eInputs);
     measured.update(extenderCurrent.position);
     CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position);
@@ -174,6 +238,7 @@ public class Elevator extends SubsystemBase {
             SubsystemConstants.LOOP_PERIOD_SECONDS, extenderCurrent, extenderGoal);
 
     setPositionExtend(extenderCurrent.position, extenderCurrent.velocity);
+    // handleStates();
 
     Logger.processInputs("Elevator", eInputs);
 
