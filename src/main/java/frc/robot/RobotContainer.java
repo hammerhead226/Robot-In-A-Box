@@ -26,13 +26,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.IntakeFromSourceParallel;
+import frc.robot.commands.IntakeFromSource;
 import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.SetClawLevel;
 import frc.robot.commands.Stow;
 import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 import frc.robot.constants.FieldConstants;
-// import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
@@ -54,7 +53,6 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
-import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
@@ -253,7 +251,6 @@ public class RobotContainer {
 
     driveController.y().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
     driveController.y().onFalse(new Stow(elevator, csArm));
-
     // why is this like this?
     driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
 
@@ -319,9 +316,8 @@ public class RobotContainer {
     manipController.y().onFalse(new Stow(elevator, csArm));
 
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
-    manipController
-        .leftBumper()
-        .onTrue(new IntakeFromSourceParallel(csFlywheel, csArm, elevator));
+    manipController.leftBumper().onTrue(new IntakeFromSource(csFlywheel, csArm,
+    elevator));
     manipController.leftBumper().onFalse(new Stow(elevator, csArm));
     manipController
         .rightBumper()

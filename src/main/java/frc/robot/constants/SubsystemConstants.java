@@ -109,7 +109,7 @@ public final class SubsystemConstants {
       public static final double DEFAULT_THRESHOLD = 1;
       public static final double ARM_GEAR_RATIO = 1;
 
-      public static final double INTAKE_SETPOINT_DEG = 0;
+      public static final double INTAKE_SETPOINT_DEG = 32;
 
       public static final double ARM_VELOCITY_DEGPERSEC = 10;
       public static final double DEFAULT_VOLTS = 0;
