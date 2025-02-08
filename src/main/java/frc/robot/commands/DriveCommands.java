@@ -179,22 +179,24 @@ public class DriveCommands {
               targetPose =
                   rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(0));
             }
-            Logger.recordOutput("targetPose name", "reef");
+            Logger.recordOutput("drive targetPose name", "reef");
           } else if (sourceAlignSupplier.getAsBoolean()) {
             targetPose = drive.getNearestSource();
             targetPose =
                 rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
 
-            Logger.recordOutput("targetPose name", "source");
+            Logger.recordOutput("drive targetPose name", "source");
           } else if (processorAlignSupplier.getAsBoolean()) {
             targetPose = FieldConstants.Processor.centerFace;
             targetPose = rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(0));
             speedDebuff *= 0.5;
 
-            Logger.recordOutput("targetPose name", "processor");
+            Logger.recordOutput("drive targetPose name", "processor");
           } else {
-            Logger.recordOutput("targetPose name", "none");
+            Logger.recordOutput("drive targetPose name", "none");
           }
+
+          Logger.recordOutput("drive targetPose", targetPose);
 
           if (targetPose != null) {
             forwardsError = drive.getPose().getX() - targetPose.getX();

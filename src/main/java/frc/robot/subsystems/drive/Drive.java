@@ -439,7 +439,7 @@ public class Drive extends SubsystemBase {
     int index = getNearestParition(6);
     Logger.recordOutput("align to reef center left target index", index);
     return FieldConstants.Reef.branchPositions
-        .get(index*2+1)
+        .get(index * 2 + 1)
         .get(FieldConstants.ReefHeight.L1)
         .toPose2d();
   }
@@ -448,7 +448,7 @@ public class Drive extends SubsystemBase {
     int index = getNearestParition(6);
     Logger.recordOutput("align to reef center left target index", index);
     return FieldConstants.Reef.branchPositions
-        .get(index*2)
+        .get(index * 2)
         .get(FieldConstants.ReefHeight.L1)
         .toPose2d();
   }
