@@ -429,7 +429,40 @@ public class Drive extends SubsystemBase {
   //   return nearestSide;
   // }
 
+  public Pose2d getNearestCenter() {
+    int index = getNearestParition(6);
+    Logger.recordOutput("align to reef center target index", index);
+    return FieldConstants.Reef.centerFaces[index];
+  }
+
+  public Pose2d getNearestCenterLeft() {
+    int index = getNearestParition(6);
+    Logger.recordOutput("align to reef center left target index", index);
+    return FieldConstants.Reef.branchPositions
+        .get(index*2+1)
+        .get(FieldConstants.ReefHeight.L1)
+        .toPose2d();
+  }
+
+  public Pose2d getNearestCenterRight() {
+    int index = getNearestParition(6);
+    Logger.recordOutput("align to reef center left target index", index);
+    return FieldConstants.Reef.branchPositions
+        .get(index*2)
+        .get(FieldConstants.ReefHeight.L1)
+        .toPose2d();
+  }
+
   public Pose2d getNearestSide() {
+    int index = getNearestParition(12);
+    Logger.recordOutput("align to reef target index", index);
+    return FieldConstants.Reef.branchPositions
+        .get(index)
+        .get(FieldConstants.ReefHeight.L1)
+        .toPose2d();
+  }
+
+  private int getNearestParition(int partitions) {
     Translation2d start = FieldConstants.Reef.center;
     Translation2d end = getPose().getTranslation();
     Translation2d v = end.minus(start);
@@ -443,19 +476,14 @@ public class Drive extends SubsystemBase {
     double adjustedRotations = -rawRotations + (7.0 / 12.0);
 
     // % 1 to just get the fractional part of the rotation
-    // multiply by 12 before flooring so [0,1) maps to 0,1,2...10,11 evenly
+    // multiply by 12 before flooring so [0,1) maps to 0,1,2...partitions-2,partitions-1 evenly
     double fractionalRotation = adjustedRotations % 1;
     if (fractionalRotation < 0) {
       fractionalRotation++;
     }
-    int index = (int) Math.floor(fractionalRotation * 12);
+    int index = (int) Math.floor(fractionalRotation * partitions);
 
-    Logger.recordOutput("align to reef target index", index);
-
-    return FieldConstants.Reef.branchPositions
-        .get(index)
-        .get(FieldConstants.ReefHeight.L1)
-        .toPose2d();
+    return index;
   }
 
   public Pose2d getNearestSource() {

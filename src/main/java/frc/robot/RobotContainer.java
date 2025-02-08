@@ -239,6 +239,8 @@ public class RobotContainer {
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
             () -> driveController.leftBumper().getAsBoolean(),
+            () -> driveController.leftTrigger().getAsBoolean(),
+            () -> driveController.rightTrigger().getAsBoolean(),
             () -> driveController.rightBumper().getAsBoolean(),
             () -> driveController.b().getAsBoolean()));
 

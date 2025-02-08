@@ -104,6 +104,8 @@ public class DriveCommands {
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
       BooleanSupplier reefAlignAssistSupplier,
+      BooleanSupplier reefLeftSupplier,
+      BooleanSupplier reefRightSupplier,
       BooleanSupplier sourceAlignSupplier,
       BooleanSupplier processorAlignSupplier) {
     return Commands.run(
@@ -164,10 +166,19 @@ public class DriveCommands {
 
           Pose2d targetPose = null;
           if (reefAlignAssistSupplier.getAsBoolean()) {
-            // getNearest can be replaced with .nearest
-            targetPose = drive.getNearestSide();
-            targetPose = rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(0));
-
+            if (reefLeftSupplier.getAsBoolean()) {
+              targetPose = drive.getNearestCenterLeft();
+              targetPose =
+                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(0));
+            } else if (reefRightSupplier.getAsBoolean()) {
+              targetPose = drive.getNearestCenterRight();
+              targetPose =
+                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(0));
+            } else {
+              targetPose = drive.getNearestCenter();
+              targetPose =
+                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(0));
+            }
             Logger.recordOutput("targetPose name", "reef");
           } else if (sourceAlignSupplier.getAsBoolean()) {
             targetPose = drive.getNearestSource();
@@ -188,8 +199,23 @@ public class DriveCommands {
           if (targetPose != null) {
             forwardsError = drive.getPose().getX() - targetPose.getX();
             sidewaysError = drive.getPose().getY() - targetPose.getY();
-            rotationError =
-                drive.getPose().getRotation().getDegrees() - targetPose.getRotation().getDegrees();
+
+            // hacky code so that it always rotates the shorter direction
+            double driveDegrees = drive.getPose().getRotation().getDegrees() % 360;
+            if (driveDegrees < 0) {
+              driveDegrees += 360;
+            }
+            double targetDegrees = targetPose.getRotation().getDegrees() % 360;
+            if (targetDegrees < 0) {
+              targetDegrees += 360;
+            }
+            if (driveDegrees - targetDegrees > 180) {
+              driveDegrees -= 360;
+            } else if (targetDegrees - driveDegrees > 180) {
+              targetDegrees -= 360;
+            }
+
+            rotationError = driveDegrees - targetDegrees;
 
             wantedForwardsVelocity = profileForward.calculate(forwardsError);
             wantedSidewaysVelocity = profileForward.calculate(sidewaysError);
