@@ -6,8 +6,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
+import frc.robot.constants.SubsystemConstants.CoralScorerConstants;
 import frc.robot.constants.SubsystemConstants.CoralScorerConstants.AlgaeScorerFlywheelConstants;
-import frc.robot.constants.SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants;
+import frc.robot.constants.SubsystemConstants.CoralScorerConstants.CoralScorerDefinedPositions;
 import frc.robot.constants.SubsystemConstants.ElevatorConstants;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
@@ -33,8 +34,8 @@ public class IntakingAlgae extends Command {
   public void initialize() {
     elevator.setElevatorTarget(12, ElevatorConstants.DEFAULT_THRESHOLD);
     arm.setPositionDegs(
-        CoralScorerArmConstants.INTAKE_SETPOINT_DEG,
-        CoralScorerArmConstants.ARM_VELOCITY_DEGPERSEC);
+        CoralScorerDefinedPositions.INTAKE_SETPOINT_DEG,
+        CoralScorerConstants.ARM_VELOCITY_DEGPERSEC);
     algaeIntake.runVelocity(AlgaeScorerFlywheelConstants.FLYWHEEL_VELOCITY_DEGPERSEC);
   }
 
@@ -47,7 +48,7 @@ public class IntakingAlgae extends Command {
   public void end(boolean interrupted) {
     algaeIntake.flywheelStop();
     arm.setPositionDegs(
-        CoralScorerArmConstants.STOW_SETPOINT_DEG, CoralScorerArmConstants.ARM_VELOCITY_DEGPERSEC);
+        CoralScorerDefinedPositions.STOW_SETPOINT_DEG, CoralScorerConstants.ARM_VELOCITY_DEGPERSEC);
     elevator.setElevatorTarget(0, ElevatorConstants.DEFAULT_THRESHOLD);
   }
 

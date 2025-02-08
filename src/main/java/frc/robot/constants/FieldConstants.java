@@ -156,12 +156,20 @@ public class FieldConstants {
     L2(Units.inchesToMeters(31.875), -35),
     L1(Units.inchesToMeters(18), 0);
 
+    public final double height;
+    public final double pitch;
+
     ReefHeight(double height, double pitch) {
       this.height = height;
       this.pitch = pitch; // in degrees
     }
 
-    public final double height;
-    public final double pitch;
+    public double getheight() {
+      return height;
+    }
+
+    public double getPitch() {
+      return pitch;
+    }
   }
 }

@@ -44,9 +44,9 @@ public class AlgaeIntakeArmIOTalonFX implements AlgaeIntakeArmIO {
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
-    follower = new TalonFX(followID, SubsystemConstants.CANBUS);
-    pigeon = new Pigeon2(gyroID, SubsystemConstants.CANBUS);
+    leader = new TalonFX(leadID, SubsystemConstants.CANIVORE_ID_STRING);
+    follower = new TalonFX(followID, SubsystemConstants.CANIVORE_ID_STRING);
+    pigeon = new Pigeon2(gyroID, SubsystemConstants.CANIVORE_ID_STRING);
     pigeon.reset();
 
     leader.getConfigurator().apply(config);

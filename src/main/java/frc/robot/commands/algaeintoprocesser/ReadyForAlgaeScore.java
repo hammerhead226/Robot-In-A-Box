@@ -20,13 +20,12 @@ public class ReadyForAlgaeScore extends Command {
   public void initialize() {
     elevator.setExtenderGoal(SubsystemConstants.ElevatorConstants.SCORING_SETPOINT_POS);
     coralScorerArm.setArmGoal(
-        SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.SCORING_SETPOINT_DEG);
+        SubsystemConstants.CoralScorerConstants.CoralScorerDefinedPositions.SCORING_SETPOINT_DEG);
   }
 
   @Override
   public boolean isFinished() {
     return elevator.elevatorAtSetpoint(SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD)
-        && coralScorerArm.atGoal(
-            SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.DEFAULT_THRESHOLD);
+        && coralScorerArm.atGoal(SubsystemConstants.CoralScorerConstants.DEFAULT_THRESHOLD);
   }
 }
