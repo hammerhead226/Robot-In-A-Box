@@ -109,7 +109,7 @@ public class Drive extends SubsystemBase {
   private final TimeInterpolatableBuffer<Pose2d> gamePieceBuffer =
       TimeInterpolatableBuffer.createBuffer(OBJECT_BUFFER_SIZE_SECONDS);
 
-  private Pose2d nearestSide = new Pose2d();
+  // private Pose2d nearestSide = new Pose2d();
 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
@@ -425,11 +425,11 @@ public class Drive extends SubsystemBase {
     return new rawGyroRotationSupplier();
   }
 
-  public Pose2d getNearestSide() {
-    return nearestSide;
-  }
+  // public Pose2d getNearestSide() {
+  //   return nearestSide;
+  // }
 
-  public void setNearestReefSide() {
+  public Pose2d getNearestSide() {
     Translation2d start = FieldConstants.Reef.center;
     Translation2d end = getPose().getTranslation();
     Translation2d v = end.minus(start);
@@ -452,21 +452,23 @@ public class Drive extends SubsystemBase {
 
     Logger.recordOutput("align to reef target index", index);
 
-    Pose2d result =
-        FieldConstants.Reef.branchPositions.get(index).get(FieldConstants.ReefHeight.L1).toPose2d();
+    return FieldConstants.Reef.branchPositions
+        .get(index)
+        .get(FieldConstants.ReefHeight.L1)
+        .toPose2d();
+  }
 
-    // flip rotation
-    Rotation2d rotation2d = result.getRotation().rotateBy(new Rotation2d(Math.PI));
+  public Pose2d getNearestSource() {
+    if (getPose()
+            .getTranslation()
+            .getDistance(FieldConstants.CoralStation.leftCenterFace.getTranslation())
+        < getPose()
+            .getTranslation()
+            .getDistance(FieldConstants.CoralStation.rightCenterFace.getTranslation())) {
+      return FieldConstants.CoralStation.leftCenterFace;
 
-    // back up target position (so it doesn't clip)
-    // x is nearer/farther, y is sideways
-    Translation2d offsetFromBranch = new Translation2d(-0.7, 0);
-    offsetFromBranch = offsetFromBranch.rotateBy(rotation2d);
-    Translation2d translation2d = result.getTranslation().plus(offsetFromBranch);
-
-    result = new Pose2d(translation2d, rotation2d);
-
-    Logger.recordOutput("align to reef target Pose2d", result);
-    nearestSide = result;
+    } else {
+      return FieldConstants.CoralStation.rightCenterFace;
+    }
   }
 }

@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -54,7 +53,6 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
-import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
@@ -255,7 +253,7 @@ public class RobotContainer {
     driveController.y().onFalse(new Stow(elevator, csArm));
 
     // why is this like this?
-    driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
+    // driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
 
     // driveController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // driveController.rightBumper().whileTrue(new AlignToReefAuto(drive, led));
@@ -319,9 +317,7 @@ public class RobotContainer {
     manipController.y().onFalse(new Stow(elevator, csArm));
 
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
-    manipController
-        .leftBumper()
-        .onTrue(new IntakeFromSourceParallel(csFlywheel, csArm, elevator));
+    manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm, elevator));
     manipController.leftBumper().onFalse(new Stow(elevator, csArm));
     manipController
         .rightBumper()
