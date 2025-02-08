@@ -37,7 +37,9 @@ import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.ElevatorState;
+import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIO;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
@@ -88,9 +90,10 @@ public class RobotContainer {
   private final CoralScorerArm csArm;
   // private final CoralScorerFlywheel coralIntake;
 
-  private final Elevator elevator;
+  public static Elevator elevator;
   private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
+  final SuperStructure Super;
 
   private final CoralScorerFlywheel csFlywheel;
 
@@ -129,6 +132,7 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, ""));
+        Super = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
 
       case SIM:
@@ -159,6 +163,7 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOSim());
+        Super = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
 
       default:
@@ -188,6 +193,7 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
+        Super = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
     }
     // Set up auto routines
@@ -246,8 +252,13 @@ public class RobotContainer {
 
     // driveController.x().onTrue(new Stow(elevator, csArm));
 
-    driveController.a().onTrue(new SetClawLevel(ElevatorState.L4, elevator, csArm));
-    driveController.a().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
+    // driveController.a().onTrue(new SetClawLevel(ElevatorState.L4, elevator, csArm));
+    // driveController.a().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
+    driveController.rightBumper().onTrue(new InstantCommand(()-> Super.setWantedState(SuperStructureState.SOURCE)));
+    driveController.rightBumper().onFalse(new InstantCommand(()-> Super.setWantedState(SuperStructureState.STOW)));
+
+    driveController.a().onTrue(new InstantCommand(()-> Super.setWantedState(SuperStructureState.L4)));
+    driveController.a().onFalse(new InstantCommand(()-> Super.setWantedState(SuperStructureState.STOW)));
 
     driveController.y().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
     driveController.y().onFalse(new Stow(elevator, csArm));

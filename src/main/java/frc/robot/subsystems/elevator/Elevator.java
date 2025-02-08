@@ -14,7 +14,6 @@ import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.ElevatorState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
-import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -40,10 +39,15 @@ public class Elevator extends SubsystemBase {
   private static final int maxAccelerationExtender = 1;
 
   private TrapezoidProfile extenderProfile;
+  private TrapezoidProfile extenderProfile2;
   private TrapezoidProfile.Constraints extenderConstraints =
       new TrapezoidProfile.Constraints(maxVelocityExtender, maxAccelerationExtender);
+  private TrapezoidProfile.Constraints extenderConstraints2 =
+      new TrapezoidProfile.Constraints(maxVelocityExtender - 0.5, maxAccelerationExtender - 0.2);
   private TrapezoidProfile.State extenderGoal = new TrapezoidProfile.State();
   private TrapezoidProfile.State extenderCurrent = new TrapezoidProfile.State();
+  private TrapezoidProfile.State extenderCurrent2 = new TrapezoidProfile.State();
+  private TrapezoidProfile.State extenderGoal2 = new TrapezoidProfile.State();
 
   private double goal;
   private ElevatorFeedforward elevatorFFModel;
@@ -110,6 +114,9 @@ public class Elevator extends SubsystemBase {
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
 
+    extenderProfile2 = new TrapezoidProfile(extenderConstraints2);
+    extenderCurrent2 = extenderProfile2.calculate(0, extenderCurrent2, extenderGoal2);
+
     measuredVisualizer = new ElevatorVis("measured", Color.kRed);
     setpointVisualizer = new ElevatorVis("setpoint", Color.kGreen);
 
@@ -138,6 +145,7 @@ public class Elevator extends SubsystemBase {
   public void setExtenderGoal(double setpoint) {
     goal = setpoint;
     extenderGoal = new TrapezoidProfile.State(setpoint, 0);
+    extenderGoal2 = new TrapezoidProfile.State(setpoint, 0);
   }
 
   public void setPositionExtend(double position, double velocity) {
@@ -216,19 +224,29 @@ public class Elevator extends SubsystemBase {
 
   @AutoLogOutput(key = "elevator")
   public Pose3d getElevatorPose() {
-    return new Pose3d(0, 0, extenderCurrent.position + 0.55, new Rotation3d());
+    if (getElevatorstage2Pose().getZ() < extenderCurrent.position) {
+      return new Pose3d(0, 0, extenderCurrent2.position + 0.5, new Rotation3d());
+    } else {
+      return new Pose3d(0, 0, extenderCurrent.position + 0.9, new Rotation3d());
+    }
+  }
+
+  @AutoLogOutput(key = "elevatorstage2")
+  public Pose3d getElevatorstage2Pose() {
+
+    return new Pose3d(0, 0, extenderCurrent2.position + 0.5, new Rotation3d());
   }
 
   @Override
   public void periodic() {
     Logger.recordOutput("Alliance", DriverStation.getAlliance().isPresent());
-    if (Drive.speedX > 0.05 || Drive.speedY > 0.05 || Drive.rotationDegs > 4) {
-      this.currentState = ElevatorState.STOW;
-    } else {
-      this.currentState = getWantedState();
-    }
-
-    handleStates();
+    /*if (Drive.speedX > 2 || Drive.speedY > 2 || Drive.rotationDegs > 50) {
+       this.currentState = ElevatorState.STOW;
+     } else {
+       this.currentState = getWantedState();
+     }
+    */
+    // handleStates();
     elevator.updateInputs(eInputs);
     measured.update(extenderCurrent.position);
     CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position);
@@ -238,6 +256,10 @@ public class Elevator extends SubsystemBase {
             SubsystemConstants.LOOP_PERIOD_SECONDS, extenderCurrent, extenderGoal);
 
     setPositionExtend(extenderCurrent.position, extenderCurrent.velocity);
+
+    extenderCurrent2 =
+        extenderProfile2.calculate(
+            SubsystemConstants.LOOP_PERIOD_SECONDS, extenderCurrent2, extenderGoal2);
     // handleStates();
 
     Logger.processInputs("Elevator", eInputs);

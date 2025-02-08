@@ -112,6 +112,51 @@ public final class SubsystemConstants {
     PROCESSOR
   }
 
+  public static enum ScoralArmState {
+    ZERO,
+    STOW,
+    L1,
+    L2,
+    L3,
+    L4,
+    SOURCE,
+    PROCESSOR
+  }
+
+  public static enum ScoralFlywheelState {
+    ZERO,
+    INTAKING_CORAL,
+    INTAKING_ALGAE,
+    SCORING_CORAL,
+    SCORING_ALGAE
+  }
+
+  public static enum ClimberState {
+    STOW,
+    STAGE_ONE,
+    STAGE_TWO,
+    HANG
+  }
+
+  public static enum DriveState {
+    FULLSPEED,
+    SLOW
+  }
+
+  public static enum SuperStructureState {
+    STOW,
+    SOURCE,
+    PROCESSOR,
+    L1,
+    L2,
+    L3,
+    L4,
+    CLIMB_STAGE_ONE,
+    CLIMB_STAGE_TWO,
+    HANG,
+    DEFAULT
+  }
+
   public static final double CORAL_DIST = -1234; // 1300; // CHANGE THIS
 
   public static class CoralScorerConstants {

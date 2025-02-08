@@ -1,6 +1,9 @@
 package frc.robot.subsystems.coralscorer;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -11,6 +14,7 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.subsystems.commoniolayers.ArmIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class CoralScorerArm extends SubsystemBase {
@@ -126,6 +130,12 @@ public class CoralScorerArm extends SubsystemBase {
 
     return new InstantCommand(() -> setArmGoal(goalDegrees), this)
         .until(() -> atGoal(thresholdDegrees));
+  }
+
+  @AutoLogOutput(key = "arm")
+  public Pose3d getElevatorPose() {
+    return new Pose3d(
+        0, 0.3, 1, new Rotation3d(new Rotation2d(Math.toRadians(armCurrentStateDegrees.position))));
   }
 
   @Override
