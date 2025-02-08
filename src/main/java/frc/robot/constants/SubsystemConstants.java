@@ -154,7 +154,11 @@ public final class SubsystemConstants {
     CLIMB_STAGE_ONE,
     CLIMB_STAGE_TWO,
     HANG,
-    DEFAULT
+    L1ATGOAL,
+  //  L2ATGOAL,
+ //   L3ATGOAL,
+  //  L4ATGOAL,
+    DEFAULT, SCORING_CORAL
   }
 
   public static final double CORAL_DIST = -1234; // 1300; // CHANGE THIS

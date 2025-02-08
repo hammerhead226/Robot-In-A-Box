@@ -49,8 +49,8 @@ public class CoralScorerFlywheel extends SubsystemBase {
         flywheel.configurePID(0.0, 0.0, 0.0);
         break;
       case SIM:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.0);
-        flywheel.configurePID(0.0, 0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.2);
+        flywheel.configurePID(0.3, 0.0, 0.0);
         break;
       default:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);
@@ -72,6 +72,7 @@ public class CoralScorerFlywheel extends SubsystemBase {
   public void periodic() {
     flywheel.updateInputs(inputs);
     Logger.processInputs(" ballsFlywheel", inputs);
+    Logger.recordOutput("flywheel output rpm", Units.radiansPerSecondToRotationsPerMinute(inputs.velocityRadPerSec));
   }
 
   /** Run open loop at the specified voltage. */

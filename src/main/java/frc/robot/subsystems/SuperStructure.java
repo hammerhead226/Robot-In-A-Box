@@ -1,8 +1,12 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.SubsystemConstants.CoralState;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
@@ -60,39 +64,82 @@ public class SuperStructure {
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(0, 0),
                 csArm.setArmTarget(40, 0),
-                csFlywheel.stopCommand()));
+                csFlywheel.stopCommand(),
+                led.setStateCommand(LED_STATE.BLUE)));
 
       case L1:
-        return new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                elevator.setElevatorTarget(FieldConstants.ReefHeight.L1.height, 0.1),
-                csArm.setArmTarget(FieldConstants.ReefHeight.L1.pitch, 2)),
-            csFlywheel.runVoltsCommmand(12));
+        if (elevator.atGoal() && csArm.atGoal(2)) {
+          setWantedState(SuperStructureState.L1ATGOAL);
+
+        } 
+          return new SequentialCommandGroup(
+              new ParallelCommandGroup(
+                      elevator.setElevatorTarget(FieldConstants.ReefHeight.L1.height, 0.1),
+                      csArm.setArmTarget(FieldConstants.ReefHeight.L1.pitch, 2),
+                      led.setStateCommand(LED_STATE.FLASHING_GREEN))
+                  );
+              //  csFlywheel.runVoltsCommmand(12),
+              // new WaitCommand(1),
+              // led.setStateCommand(LED_STATE.GREEN)
+              
+        
+            
+
+      case L1ATGOAL:
+      return new SequentialCommandGroup(led.setStateCommand(LED_STATE.GREEN));
+
+
       case L2:
+      if (elevator.atGoal() && csArm.atGoal(2)) {
+        setWantedState(SuperStructureState.L1ATGOAL);
+
+      } 
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
-                csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)),
-            csFlywheel.runVoltsCommmand(12));
+                csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2))
+            );
       case L3:
+      if (elevator.atGoal() && csArm.atGoal(2)) {
+        setWantedState(SuperStructureState.L1ATGOAL);
+
+      } 
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
-                csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)),
-            csFlywheel.runVoltsCommmand(12));
+                csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2))
+            );
       case L4:
+      if (elevator.atGoal() && csArm.atGoal(2)) {
+        setWantedState(SuperStructureState.L1ATGOAL);
+
+      } 
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 0.1),
-                csArm.setArmTarget(FieldConstants.ReefHeight.L4.pitch, 2)),
-            csFlywheel.runVoltsCommmand(12));
+                csArm.setArmTarget(FieldConstants.ReefHeight.L4.pitch, 2))
+            );
 
       case SOURCE:
+      if (csFlywheel.seesCoral() == CoralState.CURRENT || csFlywheel.seesCoral() == CoralState.SENSOR) {
+        return new SequentialCommandGroup(new WaitCommand(0.5), new InstantCommand(()-> setWantedState(SuperStructureState.STOW)));
+
+      } else {
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(1, 0.1),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)),
-            csFlywheel.runVoltsCommmand(12));
+            csFlywheel.runVelocityCommand(200));
+      }
+
+      case SCORING_CORAL:
+        if(csFlywheel.seesCoral() == CoralState.SENSOR || csFlywheel.seesCoral() == CoralState.CURRENT){
+            return new SequentialCommandGroup(csFlywheel.runVelocityCommand(300));
+        } else {
+          return new SequentialCommandGroup(new WaitCommand(0.5),
+          new InstantCommand(()-> setWantedState(SuperStructureState.STOW)));
+        }
+
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(elevator.setElevatorTarget(0, 0), csArm.setArmTarget(40, 0)));

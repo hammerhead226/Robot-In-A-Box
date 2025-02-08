@@ -31,7 +31,7 @@ public class LED_IOSim implements LED_IO {
   }
 
   @Override
-  public void setLEDState(LED_STATE state) {
-    ledState = state;
+  public void setLEDState(LED_STATE ledState) {
+    this.ledState = ledState;
   }
 }

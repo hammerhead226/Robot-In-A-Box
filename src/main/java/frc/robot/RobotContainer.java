@@ -260,10 +260,11 @@ public class RobotContainer {
 
     driveController
         .a()
-        .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.L4)));
-    driveController
-        .a()
-        .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
+        .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
+    driveController.x().onTrue(new InstantCommand(()-> Super.setWantedState(SuperStructureState.SCORING_CORAL)));
+    //  driveController
+    //    .a()
+    //   .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
 
     driveController.y().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
     driveController.y().onFalse(new Stow(elevator, csArm));
