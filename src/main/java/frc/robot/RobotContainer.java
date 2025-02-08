@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AlignToCage;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeFromSourceParallel;
@@ -224,6 +225,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    keyboard.getCButton().whileTrue(new AlignToCage(drive));
     keyboard
         .getXButton()
         .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
