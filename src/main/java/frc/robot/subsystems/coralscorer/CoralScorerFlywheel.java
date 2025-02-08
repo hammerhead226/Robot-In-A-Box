@@ -14,18 +14,15 @@ import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
-import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIO;
-import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIOInputsAutoLogged;
 import frc.robot.subsystems.newalgaeintake.FeederIOInputsAutoLogged;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class CoralScorerFlywheel extends SubsystemBase {
   private final FlywheelIO flywheel;
-  private final CoralIntakeSensorIO sensor;
+  private final CoralSensorIO sensor;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
-  private final CoralIntakeSensorIOInputsAutoLogged sInputs =
-      new CoralIntakeSensorIOInputsAutoLogged();
+  private final CoralSensorIOInputsAutoLogged sInputs = new CoralSensorIOInputsAutoLogged();
   private final SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
   private AlgaeState lastAlgaeState;
@@ -36,7 +33,7 @@ public class CoralScorerFlywheel extends SubsystemBase {
   /** Creates a new Flywheel. */
   public CoralScorerFlywheel(
       FlywheelIO flywheel,
-      CoralIntakeSensorIO sensor,
+      CoralSensorIO sensor,
       CoralState lastCoralState,
       AlgaeState lastAlgaeState) {
     this.flywheel = flywheel;
@@ -108,6 +105,11 @@ public class CoralScorerFlywheel extends SubsystemBase {
   /** Stops the flywheel. */
   public void stop() {
     flywheel.stop();
+  }
+
+  public Command stopCommand() {
+
+    return new InstantCommand(() -> stop(), this);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

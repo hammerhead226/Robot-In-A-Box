@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.FieldConstants;
-import frc.robot.constants.SubsystemConstants.ElevatorState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
@@ -39,57 +38,61 @@ public class SuperStructure {
   }
 
   public void setWantedState(SuperStructureState desiredState) {
-  
-        this.wantedState = desiredState;
-       this.currentState = wantedState;
-     
 
+    this.wantedState = desiredState;
+    this.currentState = wantedState;
   }
 
-  public void checkSpeed(){
+  public void checkSpeed() {
     if (Drive.speedX > 2 || Drive.speedY > 2 || Drive.rotationDegs > 50) {
-        this.currentState = SuperStructureState.STOW;
-      } else {
+      this.currentState = SuperStructureState.STOW;
+    } else {
 
-        currentState = wantedState;
-      }
-
+      currentState = wantedState;
+    }
   }
 
   public SequentialCommandGroup getSuperStructureCommand() {
-    
 
     switch (currentState) {
       case STOW:
         return new SequentialCommandGroup(
-            new ParallelCommandGroup(elevator.setElevatorTarget(0, 0), csArm.setArmTarget(40, 0)));
+            new ParallelCommandGroup(
+                elevator.setElevatorTarget(0, 0),
+                csArm.setArmTarget(40, 0),
+                csFlywheel.stopCommand()));
 
       case L1:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L1.height, 0.1),
-                csArm.setArmTarget(FieldConstants.ReefHeight.L1.pitch, 2)));
+                csArm.setArmTarget(FieldConstants.ReefHeight.L1.pitch, 2)),
+            csFlywheel.runVoltsCommmand(12));
       case L2:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
-                csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)));
+                csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)),
+            csFlywheel.runVoltsCommmand(12));
       case L3:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
-                csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
+                csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)),
+            csFlywheel.runVoltsCommmand(12));
       case L4:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 0.1),
-                csArm.setArmTarget(FieldConstants.ReefHeight.L4.pitch, 2)));
+                csArm.setArmTarget(FieldConstants.ReefHeight.L4.pitch, 2)),
+            csFlywheel.runVoltsCommmand(12));
 
-        case SOURCE:
-                return new SequentialCommandGroup(
-                    new ParallelCommandGroup(
-                        elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
-                        csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)));
+      case SOURCE:
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                elevator.setElevatorTarget(1, 0.1),
+                csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)),
+            csFlywheel.runVoltsCommmand(12));
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(elevator.setElevatorTarget(0, 0), csArm.setArmTarget(40, 0)));

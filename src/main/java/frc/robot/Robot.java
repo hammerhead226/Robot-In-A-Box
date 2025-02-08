@@ -21,8 +21,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
-import frc.robot.subsystems.SuperStructure;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -39,7 +37,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
-  
 
   public Robot() {
     // Record metadata
@@ -48,7 +45,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
     Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    
+
     switch (BuildConstants.DIRTY) {
       case 0:
         Logger.recordMetadata("GitDirty", "All changes committed");
@@ -165,7 +162,6 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {
     robotContainer.Super.checkSpeed();
     robotContainer.Super.getSuperStructureCommand().schedule();
-  
   }
 
   /** This function is called once when test mode is enabled. */
