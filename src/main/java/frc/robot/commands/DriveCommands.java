@@ -67,17 +67,14 @@ public class DriveCommands {
 
   // profiled controllers
 
-  private static ProfiledPIDController profileSideways;
-  private static ProfiledPIDController profileForward;
-  private static ProfiledPIDController profileRotation;
-
-  // regular controller
-  private static PIDController sidewaysPID =
-      new PIDController(1.5, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
-  private static PIDController forwardsPID =
-      new PIDController(1.5, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
-  private static PIDController rotationPID =
-      new PIDController(2.54, 0, 0, SubsystemConstants.LOOP_PERIOD_SECONDS);
+  static ProfiledPIDController sidewaysPID =
+  new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
+static ProfiledPIDController forwardsPID =
+  new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
+static ProfiledPIDController rotationPID =
+  new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
+// new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70, 120));
+static int count = 0;
 
   private DriveCommands() {}
 
@@ -115,30 +112,6 @@ public class DriveCommands {
           sidewaysPID.setTolerance(0.1);
           forwardsPID.setTolerance(0.1);
 
-          profileSideways =
-              new ProfiledPIDController(
-                  5,
-                  0,
-                  0,
-                  new TrapezoidProfile.Constraints(drive.getMaxLinearSpeedMetersPerSec(), 15));
-          profileForward =
-              new ProfiledPIDController(
-                  5,
-                  0,
-                  0,
-                  new TrapezoidProfile.Constraints(drive.getMaxLinearSpeedMetersPerSec(), 15));
-          profileRotation =
-              new ProfiledPIDController(
-                  2.54,
-                  0,
-                  0,
-                  new TrapezoidProfile.Constraints(
-                      Math.toDegrees(drive.getMaxAngularSpeedRadPerSec()), 1500));
-
-          profileForward.setTolerance(0.1);
-          profileSideways.setTolerance(0.1);
-          profileRotation.setTolerance(1);
-          profileRotation.enableContinuousInput(-180, 180);
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
@@ -166,6 +139,13 @@ public class DriveCommands {
 
           Pose2d targetPose = null;
           if (reefAlignAssistSupplier.getAsBoolean()) {
+            count++;
+            if (count == 1) {
+              sidewaysPID.reset(drive.getPose().getY());
+              forwardsPID.reset(drive.getPose().getX());
+              rotationPID.reset(drive.getRotation().getDegrees());
+            }
+
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
               targetPose =
@@ -219,9 +199,9 @@ public class DriveCommands {
 
             rotationError = driveDegrees - targetDegrees;
 
-            wantedForwardsVelocity = profileForward.calculate(forwardsError);
-            wantedSidewaysVelocity = profileForward.calculate(sidewaysError);
-            wantedRotationVelocity = Math.toRadians(profileForward.calculate(rotationError));
+            wantedForwardsVelocity = forwardsPID.calculate(forwardsError);
+            wantedSidewaysVelocity = sidewaysPID.calculate(sidewaysError);
+            wantedRotationVelocity = Math.toRadians(rotationPID.calculate(rotationError));
 
             forwardsAssistEffort = (wantedForwardsVelocity - forwardSpeed) * speedDebuff;
             sidewaysAssistEffort = (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuff;
