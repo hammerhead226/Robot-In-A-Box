@@ -14,7 +14,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -68,13 +67,13 @@ public class DriveCommands {
   // profiled controllers
 
   static ProfiledPIDController sidewaysPID =
-  new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
-static ProfiledPIDController forwardsPID =
-  new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
-static ProfiledPIDController rotationPID =
-  new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
-// new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70, 120));
-static int count = 0;
+      new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
+  static ProfiledPIDController forwardsPID =
+      new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
+  static ProfiledPIDController rotationPID =
+      new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
+  // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70, 120));
+  static int count = 0;
 
   private DriveCommands() {}
 
@@ -135,7 +134,7 @@ static int count = 0;
 
           double rotationSpeed = speeds.omegaRadiansPerSecond;
 
-          double speedDebuff = 0.9;
+          double speedDebuff = 0.5;
 
           Pose2d targetPose = null;
           if (reefAlignAssistSupplier.getAsBoolean()) {
@@ -199,15 +198,27 @@ static int count = 0;
 
             rotationError = driveDegrees - targetDegrees;
 
-            wantedForwardsVelocity = forwardsPID.calculate(forwardsError);
-            wantedSidewaysVelocity = sidewaysPID.calculate(sidewaysError);
-            wantedRotationVelocity = Math.toRadians(rotationPID.calculate(rotationError));
+            wantedForwardsVelocity =
+                MathUtil.clamp(
+                    forwardsPID.calculate(drive.getPose().getX(), targetPose.getX()), -3, 3);
+            wantedSidewaysVelocity =
+                MathUtil.clamp(
+                    sidewaysPID.calculate(drive.getPose().getY(), targetPose.getY()), -3, 3);
+            wantedRotationVelocity =
+                MathUtil.clamp(
+                    Math.toRadians(
+                        rotationPID.calculate(
+                            drive.getRotation().getDegrees(),
+                            targetPose.getRotation().getDegrees())),
+                    -drive.getMaxAngularSpeedRadPerSec(),
+                    drive.getMaxAngularSpeedRadPerSec());
 
             forwardsAssistEffort = (wantedForwardsVelocity - forwardSpeed) * speedDebuff;
             sidewaysAssistEffort = (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuff;
-            rotationAssistEffort = (wantedRotationVelocity - rotationSpeed);
+            rotationAssistEffort = (wantedRotationVelocity - rotationSpeed) * speedDebuff;
 
           } else {
+            count = 0;
             wantedForwardsVelocity = forwardSpeed;
             forwardsAssistEffort = 0;
 

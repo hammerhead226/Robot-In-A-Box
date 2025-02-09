@@ -31,9 +31,9 @@ public class AlignToCage extends Command {
   @Override
   public void initialize() {
     Pose2d targetPose = drive.getPose().nearest(possiblePoses);
-    
+
     Logger.recordOutput("AlignToCageTargetPose: ", targetPose);
-    //targetPose = new Pose2d(targetPose.getTranslation(), rotation2d);
+    // targetPose = new Pose2d(targetPose.getTranslation(), rotation2d);
     Rotation2d rotation = new Rotation2d(Math.PI);
 
     targetPose = new Pose2d(targetPose.getTranslation(), rotation);
@@ -64,7 +64,8 @@ public class AlignToCage extends Command {
   public void end(boolean interrupted) {
     pathCommand.end(interrupted);
   }
-    @Override
+
+  @Override
   public boolean isFinished() {
     return false;
   }
