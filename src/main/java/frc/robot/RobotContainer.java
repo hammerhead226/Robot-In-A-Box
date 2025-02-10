@@ -249,7 +249,9 @@ public class RobotContainer {
     autos = new SendableChooser<>();
 
     autos.addOption("AutoTest", AutoBuilder.buildAuto("Bottom-R5a(L4)-S3c-R6a(L4)-F2-R6b(L4)-S2c"));
-    autos.addOption("AutoTestTwo", AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+    // autos.addOption("AutoTestTwo",
+    // AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+    autos.addOption("AutoSource", AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
 
     //     autoChooser.addOption(
     //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -266,7 +268,7 @@ public class RobotContainer {
     // autoChooser.addOption(
     //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
-    // // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
+    // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
     // Configure the button bindings

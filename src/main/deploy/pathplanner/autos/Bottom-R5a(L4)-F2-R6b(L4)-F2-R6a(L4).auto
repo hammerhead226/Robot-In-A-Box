@@ -13,13 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "ReleaseClawL4"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.8
+            "waitTime": 2.0
           }
         },
         {
@@ -29,9 +29,15 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeFromSource"
+          }
+        },
+        {
           "type": "wait",
           "data": {
-            "waitTime": 0.6
+            "waitTime": 2.0
           }
         },
         {
@@ -41,9 +47,15 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ReleaseClawL4"
+          }
+        },
+        {
           "type": "wait",
           "data": {
-            "waitTime": 0.8
+            "waitTime": 2.0
           }
         },
         {
@@ -53,9 +65,15 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeFromSource"
+          }
+        },
+        {
           "type": "wait",
           "data": {
-            "waitTime": 0.6
+            "waitTime": 2.0
           }
         },
         {
@@ -65,9 +83,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ReleaseClawL4"
+          }
+        },
+        {
           "type": "wait",
           "data": {
-            "waitTime": 0.8
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
           }
         }
       ]
