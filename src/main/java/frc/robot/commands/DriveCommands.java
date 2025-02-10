@@ -74,6 +74,7 @@ public class DriveCommands {
       new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
   // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70, 120));
   static int count = 0;
+  static Pose2d previousTargetPose = null;
 
   private DriveCommands() {}
 
@@ -138,41 +139,43 @@ public class DriveCommands {
 
           Pose2d targetPose = null;
           if (reefAlignAssistSupplier.getAsBoolean()) {
-            count++;
-            if (count == 1) {
-              sidewaysPID.reset(drive.getPose().getY());
-              forwardsPID.reset(drive.getPose().getX());
-              rotationPID.reset(drive.getRotation().getDegrees());
-            }
-
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
               targetPose =
-                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(0));
+                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
             } else if (reefRightSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterRight();
               targetPose =
-                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(0));
+                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
             } else {
               targetPose = drive.getNearestCenter();
               targetPose =
-                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(0));
+                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
             }
             Logger.recordOutput("drive targetPose name", "reef");
+
           } else if (sourceAlignSupplier.getAsBoolean()) {
             targetPose = drive.getNearestSource();
             targetPose =
-                rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
+                rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
 
             Logger.recordOutput("drive targetPose name", "source");
+
           } else if (processorAlignSupplier.getAsBoolean()) {
             targetPose = FieldConstants.Processor.centerFace;
-            targetPose = rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(0));
+            targetPose = rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
             speedDebuff *= 0.5;
 
             Logger.recordOutput("drive targetPose name", "processor");
           } else {
             Logger.recordOutput("drive targetPose name", "none");
+          }
+
+          if (targetPose != null && !targetPose.equals(previousTargetPose)) {
+            previousTargetPose = targetPose;
+            sidewaysPID.reset(drive.getPose().getY());
+            forwardsPID.reset(drive.getPose().getX());
+            rotationPID.reset(drive.getRotation().getDegrees());
           }
 
           Logger.recordOutput("drive targetPose", targetPose);
@@ -228,6 +231,14 @@ public class DriveCommands {
             rotationAssistEffort = 0;
           }
 
+          Logger.recordOutput("Forwards Profile Position", forwardsPID.getSetpoint().position);
+          Logger.recordOutput("Sideways Profile Position", sidewaysPID.getSetpoint().position);
+          Logger.recordOutput("Rotation Profile Position", rotationPID.getSetpoint().position);
+
+          Logger.recordOutput("Forwards Profile Velocity", forwardsPID.getSetpoint().velocity);
+          Logger.recordOutput("Sideways Profile Velocity", sidewaysPID.getSetpoint().velocity);
+          Logger.recordOutput("Rotation Profile Velocity", rotationPID.getSetpoint().velocity);
+          
           Logger.recordOutput("Forwards Error", forwardsError);
           Logger.recordOutput("Sideways Error", sidewaysError);
           Logger.recordOutput("Rotation Error", rotationError);
@@ -266,7 +277,7 @@ public class DriveCommands {
    * +y is left relative to the robot's new rotation
    */
   public static Pose2d rotateAndNudge(Pose2d pose, Translation2d translation, Rotation2d rotation) {
-    Rotation2d rotation2d = pose.getRotation().rotateBy(new Rotation2d(Math.PI));
+    Rotation2d rotation2d = pose.getRotation().rotateBy(rotation);
     Translation2d translation2d = pose.getTranslation().plus(translation.rotateBy(rotation2d));
     return new Pose2d(translation2d, rotation2d);
   }
