@@ -26,6 +26,7 @@ import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
 import frc.robot.subsystems.newalgaeintake.FeederIOInputsAutoLogged;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -38,6 +39,11 @@ public class Flywheel extends SubsystemBase {
   private CoralState lastCoralState;
   private final FlywheelIOInputsAutoLogged flyInputs = new FlywheelIOInputsAutoLogged();
   private final FeederIOInputsAutoLogged feedInputs = new FeederIOInputsAutoLogged();
+
+  private static final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 1);
+  private static final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 1);
+  private static final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 1);
+
   // private final DistanceSensorIOInputsAutoLogged sInputs = new
   // DistanceSensorIOInputsAutoLogged();
   /** Creates a new Flywheel. */
