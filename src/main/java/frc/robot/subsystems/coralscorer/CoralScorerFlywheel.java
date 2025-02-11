@@ -72,7 +72,9 @@ public class CoralScorerFlywheel extends SubsystemBase {
   public void periodic() {
     flywheel.updateInputs(inputs);
     Logger.processInputs(" ballsFlywheel", inputs);
-    Logger.recordOutput("flywheel output rpm", Units.radiansPerSecondToRotationsPerMinute(inputs.velocityRadPerSec));
+    Logger.recordOutput(
+        "flywheel output rpm",
+        Units.radiansPerSecondToRotationsPerMinute(inputs.velocityRadPerSec));
   }
 
   /** Run open loop at the specified voltage. */

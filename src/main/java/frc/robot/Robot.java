@@ -133,6 +133,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
+    robotContainer.Super.getSuperStructureCommand().schedule();
+    // robotContainer.Super.checkSpeed();
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
@@ -142,7 +144,11 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    robotContainer.Super.getSuperStructureCommand().schedule();
+    // robotContainer.Super.checkSpeed();
+
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override

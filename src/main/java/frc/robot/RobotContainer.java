@@ -21,10 +21,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.Stow;
@@ -74,7 +74,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  public final Drive drive;
+  public static Drive drive;
   private final LED led;
 
   // Controller
@@ -193,7 +193,27 @@ public class RobotContainer {
         Super = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
     }
+
     // Set up auto routines
+    NamedCommands.registerCommand(
+        "AlignToReefAuto",
+        new SequentialCommandGroup(
+            new InstantCommand(drive::setNearestReefSide, drive), drive.autoAlignToReefCommand()));
+    NamedCommands.registerCommand(
+        "L1", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
+    NamedCommands.registerCommand(
+        "L2", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L2)));
+    NamedCommands.registerCommand(
+        "L3", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L3)));
+    NamedCommands.registerCommand(
+        "L4", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L4)));
+    NamedCommands.registerCommand(
+        "STOW ", new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
+    NamedCommands.registerCommand(
+        "SCORE ",
+        new InstantCommand(() -> Super.setWantedState(SuperStructureState.SCORING_CORAL)));
+    NamedCommands.registerCommand(
+        "INTAKE ", new InstantCommand(() -> Super.setWantedState(SuperStructureState.SOURCE)));
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
@@ -211,9 +231,27 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Top R3a", AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c-R1b(L3)-S3c-R6a(L3)"));
     autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
-
+    /*
     NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
+    NamedCommands.registerCommand(
+        "L1", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
+    NamedCommands.registerCommand(
+        "L2", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L2)));
+    NamedCommands.registerCommand(
+        "L3", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L3)));
+    NamedCommands.registerCommand(
+        "L4", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L4)));
+    NamedCommands.registerCommand(
+        "STOW ", new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
+    NamedCommands.registerCommand(
+        "SCORE ",
+        new InstantCommand(() -> Super.setWantedState(SuperStructureState.SCORING_CORAL)));
+    NamedCommands.registerCommand(
+        "INTAKE ", new InstantCommand(() -> Super.setWantedState(SuperStructureState.SOURCE)));
+        */
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
     // configureButtonBindings();
@@ -254,14 +292,19 @@ public class RobotContainer {
     driveController
         .rightBumper()
         .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.SOURCE)));
+
     driveController
         .rightBumper()
         .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
 
+    // driveController
+    //   .a()
+    // .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
+
+    driveController.a().onTrue(drive.autoAlignToReefCommand());
     driveController
-        .a()
-        .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
-    driveController.x().onTrue(new InstantCommand(()-> Super.setWantedState(SuperStructureState.SCORING_CORAL)));
+        .x()
+        .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.SCORING_CORAL)));
     //  driveController
     //    .a()
     //   .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
