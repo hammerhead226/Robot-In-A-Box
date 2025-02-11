@@ -29,9 +29,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.*;
+import frc.robot.constants.FieldConstants.Barge;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -104,7 +107,8 @@ public class DriveCommands {
       BooleanSupplier reefLeftSupplier,
       BooleanSupplier reefRightSupplier,
       BooleanSupplier sourceAlignSupplier,
-      BooleanSupplier processorAlignSupplier) {
+      BooleanSupplier processorAlignSupplier,
+      BooleanSupplier anchorAlignSupplier) {
     return Commands.run(
         () -> {
           rotationPID.setTolerance(1);
@@ -156,17 +160,31 @@ public class DriveCommands {
 
           } else if (sourceAlignSupplier.getAsBoolean()) {
             targetPose = drive.getNearestSource();
-            targetPose =
-                rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
+            targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
 
             Logger.recordOutput("drive targetPose name", "source");
 
           } else if (processorAlignSupplier.getAsBoolean()) {
             targetPose = FieldConstants.Processor.centerFace;
-            targetPose = rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
+            targetPose =
+                rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
             speedDebuff *= 0.5;
 
             Logger.recordOutput("drive targetPose name", "processor");
+          } else if (anchorAlignSupplier.getAsBoolean()) {
+            targetPose =
+                drive
+                    .getPose()
+                    .nearest(
+                        new ArrayList<>(
+                            Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage)));
+            targetPose =
+                rotateAndNudge(
+                    new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
+                    new Translation2d(-0.5, 0),
+                    new Rotation2d(0));
+
+            Logger.recordOutput("drive targetPose name", "anchor");
           } else {
             Logger.recordOutput("drive targetPose name", "none");
           }
@@ -238,7 +256,7 @@ public class DriveCommands {
           Logger.recordOutput("Forwards Profile Velocity", forwardsPID.getSetpoint().velocity);
           Logger.recordOutput("Sideways Profile Velocity", sidewaysPID.getSetpoint().velocity);
           Logger.recordOutput("Rotation Profile Velocity", rotationPID.getSetpoint().velocity);
-          
+
           Logger.recordOutput("Forwards Error", forwardsError);
           Logger.recordOutput("Sideways Error", sidewaysError);
           Logger.recordOutput("Rotation Error", rotationError);

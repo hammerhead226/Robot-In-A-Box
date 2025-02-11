@@ -225,7 +225,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    keyboard.getCButton().whileTrue(new AlignToCage(drive));
+    //keyboard.getCButton().whileTrue(new AlignToCage(drive));
     keyboard
         .getXButton()
         .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
@@ -244,7 +244,8 @@ public class RobotContainer {
             () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.rightTrigger().getAsBoolean(),
             () -> driveController.rightBumper().getAsBoolean(),
-            () -> driveController.b().getAsBoolean()));
+            () -> driveController.b().getAsBoolean(),
+            () -> driveController.x().getAsBoolean()));
 
     // driveController.x().onTrue(new Stow(elevator, csArm));
 
