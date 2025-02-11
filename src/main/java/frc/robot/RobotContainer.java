@@ -257,6 +257,11 @@ public class RobotContainer {
     autos.addOption(
         "AutoSourceMiddle", AutoBuilder.buildAuto("Middle-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
     autos.addOption("AutoSourceTop", AutoBuilder.buildAuto("Top-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+    autos.addOption("AutoTestTop", AutoBuilder.buildAuto("Top-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
+    autos.addOption(
+        "AutoTestMiddle", AutoBuilder.buildAuto("Middle-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
+    autos.addOption(
+        "AutoTestBottom", AutoBuilder.buildAuto("Bottom-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
 
     //     autoChooser.addOption(
     //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
