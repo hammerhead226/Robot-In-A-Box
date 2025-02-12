@@ -119,7 +119,7 @@ public class Drive extends SubsystemBase {
   private final TimeInterpolatableBuffer<Pose2d> gamePieceBuffer =
       TimeInterpolatableBuffer.createBuffer(OBJECT_BUFFER_SIZE_SECONDS);
 
-  private Pose2d nearestSide = new Pose2d();
+  // private Pose2d nearestSide = new Pose2d();
 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
@@ -281,26 +281,7 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
 
-  public PathPlannerPath autoAlignToReefCommand() {
-    // led.setState(SubsystemConstants.LED_STATE.ALIGNING);
-    Pose2d currentPose = getPose();
-    setNearestReefSide();
-    // Pose2d targetPose = getNearestSide();
-    List<Waypoint> waypoints =
-        PathPlannerPath.waypointsFromPoses(getPose(), nearestSide); // targetPose);
-
-    Logger.recordOutput("auto align target ", nearestSide);
-    PathPlannerPath path =
-        new PathPlannerPath(
-            waypoints,
-            new PathConstraints(3.5, 2.7, 100, 180), // these numbers from last year's code
-            null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-            // be null for on-the-fly paths.
-            new GoalEndState(0.5, getPose().getRotation()));
-    path.preventFlipping = true;
-
-    return path;
-  }
+  
 
   /** Runs the drive in a straight line with the specified drive output. */
   public void runCharacterization(double output) {
@@ -467,8 +448,41 @@ public class Drive extends SubsystemBase {
     return new rawGyroRotationSupplier();
   }
 
+  // public Pose2d getNearestSide() {
+  //   return nearestSide;
+  // }
+
+  public Pose2d getNearestCenter() {
+    int index = getNearestParition(6);
+    Logger.recordOutput("align to reef center target index", index);
+    return FieldConstants.Reef.centerFaces[index];
+  }
+
+  public Pose2d getNearestCenterLeft() {
+    int index = getNearestParition(6);
+    Logger.recordOutput("align to reef center left target index", index);
+    return FieldConstants.Reef.branchPositions
+        .get(index * 2 + 1)
+        .get(FieldConstants.ReefHeight.L1)
+        .toPose2d();
+  }
+
+  public Pose2d getNearestCenterRight() {
+    int index = getNearestParition(6);
+    Logger.recordOutput("align to reef center left target index", index);
+    return FieldConstants.Reef.branchPositions
+        .get(index * 2)
+        .get(FieldConstants.ReefHeight.L1)
+        .toPose2d();
+  }
+
   public Pose2d getNearestSide() {
-    return nearestSide;
+    int index = getNearestParition(12);
+    Logger.recordOutput("align to reef target index", index);
+    return FieldConstants.Reef.branchPositions
+        .get(index)
+        .get(FieldConstants.ReefHeight.L1)
+        .toPose2d();
   }
 
   public Command driveToReefAuto() {
@@ -494,7 +508,7 @@ public class Drive extends SubsystemBase {
     return pathCommand;
   }
 
-  public void setNearestReefSide() {
+  private int getNearestParition(int partitions) {
     Translation2d start = FieldConstants.Reef.center;
     Translation2d end = getPose().getTranslation();
     Translation2d v = end.minus(start);
@@ -508,30 +522,27 @@ public class Drive extends SubsystemBase {
     double adjustedRotations = -rawRotations + (7.0 / 12.0);
 
     // % 1 to just get the fractional part of the rotation
-    // multiply by 12 before flooring so [0,1) maps to 0,1,2...10,11 evenly
+    // multiply by 12 before flooring so [0,1) maps to 0,1,2...partitions-2,partitions-1 evenly
     double fractionalRotation = adjustedRotations % 1;
     if (fractionalRotation < 0) {
       fractionalRotation++;
     }
-    int index = (int) Math.floor(fractionalRotation * 12);
+    int index = (int) Math.floor(fractionalRotation * partitions);
 
-    Logger.recordOutput("align to reef target index", index);
+    return index;
+  }
 
-    Pose2d result =
-        FieldConstants.Reef.branchPositions.get(index).get(FieldConstants.ReefHeight.L1).toPose2d();
+  public Pose2d getNearestSource() {
+    if (getPose()
+            .getTranslation()
+            .getDistance(FieldConstants.CoralStation.leftCenterFace.getTranslation())
+        < getPose()
+            .getTranslation()
+            .getDistance(FieldConstants.CoralStation.rightCenterFace.getTranslation())) {
+      return FieldConstants.CoralStation.leftCenterFace;
 
-    // flip rotation
-    Rotation2d rotation2d = result.getRotation().rotateBy(new Rotation2d(Math.PI));
-
-    // back up target position (so it doesn't clip)
-    // x is nearer/farther, y is sideways
-    Translation2d offsetFromBranch = new Translation2d(-0.7, 0);
-    offsetFromBranch = offsetFromBranch.rotateBy(rotation2d);
-    Translation2d translation2d = result.getTranslation().plus(offsetFromBranch);
-
-    result = new Pose2d(translation2d, rotation2d);
-
-    Logger.recordOutput("align to reef target Pose2d", result);
-    nearestSide = result;
+    } else {
+      return FieldConstants.CoralStation.rightCenterFace;
+    }
   }
 }

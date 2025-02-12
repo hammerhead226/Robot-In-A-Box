@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AlignToCage;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeFromSource;
@@ -202,8 +203,8 @@ public class RobotContainer {
     // Set up auto routines
     NamedCommands.registerCommand(
         "AlignToReefAuto",
-        new SequentialCommandGroup(
-            new InstantCommand(drive::setNearestReefSide, drive), new AlignToReefAuto(drive, led)));
+    
+             new AlignToReefAuto(drive, led));
     NamedCommands.registerCommand(
         "L1", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
     NamedCommands.registerCommand(
@@ -274,6 +275,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    //keyboard.getCButton().whileTrue(new AlignToCage(drive));
     // keyboard
     //     .getXButton()
     //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
@@ -289,9 +291,11 @@ public class RobotContainer {
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
             () -> driveController.leftBumper().getAsBoolean(),
+            () -> driveController.leftTrigger().getAsBoolean(),
+            () -> driveController.rightTrigger().getAsBoolean(),
             () -> driveController.rightBumper().getAsBoolean(),
             () -> driveController.b().getAsBoolean(),
-            elevator));
+            () -> driveController.x().getAsBoolean()));
 
     // driveController.x().onTrue(new Stow(elevator, csArm));
 

@@ -54,7 +54,7 @@ public class AlignToReefAuto extends Command {
     path.preventFlipping = true;
 
     // pathCommand = AutoBuilder.followPath(path);
-    this.pathCommand = AutoBuilder.followPath(drive.autoAlignToReefCommand());
+    pathCommand = AutoBuilder.followPath(path);
     // pathCommand = new PathfindingCommand(targetPose,  new PathConstraints(3.5, 2.7, 100, 180),
     // drive::getPose, drive::getChassisSpeeds, null, null, null, null)
     pathCommand.initialize();
