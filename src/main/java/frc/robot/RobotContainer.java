@@ -24,11 +24,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.Stow;
-import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 // import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.SimConstants;
@@ -90,7 +91,9 @@ public class RobotContainer {
   public static Elevator elevator;
   private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
-  final SuperStructure Super;
+  final SuperStructure superStructure;
+
+  private final Trigger stateTrigger;
 
   private final CoralScorerFlywheel csFlywheel;
 
@@ -129,7 +132,7 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, ""));
-        Super = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
+        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
 
       case SIM:
@@ -160,7 +163,7 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOSim());
-        Super = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
+        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
 
       default:
@@ -190,7 +193,7 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
-        Super = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
+        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
     }
 
@@ -198,22 +201,23 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "AlignToReefAuto",
         new SequentialCommandGroup(
-            new InstantCommand(drive::setNearestReefSide, drive), drive.autoAlignToReefCommand()));
+            new InstantCommand(drive::setNearestReefSide, drive), new AlignToReefAuto(drive, led)));
     NamedCommands.registerCommand(
-        "L1", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
+        "L1", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
     NamedCommands.registerCommand(
-        "L2", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L2)));
+        "L2", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
     NamedCommands.registerCommand(
-        "L3", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L3)));
+        "L3", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
     NamedCommands.registerCommand(
-        "L4", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L4)));
+        "L4", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
     NamedCommands.registerCommand(
-        "STOW ", new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
+        "STOW ", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
     NamedCommands.registerCommand(
         "SCORE ",
-        new InstantCommand(() -> Super.setWantedState(SuperStructureState.SCORING_CORAL)));
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
     NamedCommands.registerCommand(
-        "INTAKE ", new InstantCommand(() -> Super.setWantedState(SuperStructureState.SOURCE)));
+        "INTAKE ",
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
@@ -255,6 +259,8 @@ public class RobotContainer {
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
     // configureButtonBindings();
+    stateTrigger = new Trigger(() -> superStructure.shouldTrigger());
+
     configureButtonBindings();
   }
 
@@ -266,13 +272,13 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    keyboard
-        .getXButton()
-        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
-    keyboard
-        .getZButton()
-        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
-
+    // keyboard
+    //     .getXButton()
+    //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
+    // keyboard
+    //     .getZButton()
+    //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
+    stateTrigger.onTrue(superStructure.getSuperStructureCommand());
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -289,31 +295,33 @@ public class RobotContainer {
 
     // driveController.a().onTrue(new SetClawLevel(ElevatorState.L4, elevator, csArm));
     // driveController.a().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
-    driveController
-        .rightBumper()
-        .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.SOURCE)));
-
-    driveController
-        .rightBumper()
-        .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
+    // driveController
+    //     .rightBumper()
+    //     .onTrue(new InstantCommand(() ->
+    // superStructure.setWantedState(SuperStructureState.SOURCE)));
 
     // driveController
-    //   .a()
-    // .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
+    //     .rightBumper()
+    //     .onFalse(new InstantCommand(() ->
+    // superStructure.setWantedState(SuperStructureState.STOW)));
 
-    driveController.a().onTrue(drive.autoAlignToReefCommand());
-    driveController
-        .x()
-        .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.SCORING_CORAL)));
-    //  driveController
-    //    .a()
-    //   .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
+    // // driveController
+    // //   .a()
+    // // .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
 
-    driveController.y().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
-    driveController.y().onFalse(new Stow(elevator, csArm));
+    // driveController.a().onTrue(new AlignToReefAuto(drive, led));
+    // driveController
+    //     .x()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+    // //  driveController
+    // //    .a()
+    // //   .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
+
+    // driveController.y().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
+    // driveController.y().onFalse(new Stow(elevator, csArm));
 
     // why is this like this?
-    driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
+    // driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
     // driveController.rightBumper().onTrue(new SetClawLevel(ElevatorState.SOURCE, elevator,
     // csArm));
     // driveController.rightBumper().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
@@ -369,30 +377,29 @@ public class RobotContainer {
     // manipController.y().onTrue(new InstantCommand(() ->
     // elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 1)));
 
-    manipController
-        .a()
-        .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
-    manipController
-        .b()
-        .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.L2)));
-    manipController
-        .x()
-        .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.L3)));
-    manipController
-        .y()
-        .onTrue(new InstantCommand(() -> Super.setWantedState(SuperStructureState.L4)));
-    manipController
-        .a()
-        .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
-    manipController
-        .b()
-        .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
+    keyboard
+        .getCButton()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
+    keyboard.getVButton()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
     manipController
         .x()
-        .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
     manipController
         .y()
-        .onFalse(new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    manipController
+        .a()
+        .onFalse(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
+    manipController
+        .b()
+        .onFalse(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
+    manipController
+        .x()
+        .onFalse(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
+    manipController
+        .y()
+        .onFalse(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
 
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm,

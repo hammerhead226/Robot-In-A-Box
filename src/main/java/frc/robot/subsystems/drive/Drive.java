@@ -281,10 +281,10 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
 
-  public Command autoAlignToReefCommand() {
+  public PathPlannerPath autoAlignToReefCommand() {
     // led.setState(SubsystemConstants.LED_STATE.ALIGNING);
     Pose2d currentPose = getPose();
-    // setNearestReefSide();
+    setNearestReefSide();
     // Pose2d targetPose = getNearestSide();
     List<Waypoint> waypoints =
         PathPlannerPath.waypointsFromPoses(getPose(), nearestSide); // targetPose);
@@ -299,7 +299,7 @@ public class Drive extends SubsystemBase {
             new GoalEndState(0.5, getPose().getRotation()));
     path.preventFlipping = true;
 
-    return AutoBuilder.followPath(path);
+    return path;
   }
 
   /** Runs the drive in a straight line with the specified drive output. */

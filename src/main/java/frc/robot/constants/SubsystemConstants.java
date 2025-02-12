@@ -144,6 +144,7 @@ public final class SubsystemConstants {
   }
 
   public static enum SuperStructureState {
+    NONE,
     STOW,
     SOURCE,
     PROCESSOR,

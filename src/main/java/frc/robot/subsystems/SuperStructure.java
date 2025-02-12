@@ -21,8 +21,9 @@ public class SuperStructure {
   private final CoralScorerFlywheel csFlywheel;
   private final Drive drive;
   private final LED led;
-  private SuperStructureState currentState;
+  // private SuperStructureState currentState;
   private SuperStructureState wantedState;
+  private SuperStructureState lastWantedState;
   public boolean override = false;
 
   public SuperStructure(
@@ -36,29 +37,36 @@ public class SuperStructure {
     this.csFlywheel = csFlywheel;
     this.drive = drive;
     this.led = led;
-
-    currentState = SuperStructureState.STOW;
+    lastWantedState = SuperStructureState.STOW;
     wantedState = SuperStructureState.STOW;
   }
 
-  public void setWantedState(SuperStructureState desiredState) {
-
-    this.wantedState = desiredState;
-    this.currentState = wantedState;
+  public void setWantedState(SuperStructureState wantedState) {
+    this.wantedState = wantedState;
+    // this.currentState = wantedState;
   }
 
   public void checkSpeed() {
     if (Drive.speedX > 2 || Drive.speedY > 2 || Drive.rotationDegs > 50) {
-      this.currentState = SuperStructureState.STOW;
-    } else {
-
-      currentState = wantedState;
+      this.wantedState = SuperStructureState.STOW;
     }
+    // else {
+
+    //   currentState = wantedState;
+    // }
+  }
+
+  public boolean shouldTrigger() {
+    return wantedState != lastWantedState;
+  }
+
+  public SuperStructureState getState() {
+    return wantedState;
   }
 
   public SequentialCommandGroup getSuperStructureCommand() {
-
-    switch (currentState) {
+    lastWantedState = wantedState;
+    switch (wantedState) {
       case STOW:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(

@@ -133,7 +133,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
-    robotContainer.Super.getSuperStructureCommand().schedule();
+    // robotContainer.Super.getSuperStructureCommand().schedule();
     // robotContainer.Super.checkSpeed();
 
     // schedule the autonomous command (example)
@@ -145,7 +145,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    robotContainer.Super.getSuperStructureCommand().schedule();
+    // robotContainer.Super.getSuperStructureCommand().schedule();
     // robotContainer.Super.checkSpeed();
 
   }
@@ -160,14 +160,18 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    robotContainer.Super.getSuperStructureCommand().schedule();
+    // robotContainer.Super.getSuperStructureCommand().schedule();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    robotContainer.Super.checkSpeed();
-    robotContainer.Super.getSuperStructureCommand().schedule();
+    robotContainer.superStructure.checkSpeed();
+    if (robotContainer.superStructure.shouldTrigger()) {
+      robotContainer.superStructure.getSuperStructureCommand().initialize();
+    }
+
+    Logger.recordOutput("SuperstructureState", robotContainer.superStructure.getState());
   }
 
   /** This function is called once when test mode is enabled. */
