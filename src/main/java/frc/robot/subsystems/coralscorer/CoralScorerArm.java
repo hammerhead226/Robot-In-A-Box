@@ -167,11 +167,11 @@ public class CoralScorerArm extends SubsystemBase {
   }
 
   private void updateTunableNumbers() {
-    if (kP.hasChanged(hashCode())) {
-      coralScorerArm.configurePID(kP.get(), 0, 0);
+    if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode())) {
+      coralScorerArm.configurePID(kP.get(), kI.get(), 0);
     }
-    // if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode())) {
-    //   armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
-    // }
+     if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
+       armFFModel = new ArmFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
+     }
   }
 }

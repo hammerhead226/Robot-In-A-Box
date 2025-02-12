@@ -2,6 +2,7 @@ package frc.robot.subsystems.coralscorer;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,7 +29,7 @@ public class CoralScorerFlywheel extends SubsystemBase {
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
   private final CoralIntakeSensorIOInputsAutoLogged sInputs =
       new CoralIntakeSensorIOInputsAutoLogged();
-  private final SimpleMotorFeedforward ffModel;
+  private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
   private AlgaeState lastAlgaeState;
   private final FeederIOInputsAutoLogged feedInputs = new FeederIOInputsAutoLogged();
@@ -75,12 +76,15 @@ public class CoralScorerFlywheel extends SubsystemBase {
                 null,
                 (state) -> Logger.recordOutput("Flywheel/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
+
+            updateTunableNumbers();
   }
 
   @Override
   public void periodic() {
     flywheel.updateInputs(inputs);
     Logger.processInputs(" ballsFlywheel", inputs);
+    updateTunableNumbers();
   }
 
   /** Run open loop at the specified voltage. */
@@ -172,5 +176,11 @@ public class CoralScorerFlywheel extends SubsystemBase {
 
   public CoralState getLastCoralState() {
     return lastCoralState;
+  }
+
+  private void updateTunableNumbers() {
+    if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
+       ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
+     }
   }
 }
