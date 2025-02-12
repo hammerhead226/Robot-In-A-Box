@@ -38,6 +38,8 @@ public final class SubsystemConstants {
 
     public static final double ELEVATOR_GEAR_RATIO = 1;
     public static final double SCORING_SETPOINT_POS = 0.3;
+    public static final double INTAKE_SETPOINT_INCHES = 0.9;
+    public static final double PROCESSOR_SETPOINT_INCHES = 0;
   }
 
   @Deprecated
@@ -96,6 +98,68 @@ public final class SubsystemConstants {
     DEFAULT,
     NO_ALGAE,
     CURRENT,
+  }
+
+  public static enum ElevatorState {
+    ZERO,
+    STOW,
+    L1,
+    L2,
+    L3,
+    L4,
+    SOURCE,
+    PROCESSOR
+  }
+
+  public static enum ScoralArmState {
+    ZERO,
+    STOW,
+    L1,
+    L2,
+    L3,
+    L4,
+    SOURCE,
+    PROCESSOR
+  }
+
+  public static enum ScoralFlywheelState {
+    ZERO,
+    INTAKING_CORAL,
+    INTAKING_ALGAE,
+    SCORING_CORAL,
+    SCORING_ALGAE
+  }
+
+  public static enum ClimberState {
+    STOW,
+    STAGE_ONE,
+    STAGE_TWO,
+    HANG
+  }
+
+  public static enum DriveState {
+    FULLSPEED,
+    SLOW
+  }
+
+  public static enum SuperStructureState {
+    NONE,
+    STOW,
+    SOURCE,
+    PROCESSOR,
+    L1,
+    L2,
+    L3,
+    L4,
+    CLIMB_STAGE_ONE,
+    CLIMB_STAGE_TWO,
+    HANG,
+    L1ATGOAL,
+    //  L2ATGOAL,
+    //   L3ATGOAL,
+    //  L4ATGOAL,
+    DEFAULT,
+    SCORING_CORAL
   }
 
   public static final double CORAL_DIST = -1234; // 1300; // CHANGE THIS

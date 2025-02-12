@@ -21,19 +21,28 @@ public class AlignToReefAuto extends Command {
   private final LED led;
 
   Command pathCommand;
+  Pose2d currentPose;
+
+  boolean finished;
 
   public AlignToReefAuto(Drive drive, LED led) {
     this.drive = drive;
     this.led = led;
+    finished = false;
 
     addRequirements(drive, led);
+    // currentPose = drive.getPose();
   }
 
   @Override
   public void initialize() {
     // led.setState(SubsystemConstants.LED_STATE.ALIGNING);
+    led.setState(LED_STATE.RED);
+    currentPose = drive.getPose();
+    // drive.setNearestReefSide();
     Pose2d targetPose = getNearestReefSide();
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), targetPose);
+    List<Waypoint> waypoints =
+        PathPlannerPath.waypointsFromPoses(currentPose, new Pose2d()); // targetPose);
 
     PathPlannerPath path =
         new PathPlannerPath(
@@ -44,7 +53,10 @@ public class AlignToReefAuto extends Command {
             new GoalEndState(0.5, targetPose.getRotation()));
     path.preventFlipping = true;
 
-    pathCommand = AutoBuilder.followPath(path);
+    // pathCommand = AutoBuilder.followPath(path);
+    this.pathCommand = AutoBuilder.followPath(drive.autoAlignToReefCommand());
+    // pathCommand = new PathfindingCommand(targetPose,  new PathConstraints(3.5, 2.7, 100, 180),
+    // drive::getPose, drive::getChassisSpeeds, null, null, null, null)
     pathCommand.initialize();
   }
 
@@ -98,16 +110,19 @@ public class AlignToReefAuto extends Command {
     // if both CANRanges measure a short distance
     led.setState(LED_STATE.FLASHING_YELLOW);
     pathCommand.execute();
+    finished = pathCommand.isFinished();
+    // Logger.recordOutput("pathCommmandLog", null);
   }
 
   @Override
   public void end(boolean interrupted) {
-    pathCommand.cancel();
+    // pathCommand.end(interrupted);
+    led.setState(LED_STATE.HALF_FLASH_RED_HALF_FLASH_WHITE);
   }
 
   @Override
   public boolean isFinished() {
     // or any other way we can measure "close enough" to desired position
-    return false;
+    return finished;
   }
 }

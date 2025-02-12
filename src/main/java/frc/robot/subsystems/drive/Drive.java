@@ -21,6 +21,10 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -56,6 +60,7 @@ import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.vision.ObjectDetection;
 import frc.robot.subsystems.vision.Vision.VisionConsumer;
 import frc.robot.util.LocalADStarAK;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
@@ -81,6 +86,7 @@ public class Drive extends SubsystemBase {
   private static final double ROBOT_MASS_KG = 1;
   private static final double ROBOT_MOI = 1;
   private static final double WHEEL_COF = 1;
+  private Pose2d balls;
   private static final RobotConfig PP_CONFIG =
       new RobotConfig(
           ROBOT_MASS_KG,
@@ -105,6 +111,10 @@ public class Drive extends SubsystemBase {
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Rotation2d rawGyroRotation = new Rotation2d();
+
+  public static double speedX;
+  public static double speedY;
+  public static double rotationDegs;
 
   private final TimeInterpolatableBuffer<Pose2d> gamePieceBuffer =
       TimeInterpolatableBuffer.createBuffer(OBJECT_BUFFER_SIZE_SECONDS);
@@ -162,6 +172,8 @@ public class Drive extends SubsystemBase {
         });
 
     // Configure SysId
+    speedX = 0;
+    speedY = 0;
     sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -174,6 +186,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Pose2d getPoseAtTimeStamp(double seconds) {
+
     return poseEstimator.sampleAt(seconds).orElse(new Pose2d());
   }
 
@@ -182,6 +195,7 @@ public class Drive extends SubsystemBase {
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
+
     for (var module : modules) {
       module.periodic();
     }
@@ -230,10 +244,15 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      speedX = getChassisSpeeds().vxMetersPerSecond;
+      speedY = getChassisSpeeds().vyMetersPerSecond;
+      rotationDegs = Math.toDegrees(getChassisSpeeds().omegaRadiansPerSecond);
     }
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && SimConstants.currentMode != Mode.SIM);
+    // setNearestReefSide();
+    balls = getPose();
   }
 
   /**
@@ -256,8 +275,31 @@ public class Drive extends SubsystemBase {
       modules[i].runSetpoint(setpointStates[i]);
     }
 
+    // this.speedX = speeds.vxMetersPerSecond;
+    // this.speedY = speeds.vyMetersPerSecond;
     // Log optimized setpoints (runSetpoint mutates each state)
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+  }
+
+  public PathPlannerPath autoAlignToReefCommand() {
+    // led.setState(SubsystemConstants.LED_STATE.ALIGNING);
+    Pose2d currentPose = getPose();
+    setNearestReefSide();
+    // Pose2d targetPose = getNearestSide();
+    List<Waypoint> waypoints =
+        PathPlannerPath.waypointsFromPoses(getPose(), nearestSide); // targetPose);
+
+    Logger.recordOutput("auto align target ", nearestSide);
+    PathPlannerPath path =
+        new PathPlannerPath(
+            waypoints,
+            new PathConstraints(3.5, 2.7, 100, 180), // these numbers from last year's code
+            null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+            // be null for on-the-fly paths.
+            new GoalEndState(0.5, getPose().getRotation()));
+    path.preventFlipping = true;
+
+    return path;
   }
 
   /** Runs the drive in a straight line with the specified drive output. */
@@ -318,7 +360,7 @@ public class Drive extends SubsystemBase {
 
   /** Returns the measured chassis speeds of the robot. */
   @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-  private ChassisSpeeds getChassisSpeeds() {
+  public ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
@@ -427,6 +469,29 @@ public class Drive extends SubsystemBase {
 
   public Pose2d getNearestSide() {
     return nearestSide;
+  }
+
+  public Command driveToReefAuto() {
+
+    Pose2d targetPose = getNearestSide();
+
+    // FieldConstants.Sources.Lower.Position : FieldConstants.Sources.Higher.Position;
+    List<Waypoint> waypoints =
+        PathPlannerPath.waypointsFromPoses(
+            new Pose2d(100, 1, Rotation2d.fromDegrees(50)), targetPose);
+
+    PathPlannerPath path =
+        new PathPlannerPath(
+            waypoints,
+            new PathConstraints(3.5, 2.7, 100, 180), // these numbers from last year's code
+            null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+            // be null for on-the-fly paths.
+            new GoalEndState(0.5, targetPose.getRotation()));
+    path.preventFlipping = true;
+
+    Command pathCommand = AutoBuilder.followPath(path);
+
+    return pathCommand;
   }
 
   public void setNearestReefSide() {

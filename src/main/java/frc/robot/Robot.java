@@ -45,6 +45,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
     Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+
     switch (BuildConstants.DIRTY) {
       case 0:
         Logger.recordMetadata("GitDirty", "All changes committed");
@@ -132,6 +133,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
+    // robotContainer.Super.getSuperStructureCommand().schedule();
+    // robotContainer.Super.checkSpeed();
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
@@ -141,7 +144,11 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    // robotContainer.Super.getSuperStructureCommand().schedule();
+    // robotContainer.Super.checkSpeed();
+
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -153,11 +160,19 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    // robotContainer.Super.getSuperStructureCommand().schedule();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    robotContainer.superStructure.checkSpeed();
+    if (robotContainer.superStructure.shouldTrigger()) {
+      robotContainer.superStructure.getSuperStructureCommand().initialize();
+    }
+
+    Logger.recordOutput("SuperstructureState", robotContainer.superStructure.getState());
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override
