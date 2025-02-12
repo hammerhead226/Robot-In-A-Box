@@ -15,6 +15,10 @@ import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
 import frc.robot.subsystems.newalgaeintake.FeederIOInputsAutoLogged;
+import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.Notification;
+import frc.robot.util.Elastic.Notification.NotificationLevel;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -23,10 +27,14 @@ public class CoralScorerFlywheel extends SubsystemBase {
   private final CoralSensorIO sensor;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
   private final CoralSensorIOInputsAutoLogged sInputs = new CoralSensorIOInputsAutoLogged();
-  private final SimpleMotorFeedforward ffModel;
+  private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
   private AlgaeState lastAlgaeState;
   private final FeederIOInputsAutoLogged feedInputs = new FeederIOInputsAutoLogged();
+
+  private static final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 1);
+  private static final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 1);
+  private static final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 1);
 
   private CoralState lastCoralState;
 
@@ -66,15 +74,15 @@ public class CoralScorerFlywheel extends SubsystemBase {
                 null,
                 (state) -> Logger.recordOutput("Flywheel/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
+
+    updateTunableNumbers();
   }
 
   @Override
   public void periodic() {
     flywheel.updateInputs(inputs);
     Logger.processInputs(" ballsFlywheel", inputs);
-    Logger.recordOutput(
-        "flywheel output rpm",
-        Units.radiansPerSecondToRotationsPerMinute(inputs.velocityRadPerSec));
+    updateTunableNumbers();
   }
 
   /** Run open loop at the specified voltage. */
@@ -92,7 +100,9 @@ public class CoralScorerFlywheel extends SubsystemBase {
   }
 
   public Command runVoltsCommmand(double volts) {
-
+    Elastic.sendNotification(
+        new Notification(
+            NotificationLevel.INFO, "Notice", "Flywheel is being run at " + volts + " volts."));
     return new InstantCommand(() -> runVolts(volts), this);
   }
 
@@ -171,5 +181,11 @@ public class CoralScorerFlywheel extends SubsystemBase {
 
   public CoralState getLastCoralState() {
     return lastCoralState;
+  }
+
+  private void updateTunableNumbers() {
+    if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
+      ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
+    }
   }
 }

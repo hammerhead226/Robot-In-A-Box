@@ -26,7 +26,12 @@ public class CoralScorerArm extends SubsystemBase {
   private static LoggedTunableNumber kG = new LoggedTunableNumber("CoralScoringArm/kG");
   ;
   private static LoggedTunableNumber kV = new LoggedTunableNumber("CoralScoringArm/kV");
+
+  private static LoggedTunableNumber kA = new LoggedTunableNumber("CoralScoringArm/kA", 1);
   ;
+  private static LoggedTunableNumber kS = new LoggedTunableNumber("CoralScoringArm/kS", 1);
+  ;
+  private static LoggedTunableNumber kI = new LoggedTunableNumber("CoralScoringArm/kI", 1);
 
   private static double maxVelocityDegPerSec;
   private static double maxAccelerationDegPerSecSquared;
@@ -52,21 +57,33 @@ public class CoralScorerArm extends SubsystemBase {
         kG.initDefault(0.29);
         kV.initDefault(1);
         kP.initDefault(1.123);
+        kA.initDefault(1);
+        kS.initDefault(1);
+        kI.initDefault(1);
         break;
       case REPLAY:
         kG.initDefault(0.29);
         kV.initDefault(1);
         kP.initDefault(1.123);
+        kA.initDefault(1);
+        kS.initDefault(1);
+        kI.initDefault(1);
         break;
       case SIM:
         kG.initDefault(0);
         kV.initDefault(1);
         kP.initDefault(1);
+        kA.initDefault(1);
+        kS.initDefault(1);
+        kI.initDefault(1);
         break;
       default:
         kG.initDefault(0.29);
         kV.initDefault(1);
         kP.initDefault(1.123);
+        kA.initDefault(1);
+        kS.initDefault(1);
+        kI.initDefault(1);
         break;
     }
 
@@ -160,11 +177,14 @@ public class CoralScorerArm extends SubsystemBase {
   }
 
   private void updateTunableNumbers() {
-    if (kP.hasChanged(hashCode())) {
-      coralScorerArm.configurePID(kP.get(), 0, 0);
+    if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode())) {
+      coralScorerArm.configurePID(kP.get(), kI.get(), 0);
     }
-    // if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode())) {
-    //   armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
-    // }
+    if (kG.hasChanged(hashCode())
+        || kV.hasChanged(hashCode())
+        || kA.hasChanged(hashCode())
+        || kS.hasChanged(hashCode())) {
+      armFFModel = new ArmFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
+    }
   }
 }
