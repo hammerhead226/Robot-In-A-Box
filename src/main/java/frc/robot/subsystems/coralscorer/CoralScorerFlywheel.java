@@ -2,7 +2,6 @@ package frc.robot.subsystems.coralscorer;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,8 +17,10 @@ import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
 import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIO;
 import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIOInputsAutoLogged;
 import frc.robot.subsystems.newalgaeintake.FeederIOInputsAutoLogged;
+import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.Notification;
+import frc.robot.util.Elastic.Notification.NotificationLevel;
 import frc.robot.util.LoggedTunableNumber;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -77,7 +78,7 @@ public class CoralScorerFlywheel extends SubsystemBase {
                 (state) -> Logger.recordOutput("Flywheel/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
 
-            updateTunableNumbers();
+    updateTunableNumbers();
   }
 
   @Override
@@ -102,7 +103,9 @@ public class CoralScorerFlywheel extends SubsystemBase {
   }
 
   public Command runVoltsCommmand(double volts) {
-
+    Elastic.sendNotification(
+        new Notification(
+            NotificationLevel.INFO, "Notice", "Flywheel is being run at " + volts + " volts."));
     return new InstantCommand(() -> runVolts(volts), this);
   }
 
@@ -180,7 +183,7 @@ public class CoralScorerFlywheel extends SubsystemBase {
 
   private void updateTunableNumbers() {
     if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
-       ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
-     }
+      ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
+    }
   }
 }
