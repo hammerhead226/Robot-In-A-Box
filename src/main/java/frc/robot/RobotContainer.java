@@ -23,8 +23,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+// import frc.robot.ClimbStateMachine.java.ClimbStateMachine;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.AutoAlignToSource;
 import frc.robot.commands.AutoPickupCoral;
@@ -42,6 +44,8 @@ import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.TunerConstants;
+import frc.robot.statemachines.ClimbStateMachine;
+import frc.robot.statemachines.ClimbStateMachine.CLIMB_STATES;
 import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIO;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
@@ -69,6 +73,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.KeyboardInputs;
+import java.util.Map;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -97,6 +102,8 @@ public class RobotContainer {
   private final Elevator elevator;
   private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
+
+  private final ClimbStateMachine climbStateMachine;
   // private final ObjectDetection objectDetection;
   // private final ObjectDetectionConsumer odConsumer;
   // private final ObjectDetectionIO odIO;
@@ -107,6 +114,12 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private CLIMB_STATES climbSelect() {
+    return climbStateMachine.getTargetState();
+  }
+
+  private final Command climbCommands;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -213,6 +226,27 @@ public class RobotContainer {
 
         break;
     }
+
+    climbStateMachine = new ClimbStateMachine(csArm);
+
+    // angles in none and retract aren't set, CHANGE THEM!!
+    climbCommands =
+        new SelectCommand<>(
+            Map.ofEntries(
+                Map.entry(
+                    CLIMB_STATES.EXTEND,
+                    csArm.setArmTarget(5, 5).andThen(climbStateMachine::advanceTargetState, csArm)),
+                Map.entry(
+                    CLIMB_STATES.RETRACT,
+                    csArm
+                        .setArmTarget(120, 5)
+                        .andThen(climbStateMachine::advanceTargetState, csArm)),
+                Map.entry(
+                    CLIMB_STATES.NONE,
+                    csArm
+                        .setArmTarget(120, 5)
+                        .andThen(climbStateMachine::advanceTargetState, csArm))),
+            this::climbSelect);
     // Set up auto routines
 
     // Set up SysId routines
@@ -399,9 +433,12 @@ public class RobotContainer {
         .x()
         .onFalse(
             new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
-    driveController
-        .y()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+    // driveController
+    //     .y()
+    //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm,
+    // csFlywheel));
+
+    driveController.y().onTrue(climbCommands);
 
     controller.leftBumper().onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
     controller

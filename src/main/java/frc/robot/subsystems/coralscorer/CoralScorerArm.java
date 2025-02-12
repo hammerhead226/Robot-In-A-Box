@@ -115,7 +115,7 @@ public class CoralScorerArm extends SubsystemBase {
 
   public void setArmGoal(double goalDegrees) {
     this.goalDegrees = goalDegrees;
-    armGoalStateDegrees = new TrapezoidProfile.State(goalDegrees, 0);
+    armGoalStateDegrees = new TrapezoidProfile.State(goalDegrees, 2);
   }
 
   public void setArmCurrent(double currentDegrees) {
