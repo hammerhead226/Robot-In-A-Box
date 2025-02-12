@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SubsystemConstants.CoralState;
@@ -13,8 +14,9 @@ import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
+import org.littletonrobotics.junction.Logger;
 
-public class SuperStructure {
+public class SuperStructure  {
 
   private final Elevator elevator;
   private final CoralScorerArm csArm;
@@ -25,7 +27,7 @@ public class SuperStructure {
   private SuperStructureState wantedState;
   private SuperStructureState lastWantedState;
   public boolean override = false;
-
+  private SuperStructureState requestedState;
   public SuperStructure(
       Elevator elevator,
       CoralScorerArm csArm,
@@ -39,10 +41,12 @@ public class SuperStructure {
     this.led = led;
     lastWantedState = SuperStructureState.STOW;
     wantedState = SuperStructureState.STOW;
+    requestedState = SuperStructureState.STOW;
   }
 
   public void setWantedState(SuperStructureState wantedState) {
     this.wantedState = wantedState;
+    requestedState = wantedState;
     // this.currentState = wantedState;
   }
 
@@ -50,10 +54,10 @@ public class SuperStructure {
     if (Drive.speedX > 2 || Drive.speedY > 2 || Drive.rotationDegs > 50) {
       this.wantedState = SuperStructureState.STOW;
     }
-    // else {
+    else  {
 
-    //   currentState = wantedState;
-    // }
+     this.wantedState = requestedState;
+     }
   }
 
   public boolean shouldTrigger() {
@@ -146,4 +150,6 @@ public class SuperStructure {
             new ParallelCommandGroup(elevator.setElevatorTarget(0, 0), csArm.setArmTarget(40, 0)));
     }
   }
+
+  
 }

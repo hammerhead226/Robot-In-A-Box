@@ -5,11 +5,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralScorerConstants.AlgaeScorerFlywheelConstants;
 import frc.robot.constants.SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants;
-import frc.robot.constants.SubsystemConstants.ElevatorConstants;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.elevator.Elevator;
@@ -32,8 +30,7 @@ public class IntakingAlgae extends Command {
   @Override
   public void initialize() {
     elevator.setExtenderGoal(12);
-    arm.setArmGoal(
-        CoralScorerArmConstants.INTAKE_SETPOINT_DEG);
+    arm.setArmGoal(CoralScorerArmConstants.INTAKE_SETPOINT_DEG);
     algaeIntake.runVelocity(AlgaeScorerFlywheelConstants.FLYWHEEL_VELOCITY_DEGPERSEC);
   }
 
@@ -45,8 +42,7 @@ public class IntakingAlgae extends Command {
   @Override
   public void end(boolean interrupted) {
     algaeIntake.stop();
-    arm.setArmGoal(
-        CoralScorerArmConstants.STOW_SETPOINT_DEG);
+    arm.setArmGoal(CoralScorerArmConstants.STOW_SETPOINT_DEG);
     elevator.setExtenderGoal(0);
   }
 
