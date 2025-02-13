@@ -17,11 +17,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 
-public class AlgaeIntakeArmIOTalonFX implements ArmIO {
+public class AlgaeIntakeArmIOTalonFX implements AlgaeIntakeArmIO {
   private final TalonFX leader;
   private final TalonFX follower;
 
@@ -45,9 +44,9 @@ public class AlgaeIntakeArmIOTalonFX implements ArmIO {
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
-    follower = new TalonFX(followID, SubsystemConstants.CANBUS);
-    pigeon = new Pigeon2(gyroID, SubsystemConstants.CANBUS);
+    leader = new TalonFX(leadID, SubsystemConstants.CANIVORE_ID_STRING);
+    follower = new TalonFX(followID, SubsystemConstants.CANIVORE_ID_STRING);
+    pigeon = new Pigeon2(gyroID, SubsystemConstants.CANIVORE_ID_STRING);
     pigeon.reset();
 
     leader.getConfigurator().apply(config);
@@ -88,7 +87,7 @@ public class AlgaeIntakeArmIOTalonFX implements ArmIO {
   }
 
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
+  public void updateInputs(AlgaeIntakeArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps, pitch);
     inputs.gyroConnected = BaseStatusSignal.refreshAll(pitch).equals(StatusCode.OK);

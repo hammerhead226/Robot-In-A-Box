@@ -22,8 +22,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
+import frc.robot.subsystems.newalgaeintake.FeederIOInputsAutoLogged;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -33,6 +35,11 @@ public class Flywheel extends SubsystemBase {
   private final SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
 
+  private CoralState lastCoralState;
+  private final FlywheelIOInputsAutoLogged flyInputs = new FlywheelIOInputsAutoLogged();
+  private final FeederIOInputsAutoLogged feedInputs = new FeederIOInputsAutoLogged();
+  // private final DistanceSensorIOInputsAutoLogged sInputs = new
+  // DistanceSensorIOInputsAutoLogged();
   /** Creates a new Flywheel. */
   public Flywheel(FlywheelIO io) {
     this.io = io;
@@ -88,6 +95,31 @@ public class Flywheel extends SubsystemBase {
   public Command runVoltsCommmand(double volts) {
 
     return new InstantCommand(() -> runVolts(volts), this);
+  }
+
+  public CoralState getLastCoralState() {
+    return lastCoralState;
+  }
+
+  public CoralState seesCoral() {
+    Logger.recordOutput("see note val", "default");
+    /*  if ((flyInputs.distance > SubsystemConstants.CORAL_DIST && sInputs.distance < 2150)) {
+      Logger.recordOutput("see note val", "sensor");
+      lastCoralState = CoralState.SENSOR;
+      return CoralState.SENSOR;
+
+    } else */
+    if (feedInputs.currentAmps > 13) { // TODO add additional check to filter out false positives
+      // } else if (feedInputs.currentAmps > 10000) {
+      Logger.recordOutput("see note val", "current");
+      lastCoralState = CoralState.CURRENT;
+      return CoralState.CURRENT;
+
+    } else {
+      Logger.recordOutput("see note val", "no note");
+      lastCoralState = CoralState.NO_CORAL;
+      return CoralState.NO_CORAL;
+    }
   }
 
   public Command runVelocityCommand(double velocityRPM) {

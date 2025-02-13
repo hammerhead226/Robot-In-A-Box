@@ -21,7 +21,8 @@ public class PivotVis {
     this.key = key;
     this.panel = new LoggedMechanism2d(100, 100, new Color8Bit(Color.kWhite));
     this.root = panel.getRoot("mechanism", 50, 0);
-    this.mecha = root.append(new LoggedMechanismLigament2d("arms", 2, 0, 10, new Color8Bit(color)));
+    this.mecha =
+        root.append(new LoggedMechanismLigament2d("arms", 0.5, 0, 10, new Color8Bit(color)));
 
     Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
   }
@@ -34,7 +35,12 @@ public class PivotVis {
   }
 
   public void updateVertical(double position) {
-    root.setPosition(50, position);
+    root.setPosition(50.1, position);
+    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+  }
+
+  public void updateLength(double length) {
+    mecha.setLength(length);
     Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
   }
 }

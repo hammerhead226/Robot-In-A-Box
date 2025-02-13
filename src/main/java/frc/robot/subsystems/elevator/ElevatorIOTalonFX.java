@@ -34,8 +34,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 
-    leader = new TalonFX(lead, SubsystemConstants.CANBUS);
-    follower = new TalonFX(follow, SubsystemConstants.CANBUS);
+    leader = new TalonFX(lead, SubsystemConstants.CANIVORE_ID_STRING);
+    follower = new TalonFX(follow, SubsystemConstants.CANIVORE_ID_STRING);
 
     leader.getConfigurator().apply(config);
 

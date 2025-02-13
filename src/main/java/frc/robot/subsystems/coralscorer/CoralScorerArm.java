@@ -2,6 +2,7 @@ package frc.robot.subsystems.coralscorer;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,6 +37,9 @@ public class CoralScorerArm extends SubsystemBase {
 
   private ArmFeedforward armFFModel;
 
+  public static PivotVis measuredVisualizer;
+  public static PivotVis setpointVisualizer;
+
   /** Creates a new Arm. */
   public CoralScorerArm(ArmIO arm) {
     this.coralScorerArm = arm;
@@ -51,9 +55,9 @@ public class CoralScorerArm extends SubsystemBase {
         kP.initDefault(1.123);
         break;
       case SIM:
-        kG.initDefault(0.29);
+        kG.initDefault(0);
         kV.initDefault(1);
-        kP.initDefault(1.123);
+        kP.initDefault(1);
         break;
       default:
         kG.initDefault(0.29);
@@ -62,19 +66,24 @@ public class CoralScorerArm extends SubsystemBase {
         break;
     }
 
+    measuredVisualizer = new PivotVis("measured", Color.kRed);
     // CHANGE PER ARM
-    maxVelocityDegPerSec = 1;
-    maxAccelerationDegPerSecSquared = 1;
+    maxVelocityDegPerSec = 90;
+    maxAccelerationDegPerSecSquared = 180;
     // maxAccelerationDegPerSecSquared = 180;
 
     armConstraints =
         new TrapezoidProfile.Constraints(maxVelocityDegPerSec, maxAccelerationDegPerSecSquared);
     armProfile = new TrapezoidProfile(armConstraints);
 
-    // setArmGoal(90);
+    setArmGoal(-90);
     // setArmCurrent(getArmPositionDegs());
     armCurrentStateDegrees = armProfile.calculate(0, armCurrentStateDegrees, armGoalStateDegrees);
     armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
+
+    measuredVisualizer = new PivotVis("measured pivot scoral", Color.kAzure);
+    setpointVisualizer = new PivotVis("setpoint pivot scoral", Color.kGreen);
+
     updateTunableNumbers();
   }
 
@@ -122,7 +131,7 @@ public class CoralScorerArm extends SubsystemBase {
   @Override
   public void periodic() {
     coralScorerArm.updateInputs(csaInputs);
-
+    measuredVisualizer.update(armCurrentStateDegrees.position);
     armCurrentStateDegrees =
         armProfile.calculate(
             SubsystemConstants.LOOP_PERIOD_SECONDS, armCurrentStateDegrees, armGoalStateDegrees);
@@ -134,6 +143,8 @@ public class CoralScorerArm extends SubsystemBase {
 
     Logger.recordOutput("arm goal", goalDegrees);
     // This method will be called once per scheduler run
+    measuredVisualizer.update(armCurrentStateDegrees.position);
+    setpointVisualizer.update(armGoalStateDegrees.position);
 
     updateTunableNumbers();
   }

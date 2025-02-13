@@ -14,25 +14,36 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeFromSourceParallel;
+import frc.robot.commands.IntakingAlgaeParallel;
+import frc.robot.commands.SetClawLevel;
 import frc.robot.commands.Stow;
+import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
+import frc.robot.constants.FieldConstants;
+// import frc.robot.commands.IntakeFromSource;
+import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants.AlgaeState;
+import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.TunerConstants;
-import frc.robot.subsystems.arms.Arm;
-import frc.robot.subsystems.arms.ArmIOSim;
-import frc.robot.subsystems.arms.ArmIOTalonFX;
-import frc.robot.subsystems.commoniolayers.ArmIO;
+import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIO;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheelIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -43,13 +54,17 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.led.LED;
+import frc.robot.subsystems.led.LED_IO;
+import frc.robot.subsystems.led.LED_IOCANdle;
+import frc.robot.subsystems.led.LED_IOSim;
+import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArm;
+import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIOSim;
+import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.KeyboardInputs;
-
-import java.lang.ModuleLayer.Controller;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -61,17 +76,23 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Arm arm;
+  private final LED led;
 
   // Controller
-   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController manipController = new CommandXboxController(1);
   private final Joystick joystikc = new Joystick(0);
   private final JoystickButton btn = new JoystickButton(joystikc, 4);
   private final KeyboardInputs keyboard = new KeyboardInputs(0);
 
   private final CoralScorerArm csArm;
+  // private final CoralScorerFlywheel coralIntake;
+
   private final Elevator elevator;
+  private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
+
+  private final CoralScorerFlywheel csFlywheel;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -100,7 +121,14 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         // TODO change lead, follower, gyro IDs, etc.
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
-        arm = new Arm(new ArmIOTalonFX(0, 0, 0));
+        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOTalonFX(0, 0, 0));
+        csFlywheel =
+            new CoralScorerFlywheel(
+                new CoralScorerFlywheelIOSim(),
+                new CoralIntakeSensorIO() {},
+                CoralState.DEFAULT,
+                AlgaeState.DEFAULT);
+        led = new LED(new LED_IOCANdle(0, ""));
         break;
 
       case SIM:
@@ -114,6 +142,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
@@ -122,8 +151,14 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIOSim());
-        arm = new Arm(new ArmIOSim());
-        
+        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
+        csFlywheel =
+            new CoralScorerFlywheel(
+                new CoralScorerFlywheelIOSim(),
+                new CoralIntakeSensorIO() {},
+                CoralState.DEFAULT,
+                AlgaeState.DEFAULT);
+        led = new LED(new LED_IOSim());
         break;
 
       default:
@@ -145,11 +180,16 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIO() {});
-
-        arm = new Arm(new ArmIO() {});
+        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
+        csFlywheel =
+            new CoralScorerFlywheel(
+                new CoralScorerFlywheelIOSim(),
+                new CoralIntakeSensorIO() {},
+                CoralState.DEFAULT,
+                AlgaeState.DEFAULT);
+        led = new LED(new LED_IO() {});
         break;
     }
-
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -170,7 +210,10 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
 
+    NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
+    // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
+    // configureButtonBindings();
     configureButtonBindings();
   }
 
@@ -182,14 +225,40 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    controller.a().onTrue(new Stow(arm, elevator));
+    keyboard
+        .getXButton()
+        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
+    keyboard
+        .getZButton()
+        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
+
     // Default command, normal field-relative drive
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -controller.getLeftY(),
-    //         () -> -controller.getLeftX(),
-    //         () -> -controller.getRightX()));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX(),
+            () -> driveController.leftBumper().getAsBoolean(),
+            () -> driveController.rightBumper().getAsBoolean(),
+            () -> driveController.b().getAsBoolean()));
+
+    // driveController.x().onTrue(new Stow(elevator, csArm));
+
+    driveController.a().onTrue(new SetClawLevel(ReefHeight.L1, elevator, csArm));
+    driveController.a().onFalse(/*csFlywheel
+                    .runVelocityCommand(2000)
+                    .until(() -> csFlywheel.getLastCoralState() != CoralState.NO_CORAL).andThen*/ (new Stow(elevator, csArm)));
+
+    driveController.y().onTrue(new AlgaeIntoProcesser(elevator, csArm, csFlywheel));
+    driveController.y().onFalse(new Stow(elevator, csArm));
+
+    // why is this like this?
+    driveController.leftBumper().onTrue(new InstantCommand(() -> drive.setNearestReefSide()));
+
+    // driveController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
+    // driveController.rightBumper().whileTrue(new AlignToReefAuto(drive, led));
+    // driveController.rightTrigger().whileTrue(new AlignToProcessor(drive, led));
 
     // // Lock to 0° when A button is held
     // controller
@@ -217,14 +286,49 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
 
-    keyboard.getVButton().onTrue(elevator.setElevatorTarget(10, 1));
-    keyboard.getVButton().onFalse(elevator.setElevatorTarget(4, 1));
-  }
+    // controller.y().whileTrue(elevator.setElevatorTarget(1.83, 1));
+    // controller.y().whileFalse(elevator.setElevatorTarget(1, 1));
 
+    // controller.x().whileTrue(csArm.setArmTarget(90, 1));
+    // controller.x().whileFalse(csArm.setArmTarget(-90, 1));
+
+    /*controller.b().whileTrue(algaeArm.setArmTarget(70, 2));
+    controller.b().whileFalse(algaeArm.setArmTarget(20, 2));*/
+
+    // manipController.rightTrigger().onTrue(new Stow(elevator, csArm));
+    // driveController.a().whileTrue(new ReleaseClawParallel(scoringLevel, elevator, csArm,
+    // csFlywheel));
+
+    // manipController.a().onTrue(new InstantCommand(() ->
+    // elevator.setElevatorTarget(FieldConstants.ReefHeight.L1.height, 1)));
+    // manipController.b().onTrue(new InstantCommand(() ->
+    // elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 1)));
+    // manipController.x().onTrue(new InstantCommand(() ->
+    // elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 1)));
+    // manipController.y().onTrue(new InstantCommand(() ->
+    // elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 1)));
+
+    manipController.a().onTrue(new SetClawLevel(FieldConstants.ReefHeight.L1, elevator, csArm));
+    manipController.b().onTrue(new SetClawLevel(FieldConstants.ReefHeight.L2, elevator, csArm));
+    manipController.x().onTrue(new SetClawLevel(FieldConstants.ReefHeight.L3, elevator, csArm));
+    manipController.y().onTrue(new SetClawLevel(FieldConstants.ReefHeight.L4, elevator, csArm));
+    manipController.a().onFalse(new Stow(elevator, csArm));
+    manipController.b().onFalse(new Stow(elevator, csArm));
+    manipController.x().onFalse(new Stow(elevator, csArm));
+    manipController.y().onFalse(new Stow(elevator, csArm));
+
+    // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
+    manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm, elevator));
+    manipController.leftBumper().onFalse(new Stow(elevator, csArm));
+    manipController
+        .rightBumper()
+        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
+    manipController.rightBumper().onFalse(new Stow(elevator, csArm));
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
-   * @return the command to run in autonomous
+   * @return the command to run in autonomous.
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();

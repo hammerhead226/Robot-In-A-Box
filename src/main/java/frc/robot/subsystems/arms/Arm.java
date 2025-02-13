@@ -6,6 +6,7 @@ package frc.robot.subsystems.arms;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -13,6 +14,7 @@ import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.subsystems.commoniolayers.ArmIOInputsAutoLogged;
+import frc.robot.subsystems.coralscorer.ArmVis;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -34,7 +36,7 @@ public class Arm extends SubsystemBase {
   private TrapezoidProfile.State armCurrentStateDegrees = new TrapezoidProfile.State();
 
   double goalDegrees;
-
+  private ArmVis measured;
   private ArmFeedforward armFFModel;
 
   /** Creates a new Arm. */
@@ -60,6 +62,7 @@ public class Arm extends SubsystemBase {
         kG.initDefault(0.29);
         kV.initDefault(1);
         kP.initDefault(1.123);
+        measured = new ArmVis("measured", Color.kWhite);
         break;
     }
 
@@ -75,7 +78,7 @@ public class Arm extends SubsystemBase {
     // setArmGoal(90);
     // setArmCurrent(getArmPositionDegs());
     armCurrentStateDegrees = armProfile.calculate(0, armCurrentStateDegrees, armGoalStateDegrees);
-
+    measured = new ArmVis("measured", Color.kWhite);
     updateTunableNumbers();
   }
 
@@ -129,7 +132,7 @@ public class Arm extends SubsystemBase {
             SubsystemConstants.LOOP_PERIOD_SECONDS, armCurrentStateDegrees, armGoalStateDegrees);
 
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
-
+    measured.update(armCurrentStateDegrees.position);
     Logger.processInputs("Arm", pInputs);
     Logger.recordOutput("arm error", getArmError());
 

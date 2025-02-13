@@ -4,47 +4,29 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.arms.Arm;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.elevator.Elevator;
 
-
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Stow extends Command {
-  private final Arm arm;
-private final Elevator elevator;
-private double elevatorpos;
-private double armangle;
-
+// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
+// information, see:
+// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+public class Stow extends ParallelCommandGroup {
   /** Creates a new Stow. */
-  public Stow(Arm arm, Elevator elevator) {
+  private Elevator elevator;
 
-this.arm = arm;
-this.elevator = elevator;
+  private CoralScorerArm arm;
 
-  }
+  public Stow(Elevator elevator, CoralScorerArm arm) {
+    // Add your commands in the addCommands() call, e.g.
+    // addCommands(new FooCommand(), new BarCommand());
+    this.elevator = elevator;
+    this.arm = arm;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    elevator.setPositionExtend(5, 20);
-    arm.setPositionDegs(0, 20);
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    elevatorpos = elevator.getElevatorPosition();
-    armangle = arm.getArmPositionDegs();
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-   return Math.abs(elevatorpos - 10)>= 2 && Math.abs(armangle - 10)>= 2;
+    addCommands(
+        elevator.setElevatorTarget(0.0, SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD),
+        arm.setArmTarget(0.0, 2.0) // TODO: put this in constants
+        );
   }
 }

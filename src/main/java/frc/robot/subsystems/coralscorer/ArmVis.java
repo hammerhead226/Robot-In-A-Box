@@ -8,22 +8,44 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 public class ArmVis {
-  private final String armKey;
-  private final LoggedMechanism2d armPanel;
-  private final LoggedMechanismRoot2d armRoot;
-  private final LoggedMechanismLigament2d armMecha;
+  private final String key;
+  private final LoggedMechanism2d panel;
+  private final LoggedMechanismRoot2d root;
+  private final LoggedMechanismRoot2d root2;
+  private final LoggedMechanismLigament2d mecha2;
+  private final LoggedMechanismLigament2d mecha;
 
   public ArmVis(String key, Color color) {
-    this.armKey = key;
-    this.armPanel = new LoggedMechanism2d(100, 100, new Color8Bit(Color.kWhite));
-    this.armRoot = armPanel.getRoot("elevator", 50, 0);
-    this.armMecha =
-        armRoot.append(new LoggedMechanismLigament2d("elevator", 2, 0, 10, new Color8Bit(color)));
+
+    this.key = key;
+    this.panel = new LoggedMechanism2d(100, 100, new Color8Bit(Color.kWhite));
+    this.root = panel.getRoot("mechanism", 50, 0.2);
+    this.mecha =
+        root.append(new LoggedMechanismLigament2d("arms", 0.5, 0, 10, new Color8Bit(color)));
+
+    this.root2 = panel.getRoot("mechanism2", 50, -0.2);
+
+    this.mecha2 =
+        root2.append(new LoggedMechanismLigament2d("arms2", 0.5, 0, 10, new Color8Bit(color)));
+    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
   }
 
-  public void update(double position) {
-    armMecha.setLength(position);
-    armRoot.setPosition(50, position);
-    Logger.recordOutput("PivotVis/mechanism2d/" + armKey, this.armPanel);
+  public void update(double angle) {
+    // mecha.setLength(position);
+    // root.setPosition(50, position);
+    mecha.setAngle(angle);
+    mecha2.setAngle(-angle);
+    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+  }
+
+  public void updateVertical(double position) {
+    root.setPosition(50.1, position);
+    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+  }
+
+  public void updateLength(double length) {
+    mecha.setLength(length);
+    mecha2.setLength(length);
+    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
   }
 }

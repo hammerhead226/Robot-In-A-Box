@@ -12,7 +12,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.constants.SubsystemConstants.AlgaeIntakeConstants;
 
 public class AlgaeIntakeFeederIOTalonFX implements AlgaeIntakeFeederIO {
 
@@ -28,12 +27,13 @@ public class AlgaeIntakeFeederIOTalonFX implements AlgaeIntakeFeederIO {
   public AlgaeIntakeFeederIOTalonFX(int id) {
 
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.CurrentLimits.StatorCurrentLimit = AlgaeIntakeConstants.FeederConstants.CURRENT_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit =
+        SubsystemConstants.CoralScorerConstants.AlgaeScorerFlywheelConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
-        AlgaeIntakeConstants.FeederConstants.CURRENT_LIMIT_ENABLED;
+        SubsystemConstants.CoralScorerConstants.AlgaeScorerFlywheelConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    feeder = new TalonFX(id, SubsystemConstants.CANBUS);
+    feeder = new TalonFX(id, SubsystemConstants.CANIVORE_ID_STRING);
 
     feeder.getConfigurator().apply(config);
 
