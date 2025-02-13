@@ -235,17 +235,19 @@ public class RobotContainer {
             Map.ofEntries(
                 Map.entry(
                     CLIMB_STATES.EXTEND,
-                    csArm.setArmTarget(5, 5).andThen(climbStateMachine::advanceTargetState, csArm)),
+                    algaeArm
+                        .setArmTarget(160, 5)
+                        .andThen(climbStateMachine::advanceTargetState, algaeArm)),
                 Map.entry(
                     CLIMB_STATES.RETRACT,
-                    csArm
-                        .setArmTarget(120, 5)
-                        .andThen(climbStateMachine::advanceTargetState, csArm)),
+                    algaeArm
+                        .setArmTarget(60, 5)
+                        .andThen(climbStateMachine::advanceTargetState, algaeArm)),
                 Map.entry(
                     CLIMB_STATES.NONE,
-                    csArm
-                        .setArmTarget(120, 5)
-                        .andThen(climbStateMachine::advanceTargetState, csArm))),
+                    algaeArm
+                        .setArmTarget(30, 5)
+                        .andThen(climbStateMachine::advanceTargetState, algaeArm))),
             this::climbSelect);
     // Set up auto routines
 
