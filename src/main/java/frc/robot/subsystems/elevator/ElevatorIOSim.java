@@ -18,7 +18,7 @@ public class ElevatorIOSim implements ElevatorIO {
   private int gearBoxMotorCount = 2;
   private int gearing = 12;
   private double carriageMassKg = 3.18;
-  private double drumRadiusMeters = 0.31;
+  private double drumRadiusMeters = 0.03;
   private double minHeightMeters = 0;
   private double maxHeightMeters = 1.9;
   private boolean simulateGravity = true;

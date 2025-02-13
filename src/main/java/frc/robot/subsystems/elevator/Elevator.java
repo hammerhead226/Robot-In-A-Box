@@ -86,14 +86,14 @@ public class Elevator extends SubsystemBase {
         break;
       case SIM:
         kS.initDefault(0);
-        kG.initDefault(0);
-        kV.initDefault(1);
+        kG.initDefault(0.01);
+        kV.initDefault(0.37);
         kA.initDefault(0);
 
-        kP.initDefault(0.1);
-        kI.initDefault(0);
+        kP.initDefault(1.2);
+        kI.initDefault(0.1);
 
-        barkG.initDefault(0);
+        barkG.initDefault(1.7);
         break;
       default:
         kS.initDefault(0);
@@ -110,7 +110,7 @@ public class Elevator extends SubsystemBase {
     measured = new ElevatorVis("measured", Color.kRed);
 
     // CHANGE THIS VALUE TO MATCH THE ELEVATOR
-    //setExtenderGoal(1.3);
+    // setExtenderGoal(1.3);
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
 
@@ -122,7 +122,7 @@ public class Elevator extends SubsystemBase {
 
     currentState = ElevatorState.STOW;
     wantedState = ElevatorState.STOW;
-    
+
     updateTunableNumbers();
   }
 
@@ -188,7 +188,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command setElevatorTarget(double goalInches, double thersholdInches) {
-    
+
     return new InstantCommand(() -> setExtenderGoal(goalInches), this)
         .until(() -> elevatorAtSetpoint(thersholdInches));
   }

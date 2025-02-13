@@ -295,7 +295,9 @@ public class RobotContainer {
     driveController
         .y()
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
-    driveController.a().onTrue(new InstantCommand(()-> superStructure.setWantedState(SuperStructureState.STOW)));
+    driveController
+        .a()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
     // driveController.a().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
     // driveController
     //     .rightBumper()
