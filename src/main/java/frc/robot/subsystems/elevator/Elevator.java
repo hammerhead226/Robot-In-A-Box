@@ -85,13 +85,13 @@ public class Elevator extends SubsystemBase {
         barkG.initDefault(0);
         break;
       case SIM:
-        kS.initDefault(0);
+        kS.initDefault(0.0);
         kG.initDefault(0.01);
-        kV.initDefault(0.37);
+        kV.initDefault(0.55);
         kA.initDefault(0);
 
-        kP.initDefault(1.2);
-        kI.initDefault(0.1);
+        kP.initDefault(13.4);
+        kI.initDefault(1);
 
         barkG.initDefault(1.7);
         break;

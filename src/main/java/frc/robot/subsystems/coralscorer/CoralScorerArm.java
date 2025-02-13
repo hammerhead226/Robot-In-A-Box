@@ -27,11 +27,11 @@ public class CoralScorerArm extends SubsystemBase {
   ;
   private static LoggedTunableNumber kV = new LoggedTunableNumber("CoralScoringArm/kV");
 
-  private static LoggedTunableNumber kA = new LoggedTunableNumber("CoralScoringArm/kA", 1);
+  private static LoggedTunableNumber kA = new LoggedTunableNumber("CoralScoringArm/kA", 0);
   ;
-  private static LoggedTunableNumber kS = new LoggedTunableNumber("CoralScoringArm/kS", 1);
+  private static LoggedTunableNumber kS = new LoggedTunableNumber("CoralScoringArm/kS", 0);
   ;
-  private static LoggedTunableNumber kI = new LoggedTunableNumber("CoralScoringArm/kI", 1);
+  private static LoggedTunableNumber kI = new LoggedTunableNumber("CoralScoringArm/kI", 0);
 
   private static double maxVelocityDegPerSec;
   private static double maxAccelerationDegPerSecSquared;
@@ -70,12 +70,12 @@ public class CoralScorerArm extends SubsystemBase {
         kI.initDefault(1);
         break;
       case SIM:
-        kG.initDefault(0);
-        kV.initDefault(1);
-        kP.initDefault(1);
-        kA.initDefault(1);
-        kS.initDefault(1);
-        kI.initDefault(1);
+        kG.initDefault(0.33);
+        kV.initDefault(0.01);
+        kP.initDefault(20);
+        kA.initDefault(0);
+        kS.initDefault(0);
+        kI.initDefault(50);
         break;
       default:
         kG.initDefault(0.29);
@@ -97,7 +97,7 @@ public class CoralScorerArm extends SubsystemBase {
         new TrapezoidProfile.Constraints(maxVelocityDegPerSec, maxAccelerationDegPerSecSquared);
     armProfile = new TrapezoidProfile(armConstraints);
 
-    setArmGoal(-90);
+    // setArmGoal(-90);
     // setArmCurrent(getArmPositionDegs());
     armCurrentStateDegrees = armProfile.calculate(0, armCurrentStateDegrees, armGoalStateDegrees);
     armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
