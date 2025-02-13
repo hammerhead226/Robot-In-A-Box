@@ -18,7 +18,7 @@ public class ElevatorIOSim implements ElevatorIO {
   private int gearBoxMotorCount = 2;
   private int gearing = 12;
   private double carriageMassKg = 3.18;
-  private double drumRadiusMeters = 1;
+  private double drumRadiusMeters = 0.31;
   private double minHeightMeters = 0;
   private double maxHeightMeters = 1.9;
   private boolean simulateGravity = true;
@@ -45,6 +45,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
+   // sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
     positionSetpointInches = pid.getSetpoint();
 
     appliedVolts +=
@@ -54,11 +55,11 @@ public class ElevatorIOSim implements ElevatorIO {
             12);
 
     sim.setInputVoltage(appliedVolts);
-
+   
     positionInch = Units.metersToInches(sim.getPositionMeters());
     velocityInchesPerSecond = Units.metersToInches(sim.getVelocityMetersPerSecond());
     currentAmps = sim.getCurrentDrawAmps();
-
+    
     inputs.positionSetpointInch = positionSetpointInches;
     inputs.appliedVolts = appliedVolts;
     inputs.elevatorPositionInch = positionInch;

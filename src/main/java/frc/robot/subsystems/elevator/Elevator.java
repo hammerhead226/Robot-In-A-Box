@@ -90,7 +90,7 @@ public class Elevator extends SubsystemBase {
         kV.initDefault(1);
         kA.initDefault(0);
 
-        kP.initDefault(3);
+        kP.initDefault(0.1);
         kI.initDefault(0);
 
         barkG.initDefault(0);
@@ -110,7 +110,7 @@ public class Elevator extends SubsystemBase {
     measured = new ElevatorVis("measured", Color.kRed);
 
     // CHANGE THIS VALUE TO MATCH THE ELEVATOR
-    setExtenderGoal(1.3);
+    //setExtenderGoal(1.3);
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
 
@@ -122,6 +122,7 @@ public class Elevator extends SubsystemBase {
 
     currentState = ElevatorState.STOW;
     wantedState = ElevatorState.STOW;
+    
     updateTunableNumbers();
   }
 
@@ -187,7 +188,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command setElevatorTarget(double goalInches, double thersholdInches) {
-
+    
     return new InstantCommand(() -> setExtenderGoal(goalInches), this)
         .until(() -> elevatorAtSetpoint(thersholdInches));
   }

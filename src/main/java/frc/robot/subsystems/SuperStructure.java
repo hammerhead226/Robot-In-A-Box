@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SubsystemConstants.CoralState;
@@ -14,9 +13,8 @@ import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
-import org.littletonrobotics.junction.Logger;
 
-public class SuperStructure  {
+public class SuperStructure {
 
   private final Elevator elevator;
   private final CoralScorerArm csArm;
@@ -28,6 +26,7 @@ public class SuperStructure  {
   private SuperStructureState lastWantedState;
   public boolean override = false;
   private SuperStructureState requestedState;
+
   public SuperStructure(
       Elevator elevator,
       CoralScorerArm csArm,
@@ -53,11 +52,10 @@ public class SuperStructure  {
   public void checkSpeed() {
     if (Drive.speedX > 2 || Drive.speedY > 2 || Drive.rotationDegs > 50) {
       this.wantedState = SuperStructureState.STOW;
-    }
-    else  {
+    } else {
 
-     this.wantedState = requestedState;
-     }
+      this.wantedState = requestedState;
+    }
   }
 
   public boolean shouldTrigger() {
@@ -74,7 +72,7 @@ public class SuperStructure  {
       case STOW:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
-                elevator.setElevatorTarget(0, 0),
+                elevator.setElevatorTarget(0, 5),
                 csArm.setArmTarget(40, 0),
                 csFlywheel.stopCommand(),
                 led.setStateCommand(LED_STATE.BLUE)));
@@ -112,12 +110,12 @@ public class SuperStructure  {
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
       case L4:
-        if (elevator.atGoal() && csArm.atGoal(2)) {
+        if (elevator.atGoal() && csArm.atGoal(0.2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
-                elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 0.1),
+                elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 7),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L4.pitch, 2)));
 
       case SOURCE:
@@ -150,6 +148,4 @@ public class SuperStructure  {
             new ParallelCommandGroup(elevator.setElevatorTarget(0, 0), csArm.setArmTarget(40, 0)));
     }
   }
-
-  
 }
