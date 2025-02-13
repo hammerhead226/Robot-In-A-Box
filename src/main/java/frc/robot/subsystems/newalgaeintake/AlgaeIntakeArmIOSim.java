@@ -50,7 +50,7 @@ public class AlgaeIntakeArmIOSim implements AlgaeIntakeArmIO {
   public void updateInputs(AlgaeIntakeArmIOInputs inputs) {
     positionSetpointRads = pid.getSetpoint();
 
-    appliedVolts +=
+    appliedVolts =
         MathUtil.clamp(
             pid.calculate(sim.getAngleRads(), positionSetpointRads),
             clampedValueLowVolts,

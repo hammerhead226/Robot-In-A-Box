@@ -44,7 +44,7 @@ public class IndexerIOSim implements IndexerIO {
   public void updateInputs(IndexerIOInputs inputs) {
     positionSetpointInches = pid.getSetpoint();
 
-    appliedVolts +=
+    appliedVolts =
         MathUtil.clamp(
             pid.calculate(Units.metersToInches(sim.getPositionMeters()), positionSetpointInches),
             -12.0,
