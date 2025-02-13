@@ -59,7 +59,7 @@ public class Flywheel extends SubsystemBase {
         io.configurePID(0.0, 0.0, 0.0);
         break;
       case SIM:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.3);
         io.configurePID(0.0, 0.0, 0.0);
         break;
       default:

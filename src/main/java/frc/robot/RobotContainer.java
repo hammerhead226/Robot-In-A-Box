@@ -294,7 +294,8 @@ public class RobotContainer {
 
     driveController
         .y()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
+    //driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
     driveController
         .a()
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
@@ -381,12 +382,12 @@ public class RobotContainer {
     // manipController.y().onTrue(new InstantCommand(() ->
     // elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 1)));
 
-    keyboard
-        .getCButton()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
-    keyboard
-        .getVButton()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+    //keyboard
+    //    .getCButton()
+    //    .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
+    //keyboard
+    //    .getVButton()
+    //    .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
     manipController
         .x()
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));

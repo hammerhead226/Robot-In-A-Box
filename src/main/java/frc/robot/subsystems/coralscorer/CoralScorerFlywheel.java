@@ -57,8 +57,8 @@ public class CoralScorerFlywheel extends SubsystemBase {
         flywheel.configurePID(0.0, 0.0, 0.0);
         break;
       case SIM:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.2);
-        flywheel.configurePID(0.3, 0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.1);
+        flywheel.configurePID(0, 0.0, 0.0);
         break;
       default:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);

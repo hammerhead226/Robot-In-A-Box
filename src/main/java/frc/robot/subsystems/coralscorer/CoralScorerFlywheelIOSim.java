@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
@@ -18,7 +19,7 @@ public class CoralScorerFlywheelIOSim implements FlywheelIO {
 
   private DCMotorSim sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(motor, gearBoxMotorCount, gearing), motor, 0.0, 0.0);
+          LinearSystemId.createDCMotorSystem(motor, 0.004, gearing), motor);
 
   private PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
@@ -43,7 +44,8 @@ public class CoralScorerFlywheelIOSim implements FlywheelIO {
     sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
 
     inputs.positionRad = 0.0;
-    inputs.velocityRadPerSec = sim.getAngularVelocityRadPerSec();
+    //inputs.velocityRadPerSec = Units.radiansPerSecondToRotationsPerMinute(sim.getAngularVelocityRadPerSec());
+    inputs.velocityRadPerSec = sim.getAngularVelocityRPM();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = sim.getCurrentDrawAmps();
   }
