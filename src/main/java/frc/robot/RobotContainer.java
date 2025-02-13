@@ -20,11 +20,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AlignToCage;
 import frc.robot.commands.AlignToReefAuto;
+import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeFromSourceParallel;
 import frc.robot.commands.IntakingAlgaeParallel;
@@ -225,7 +227,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    //keyboard.getCButton().whileTrue(new AlignToCage(drive));
+    // keyboard.getCButton().whileTrue(new AlignToCage(drive));
     keyboard
         .getXButton()
         .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
@@ -248,6 +250,14 @@ public class RobotContainer {
             () -> driveController.x().getAsBoolean()));
 
     // driveController.x().onTrue(new Stow(elevator, csArm));
+
+    driveController
+        .leftBumper()
+        .onFalse(
+            new ConditionalCommand(
+                new ApproachReefPerpendicular(drive).withTimeout(2),
+                new InstantCommand(),
+                () -> drive.isAtReefSide()));
 
     driveController.a().onTrue(new SetClawLevel(ReefHeight.L1, elevator, csArm));
     driveController.a().onFalse(/*csFlywheel

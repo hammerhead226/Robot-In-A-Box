@@ -4,27 +4,25 @@
 
 package frc.robot.commands;
 
-import java.util.List;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
+import java.util.List;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ApproachReefPerpendicular extends Command {
-   private final Drive drive;
-  boolean finished;
+  private final Drive drive;
   Command pathCommand;
   /** Creates a new ApproachReefPerpendicular. */
   public ApproachReefPerpendicular(Drive drive) {
     this.drive = drive;
-    finished = false;
     addRequirements(drive);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -32,10 +30,12 @@ public class ApproachReefPerpendicular extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-      Pose2d targetPose =
-        new Pose2d(
-            drive.getNearestSide().getTranslation().minus(drive.getOffset()),
-            drive.getNearestSide().getRotation());
+    Pose2d targetPose =
+        DriveCommands.rotateAndNudge(
+            drive.getLastReefFieldPose(), new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
+    // new Pose2d(
+    //     drive.getNearestSide().getTranslation().minus(drive.getOffset()),
+    //     drive.getNearestSide().getRotation());
     // new Pose2d(nearestSide.getTranslation().minus(offset), nearestSide.getRotation())
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), targetPose);
 
@@ -56,8 +56,6 @@ public class ApproachReefPerpendicular extends Command {
   @Override
   public void execute() {
     pathCommand.execute();
-
-    finished = pathCommand.isFinished();
   }
 
   // Called once the command ends or is interrupted.
@@ -69,6 +67,6 @@ public class ApproachReefPerpendicular extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return pathCommand.isFinished();
   }
 }
