@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.newalgaeintake;
+package frc.robot.subsystems.Climber;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.constants.SubsystemConstants;
 
 /** Add your docs here. */
-public class AlgaeIntakeArmIOSim implements AlgaeIntakeArmIO {
+public class ClimberArmIOSim implements ClimberArmIO {
 
   // SIM VARIABLES (CHANGE)
   private int gearBoxMotorCount = 2;
@@ -47,7 +47,7 @@ public class AlgaeIntakeArmIOSim implements AlgaeIntakeArmIO {
   private double clampedValueHighVolts = 12.0;
 
   @Override
-  public void updateInputs(AlgaeIntakeArmIOInputs inputs) {
+  public void updateInputs(ClimberArmIOInputs inputs) {
     positionSetpointRads = pid.getSetpoint();
 
     appliedVolts +=

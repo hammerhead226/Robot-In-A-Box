@@ -1,4 +1,4 @@
-package frc.robot.subsystems.newalgaeintake;
+package frc.robot.subsystems.algae;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;

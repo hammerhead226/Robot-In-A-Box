@@ -35,6 +35,9 @@ import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.Climber.ClimberArm;
+import frc.robot.subsystems.Climber.ClimberArmIOSim;
+import frc.robot.subsystems.Climber.ClimberArmIOTalonFX;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
@@ -56,9 +59,6 @@ import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
 import frc.robot.subsystems.led.LED_IOSim;
-import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArm;
-import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIOSim;
-import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -87,7 +87,7 @@ public class RobotContainer {
   // private final CoralScorerFlywheel coralIntake;
 
   public static Elevator elevator;
-  private final AlgaeIntakeArm algaeArm;
+  private final ClimberArm climberArm;
   private final Vision vision;
   final SuperStructure superStructure;
 
@@ -122,7 +122,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("photon", new Transform3d()));
         // TODO change lead, follower, gyro IDs, etc.
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
-        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOTalonFX(0, 0, 0));
+        climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
         csFlywheel =
             new CoralScorerFlywheel(
                 new CoralScorerFlywheelIOSim(),
@@ -153,7 +153,7 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIOSim());
-        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
+        climberArm = new ClimberArm(new ClimberArmIOSim());
         csFlywheel =
             new CoralScorerFlywheel(
                 new CoralScorerFlywheelIOSim(),
@@ -183,7 +183,7 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIO() {});
-        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
+        climberArm = new ClimberArm(new ClimberArmIOSim());
         csFlywheel =
             new CoralScorerFlywheel(
                 new CoralScorerFlywheelIOSim(),

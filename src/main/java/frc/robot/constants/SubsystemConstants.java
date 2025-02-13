@@ -42,6 +42,18 @@ public final class SubsystemConstants {
     public static final double PROCESSOR_SETPOINT_INCHES = 0;
   }
 
+  // @Deprecated
+  public static final class ClimberConstants {
+    public static final double CURRENT_LIMIT = 35.0;
+    public static final boolean CURRENT_LIMIT_ENABLED = true;
+
+    public static final double DEFAULT_THRESHOLD = 0.1;
+    public static final double ARM_GEAR_RATIO = 1;
+
+    public static final double ARM_ZERO_ANGLE = 0;
+    public static final double STOW_SETPOINT_DEG = 0;
+  }
+
   @Deprecated
   public static final class ArmConstants {
     public static final double CURRENT_LIMIT = 35.0;

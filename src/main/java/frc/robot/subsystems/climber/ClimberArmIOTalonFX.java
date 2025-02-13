@@ -1,4 +1,4 @@
-package frc.robot.subsystems.newalgaeintake;
+package frc.robot.subsystems.Climber;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+// import com.ctre.phoenix6.signrals.InvertedValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
@@ -20,7 +21,7 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 
-public class AlgaeIntakeArmIOTalonFX implements AlgaeIntakeArmIO {
+public class ClimberArmIOTalonFX implements ClimberArmIO {
   private final TalonFX leader;
   private final TalonFX follower;
 
@@ -36,11 +37,11 @@ public class AlgaeIntakeArmIOTalonFX implements AlgaeIntakeArmIO {
   private final StatusSignal<Current> currentAmps;
   private final StatusSignal<Angle> pitch;
 
-  public AlgaeIntakeArmIOTalonFX(int leadID, int followID, int gyroID) {
+  public ClimberArmIOTalonFX(int leadID, int followID, int gyroID) {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ArmConstants.CURRENT_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ClimberConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
-        SubsystemConstants.ArmConstants.CURRENT_LIMIT_ENABLED;
+        SubsystemConstants.ClimberConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
@@ -59,11 +60,11 @@ public class AlgaeIntakeArmIOTalonFX implements AlgaeIntakeArmIO {
 
     leader.setPosition(
         Conversions.degreesToFalcon(
-            startAngleDegs, SubsystemConstants.ArmConstants.ARM_GEAR_RATIO));
+            startAngleDegs, SubsystemConstants.ClimberConstants.ARM_GEAR_RATIO));
 
     follower.setPosition(
         Conversions.degreesToFalcon(
-            startAngleDegs, SubsystemConstants.ArmConstants.ARM_GEAR_RATIO));
+            startAngleDegs, SubsystemConstants.ClimberConstants.ARM_GEAR_RATIO));
 
     leaderPositionDegs = leader.getPosition();
     velocityDegsPerSec = leader.getVelocity();
@@ -72,7 +73,7 @@ public class AlgaeIntakeArmIOTalonFX implements AlgaeIntakeArmIO {
 
     // leader.get
 
-    positionSetpointDegs = SubsystemConstants.ArmConstants.STOW_SETPOINT_DEG;
+    positionSetpointDegs = SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG;
 
     Logger.recordOutput("start angle", startAngleDegs);
 
@@ -87,16 +88,16 @@ public class AlgaeIntakeArmIOTalonFX implements AlgaeIntakeArmIO {
   }
 
   @Override
-  public void updateInputs(AlgaeIntakeArmIOInputs inputs) {
+  public void updateInputs(ClimberArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps, pitch);
     inputs.gyroConnected = BaseStatusSignal.refreshAll(pitch).equals(StatusCode.OK);
-    inputs.pitch = pitch.getValueAsDouble() + SubsystemConstants.ArmConstants.ARM_ZERO_ANGLE;
+    inputs.pitch = pitch.getValueAsDouble() + SubsystemConstants.ClimberConstants.ARM_ZERO_ANGLE;
     inputs.positionDegs =
         Conversions.falconToDegrees(
                 (leaderPositionDegs.getValueAsDouble()),
-                SubsystemConstants.ArmConstants.ARM_GEAR_RATIO)
-            + SubsystemConstants.ArmConstants.ARM_ZERO_ANGLE;
+                SubsystemConstants.ClimberConstants.ARM_GEAR_RATIO)
+            + SubsystemConstants.ClimberConstants.ARM_ZERO_ANGLE;
 
     inputs.velocityDegsPerSec = velocityDegsPerSec.getValueAsDouble();
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
@@ -124,7 +125,7 @@ public class AlgaeIntakeArmIOTalonFX implements AlgaeIntakeArmIO {
         new PositionVoltage(
             Conversions.degreesToFalcon(
                 positionDegs,
-                SubsystemConstants.ArmConstants
+                SubsystemConstants.ClimberConstants
                     .ARM_GEAR_RATIO))); // CHECK FOR STOW ANGLE (positionDegs - 59)
   }
 

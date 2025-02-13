@@ -1,4 +1,4 @@
-package frc.robot.subsystems.newalgaeintake;
+package frc.robot.subsystems.Climber;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -13,7 +13,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.SubsystemConstants;
 
-public class AlgaeIntakeFeederIOTalonFX implements AlgaeIntakeFeederIO {
+public class ClimberFeederIOTalonFX implements ClimberFeederIO {
 
   private final TalonFX feeder;
 
@@ -24,7 +24,7 @@ public class AlgaeIntakeFeederIOTalonFX implements AlgaeIntakeFeederIO {
 
   private double velocitySetpointRPS = 0;
 
-  public AlgaeIntakeFeederIOTalonFX(int id) {
+  public ClimberFeederIOTalonFX(int id) {
 
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit =

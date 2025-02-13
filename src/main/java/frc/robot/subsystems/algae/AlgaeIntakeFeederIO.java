@@ -1,4 +1,4 @@
-package frc.robot.subsystems.newalgaeintake;
+package frc.robot.subsystems.algae;
 
 import org.littletonrobotics.junction.AutoLog;
 

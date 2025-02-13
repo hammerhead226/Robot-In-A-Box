@@ -1,4 +1,4 @@
-package frc.robot.subsystems.newalgaeintake;
+package frc.robot.subsystems.algae;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -10,7 +10,6 @@ public class AlgaeIntake extends SubsystemBase {
   SimpleMotorFeedforward feederFFModel;
 
   private final AlgaeIntakeFeederIO feeder;
-  private final AlgaeIntakeArmIO arm;
 
   private static final LoggedTunableNumber feederkP = new LoggedTunableNumber("feederkP");
   private static final LoggedTunableNumber feederkI = new LoggedTunableNumber("feederkI");
@@ -19,7 +18,7 @@ public class AlgaeIntake extends SubsystemBase {
   private static LoggedTunableNumber armkG = new LoggedTunableNumber("armkG");
   private static LoggedTunableNumber armkV = new LoggedTunableNumber("armkV");
 
-  public AlgaeIntake(AlgaeIntakeFeederIO feeder, AlgaeIntakeArmIO arm) {
+  public AlgaeIntake(AlgaeIntakeFeederIO feeder) {
     switch (SimConstants.currentMode) {
       case REAL:
         feederFFModel = new SimpleMotorFeedforward(0, 0, 0);
@@ -61,13 +60,6 @@ public class AlgaeIntake extends SubsystemBase {
 
     this.feeder = feeder;
     feeder.configurePID(feederkP.get(), feederkI.get(), feederkD.get());
-
-    this.arm = arm;
-    arm.configurePID(armkP.get(), armkG.get(), armkV.get());
-  }
-
-  public void stopArm() {
-    arm.stop();
   }
 
   public void stopFeeder() {
