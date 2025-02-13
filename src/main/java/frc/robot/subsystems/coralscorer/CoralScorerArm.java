@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.ArmIO;
@@ -48,6 +49,20 @@ public class CoralScorerArm extends SubsystemBase {
 
   public static PivotVis measuredVisualizer;
   public static PivotVis setpointVisualizer;
+
+  public enum ScoralArmState {
+    ZERO,
+    STOW,
+    L1,
+    L2,
+    L3,
+    L4,
+    SOURCE,
+    PROCESSOR
+  }
+
+  public ScoralArmState wantedState = ScoralArmState.STOW;
+  public ScoralArmState currentState = ScoralArmState.STOW;
 
   /** Creates a new Arm. */
   public CoralScorerArm(ArmIO arm) {
@@ -155,9 +170,74 @@ public class CoralScorerArm extends SubsystemBase {
         0, 0.3, 1, new Rotation3d(new Rotation2d(Math.toRadians(armCurrentStateDegrees.position))));
   }
 
+  // state machine stuff
+
+  public void setWantedState(ScoralArmState state) {
+    wantedState = state;
+  }
+
+  public void Stow() {
+    setArmGoal(0);
+  }
+
+  public void goToSource() {
+    setArmGoal(20);
+  }
+
+  public void gotoFirstLevel() {
+    setArmGoal(FieldConstants.ReefHeight.L1.pitch);
+  }
+
+  public void gotoSecondLevel() {
+    setArmGoal(FieldConstants.ReefHeight.L2.pitch);
+  }
+
+  public void gotoThirdLevel() {
+    setArmGoal(FieldConstants.ReefHeight.L3.pitch);
+  }
+
+  public void gotoFourthLevel() {
+    setArmGoal(FieldConstants.ReefHeight.L4.pitch);
+  }
+
+  public void gotoProcessorLevel() {
+    setArmGoal(90);
+  }
+
   @Override
   public void periodic() {
     coralScorerArm.updateInputs(csaInputs);
+
+    // state machine stuff
+    if (wantedState != currentState) {
+      currentState = wantedState;
+    }
+
+    switch (currentState) {
+      case ZERO:
+        Stow();
+        break;
+      case SOURCE:
+        goToSource();
+        break;
+      case L1:
+        gotoFirstLevel();
+        break;
+      case L2:
+        gotoSecondLevel();
+        break;
+      case L3:
+        gotoThirdLevel();
+        break;
+      case L4:
+        gotoFourthLevel();
+        break;
+      case PROCESSOR:
+        gotoProcessorLevel();
+      default:
+        Stow();
+    }
+
     measuredVisualizer.update(armCurrentStateDegrees.position);
     armCurrentStateDegrees =
         armProfile.calculate(

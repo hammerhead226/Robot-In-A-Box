@@ -160,16 +160,11 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    robotContainer.superStructure.getSuperStructureCommand().initialize();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    robotContainer.superStructure.checkSpeed();
-    if (robotContainer.superStructure.shouldTrigger()) {
-      robotContainer.superStructure.getSuperStructureCommand().initialize();
-    }
 
     Logger.recordOutput("SuperstructureState", robotContainer.superStructure.getState());
   }

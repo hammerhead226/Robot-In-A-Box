@@ -123,17 +123,6 @@ public final class SubsystemConstants {
     PROCESSOR
   }
 
-  public static enum ScoralArmState {
-    ZERO,
-    STOW,
-    L1,
-    L2,
-    L3,
-    L4,
-    SOURCE,
-    PROCESSOR
-  }
-
   public static enum ScoralFlywheelState {
     ZERO,
     INTAKING_CORAL,

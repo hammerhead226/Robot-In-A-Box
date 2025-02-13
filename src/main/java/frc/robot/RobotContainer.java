@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.DriveCommands;
@@ -91,7 +90,7 @@ public class RobotContainer {
   private final Vision vision;
   final SuperStructure superStructure;
 
-  private final Trigger stateTrigger;
+  // private final Trigger stateTrigger;
 
   private final CoralScorerFlywheel csFlywheel;
 
@@ -255,7 +254,7 @@ public class RobotContainer {
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
     // configureButtonBindings();
-    stateTrigger = new Trigger(() -> superStructure.shouldTrigger());
+    // stateTrigger = new Trigger(() -> superStructure.shouldTrigger());
 
     configureButtonBindings();
   }
@@ -294,8 +293,8 @@ public class RobotContainer {
 
     driveController
         .y()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
-    //driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    // driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
     driveController
         .a()
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
@@ -382,10 +381,10 @@ public class RobotContainer {
     // manipController.y().onTrue(new InstantCommand(() ->
     // elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 1)));
 
-    //keyboard
+    // keyboard
     //    .getCButton()
     //    .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
-    //keyboard
+    // keyboard
     //    .getVButton()
     //    .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
     manipController
