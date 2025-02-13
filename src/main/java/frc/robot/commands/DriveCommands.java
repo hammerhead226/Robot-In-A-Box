@@ -147,18 +147,20 @@ public class DriveCommands {
 
           targetPose = null;
           if (reefAlignAssistSupplier.getAsBoolean()) {
+            Translation2d reefTranslation = drive.isNearReef() ? new Translation2d(-0.5, 0) : new Translation2d(-1.3, 0);
+
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
               targetPose =
-                  rotateAndNudge(targetPose, new Translation2d(-1.3, 0), new Rotation2d(Math.PI));
+                  rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
             } else if (reefRightSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterRight();
               targetPose =
-                  rotateAndNudge(targetPose, new Translation2d(-1.3, 0), new Rotation2d(Math.PI));
+                  rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
             } else {
               targetPose = drive.getNearestCenter();
               targetPose =
-                  rotateAndNudge(targetPose, new Translation2d(-1.3, 0), new Rotation2d(Math.PI));
+                  rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
             }
             Logger.recordOutput("drive targetPose name", "reef");
 

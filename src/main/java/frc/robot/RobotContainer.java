@@ -257,7 +257,9 @@ public class RobotContainer {
             new ConditionalCommand(
                 new ApproachReefPerpendicular(drive).withTimeout(2),
                 new InstantCommand(),
-                () -> drive.isAtReefSide()));
+                () -> (
+                    !drive.isNearReef()
+                    && drive.isAtReefSide())));
 
     driveController.a().onTrue(new SetClawLevel(ReefHeight.L1, elevator, csArm));
     driveController.a().onFalse(/*csFlywheel
