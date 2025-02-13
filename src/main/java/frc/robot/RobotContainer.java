@@ -242,7 +242,7 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
-            () -> driveController.leftBumper().getAsBoolean(),
+            () -> driveController.a().getAsBoolean(),
             () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.rightTrigger().getAsBoolean(),
             () -> driveController.rightBumper().getAsBoolean(),
@@ -252,14 +252,12 @@ public class RobotContainer {
     // driveController.x().onTrue(new Stow(elevator, csArm));
 
     driveController
-        .leftBumper()
+        .a()
         .onFalse(
             new ConditionalCommand(
                 new ApproachReefPerpendicular(drive).withTimeout(2),
                 new InstantCommand(),
-                () -> (
-                    !drive.isNearReef()
-                    && drive.isAtReefSide())));
+                () -> (!drive.isNearReef() && drive.isAtReefSide())));
 
     driveController.a().onTrue(new SetClawLevel(ReefHeight.L1, elevator, csArm));
     driveController.a().onFalse(/*csFlywheel
