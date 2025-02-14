@@ -156,9 +156,9 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command setElevatorTarget(double goalInches, double thresholdInches) {
-
+    //TODO: Change the wait time to an accurate value
     return new InstantCommand(() -> setExtenderGoal(goalInches), this)
-        .until(() -> elevatorAtSetpoint(thresholdInches));
+        .until(() -> elevatorAtSetpoint(thresholdInches)).withTimeout(5);
   }
 
   @Override
