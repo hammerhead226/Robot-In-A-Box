@@ -204,7 +204,7 @@ public class CoralScorerFlywheel extends SubsystemBase {
       lastCoralState = CoralState.SENSOR;
       return CoralState.SENSOR;
 
-    } else if (feedInputs.currentAmps > 1399999999) {
+    } else if (feedInputs.currentAmps > 13) {
       Logger.recordOutput("see note val", "current");
       lastCoralState = CoralState.CURRENT;
       return CoralState.CURRENT;

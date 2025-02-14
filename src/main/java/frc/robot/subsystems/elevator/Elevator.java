@@ -102,8 +102,8 @@ public class Elevator extends SubsystemBase {
         kV.initDefault(0.55);
         kA.initDefault(0);
 
-        kP.initDefault(13.4);
-        kI.initDefault(1);
+        kP.initDefault(11);
+        kI.initDefault(0);
 
         barkG.initDefault(1.7);
         break;
@@ -214,6 +214,10 @@ public class Elevator extends SubsystemBase {
     this.wantedState = wantedState;
   }
 
+  public void breakMode(boolean brake){
+    elevator.setBrakeMode(brake);
+  }
+
   public ElevatorState handleStateTransitions() {
     return switch (wantedState) {
       case ZERO -> ElevatorState.ZERO;
@@ -260,6 +264,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     Logger.recordOutput("Alliance", DriverStation.getAlliance().isPresent());
     elevator.updateInputs(eInputs);
+    updateTunableNumbers();
     // state logic
     // ElevatorState desiredState = wantedState;
     if (wantedState != currentState) {

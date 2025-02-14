@@ -136,12 +136,11 @@ public class SuperStructure extends SubsystemBase {
         return elevator.hasReachedGoal(FieldConstants.ReefHeight.L4.height)
             && csArm.hasReachedGoal(FieldConstants.ReefHeight.L4.pitch);
       case SOURCE:
-       return elevator.hasReachedGoal(0)
-                        && csArm.hasReachedGoal(40);
+        return elevator.hasReachedGoal(0) && csArm.hasReachedGoal(40);
 
       case SCORING_CORAL:
-      return csFlywheel.seesCoral() == CoralState.CURRENT
-      || csFlywheel.seesCoral() == CoralState.SENSOR;
+        return csFlywheel.seesCoral() == CoralState.CURRENT
+            || csFlywheel.seesCoral() == CoralState.SENSOR;
       default:
         return false;
     }
@@ -154,10 +153,10 @@ public class SuperStructure extends SubsystemBase {
 
         break;
       case SOURCE:
-         if ( csFlywheel.seesCoral() == CoralState.SENSOR) {
-           Stow();
-           led.setState(LED_STATE.GREEN);
-         } else {
+        if (csFlywheel.seesCoral() == CoralState.SENSOR) {
+          Stow();
+          led.setState(LED_STATE.GREEN);
+        } else {
           goToSource();
           led.setState(LED_STATE.FLASHING_YELLOW);
         }

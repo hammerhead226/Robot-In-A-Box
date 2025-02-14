@@ -257,8 +257,6 @@ public class CoralScorerArm extends SubsystemBase {
       default:
         Stow();
     }
-
-    
   }
 
   private void updateTunableNumbers() {

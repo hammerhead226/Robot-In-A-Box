@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -206,15 +205,18 @@ public class RobotContainer {
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)),
             new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
     NamedCommands.registerCommand(
-        "L2",new SequentialCommandGroup(
+        "L2",
+        new SequentialCommandGroup(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)),
             new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
     NamedCommands.registerCommand(
-        "L3", new SequentialCommandGroup(
+        "L3",
+        new SequentialCommandGroup(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)),
             new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
     NamedCommands.registerCommand(
-        "L4", new SequentialCommandGroup(
+        "L4",
+        new SequentialCommandGroup(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)),
             new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
     NamedCommands.registerCommand(
@@ -222,7 +224,8 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SCORE",
         new SequentialCommandGroup(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
             new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
     NamedCommands.registerCommand(
         "INTAKE",
