@@ -13,11 +13,15 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,10 +33,10 @@ import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakingAlgae;
 import frc.robot.commands.Stow;
-// import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.SuperStructure;
@@ -63,7 +67,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.KeyboardInputs;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -289,6 +292,9 @@ public class RobotContainer {
             () -> driveController.rightBumper().getAsBoolean(),
             () -> driveController.b().getAsBoolean(),
             () -> driveController.x().getAsBoolean()));
+    
+    Trigger isBatteryLow = new Trigger(() -> (RobotController.getBatteryVoltage() < 10.0));
+    isBatteryLow.onTrue(new InstantCommand(() -> led.setState(LED_STATE.FLASHING_RED)));
 
     // driveController.x().onTrue(new Stow(elevator, csArm));
 

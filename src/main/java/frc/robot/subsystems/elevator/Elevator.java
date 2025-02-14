@@ -1,5 +1,8 @@
 package frc.robot.subsystems.elevator;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -15,8 +18,6 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.ElevatorState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.util.LoggedTunableNumber;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
 
