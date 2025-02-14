@@ -35,10 +35,10 @@ import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
-import frc.robot.subsystems.Climber.ClimberArm;
-import frc.robot.subsystems.Climber.ClimberArmIOSim;
-import frc.robot.subsystems.Climber.ClimberArmIOTalonFX;
 import frc.robot.subsystems.SuperStructure;
+import frc.robot.subsystems.climber.ClimberArm;
+import frc.robot.subsystems.climber.ClimberArmIOSim;
+import frc.robot.subsystems.climber.ClimberArmIOTalonFX;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
@@ -294,8 +294,10 @@ public class RobotContainer {
 
     driveController
         .y()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
-    //driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
+        .onTrue(
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
+    // driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
     driveController
         .a()
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
@@ -382,10 +384,10 @@ public class RobotContainer {
     // manipController.y().onTrue(new InstantCommand(() ->
     // elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 1)));
 
-    //keyboard
+    // keyboard
     //    .getCButton()
     //    .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
-    //keyboard
+    // keyboard
     //    .getVButton()
     //    .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
     manipController

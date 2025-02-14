@@ -134,14 +134,14 @@ public class SuperStructure {
         }
 
       case SCORING_CORAL:
-        //if (csFlywheel.seesCoral() == CoralState.SENSOR
-           // || csFlywheel.seesCoral() == CoralState.CURRENT) {
-          return new SequentialCommandGroup(csFlywheel.runVoltsCommmand(1));
-       // } else {
-       //   return new SequentialCommandGroup(
-      //        new WaitCommand(0.5),
-       //       new InstantCommand(() -> setWantedState(SuperStructureState.STOW)));
-       // }
+        // if (csFlywheel.seesCoral() == CoralState.SENSOR
+        // || csFlywheel.seesCoral() == CoralState.CURRENT) {
+        return new SequentialCommandGroup(csFlywheel.runVoltsCommmand(1));
+        // } else {
+        //   return new SequentialCommandGroup(
+        //        new WaitCommand(0.5),
+        //       new InstantCommand(() -> setWantedState(SuperStructureState.STOW)));
+        // }
 
       default:
         return new SequentialCommandGroup(
