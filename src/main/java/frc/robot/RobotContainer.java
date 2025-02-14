@@ -407,7 +407,8 @@ public class RobotContainer {
     driveController.rightBumper().onTrue(new AlignToReefAuto(drive, led));
 
     driveController.leftBumper().onTrue(new AutoAlignToSource(drive, led));
-    driveController.rightTrigger().onTrue(new ReleaseAlgae(csFlywheel));
+
+    // driveController.rightTrigger().onTrue(new ReleaseAlgae(csFlywheel));
 
     // manipController.a().onTrue(new InstantCommand(() ->
     // elevator.setElevatorTarget(FieldConstants.ReefHeight.L1.height, 1)));
@@ -425,24 +426,15 @@ public class RobotContainer {
         .b()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
     driveController
-        .b()
-        .onFalse(
-            new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
-    driveController
         .x()
         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
     driveController
-        .x()
-        .onFalse(
-            new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
-    // driveController
-    //     .y()
-    //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm,
-    // csFlywheel));
+        .y()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
 
-    driveController.y().onTrue(climbCommands);
+    controller.y().onTrue(climbCommands);
 
-    controller.leftBumper().onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
+    driveController.leftTrigger().onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
     controller
         .leftBumper()
         .onFalse(
