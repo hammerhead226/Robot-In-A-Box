@@ -36,6 +36,17 @@ public class CoralScorerFlywheel extends SubsystemBase {
   private static final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 1);
   private static final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 1);
 
+  public enum ScoralFlywheelState {
+    ZERO,
+    INTAKING_CORAL,
+    INTAKING_ALGAE,
+    SCORING_CORAL,
+    SCORING_ALGAE
+  }
+
+  public ScoralFlywheelState currentState = ScoralFlywheelState.ZERO;
+  public ScoralFlywheelState wantedState = ScoralFlywheelState.ZERO;
+
   private CoralState lastCoralState;
 
   /** Creates a new Flywheel. */
@@ -82,6 +93,32 @@ public class CoralScorerFlywheel extends SubsystemBase {
   public void periodic() {
     flywheel.updateInputs(inputs);
     Logger.processInputs(" ballsFlywheel", inputs);
+
+    if (wantedState != currentState) {
+      currentState = wantedState;
+    }
+
+    switch (currentState) {
+      case ZERO:
+        zero();
+        break;
+      case INTAKING_ALGAE:
+        intakeAlgae();
+        break;
+      case INTAKING_CORAL:
+        intakeCoral();
+        break;
+      case SCORING_ALGAE:
+        scoreAlgae();
+        break;
+      case SCORING_CORAL:
+        scoreCoral();
+        break;
+
+      default:
+        zero();
+    }
+
     updateTunableNumbers();
   }
 
@@ -181,6 +218,30 @@ public class CoralScorerFlywheel extends SubsystemBase {
 
   public CoralState getLastCoralState() {
     return lastCoralState;
+  }
+
+  public void setWantedState(ScoralFlywheelState state) {
+    wantedState = state;
+  }
+
+  public void zero() {
+    flywheel.stop();
+  }
+
+  public void intakeCoral() {
+    flywheel.setVoltage(-2);
+  }
+
+  public void intakeAlgae() {
+    flywheel.setVoltage(-1);
+  }
+
+  public void scoreCoral() {
+    flywheel.setVoltage(2);
+  }
+
+  public void scoreAlgae() {
+    flywheel.setVoltage(2);
   }
 
   private void updateTunableNumbers() {

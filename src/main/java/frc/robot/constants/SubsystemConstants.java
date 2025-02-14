@@ -160,7 +160,8 @@ public final class SubsystemConstants {
     //   L3ATGOAL,
     //  L4ATGOAL,
     DEFAULT,
-    SCORING_CORAL
+    SCORING_CORAL,
+    READY_FOR_SCORE_REEF
   }
 
   public static final double CORAL_DIST = -1234; // 1300; // CHANGE THIS

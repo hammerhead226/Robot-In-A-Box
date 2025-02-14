@@ -21,6 +21,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -198,21 +201,35 @@ public class RobotContainer {
     NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
 
     NamedCommands.registerCommand(
-        "L1", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
+        "L1",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)),
+            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
     NamedCommands.registerCommand(
-        "L2", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+        "L2",new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)),
+            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
     NamedCommands.registerCommand(
-        "L3", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+        "L3", new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)),
+            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
     NamedCommands.registerCommand(
-        "L4", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+        "L4", new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)),
+            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
     NamedCommands.registerCommand(
         "STOW ", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
     NamedCommands.registerCommand(
-        "SCORE ",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
+        "SCORE",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
+            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
     NamedCommands.registerCommand(
-        "INTAKE ",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
+        "INTAKE",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)),
+            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
+
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
@@ -233,6 +250,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Top R3a", AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c-R1b(L3)-S3c-R6a(L3)"));
     autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
+    autoChooser.addDefaultOption("1.1 auto", AutoBuilder.buildAuto("1.1.auto"));
     /*
     NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
     NamedCommands.registerCommand(
@@ -297,7 +315,10 @@ public class RobotContainer {
     // driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
     driveController
         .a()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
+        .onTrue(
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
+
     // driveController.a().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
     // driveController
     //     .rightBumper()
@@ -395,16 +416,10 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
     manipController
         .a()
-        .onFalse(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
     manipController
         .b()
-        .onFalse(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
-    manipController
-        .x()
-        .onFalse(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
-    manipController
-        .y()
-        .onFalse(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm,

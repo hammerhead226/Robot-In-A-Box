@@ -135,6 +135,10 @@ public class CoralScorerArm extends SubsystemBase {
     return (Math.abs(csaInputs.positionDegs - goalDegrees) <= threshold);
   }
 
+  public boolean hasReachedGoal(double goalDegs) {
+    return (Math.abs(armCurrentStateDegrees.position - goalDegs) <= 2);
+  }
+
   private double getArmError() {
     return csaInputs.positionSetpointDegs - csaInputs.positionDegs;
   }
@@ -181,7 +185,7 @@ public class CoralScorerArm extends SubsystemBase {
   }
 
   public void goToSource() {
-    setArmGoal(20);
+    setArmGoal(40);
   }
 
   public void gotoFirstLevel() {
@@ -208,6 +212,22 @@ public class CoralScorerArm extends SubsystemBase {
   public void periodic() {
     coralScorerArm.updateInputs(csaInputs);
 
+    measuredVisualizer.update(armCurrentStateDegrees.position);
+    armCurrentStateDegrees =
+        armProfile.calculate(
+            SubsystemConstants.LOOP_PERIOD_SECONDS, armCurrentStateDegrees, armGoalStateDegrees);
+
+    setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
+
+    Logger.processInputs("Coral Arm", csaInputs);
+    Logger.recordOutput("arm error", getArmError());
+
+    Logger.recordOutput("arm goal", goalDegrees);
+    // This method will be called once per scheduler run
+    measuredVisualizer.update(armCurrentStateDegrees.position);
+    setpointVisualizer.update(armGoalStateDegrees.position);
+
+    updateTunableNumbers();
     // state machine stuff
     if (wantedState != currentState) {
       currentState = wantedState;
@@ -238,22 +258,7 @@ public class CoralScorerArm extends SubsystemBase {
         Stow();
     }
 
-    measuredVisualizer.update(armCurrentStateDegrees.position);
-    armCurrentStateDegrees =
-        armProfile.calculate(
-            SubsystemConstants.LOOP_PERIOD_SECONDS, armCurrentStateDegrees, armGoalStateDegrees);
-
-    setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
-
-    Logger.processInputs("Coral Arm", csaInputs);
-    Logger.recordOutput("arm error", getArmError());
-
-    Logger.recordOutput("arm goal", goalDegrees);
-    // This method will be called once per scheduler run
-    measuredVisualizer.update(armCurrentStateDegrees.position);
-    setpointVisualizer.update(armGoalStateDegrees.position);
-
-    updateTunableNumbers();
+    
   }
 
   private void updateTunableNumbers() {

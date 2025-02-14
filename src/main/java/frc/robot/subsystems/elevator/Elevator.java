@@ -140,6 +140,11 @@ public class Elevator extends SubsystemBase {
         <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
   }
 
+  public boolean hasReachedGoal(double goalInches) {
+    return (Math.abs(extenderCurrent.position - goalInches)
+        <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
+  }
+
   public double getElevatorPosition() {
     return eInputs.elevatorPositionInch;
   }
