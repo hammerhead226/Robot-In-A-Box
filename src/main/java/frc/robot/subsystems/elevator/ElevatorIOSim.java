@@ -92,7 +92,5 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   @Override
-  public void setBrakeMode(boolean bruh){
-    
-  }
+  public void setBrakeMode(boolean bruh) {}
 }

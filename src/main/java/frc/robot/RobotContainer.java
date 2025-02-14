@@ -38,9 +38,9 @@ import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
-import frc.robot.subsystems.Climber.ClimberArm;
-import frc.robot.subsystems.Climber.ClimberArmIOSim;
-import frc.robot.subsystems.Climber.ClimberArmIOTalonFX;
+import frc.robot.subsystems.climber.ClimberArm;
+import frc.robot.subsystems.climber.ClimberArmIOSim;
+import frc.robot.subsystems.climber.ClimberArmIOTalonFX;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
@@ -278,7 +278,7 @@ public class RobotContainer {
     // Configure the button bindings
     // configureButtonBindings();
     // stateTrigger = new Trigger(() -> superStructure.shouldTrigger());
-     elevatorBrakeTrigger = new Trigger(()-> RobotController.getUserButton());
+    elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
     configureButtonBindings();
   }
 
@@ -313,8 +313,8 @@ public class RobotContainer {
             () -> driveController.x().getAsBoolean()));
 
     // driveController.x().onTrue(new Stow(elevator, csArm));
-    elevatorBrakeTrigger.onTrue(new InstantCommand(()-> elevator.breakMode(true), elevator));
-    elevatorBrakeTrigger.onFalse(new InstantCommand(()-> elevator.breakMode(false)));
+    elevatorBrakeTrigger.onTrue(new InstantCommand(() -> elevator.breakMode(true), elevator));
+    elevatorBrakeTrigger.onFalse(new InstantCommand(() -> elevator.breakMode(false)));
 
     driveController
         .y()

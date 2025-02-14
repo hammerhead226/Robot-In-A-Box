@@ -74,8 +74,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   public void runCharacterization(double volts) {
     leader.setVoltage(volts);
   }
-//weird how we give the setpoint in meters and it sets it to meters in sim?
-//we'll have to see what the exact bug is but for now work with meters
+  // weird how we give the setpoint in meters and it sets it to meters in sim?
+  // we'll have to see what the exact bug is but for now work with meters
   @Override
   public void setPositionSetpoint(double position, double ffVolts) {
     this.positionSetpoint = position;
@@ -103,13 +103,12 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   }
 
   @Override
-  public void setBrakeMode(boolean brake){
-        TalonFXConfiguration config = new TalonFXConfiguration();
-        if(brake){
-          config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        } else {
-          config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        }
-
+  public void setBrakeMode(boolean brake) {
+    TalonFXConfiguration config = new TalonFXConfiguration();
+    if (brake) {
+      config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    } else {
+      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    }
   }
 }

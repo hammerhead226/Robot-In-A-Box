@@ -214,7 +214,7 @@ public class Elevator extends SubsystemBase {
     this.wantedState = wantedState;
   }
 
-  public void breakMode(boolean brake){
+  public void breakMode(boolean brake) {
     elevator.setBrakeMode(brake);
   }
 
