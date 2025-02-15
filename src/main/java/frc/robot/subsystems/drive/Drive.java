@@ -55,6 +55,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SimConstants.Mode;
+import frc.robot.constants.SubsystemConstants.AlgaeState;
+import frc.robot.constants.SubsystemConstants.AlignState;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.vision.ObjectDetection;
@@ -68,6 +70,9 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
+  private final DistanceSensorIO distanceSensor;
+  private final DistanceSensorIOInputsAutoLogged dsInputs = new DistanceSensorIOInputsAutoLogged();
+  private final AlignState lastAlignState;
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY =
       new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
@@ -318,6 +323,21 @@ public class Drive extends SubsystemBase {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
+  public AlignState seesWall() {
+    Logger.recordOutput("see note val", "default");
+    //Change val to accurate value
+    if (dsInputs.distance < 13) {
+      Logger.recordOutput("see note val", "current");
+      lastAlignState = AlignState.IN_POSITION;
+      return AlignState.IN_POSITION;
+
+    } else {
+      Logger.recordOutput("see note val", "no note");
+      lastAlignState = AlignState.ALIGNING;
+      return AlignState.ALIGNING;
+    }
+  }
+  
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
   @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {

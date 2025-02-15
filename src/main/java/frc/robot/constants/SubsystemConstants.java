@@ -155,6 +155,11 @@ public final class SubsystemConstants {
     HANG
   }
 
+  public static enum AlignState {
+    ALIGNING,
+    IN_POSITION
+  }
+
   public static enum DriveState {
     FULLSPEED,
     SLOW
