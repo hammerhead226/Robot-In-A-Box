@@ -64,7 +64,7 @@ public class AlignToProcessor extends Command {
 
   @Override
   public void execute() {
-    led.setState(LED_STATE.FLASHING_YELLOW);
+    led.setState(LED_STATE.FLASHING_ORANGE);
     pathCommand.execute();
   }
 

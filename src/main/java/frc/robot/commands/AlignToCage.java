@@ -16,10 +16,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.subsystems.led.LED;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
+
 
 public class AlignToCage extends Command {
   private Drive drive;
   private Command pathCommand;
+  private LED led;
   private List<Pose2d> possiblePoses =
       new ArrayList<>(Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage));
 
@@ -57,6 +61,7 @@ public class AlignToCage extends Command {
 
   @Override
   public void execute() {
+    led.setState(LED_STATE.FLASHING_BLUE);
     pathCommand.execute();
   }
 

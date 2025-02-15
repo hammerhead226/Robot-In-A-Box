@@ -26,8 +26,14 @@ public class LED_IOCANdle implements LED_IO {
   StrobeAnimation flashYellow = new StrobeAnimation(255, 255, 0, 0, 0.01, 57 + 24);
   StrobeAnimation flashWhite = new StrobeAnimation(255, 255, 255, 255, 0.01, 57 + 24);
   StrobeAnimation halfFlashWhite = new StrobeAnimation(255, 255, 255, 255, 0.01, 28 + 24, 0);
-
+  StrobeAnimation flashPurple = new StrobeAnimation(119, 0, 255, 0, 0.01, 57 + 24);
+  StrobeAnimation flashOrange = new StrobeAnimation(255, 165, 0, 0, 0.01, 57 + 24);
+  StrobeAnimation flashGrey = new StrobeAnimation(96, 96, 96, 0, 0.01, 57 + 24);
+  StrobeAnimation flashPink = new StrobeAnimation(255, 204, 255, 0, 0.01, 57 + 24);
+  StrobeAnimation flashBlack = new StrobeAnimation(0, 0, 0, 0, 0.01, 57 + 24);
+  StrobeAnimation flashCyan   = new StrobeAnimation(204, 255, 255, 0, 0.01, 57 + 24);
   FireAnimation rainbow = new FireAnimation(0.3, 0.03, 57 + 24, 0.1, 0.1);
+  
   // ColorFlowAnimation rainbow = new ColorFlowAnimation(0, 0, 255, 0, 0.343, 57,
   // Direction.Forward);
 
@@ -84,6 +90,10 @@ public class LED_IOCANdle implements LED_IO {
         candle.clearAnimation(0);
         candle.setLEDs(255, 0, 0, 0, 0, 57 + 24);
         break;
+      case FLASHING_PURPLE:
+        candle.animate(flashPurple, 0);
+        break;
+      
       case BLUE:
         // TODO:: DEFAULT COLOR | BLUE
         candle.clearAnimation(0);
@@ -126,12 +136,27 @@ public class LED_IOCANdle implements LED_IO {
         // candle.setLEDs(255, 0, 0, 0, 32, 28);
         candle.setLEDs(255, 0, 0, 0, 32, 25);
         break;
+      case FLASHING_GREY:
+        candle.animate(flashGrey, 0);
+        break;
+      case FLASHING_PINK:
+        candle.animate(flashPink, 0);
+        break;
+      case FLASHING_BLACK:
+        candle.animate(flashBlack, 0);
+        break;
       case FLASHING_WHITE:
         // TODO:: SIGNAL TO HUMAN PLAYER | FLASHING WHITE
         candle.animate(flashWhite, 0);
         break;
+      case FLASHING_CYAN:
+        candle.animate(flashCyan, 0);
+        break;
       case FLASHING_YELLOW:
         candle.animate(flashYellow, 0);
+        break;
+      case FLASHING_ORANGE:
+        candle.animate(flashOrange, 0);
         break;
       case FLASHING_GREEN:
         // TODO:: AIMBOT | FLASHING GREEN
