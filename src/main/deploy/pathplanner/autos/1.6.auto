@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.2Start"
+            "pathName": "1.6Start"
           }
         },
         {
@@ -25,13 +25,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.2Second "
+            "pathName": "1.6Second "
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "1.2Third "
+            "pathName": "1.6Third "
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.2Fourth"
+            "pathName": "1.6Fourth"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.2Fifth"
+            "pathName": "1.6Fifth"
           }
         }
       ]

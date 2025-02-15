@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.2Start"
+            "pathName": "1.4Start "
           }
         },
         {
@@ -25,13 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.2Second "
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "1.2Third "
+            "pathName": "1.4Second "
           }
         },
         {
@@ -43,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.2Fourth"
+            "pathName": "1.4Third"
           }
         },
         {
@@ -61,7 +55,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.2Fifth"
+            "pathName": "1.4Fourth"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "INTAKE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1.4Fifth"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE"
           }
         }
       ]
