@@ -201,21 +201,22 @@ public class SuperStructure extends SubsystemBase {
   @Override
   public void periodic() {
     // Logger.recordOutput("current State", currentState)
-    if (Drive.speedX > 1 || Drive.speedY > 1) {
-      currentState = SuperStructureState.STOW;
-    } else if (wantedState != currentState) {
-      currentState = wantedState;
-    }
+    //   if (Drive.speedX > 1 || Drive.speedY > 1) {
+    //     currentState = SuperStructureState.STOW;
+    //   } else if (wantedState != currentState) {
+    //     currentState = wantedState;
+    //   }
 
-    applyState();
+    //   applyState();
 
-    if (successfullScore) {
-      setWantedState(SuperStructureState.STOW);
-      successfullScore = false;
-    }
+    //   if (successfullScore) {
+    //     setWantedState(SuperStructureState.STOW);
+    //     successfullScore = false;
+    //   }
 
-    if (elevator.atGoal() && csArm.atGoal(2)) {
-      led.setState(LED_STATE.GREEN);
-    }
+    //   if (elevator.atGoal() && csArm.atGoal(2)) {
+    //     led.setState(LED_STATE.GREEN);
+    //   }
+    // }
   }
 }

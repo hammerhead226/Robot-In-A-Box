@@ -98,11 +98,13 @@ public class Elevator extends SubsystemBase {
         break;
       case SIM:
         kS.initDefault(0.0);
-        kG.initDefault(0.01);
-        kV.initDefault(0.55);
+        kG.initDefault(0.1);
+        // kV.initDefault(0.55);
+        kV.initDefault(0.055);
         kA.initDefault(0);
 
         kP.initDefault(11);
+        // kP.initDefault(0.5);
         kI.initDefault(0);
 
         barkG.initDefault(1.7);
@@ -267,34 +269,34 @@ public class Elevator extends SubsystemBase {
     updateTunableNumbers();
     // state logic
     // ElevatorState desiredState = wantedState;
-    if (wantedState != currentState) {
-      currentState = wantedState;
-    }
+    // if (wantedState != currentState) {
+    //   currentState = wantedState;
+    // }
 
-    switch (currentState) {
-      case ZERO:
-        Stow();
-        break;
-      case SOURCE:
-        goToSource();
-        break;
-      case L1:
-        gotoFirstLevel();
-        break;
-      case L2:
-        gotoSecondLevel();
-        break;
-      case L3:
-        gotoThirdLevel();
-        break;
-      case L4:
-        gotoFourthLevel();
-        break;
-      case PROCESSOR:
-        gotoProcessorLevel();
-      default:
-        Stow();
-    }
+    // switch (currentState) {
+    //   case ZERO:
+    //     Stow();
+    //     break;
+    //   case SOURCE:
+    //     goToSource();
+    //     break;
+    //   case L1:
+    //     gotoFirstLevel();
+    //     break;
+    //   case L2:
+    //     gotoSecondLevel();
+    //     break;
+    //   case L3:
+    //     gotoThirdLevel();
+    //     break;
+    //   case L4:
+    //     gotoFourthLevel();
+    //     break;
+    //   case PROCESSOR:
+    //     gotoProcessorLevel();
+    //   default:
+    //     Stow();
+    // }
 
     measured.update(extenderCurrent.position);
     CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position);
@@ -317,6 +319,7 @@ public class Elevator extends SubsystemBase {
 
     CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position + 0.1);
     CoralScorerArm.setpointVisualizer.updateVertical(extenderGoal.position + 0.1);
+    // Logger.recordOutput("setpoint for elevator",)
 
     updateTunableNumbers();
   }

@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -33,6 +34,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         SubsystemConstants.ElevatorConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     leader = new TalonFX(lead, SubsystemConstants.CANBUS);
     follower = new TalonFX(follow, SubsystemConstants.CANBUS);
@@ -57,13 +59,14 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     BaseStatusSignal.refreshAll(elevatorPosition, elevatorVelocity, appliedVolts, currentAmps);
     inputs.elevatorPositionInch =
         Conversions.motorRotToInches(
-            elevatorPosition.getValueAsDouble(),
-            5.97,
-            SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO);
+                elevatorPosition.getValueAsDouble(),
+                5.5,
+                SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO)
+            - 0.051;
     inputs.elevatorVelocityInchesPerSecond =
         Conversions.motorRotToInches(
             elevatorVelocity.getValueAsDouble() * 60.,
-            5.97,
+            5.5,
             SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO);
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
