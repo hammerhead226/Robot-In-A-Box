@@ -33,7 +33,10 @@ public class ReleaseClaw extends Command {
   }
 
   @Override
-  public void execute() {}
+  public void execute() {
+    led.setState(LED_STATE.FLASHING_ORANGE);
+
+  }
 
   @Override
   public boolean isFinished() {

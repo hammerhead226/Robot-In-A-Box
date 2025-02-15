@@ -35,7 +35,7 @@ import frc.robot.commands.IntakeFromSourceParallel;
 import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.ReleaseClawParallel;
 import frc.robot.commands.Stow;
-// import frc.robot.commands.algaeintosource.ReleaseAlgae;
+import frc.robot.commands.algaeintosource.ReleaseAlgae;
 // import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 import frc.robot.constants.FieldConstants;
 // import frc.robot.commands.IntakeFromSource;
@@ -453,6 +453,9 @@ public class RobotContainer {
     //     .y()
     //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm,
     // csFlywheel));
+    driveController.leftBumper().onTrue(new AutoAlignToSource(drive, led));
+
+    // driveController.rightTrigger().onTrue(new ReleaseAlgae(csFlywheel));
 
     // controller.y().onTrue(climbCommands);
     controller.a().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm, elevator).until(() ->
@@ -489,6 +492,39 @@ public class RobotContainer {
     //     .leftBumper()
     //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm,
     // csFlywheel));
+    manipController
+        .a()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
+    manipController
+        .b()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
+
+    driveController
+        .a()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
+    driveController
+        .b()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
+    driveController
+        .x()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
+    driveController
+        .y()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+
+    controller.y().onTrue(climbCommands);
+
+    driveController.leftTrigger().onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
+    controller
+        .leftBumper()
+        .onFalse(
+            new ParallelCommandGroup(
+                csArm.setArmTarget(60, 4),
+                elevator.setElevatorTarget(0.2, 0.05),
+                new InstantCommand(() -> csFlywheel.runVolts(0))));
+    controller
+        .leftBumper()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
