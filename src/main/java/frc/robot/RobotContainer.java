@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -46,6 +47,7 @@ import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.TunerConstants;
 import frc.robot.statemachines.ClimbStateMachine;
 import frc.robot.statemachines.ClimbStateMachine.CLIMB_STATES;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIO;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
@@ -73,8 +75,17 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.KeyboardInputs;
+
 import java.util.Map;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import frc.robot.commands.algaeintoprocesser.ReleaseAlgae;
+import frc.robot.subsystems.commoniolayers.FlywheelIO;
+import frc.robot.subsystems.coralscorer.CoralSensorIO;
+import frc.robot.subsystems.flywheel.FlywheelIOSim;
+import frc.robot.subsystems.flywheel.FlywheelIOTalonFX;
+import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIO;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -120,6 +131,7 @@ public class RobotContainer {
   }
 
   private final Command climbCommands;
+  final SuperStructure superStructure;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -147,12 +159,13 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
         algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOTalonFX(0, 0, 0));
         csFlywheel =
-            new CoralScorerFlywheel(
-                new CoralScorerFlywheelIOSim(),
-                new CoralIntakeSensorIO() {},
-                CoralState.DEFAULT,
-                AlgaeState.DEFAULT);
+        new CoralScorerFlywheel(
+            new FlywheelIOTalonFX(),
+            new CoralSensorIO() {},
+            CoralState.DEFAULT,
+            AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, ""));
+        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
         // coralIntake = new IntakeFromSource(new CoralScorerFlywheel(), new CoralScorerArm(), new
         // Elevator());
@@ -182,14 +195,15 @@ public class RobotContainer {
         algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
         csFlywheel =
             new CoralScorerFlywheel(
-                new CoralScorerFlywheelIOSim(),
-                new CoralIntakeSensorIO() {},
+                new FlywheelIOSim(),
+                new CoralSensorIO() {},
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOSim());
 
         // objectDetection = new ObjectDetection(new ObjectDetectionConsumer() {}, new
         // ObjectDetectionIO() {});
+        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
 
         break;
 
@@ -212,18 +226,18 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIO() {});
-        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOSim());
+        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIO() {});
         csFlywheel =
             new CoralScorerFlywheel(
-                new CoralScorerFlywheelIOSim(),
-                new CoralIntakeSensorIO() {},
+                new FlywheelIO() {},
+                new CoralSensorIO() {},
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
 
         // objectDetection = new ObjectDetection(new ObjectDetectionConsumer() {}, new
         // ObjectDetectionIO() {});
-
+        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
     }
 
@@ -281,7 +295,7 @@ public class RobotContainer {
         new IntakingAlgaeParallel(elevator, csArm, csFlywheel)
             .until(() -> csFlywheel.seesAlgae() == AlgaeState.CURRENT)
             .withTimeout(5));
-    NamedCommands.registerCommand("Stow", new Stow(csArm, elevator));
+    NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
     // NamedCommands.registerCommand(
     // "AlgaeIntoProcessor", new AlgaeIntoProcessor(elevator, csArm, csFlywheel));

@@ -11,7 +11,6 @@ import com.ctre.phoenix.led.ColorFlowAnimation;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.constants.SubsystemConstants;
@@ -32,9 +31,9 @@ public class LED_IOCANdle implements LED_IO {
   StrobeAnimation flashGrey = new StrobeAnimation(96, 96, 96, 0, 0.01, 57 + 24);
   StrobeAnimation flashPink = new StrobeAnimation(255, 204, 255, 0, 0.01, 57 + 24);
   StrobeAnimation flashBlack = new StrobeAnimation(0, 0, 0, 0, 0.01, 57 + 24);
-  StrobeAnimation flashCyan   = new StrobeAnimation(204, 255, 255, 0, 0.01, 57 + 24);
+  StrobeAnimation flashCyan = new StrobeAnimation(204, 255, 255, 0, 0.01, 57 + 24);
   FireAnimation rainbow = new FireAnimation(0.3, 0.03, 57 + 24, 0.1, 0.1);
-  
+
   // ColorFlowAnimation rainbow = new ColorFlowAnimation(0, 0, 255, 0, 0.343, 57,
   // Direction.Forward);
 
@@ -98,7 +97,7 @@ public class LED_IOCANdle implements LED_IO {
         break;
       case FLASHING_PURPLE:
         candle.clearAnimation(0);
-        candle.setLEDs(119,0,200,0,0,57+24);
+        candle.setLEDs(119, 0, 200, 0, 0, 57 + 24);
         break;
       case YELLOW:
         candle.clearAnimation(0);

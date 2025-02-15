@@ -16,17 +16,17 @@ import frc.robot.subsystems.elevator.Elevator;
 public class ScoringProccessorSequential extends SequentialCommandGroup {
   private final CoralScorerFlywheel csFlywheel;
   private final CoralScorerArm csArm;
-  private final Elevator elevator; 
+  private final Elevator elevator;
 
   public ScoringProccessorSequential(
-    CoralScorerFlywheel csFlywheel, CoralScorerArm csArm, Elevator elevator) {
+      CoralScorerFlywheel csFlywheel, CoralScorerArm csArm, Elevator elevator) {
     this.csFlywheel = csFlywheel;
     this.elevator = elevator;
     this.csArm = csArm;
 
     addCommands(
-    elevator.setElevatorTarget(0.25, 0.01),
-    csArm.setArmTarget(190, 2),
-    new InstantCommand(() -> csFlywheel.runVolts(5)));
+        elevator.setElevatorTarget(0.25, 0.01),
+        csArm.setArmTarget(190, 2),
+        new InstantCommand(() -> csFlywheel.runVolts(5)));
   }
 }

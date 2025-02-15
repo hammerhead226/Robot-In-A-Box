@@ -5,8 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.led.LED;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
+import frc.robot.subsystems.led.LED;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ClimbCommands extends Command {
@@ -25,14 +25,11 @@ public class ClimbCommands extends Command {
   @Override
   public void execute() {
     led.setState(LED_STATE.FLASHING_GREY);
-
-
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
