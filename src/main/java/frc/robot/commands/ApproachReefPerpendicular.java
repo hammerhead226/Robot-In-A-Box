@@ -14,7 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +22,12 @@ import java.util.List;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ApproachReefPerpendicular extends Command {
   private final Drive drive;
+  private final SuperStructure superStructure;
   Command pathCommand;
   /** Creates a new ApproachReefPerpendicular. */
-  public ApproachReefPerpendicular(Drive drive) {
+  public ApproachReefPerpendicular(Drive drive, SuperStructure superStructure) {
     this.drive = drive;
+    this.superStructure = superStructure;
     addRequirements(drive);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -43,10 +45,7 @@ public class ApproachReefPerpendicular extends Command {
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), targetPose);
     List<EventMarker> eventMarkers = new ArrayList<>();
     eventMarkers.add(
-        new EventMarker(
-            "test trigger",
-            0.7,
-            new InstantCommand(() -> System.out.println("event marker hit!"))));
+        new EventMarker("test trigger", 0.7, superStructure.getSuperStructureCommand()));
     PathPlannerPath path =
         new PathPlannerPath(
             waypoints,
@@ -54,7 +53,7 @@ public class ApproachReefPerpendicular extends Command {
             new ArrayList<>(),
             new ArrayList<>(),
             eventMarkers,
-            new PathConstraints(3.5, 2.7, 100, 180), // these numbers from last year's code
+            new PathConstraints(1.5, 2.7, 100, 180), // these numbers from last year's code
             null, // The ideal starting state, this is only relevant for pre-planned paths, so can
             // be null for on-the-fly paths.
             new GoalEndState(0.5, targetPose.getRotation()),

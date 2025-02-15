@@ -258,6 +258,7 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && SimConstants.currentMode != Mode.SIM);
     // setNearestReefSide();
     balls = getPose();
+    Logger.recordOutput("chassisSpeed", chassisSpeedMetersPerSec);
   }
 
   /**

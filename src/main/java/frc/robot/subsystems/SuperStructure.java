@@ -21,9 +21,8 @@ public class SuperStructure {
   private final CoralScorerFlywheel csFlywheel;
   private final Drive drive;
   private final LED led;
-  // private SuperStructureState currentState;
+  private SuperStructureState currentState;
   private SuperStructureState wantedState;
-  private SuperStructureState lastWantedState;
   public boolean override = false;
 
   public SuperStructure(
@@ -37,8 +36,8 @@ public class SuperStructure {
     this.csFlywheel = csFlywheel;
     this.drive = drive;
     this.led = led;
-    lastWantedState = SuperStructureState.STOW;
     wantedState = SuperStructureState.STOW;
+    currentState = SuperStructureState.STOW;
   }
 
   public void setWantedState(SuperStructureState wantedState) {
@@ -57,18 +56,18 @@ public class SuperStructure {
     // }
   }
 
-  public boolean shouldTrigger() {
-    return wantedState != lastWantedState;
-  }
-
-  public SuperStructureState getState() {
+  public SuperStructureState getWantedState() {
     return wantedState;
   }
 
+  public SuperStructureState getCurrentState() {
+    return currentState;
+  }
+
   public SequentialCommandGroup getSuperStructureCommand() {
-    lastWantedState = wantedState;
     switch (wantedState) {
       case STOW:
+        currentState = SuperStructureState.STOW; 
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(0, 0),
@@ -77,6 +76,7 @@ public class SuperStructure {
                 led.setStateCommand(LED_STATE.BLUE)));
 
       case L1:
+      currentState = SuperStructureState.L1;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -93,6 +93,7 @@ public class SuperStructure {
         return new SequentialCommandGroup(led.setStateCommand(LED_STATE.GREEN));
 
       case L2:
+        currentState = SuperStructureState.L2;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -101,6 +102,7 @@ public class SuperStructure {
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)));
       case L3:
+      currentState = SuperStructureState.L3;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -109,6 +111,7 @@ public class SuperStructure {
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
       case L4:
+      currentState = SuperStructureState.L4;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -118,6 +121,7 @@ public class SuperStructure {
                 csArm.setArmTarget(FieldConstants.ReefHeight.L4.pitch, 2)));
 
       case SOURCE:
+        currentState = SuperStructureState.SOURCE;
         if (csFlywheel.seesCoral() == CoralState.CURRENT
             || csFlywheel.seesCoral() == CoralState.SENSOR) {
           return new SequentialCommandGroup(
@@ -133,6 +137,7 @@ public class SuperStructure {
         }
 
       case SCORING_CORAL:
+        currentState = SuperStructureState.SCORING_CORAL;
         if (csFlywheel.seesCoral() == CoralState.SENSOR
             || csFlywheel.seesCoral() == CoralState.CURRENT) {
           return new SequentialCommandGroup(csFlywheel.runVelocityCommand(300));

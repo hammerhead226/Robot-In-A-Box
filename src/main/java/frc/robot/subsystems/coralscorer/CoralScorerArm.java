@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.ArmIO;
@@ -233,30 +232,30 @@ public class CoralScorerArm extends SubsystemBase {
       currentState = wantedState;
     }
 
-  //   switch (currentState) {
-  //     case ZERO:
-  //       Stow();
-  //       break;
-  //     case SOURCE:
-  //       goToSource();
-  //       break;
-  //     case L1:
-  //       gotoFirstLevel();
-  //       break;
-  //     case L2:
-  //       gotoSecondLevel();
-  //       break;
-  //     case L3:
-  //       gotoThirdLevel();
-  //       break;
-  //     case L4:
-  //       gotoFourthLevel();
-  //       break;
-  //     case PROCESSOR:
-  //       gotoProcessorLevel();
-  //     default:
-  //       Stow();
-  //   }
+    //   switch (currentState) {
+    //     case ZERO:
+    //       Stow();
+    //       break;
+    //     case SOURCE:
+    //       goToSource();
+    //       break;
+    //     case L1:
+    //       gotoFirstLevel();
+    //       break;
+    //     case L2:
+    //       gotoSecondLevel();
+    //       break;
+    //     case L3:
+    //       gotoThirdLevel();
+    //       break;
+    //     case L4:
+    //       gotoFourthLevel();
+    //       break;
+    //     case PROCESSOR:
+    //       gotoProcessorLevel();
+    //     default:
+    //       Stow();
+    //   }
   }
 
   private void updateTunableNumbers() {
