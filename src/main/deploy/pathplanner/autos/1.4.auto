@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "1.4Second "
@@ -32,6 +38,12 @@
           "type": "named",
           "data": {
             "name": "INTAKE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
           }
         },
         {
@@ -53,6 +65,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "1.4Fourth"
@@ -62,6 +80,12 @@
           "type": "named",
           "data": {
             "name": "INTAKE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
           }
         },
         {
@@ -80,6 +104,12 @@
           "type": "named",
           "data": {
             "name": "SCORE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
           }
         }
       ]

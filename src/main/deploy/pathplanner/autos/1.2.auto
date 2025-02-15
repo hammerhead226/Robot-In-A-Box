@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "1.2Second "
@@ -41,6 +47,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "1.2Fourth"
@@ -56,6 +68,12 @@
           "type": "named",
           "data": {
             "name": "SCORE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
           }
         },
         {
