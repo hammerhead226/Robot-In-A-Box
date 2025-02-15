@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
@@ -95,12 +96,17 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   }
 
   @Override
-  public void configurePID(double kP, double kI, double kD) {
+  public void configurePIDF(
+      double kP, double kI, double kD, double kS, double kG, double kV, double kA) {
     Slot0Configs config = new Slot0Configs();
 
     config.kP = kP;
     config.kI = kI;
     config.kD = kD;
+
+    config.GravityType = GravityTypeValue.Elevator_Static;
+    config.kG = kG;
+    config.kV = kV;
 
     leader.getConfigurator().apply(config);
   }

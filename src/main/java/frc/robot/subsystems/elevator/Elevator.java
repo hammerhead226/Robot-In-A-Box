@@ -1,8 +1,6 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
@@ -15,7 +13,6 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.ElevatorState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.util.LoggedTunableNumber;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
@@ -32,8 +29,6 @@ public class Elevator extends SubsystemBase {
   private static final LoggedTunableNumber kV = new LoggedTunableNumber("Elevator/kV");
   private static final LoggedTunableNumber kA = new LoggedTunableNumber("Elevator/kA");
 
-  private static final LoggedTunableNumber barkG = new LoggedTunableNumber("Bar/kG");
-
   // CHANGE THESE VALUES TO MATCH THE ELEVATOR
   private static final int maxVelocityExtender = 1;
   private static final int maxAccelerationExtender = 1;
@@ -46,8 +41,6 @@ public class Elevator extends SubsystemBase {
       new TrapezoidProfile.Constraints(maxVelocityExtender - 0.5, maxAccelerationExtender - 0.2);
   private TrapezoidProfile.State extenderGoal = new TrapezoidProfile.State();
   private TrapezoidProfile.State extenderCurrent = new TrapezoidProfile.State();
-  private TrapezoidProfile.State extenderCurrent2 = new TrapezoidProfile.State();
-  private TrapezoidProfile.State extenderGoal2 = new TrapezoidProfile.State();
 
   private double goal;
   private ElevatorFeedforward elevatorFFModel;
@@ -82,8 +75,6 @@ public class Elevator extends SubsystemBase {
 
         kP.initDefault(0);
         kI.initDefault(0);
-
-        barkG.initDefault(0);
         break;
       case REPLAY:
         kS.initDefault(0);
@@ -93,8 +84,6 @@ public class Elevator extends SubsystemBase {
 
         kP.initDefault(0);
         kI.initDefault(0);
-
-        barkG.initDefault(0);
         break;
       case SIM:
         kS.initDefault(0.0);
@@ -107,7 +96,6 @@ public class Elevator extends SubsystemBase {
         // kP.initDefault(0.5);
         kI.initDefault(0);
 
-        barkG.initDefault(1.7);
         break;
       default:
         kS.initDefault(0);
@@ -117,8 +105,6 @@ public class Elevator extends SubsystemBase {
 
         kP.initDefault(0);
         kI.initDefault(0);
-
-        barkG.initDefault(0);
         break;
     }
     measured = new ElevatorVis("measured", Color.kRed);
@@ -129,7 +115,6 @@ public class Elevator extends SubsystemBase {
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
 
     extenderProfile2 = new TrapezoidProfile(extenderConstraints2);
-    extenderCurrent2 = extenderProfile2.calculate(0, extenderCurrent2, extenderGoal2);
 
     measuredVisualizer = new ElevatorVis("measured", Color.kRed);
     setpointVisualizer = new ElevatorVis("setpoint", Color.kGreen);
@@ -162,7 +147,7 @@ public class Elevator extends SubsystemBase {
   public void setExtenderGoal(double setpoint) {
     goal = setpoint;
     extenderGoal = new TrapezoidProfile.State(setpoint, 0);
-    extenderGoal2 = new TrapezoidProfile.State(setpoint, 0);
+    // extenderGoal2 = new TrapezoidProfile.State(setpoint, 0);
   }
 
   public void setPositionExtend(double position, double velocity) {
@@ -196,20 +181,14 @@ public class Elevator extends SubsystemBase {
         .until(() -> elevatorAtSetpoint(thersholdInches));
   }
 
-  @AutoLogOutput(key = "elevator")
-  public Pose3d getElevatorPose() {
-    if (getElevatorstage2Pose().getZ() < extenderCurrent.position) {
-      return new Pose3d(0, 0, extenderCurrent2.position + 0.5, new Rotation3d());
-    } else {
-      return new Pose3d(0, 0, extenderCurrent.position + 0.9, new Rotation3d());
-    }
-  }
-
-  @AutoLogOutput(key = "elevatorstage2")
-  public Pose3d getElevatorstage2Pose() {
-
-    return new Pose3d(0, 0, extenderCurrent2.position + 0.5, new Rotation3d());
-  }
+  // @AutoLogOutput(key = "elevator")
+  // public Pose3d getElevatorPose() {
+  //   if (getElevatorstage2Pose().getZ() < extenderCurrent.position) {
+  //     return new Pose3d(0, 0, extenderCurrent2.position + 0.5, new Rotation3d());
+  //   } else {
+  //     return new Pose3d(0, 0, extenderCurrent.position + 0.9, new Rotation3d());
+  //   }
+  // }
 
   // state stuff
   public void setWantedState(ElevatorState wantedState) {
@@ -307,11 +286,6 @@ public class Elevator extends SubsystemBase {
 
     setPositionExtend(extenderCurrent.position, extenderCurrent.velocity);
 
-    extenderCurrent2 =
-        extenderProfile2.calculate(
-            SubsystemConstants.LOOP_PERIOD_SECONDS, extenderCurrent2, extenderGoal2);
-    // handleStates();
-
     Logger.processInputs("Elevator", eInputs);
 
     measuredVisualizer.update(0.55 + extenderCurrent.position);
@@ -326,7 +300,7 @@ public class Elevator extends SubsystemBase {
 
   private void updateTunableNumbers() {
     if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode())) {
-      elevator.configurePID(kP.get(), kI.get(), 0);
+      elevator.configurePIDF(kP.get(), kI.get(), 0, kS.get(), kG.get(), kV.get(), kA.get());
     }
     if (kS.hasChanged(hashCode())
         || kG.hasChanged(hashCode())

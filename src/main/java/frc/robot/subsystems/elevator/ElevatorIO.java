@@ -22,7 +22,8 @@ public interface ElevatorIO {
 
   public default void setVoltage(double volts) {}
 
-  public default void configurePID(double kP, double kI, double kD) {}
+  public default void configurePIDF(
+      double kP, double kI, double kD, double kS, double kG, double kV, double kA) {}
 
   public default void setBrakeMode(boolean brake) {}
 }

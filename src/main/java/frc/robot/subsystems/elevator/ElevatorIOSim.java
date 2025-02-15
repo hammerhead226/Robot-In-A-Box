@@ -87,7 +87,8 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   @Override
-  public void configurePID(double kP, double kI, double kD) {
+  public void configurePIDF(
+      double kP, double kI, double kD, double kS, double kG, double kV, double kA) {
     pid.setPID(kP, kI, kD);
   }
 
