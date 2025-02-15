@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakingAlgae;
@@ -84,6 +85,7 @@ public class RobotContainer {
   SuperStructure superStructure;
   // public final Trigger elevatorBrakeTrigger;
   // private final Trigger stateTrigger;
+  private final Trigger speedTrigger;
 
   private CoralScorerFlywheel csFlywheel;
 
@@ -295,6 +297,7 @@ public class RobotContainer {
     // configureButtonBindings();
     // stateTrigger = new Trigger(() -> superStructure.shouldTrigger());
     // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
+    speedTrigger = new Trigger(() -> superStructure.isRobotTooFast());
     // configureButtonBindings();
     test();
   }
@@ -315,7 +318,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-
+    speedTrigger.onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)).andThen(superStructure.getSuperStructureCommand()));
     // keyboard.getCButton().whileTrue(new AlignToCage(drive));
     // keyboard
     //     .getXButton()

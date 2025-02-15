@@ -49,16 +49,16 @@ public class Elevator extends SubsystemBase {
   private ElevatorVis measuredVisualizer;
   private ElevatorVis setpointVisualizer;
 
-  public enum ElevatorState {
-    ZERO,
-    STOW,
-    L1,
-    L2,
-    L3,
-    L4,
-    SOURCE,
-    PROCESSOR
-  }
+  // public enum ElevatorState {
+  //   ZERO,
+  //   STOW,
+  //   L1,
+  //   L2,
+  //   L3,
+  //   L4,
+  //   SOURCE,
+  //   PROCESSOR
+  // }
 
   private ElevatorState wantedState = ElevatorState.STOW;
   private ElevatorState currentState = ElevatorState.STOW;
@@ -114,7 +114,7 @@ public class Elevator extends SubsystemBase {
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
 
-    extenderProfile2 = new TrapezoidProfile(extenderConstraints2);
+    // extenderProfile2 = new TrapezoidProfile(extenderConstraints2);
 
     measuredVisualizer = new ElevatorVis("measured", Color.kRed);
     setpointVisualizer = new ElevatorVis("setpoint", Color.kGreen);
@@ -199,47 +199,47 @@ public class Elevator extends SubsystemBase {
     elevator.setBrakeMode(brake);
   }
 
-  public ElevatorState handleStateTransitions() {
-    return switch (wantedState) {
-      case ZERO -> ElevatorState.ZERO;
-      case STOW -> ElevatorState.STOW;
-      case SOURCE -> ElevatorState.SOURCE;
-      case L1 -> ElevatorState.L1;
-      case L2 -> ElevatorState.L2;
-      case L3 -> ElevatorState.L3;
-      case L4 -> ElevatorState.L4;
-      default -> ElevatorState.ZERO;
-    };
-  }
+  // public ElevatorState handleStateTransitions() {
+  //   return switch (wantedState) {
+  //     case ZERO -> ElevatorState.ZERO;
+  //     case STOW -> ElevatorState.STOW;
+  //     case SOURCE -> ElevatorState.SOURCE;
+  //     case L1 -> ElevatorState.L1;
+  //     case L2 -> ElevatorState.L2;
+  //     case L3 -> ElevatorState.L3;
+  //     case L4 -> ElevatorState.L4;
+  //     default -> ElevatorState.ZERO;
+  //   };
+  // }
 
-  // elevator factory
-  public void Stow() {
-    setExtenderGoal(0);
-  }
+  // // elevator factory
+  // public void Stow() {
+  //   setExtenderGoal(0);
+  // }
 
-  public void goToSource() {
-    setExtenderGoal(0);
-  }
+  // public void goToSource() {
+  //   setExtenderGoal(0);
+  // }
 
-  public void gotoFirstLevel() {
-    setExtenderGoal(FieldConstants.ReefHeight.L1.height);
-  }
+  // public void gotoFirstLevel() {
+  //   setExtenderGoal(FieldConstants.ReefHeight.L1.height);
+  // }
 
-  public void gotoSecondLevel() {
-    setExtenderGoal(FieldConstants.ReefHeight.L2.height);
-  }
+  // public void gotoSecondLevel() {
+  //   setExtenderGoal(FieldConstants.ReefHeight.L2.height);
+  // }
 
-  public void gotoThirdLevel() {
-    setExtenderGoal(FieldConstants.ReefHeight.L3.height);
-  }
+  // public void gotoThirdLevel() {
+  //   setExtenderGoal(FieldConstants.ReefHeight.L3.height);
+  // }
 
-  public void gotoFourthLevel() {
-    setExtenderGoal(FieldConstants.ReefHeight.L4.height);
-  }
+  // public void gotoFourthLevel() {
+  //   setExtenderGoal(FieldConstants.ReefHeight.L4.height);
+  // }
 
-  public void gotoProcessorLevel() {
-    setExtenderGoal(0);
-  }
+  // public void gotoProcessorLevel() {
+  //   setExtenderGoal(0);
+  // }
 
   @Override
   public void periodic() {

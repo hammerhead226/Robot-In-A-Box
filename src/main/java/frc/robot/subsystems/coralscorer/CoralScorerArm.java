@@ -174,39 +174,39 @@ public class CoralScorerArm extends SubsystemBase {
         0, 0.3, 1, new Rotation3d(new Rotation2d(Math.toRadians(armCurrentStateDegrees.position))));
   }
 
-  // state machine stuff
+  // // state machine stuff
 
-  public void setWantedState(ScoralArmState state) {
-    wantedState = state;
-  }
+  // public void setWantedState(ScoralArmState state) {
+  //   wantedState = state;
+  // }
 
-  public void Stow() {
-    setArmGoal(0);
-  }
+  // public void Stow() {
+  //   setArmGoal(0);
+  // }
 
-  public void goToSource() {
-    setArmGoal(40);
-  }
+  // public void goToSource() {
+  //   setArmGoal(40);
+  // }
 
-  public void gotoFirstLevel() {
-    setArmGoal(FieldConstants.ReefHeight.L1.pitch);
-  }
+  // public void gotoFirstLevel() {
+  //   setArmGoal(FieldConstants.ReefHeight.L1.pitch);
+  // }
 
-  public void gotoSecondLevel() {
-    setArmGoal(FieldConstants.ReefHeight.L2.pitch);
-  }
+  // public void gotoSecondLevel() {
+  //   setArmGoal(FieldConstants.ReefHeight.L2.pitch);
+  // }
 
-  public void gotoThirdLevel() {
-    setArmGoal(FieldConstants.ReefHeight.L3.pitch);
-  }
+  // public void gotoThirdLevel() {
+  //   setArmGoal(FieldConstants.ReefHeight.L3.pitch);
+  // }
 
-  public void gotoFourthLevel() {
-    setArmGoal(FieldConstants.ReefHeight.L4.pitch);
-  }
+  // public void gotoFourthLevel() {
+  //   setArmGoal(FieldConstants.ReefHeight.L4.pitch);
+  // }
 
-  public void gotoProcessorLevel() {
-    setArmGoal(90);
-  }
+  // public void gotoProcessorLevel() {
+  //   setArmGoal(90);
+  // }
 
   @Override
   public void periodic() {
@@ -233,30 +233,30 @@ public class CoralScorerArm extends SubsystemBase {
       currentState = wantedState;
     }
 
-    switch (currentState) {
-      case ZERO:
-        Stow();
-        break;
-      case SOURCE:
-        goToSource();
-        break;
-      case L1:
-        gotoFirstLevel();
-        break;
-      case L2:
-        gotoSecondLevel();
-        break;
-      case L3:
-        gotoThirdLevel();
-        break;
-      case L4:
-        gotoFourthLevel();
-        break;
-      case PROCESSOR:
-        gotoProcessorLevel();
-      default:
-        Stow();
-    }
+  //   switch (currentState) {
+  //     case ZERO:
+  //       Stow();
+  //       break;
+  //     case SOURCE:
+  //       goToSource();
+  //       break;
+  //     case L1:
+  //       gotoFirstLevel();
+  //       break;
+  //     case L2:
+  //       gotoSecondLevel();
+  //       break;
+  //     case L3:
+  //       gotoThirdLevel();
+  //       break;
+  //     case L4:
+  //       gotoFourthLevel();
+  //       break;
+  //     case PROCESSOR:
+  //       gotoProcessorLevel();
+  //     default:
+  //       Stow();
+  //   }
   }
 
   private void updateTunableNumbers() {
