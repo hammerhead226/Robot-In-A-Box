@@ -52,6 +52,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.DriveCommands;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SimConstants.Mode;
@@ -121,6 +122,7 @@ public class Drive extends SubsystemBase {
       TimeInterpolatableBuffer.createBuffer(OBJECT_BUFFER_SIZE_SECONDS);
 
   // private Pose2d nearestSide = new Pose2d();
+  private Pose2d lastReefFieldPose;
 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
@@ -456,34 +458,36 @@ public class Drive extends SubsystemBase {
   public Pose2d getNearestCenter() {
     int index = getNearestParition(6);
     Logger.recordOutput("align to reef center target index", index);
-    return FieldConstants.Reef.centerFaces[index];
+    lastReefFieldPose = FieldConstants.Reef.centerFaces[index];
+    return lastReefFieldPose;
   }
 
   public Pose2d getNearestCenterLeft() {
-    int index = getNearestParition(6);
+    int index = getNearestParition(6) * 2 + 1;
     Logger.recordOutput("align to reef center left target index", index);
-    return FieldConstants.Reef.branchPositions
-        .get(index * 2 + 1)
-        .get(FieldConstants.ReefHeight.L1)
-        .toPose2d();
+    return passBranchFieldPose(index);
   }
 
   public Pose2d getNearestCenterRight() {
-    int index = getNearestParition(6);
+    int index = getNearestParition(6) * 2;
     Logger.recordOutput("align to reef center left target index", index);
-    return FieldConstants.Reef.branchPositions
-        .get(index * 2)
-        .get(FieldConstants.ReefHeight.L1)
-        .toPose2d();
+    return passBranchFieldPose(index);
   }
 
   public Pose2d getNearestSide() {
     int index = getNearestParition(12);
     Logger.recordOutput("align to reef target index", index);
-    return FieldConstants.Reef.branchPositions
-        .get(index)
-        .get(FieldConstants.ReefHeight.L1)
-        .toPose2d();
+    return passBranchFieldPose(index);
+  }
+
+  private Pose2d passBranchFieldPose(int index) {
+    lastReefFieldPose =
+        FieldConstants.Reef.branchPositions.get(index).get(FieldConstants.ReefHeight.L1).toPose2d();
+    return lastReefFieldPose;
+  }
+
+  public Pose2d getLastReefFieldPose() {
+    return lastReefFieldPose;
   }
 
   public Command driveToReefAuto() {
@@ -545,5 +549,15 @@ public class Drive extends SubsystemBase {
     } else {
       return FieldConstants.CoralStation.rightCenterFace;
     }
+  }
+
+  public boolean isAtReefSide() {
+    return DriveCommands.getTargetPose() != null
+        && getPose().getTranslation().getDistance(DriveCommands.getTargetPose().getTranslation())
+            <= 0.2;
+  }
+
+  public boolean isNearReef() {
+    return getPose().getTranslation().getDistance(FieldConstants.Reef.center) <= 1.0;
   }
 }

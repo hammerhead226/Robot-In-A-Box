@@ -18,18 +18,15 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.Command;import du.wimport edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxCimport du.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.IntakingAlgae;
-import frc.robot.commands.Stow;
+import frc.robot.commands.AlignToReefAuto;
+import frc.robot.commands.ApproachReefPerpendicular;
+import frc.robot.commands.DriveCommands;import rc.rimport frc.robot.commands.Stow;
 // import frc.robot.commands.IntakeFromSource;
-import frc.robot.constants.SimConstants;
-import frc.robot.constants.SubsystemConstants.AlgaeState;
+import frc.robot.constants.SimConstants;import rc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
@@ -66,267 +63,300 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
+ * 
   public static Drive drive;
+ * 
   private LED led;
+ * 
 
   // Controller
-  private final CommandXboxController driveController = new CommandXboxController(0);
-  private final CommandXboxController manipController = new CommandXboxController(1);
-  private final Joystick joystikc = new Joystick(0);
-  private final JoystickButton btn = new JoystickButton(joystikc, 4);
-  private final KeyboardInputs keyboard = new KeyboardInputs(0);
+  private final CommandXboxCo
+    private final
+    private final Joystick joy
+    private final Jo
 
-  private CoralScorerArm csArm;
-  // private final CoralScorerFlywheel coralIntake;
+    
+    private CoralScorerArm csArm;
+    // private final CoralScorerFlywheel coralIntake;
+    
+    public static Elevator elevator;
+    private ClimberArm climberArm;
 
-  public static Elevator elevator;
-  private ClimberArm climberArm;
-  private Vision vision;
-  SuperStructure superStructure;
-  // public final Trigger elevatorBrakeTrigger;
-  // private final Trigger stateTrigger;
-  private final Trigger speedTrigger;
+    SuperStructure superStructure
+    // public final Trigger elevatorBrakeTrigger;
 
-  private CoralScorerFlywheel csFlywheel;
+    private final Trigger speedTrigg
+    
+    private CoralScorerFly
+    
+    // Dashboard inputs
+    private final LoggedDashboardChooser<C
+    
 
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+    public RobotContainer() {
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    switch (SimConstants.currentMode) {
-      case REAL:
-        // Real robot, instantiate hardware IO implementations
-        // drive =
-        //     new Drive(
-        //         new GyroIOPigeon2(),
-        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
-        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
-        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
-        //         new ModuleIOTalonFX(TunerConstants.BackRight));
+        case REAL:
+          // Real robot, instantiate hardware IO implementatio
 
-        //  csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
+       
+     *   //     new Drive(
+     
+          //         new Gyro
+            //         new ModuleIOTalonFX(
+              //      
+                //         new ModuleIOTalonFX(TunerConstants.BackLeft
+                //        
+                 
+                //  new CoralScorerArm(
+                 
+                // 
+                // Vision(
+                // drive.getToPoseEstimatorConsumer(),
 
-        // vision =
-        //     new Vision(
-        //         drive.getToPoseEstimatorConsumer(),
-        //         new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-        //         new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-        //         new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-        //         new VisionIOPhotonVision("photon", new Transform3d()));
-        // TODO change lead, follower, gyro IDs, etc.
-        elevator = new Elevator(new ElevatorIOTalonFX(8, 9));
-        // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
-        // csFlywheel =
-        //     new CoralScorerFlywheel(
-        //         new CoralScorerFlywheelIOSim(),
-        //         new CoralSensorIO() {},
-        //         CoralState.DEFAULT,
-        //         AlgaeState.DEFAULT);
-        // led = new LED(new LED_IOCANdle(0, ""));
-        // superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+                //        new VisionIOLimelight("limelight 2", drive.getRawGyr
 
-        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+                //         
+                //  change lea
+                el new Elevator(new ElevatorIOTalonFX(
+                // rm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
+                // el =
+                // CoralScorerFlywheel(
+                // new CoralScorerFlywheelIOSim(),
+                //         new CoralSensorIO() {},
+                //         CoralState.DEFAULT,
+                //         AlgaeState.DEFAULT);
+                // led = new LE
+                // rStructure = new SuperSt
+                dr 
+                   ve(
+                    GyroIO() {},
+                    ModuleIOSim(TunerCo
+                        new ModuleIOSim(TunerConstants.Fro
+                        new ModuleIOSim(TunerConstants.BackLeft),
+                        
+                        new CoralScore
+                        rA
+                        
+                        
+                        Vision(
+                        drive.getToPoseEstimatorConsumer(),
 
-        vision =
-            new Vision(
-                drive.getToPoseEstimatorConsumer(),
-                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-                new VisionIOPhotonVision("photon", new Transform3d()));
-        climberArm = new ClimberArm(new ClimberArmIOSim());
-        csFlywheel =
-            new CoralScorerFlywheel(
-                new CoralScorerFlywheelIOSim(),
-                new CoralSensorIO() {},
-                CoralState.DEFAULT,
-                AlgaeState.DEFAULT);
-        led = new LED(new LED_IOSim());
-        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
-        break;
+                        new VisionIOLimelight("limelight 2", drive.get
 
-      case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+                         berArm = ne
+                        el =
+                        CoralScorerFlywheel(
+                        new CoralScorerFlywheelIOSim(),
+                        new CoralSensorIO() {},
+                        CoralState.DEFAULT,
+                        AlgaeState.DEFAULT);
+                led = new LE rStructure = new SuperSt
+                        
+                        
+                        
+                        
+                        obot, instantiate ph
+                drive =
+                    new Drive(
+                      
 
-        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+                     
+                        new ModuleIOSim(TunerConstants.BackLeft),
+                        
+                        new CoralScore
+                        rA
+                        
+                        
+                        Vision(
+                        drive.getToPoseEstimatorConsumer(),
 
-        vision =
-            new Vision(
-                drive.getToPoseEstimatorConsumer(),
-                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-                new VisionIOPhotonVision("photon", new Transform3d()));
-        elevator = new Elevator(new ElevatorIOSim());
-        climberArm = new ClimberArm(new ClimberArmIOSim());
-        csFlywheel =
-            new CoralScorerFlywheel(
-                new CoralScorerFlywheelIOSim(),
-                new CoralSensorIO() {},
-                CoralState.DEFAULT,
-                AlgaeState.DEFAULT);
-        led = new LED(new LED_IOSim());
-        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
-        break;
+                        new VisionIOLimelight("limelight 2", drive.get
 
-      default:
-        // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
+                         ator = new 
+                        rm = new ClimberArm(new ClimberArmI
+                        el =
+                        CoralScorerFlywheel(
+                        new CoralScorerFlywheelIOSim(),
+                        new CoralSensorIO() {},
+                        CoralState.DEFAULT,
+                        AlgaeState.DEFAULT);
+                led = new LE rStructure = new SuperSt
+                        
+                        
+                        
+                        
+                        yed robot, disable I
+                drive =
+                    new Drive(
+                      
 
-        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
-        vision =
-            new Vision(
-                drive.getToPoseEstimatorConsumer(),
-                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-                new VisionIOPhotonVision("photon", new Transform3d()));
-        elevator = new Elevator(new ElevatorIO() {});
-        climberArm = new ClimberArm(new ClimberArmIOSim());
-        csFlywheel =
-            new CoralScorerFlywheel(
-                new CoralScorerFlywheelIOSim(),
-                new CoralSensorIO() {},
-                CoralState.DEFAULT,
-                AlgaeState.DEFAULT);
-        led = new LED(new LED_IO() {});
-        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
-        break;
-    }
+                    
+                        new ModuleIO() {},
+                        
+                        new CoralScore
+                        rA
+                        
+                        
+                        Vision(
+                        
+                        drive.getToPoseE
+                        st
+                        new VisionIOLime
+                        lig
 
-    // Set up auto routines
-    // NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
+                        new VisionIOLimelight("limelight 3", drive.get
+                         ator = new 
+                        rm = new ClimberArm(new ClimberArmI
+                        el =
+                        CoralScorerFlywheel(
+                        new CoralScorerFlywheelIOSim(),
+                        new CoralSensorIO() {},
+                        CoralState.DEFAULT,
+                
+                        AlgaeState.DEFAULT);
+                led = new LE rStructure = new SuperSt
+                        
+                        
+                        
+                        
+                        to routines
+                amedCommands.registerCommand
+                ("A
+                
+                amedCo
+        /
 
-    // NamedCommands.registerCommand(
-    //     "L1",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    // NamedCommands.registerCommand(
-    //     "L2",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    // NamedCommands.registerCommand(
-    //     "L3",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    // NamedCommands.registerCommand(
-    //     "L4",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    // NamedCommands.registerCommand(
-    //     "STOW ", new InstantCommand(() ->
-    // superStructure.setWantedState(SuperStructureState.STOW)));
-    // NamedCommands.registerCommand(
-    //     "SCORE",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(
-    //             () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    // NamedCommands.registerCommand(
-    //     "INTAKE",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
+        //         new InstantC
+        //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal()
+        // ));
 
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+        //     "L2",
+        // new S
+        //     new InstantCommand(() -
+        // new WaitUntilCommand(() 
+        // > superStructure.hasStructureReachedGoal())));
+        // mands.registerCommand(
+        //     "L3",
+        // new S
+        //     new InstantCommand(() -
+        // new WaitUntilCommand(() 
+        // > superStructure.hasStructureReachedGoal())));
+        // mands.registerCommand(
+        //     "L4",
+        // new S
+        //     new InstantCommand(() -
+        // new WaitUntilCommand(() 
+        // > superStructure.hasStructureReachedGoal())));
+        // mands.registerCommand(
+        //     "STOW ", new InstantComman
+        // rStru
+        // dCommands.registerCommand(
+        // RE",
+        // 
+        // SequentialCommandGroup(
+        //         new InstantCommand(
+        //         () -> superStructure.setW
+        //         new WaitUntilCommand(() -> superStructure.hasStruc
+        // NamedCommands.registerCommand(
+        // "INTAKE"
+        // new SequentialCommandGroup(
+        // new InstantCommand(
+        // WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
+         
+        autoChooser = new LoggedDashboard
+         
+        // up SysId routines
+        au .addOption(
+        // 
+           Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterizati
 
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Top R3a", AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c-R1b(L3)-S3c-R6a(L3)"));
-    autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
-    autoChooser.addDefaultOption("1.1 auto", AutoBuilder.buildAuto("1.1.auto"));
-    /*
-    NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
-    NamedCommands.registerCommand(
-        "L1", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
-    NamedCommands.registerCommand(
-        "L2", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L2)));
-    NamedCommands.registerCommand(
-        "L3", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L3)));
-    NamedCommands.registerCommand(
-        "L4", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L4)));
-    NamedCommands.registerCommand(
-        "STOW ", new InstantCommand(() -> Super.setWantedState(SuperStructureState.STOW)));
-    NamedCommands.registerCommand(
-        "SCORE ",
-        new InstantCommand(() -> Super.setWantedState(SuperStructureState.SCORING_CORAL)));
-    NamedCommands.registerCommand(
-        "INTAKE ", new InstantCommand(() -> Super.setWantedState(SuperStructureState.SOURCE)));
-        */
-    // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
-    // Configure the button bindings
-    // configureButtonBindings();
-    // stateTrigger = new Trigger(() -> superStructure.shouldTrigger());
-    // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
-    speedTrigger = new Trigger(() -> superStructure.isRobotTooFast());
-    // configureButtonBindings();
-    test();
-  }
+            "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void test() {
-    driveController
-        .a()
-        .onTrue(new InstantCommand(() -> elevator.setElevatorTarget(0.1, 0), elevator));
-    driveController
-        .a()
-        .onFalse(new InstantCommand(() -> elevator.setElevatorTarget(0, 0), elevator));
-  }
+            "Drive SysId (Quasis
+            drive.sysIdQuasist
+                Chooser.addOption(
+            "Drive SysId (Quas
+                drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Drive SysId (Dynamic Forward)", dri
+                Chooser.addOption(
+            "Drive SysId (Dyna
+                Chooser.addOption(
+                "Top R3a", AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c
+        autoChooser.addDefault
+                Chooser.addDefaultOption("1.1 auto", AutoBuilder.buildAuto("1.1.auto"));
+        /*
+                dCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
+        NamedCommands.register
+                "L1", new InstantCommand(() -> Super.setWantedState(SuperStructureState.L1)));
+        NamedCommands.registerCommand(
+            "L2", new InstantCommand(() -> Super.setWantedState(SuperStructureState.
+        Na
+         *     "L3", new InstantCommand(() -> Super.setWantedState(SuperStructureState
+         * L3)));
+         * NamedCommands.registerCommand(
+         * "L4", new InstantCommand(() ->
+         * Super.setWantedState(SuperStructureState.L4)));
+         * NamedCommands.registerCommand(
+         * "STOW ", new InstantCommand(()
+         * -> Super.setWantedState(SuperStructureState.STO
+         * NamedCommands.registerCommand(
+         * "SCORE ",
+         * 
+         *     new InstantCommand(() -> S
+         * dCommands.registerCommand(
+         * 
+         *     "INTAKE ", new InstantComm
+         * */
+         * 
+         * // autoChooser.addOption("toRe
+         * onfigure 
+         * onfigureButtonBindings()
+         * 
+         * // stateTrigger = new Trigger(
+         * levatorBrakeTrigger = new Trigger((
+         *  -> RobotController.getUserButton());
+         dT
+        // configureButtonBindings();
+        test();
+        
+        
+        *
+         Use this method to define your button->command mappings. Buttons 
+         instantiating a {@link Gener
+         edu.wp
+     
 
-  private void configureButtonBindings() {
-    speedTrigger.onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)).andThen(superStructure.getSuperStructureCommand()));
-    // keyboard.getCButton().whileTrue(new AlignToCage(drive));
-    // keyboard
-    //     .getXButton()
+    pri
+      driveController
+     * 
+          .a()
+          .onTrue(new InstantCommand(() -> elevator.setElevatorTarget(0.1, 0), elev
+     * tor));
+      driveController
+       
+          .onFalse(new In
+        
+                
+                e void configureButtonBindings() {
+        speedTrigger.on
+                eybo
+                eyboard
+      //     .getXButton()
     //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
     // keyboard
     //     .getZButton()
     //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
     // stateTrigger.onTrue(superStructure.getSuperStructureCommand());
+
+    // keyboard.getCButton().whileTrue(new AlignToCage(drive));
+    keyboard
+        .getXButton()
+        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
+    keyboard
+        .getZButton()
+        .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
+
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -334,7 +364,7 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
-            () -> driveController.leftBumper().getAsBoolean(),
+            () -> driveController.a().getAsBoolean(),
             () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.rightTrigger().getAsBoolean(),
             () -> driveController.rightBumper().getAsBoolean(),
@@ -354,6 +384,17 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(
                 () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
+        .a()
+        .onFalse(
+            new ConditionalCommand(
+                new ApproachReefPerpendicular(drive).withTimeout(2),
+                new InstantCommand(),
+                () -> (!drive.isNearReef() && drive.isAtReefSide())));
+
+    driveController.a().onTrue(new SetClawLevel(ReefHeight.L1, elevator, csArm));
+    driveController.a().onFalse(/*csFlywheel
+                    .runVelocityCommand(2000)
+                    .until(() -> csFlywheel.getLastCoralState() != CoralState.NO_CORAL).andThen*/ (new Stow(elevator, csArm)));
 
     // driveController.a().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
     // driveController
@@ -473,3 +514,13 @@ public class RobotContainer {
     return autoChooser.get();
   }
 }
+
+
+    
+     
+     
+     
+     
+    
+        
+    

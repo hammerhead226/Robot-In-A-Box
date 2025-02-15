@@ -64,7 +64,13 @@ public class DriveCommands {
   private static double sidewaysAssistEffort = 0;
   private static double rotationAssistEffort = 0;
 
-  private static Pose2d nearestReefSide = null;
+  private static Pose2d previousTargetPose;
+  private static Pose2d targetPose;
+
+  public static Pose2d getTargetPose() {
+    return targetPose;
+  }
+
   // private static ProfiledPIDController goof = new ProfiledPIDController(1.5, 0, 0, )
 
   // profiled controllers
@@ -76,8 +82,6 @@ public class DriveCommands {
   static ProfiledPIDController rotationPID =
       new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
   // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70, 120));
-  static int count = 0;
-  static Pose2d previousTargetPose = null;
 
   private DriveCommands() {}
 
@@ -141,20 +145,20 @@ public class DriveCommands {
 
           double speedDebuff = 0.5;
 
-          Pose2d targetPose = null;
+          targetPose = null;
           if (reefAlignAssistSupplier.getAsBoolean()) {
+            Translation2d reefTranslation =
+                drive.isNearReef() ? new Translation2d(-0.5, 0) : new Translation2d(-1.3, 0);
+
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
-              targetPose =
-                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
+              targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
             } else if (reefRightSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterRight();
-              targetPose =
-                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
+              targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
             } else {
               targetPose = drive.getNearestCenter();
-              targetPose =
-                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
+              targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
             }
             Logger.recordOutput("drive targetPose name", "reef");
 
@@ -239,7 +243,6 @@ public class DriveCommands {
             rotationAssistEffort = (wantedRotationVelocity - rotationSpeed) * speedDebuff;
 
           } else {
-            count = 0;
             wantedForwardsVelocity = forwardSpeed;
             forwardsAssistEffort = 0;
 
