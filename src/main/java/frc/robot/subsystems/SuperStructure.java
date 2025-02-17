@@ -45,16 +45,16 @@ public class SuperStructure {
     // this.currentState = wantedState;
   }
 
-  public boolean isRobotTooFast() {
-    return Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec > 50;
-    // if (Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec > 50) {
-    //   this.wantedState = SuperStructureState.STOW;
-    // }
-    // else {
+  // public boolean isRobotTooFast() {
+  //   return Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec > 50;
+  //   // if (Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec > 50) {
+  //   //   this.wantedState = SuperStructureState.STOW;
+  //   // }
+  //   // else {
 
-    //   currentState = wantedState;
-    // }
-  }
+  //   //   currentState = wantedState;
+  //   // }
+  // }
 
   public SuperStructureState getWantedState() {
     return wantedState;

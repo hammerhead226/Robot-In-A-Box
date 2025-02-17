@@ -285,7 +285,7 @@ public class RobotContainer {
     // configureButtonBindings();
     // stateTrigger = new Trigger(() -> superStructure.changedStated());
     // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
-    slowModeTrigger = new Trigger(() -> superStructure.isRobotTooFast() || superStructure.elevatorExtended());
+    slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     configureButtonBindings();
     // test();
