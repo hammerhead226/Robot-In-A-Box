@@ -22,9 +22,9 @@ import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.Climber.ClimberArm;
+import frc.robot.subsystems.Climber.ClimberArmIOSim;
 import frc.robot.subsystems.SuperStructure;
-import frc.robot.subsystems.climber.ClimberArm;
-import frc.robot.subsystems.climber.ClimberArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
@@ -73,9 +73,9 @@ public class RobotContainer {
   private Vision vision;
   SuperStructure superStructure;
   // public final Trigger elevatorBrakeTrigger;
-  // private final Trigger stateTrigger;
+  private final Trigger stateTrigger;
   private final Trigger speedTrigger;
-
+  private final Trigger speedModeTrigger;
   private CoralScorerFlywheel csFlywheel;
 
   // Dashboard inputs
@@ -284,9 +284,10 @@ public class RobotContainer {
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
     // configureButtonBindings();
-    // stateTrigger = new Trigger(() -> superStructure.shouldTrigger());
+    stateTrigger = new Trigger(() -> superStructure.changedStated());
     // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
     speedTrigger = new Trigger(() -> superStructure.isRobotTooFast());
+    speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     configureButtonBindings();
     // test();
   }
@@ -318,7 +319,10 @@ public class RobotContainer {
     // keyboard
     //     .getZButton()
     //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
-    // stateTrigger.onTrue(superStructure.getSuperStructureCommand());
+    stateTrigger.onTrue(superStructure.getSuperStructureCommand());
+    speedModeTrigger.onTrue(new InstantCommand(() -> drive.slowMode()));
+    speedModeTrigger.onFalse(new InstantCommand(() -> drive.fastMode()));
+
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -466,7 +470,7 @@ public class RobotContainer {
     manipController
         .b()
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
-        
+
     manipController.leftBumper().onTrue(superStructure.getSuperStructureCommand());
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm,

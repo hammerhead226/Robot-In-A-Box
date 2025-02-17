@@ -123,6 +123,7 @@ public class Drive extends SubsystemBase {
 
   // private Pose2d nearestSide = new Pose2d();
   private Pose2d lastReefFieldPose;
+  public boolean goSlower = false;
 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
@@ -408,14 +409,29 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
-    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    if (goSlower) {
+      return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.25;
+    } else {
+      return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    }
   }
 
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
-    return getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
+    if (goSlower) {
+      return (getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS) * 0.1;
+    } else {
+      return getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
+    }
   }
 
+  public void slowMode() {
+    goSlower = true;
+  }
+
+  public void fastMode() {
+    goSlower = false;
+  }
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {

@@ -64,10 +64,19 @@ public class SuperStructure {
     return currentState;
   }
 
+  public boolean changedStated() {
+
+    return currentState != wantedState;
+  }
+
+  public boolean elevatorExtended() {
+    return elevator.isExtended();
+  }
+
   public SequentialCommandGroup getSuperStructureCommand() {
     switch (wantedState) {
       case STOW:
-        currentState = SuperStructureState.STOW; 
+        currentState = SuperStructureState.STOW;
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(0, 0),
@@ -76,7 +85,7 @@ public class SuperStructure {
                 led.setStateCommand(LED_STATE.BLUE)));
 
       case L1:
-      currentState = SuperStructureState.L1;
+        currentState = SuperStructureState.L1;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -102,7 +111,7 @@ public class SuperStructure {
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)));
       case L3:
-      currentState = SuperStructureState.L3;
+        currentState = SuperStructureState.L3;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -111,7 +120,7 @@ public class SuperStructure {
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
       case L4:
-      currentState = SuperStructureState.L4;
+        currentState = SuperStructureState.L4;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -140,7 +149,7 @@ public class SuperStructure {
         currentState = SuperStructureState.SCORING_CORAL;
         if (csFlywheel.seesCoral() == CoralState.SENSOR
             || csFlywheel.seesCoral() == CoralState.CURRENT) {
-          return new SequentialCommandGroup(csFlywheel.runVelocityCommand(300));
+          return new SequentialCommandGroup(csFlywheel.runVoltsCommmand(1));
         } else {
           return new SequentialCommandGroup(
               new WaitCommand(0.5),
