@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.constants.SubsystemConstants.ElevatorState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
@@ -33,11 +32,8 @@ public class Elevator extends SubsystemBase {
   private static final int maxAccelerationExtender = 1;
 
   private TrapezoidProfile extenderProfile;
-  private TrapezoidProfile extenderProfile2;
   private TrapezoidProfile.Constraints extenderConstraints =
       new TrapezoidProfile.Constraints(maxVelocityExtender, maxAccelerationExtender);
-  private TrapezoidProfile.Constraints extenderConstraints2 =
-      new TrapezoidProfile.Constraints(maxVelocityExtender - 0.5, maxAccelerationExtender - 0.2);
   private TrapezoidProfile.State extenderGoal = new TrapezoidProfile.State();
   private TrapezoidProfile.State extenderCurrent = new TrapezoidProfile.State();
 
@@ -59,8 +55,8 @@ public class Elevator extends SubsystemBase {
   //   PROCESSOR
   // }
 
-  private ElevatorState wantedState = ElevatorState.STOW;
-  private ElevatorState currentState = ElevatorState.STOW;
+  // private ElevatorState wantedState = ElevatorState.STOW;
+  // private ElevatorState currentState = ElevatorState.STOW;
 
   public Elevator(ElevatorIO elevator) {
     this.elevator = elevator;
@@ -190,9 +186,9 @@ public class Elevator extends SubsystemBase {
   // }
 
   // state stuff
-  public void setWantedState(ElevatorState wantedState) {
-    this.wantedState = wantedState;
-  }
+  // public void setWantedState(ElevatorState wantedState) {
+  //   this.wantedState = wantedState;
+  // }
 
   public void breakMode(boolean brake) {
     elevator.setBrakeMode(brake);

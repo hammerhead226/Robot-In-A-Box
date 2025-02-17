@@ -22,8 +22,8 @@ import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
-import frc.robot.subsystems.Climber.ClimberArm;
-import frc.robot.subsystems.Climber.ClimberArmIOSim;
+import frc.robot.subsystems.climber.ClimberArm;
+import frc.robot.subsystems.climber.ClimberArmIOSim;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
@@ -73,9 +73,8 @@ public class RobotContainer {
   private Vision vision;
   SuperStructure superStructure;
   // public final Trigger elevatorBrakeTrigger;
-  private final Trigger stateTrigger;
-  private final Trigger speedTrigger;
-  private final Trigger speedModeTrigger;
+//   private final Trigger stateTrigger;
+  private final Trigger slowModeTrigger;
   private CoralScorerFlywheel csFlywheel;
 
   // Dashboard inputs
@@ -284,10 +283,10 @@ public class RobotContainer {
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
     // configureButtonBindings();
-    stateTrigger = new Trigger(() -> superStructure.changedStated());
+    // stateTrigger = new Trigger(() -> superStructure.changedStated());
     // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
-    speedTrigger = new Trigger(() -> superStructure.isRobotTooFast());
-    speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+    slowModeTrigger = new Trigger(() -> superStructure.isRobotTooFast() || superStructure.elevatorExtended());
+    // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     configureButtonBindings();
     // test();
   }
@@ -319,9 +318,9 @@ public class RobotContainer {
     // keyboard
     //     .getZButton()
     //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
-    stateTrigger.onTrue(superStructure.getSuperStructureCommand());
-    speedModeTrigger.onTrue(new InstantCommand(() -> drive.slowMode()));
-    speedModeTrigger.onFalse(new InstantCommand(() -> drive.fastMode()));
+    // stateTrigger.onTrue(superStructure.getSuperStructureCommand());
+    slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
+    slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(

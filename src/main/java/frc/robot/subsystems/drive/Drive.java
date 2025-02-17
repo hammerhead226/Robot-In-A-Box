@@ -44,7 +44,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.Units.*;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -87,7 +86,6 @@ public class Drive extends SubsystemBase {
   private static final double ROBOT_MASS_KG = 1;
   private static final double ROBOT_MOI = 1;
   private static final double WHEEL_COF = 1;
-  private Pose2d balls;
   private static final RobotConfig PP_CONFIG =
       new RobotConfig(
           ROBOT_MASS_KG,
@@ -123,7 +121,10 @@ public class Drive extends SubsystemBase {
 
   // private Pose2d nearestSide = new Pose2d();
   private Pose2d lastReefFieldPose;
-  public boolean goSlower = false;
+  public boolean slowMode = false;
+
+  private double linearSpeedMultiplier = 0.3;
+  private double angularSpeedMultiplier = 0.1;
 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
@@ -258,7 +259,6 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && SimConstants.currentMode != Mode.SIM);
     // setNearestReefSide();
-    balls = getPose();
     Logger.recordOutput("chassisSpeed", chassisSpeedMetersPerSec);
   }
 
@@ -409,29 +409,19 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
-    if (goSlower) {
-      return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.25;
-    } else {
-      return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    }
+    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * linearSpeedMultiplier;
   }
 
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
-    if (goSlower) {
-      return (getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS) * 0.1;
-    } else {
-      return getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
-    }
+    return (getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS) * angularSpeedMultiplier;
   }
 
-  public void slowMode() {
-    goSlower = true;
+  public void enableSlowMode(boolean enabled) {
+    linearSpeedMultiplier = enabled ? 1 : 0.3;
+    angularSpeedMultiplier = enabled ? 1 : 0.1;
   }
-
-  public void fastMode() {
-    goSlower = false;
-  }
+  
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {

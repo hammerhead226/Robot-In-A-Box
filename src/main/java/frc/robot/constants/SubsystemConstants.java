@@ -54,7 +54,7 @@ public final class SubsystemConstants {
     public static final double STOW_SETPOINT_DEG = 0;
   }
 
-  @Deprecated
+  // @Deprecated
   public static final class ArmConstants {
     public static final double CURRENT_LIMIT = 35.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
