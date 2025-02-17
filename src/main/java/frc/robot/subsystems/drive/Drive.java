@@ -418,8 +418,8 @@ public class Drive extends SubsystemBase {
   }
 
   public void enableSlowMode(boolean enabled) {
-    linearSpeedMultiplier = enabled ? 1 : 0.3;
-    angularSpeedMultiplier = enabled ? 1 : 0.1;
+    linearSpeedMultiplier = enabled ? 0.3 : 1;
+    angularSpeedMultiplier = enabled ? 0.1 : 1;
   }
 
   /** Returns an array of module translations. */
