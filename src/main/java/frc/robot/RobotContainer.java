@@ -22,9 +22,9 @@ import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.climber.ClimberArm;
 import frc.robot.subsystems.climber.ClimberArmIOSim;
-import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
@@ -73,7 +73,7 @@ public class RobotContainer {
   private Vision vision;
   SuperStructure superStructure;
   // public final Trigger elevatorBrakeTrigger;
-//   private final Trigger stateTrigger;
+  //   private final Trigger stateTrigger;
   private final Trigger slowModeTrigger;
   private CoralScorerFlywheel csFlywheel;
 

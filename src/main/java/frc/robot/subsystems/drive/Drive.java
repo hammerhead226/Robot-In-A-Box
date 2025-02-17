@@ -421,7 +421,7 @@ public class Drive extends SubsystemBase {
     linearSpeedMultiplier = enabled ? 1 : 0.3;
     angularSpeedMultiplier = enabled ? 1 : 0.1;
   }
-  
+
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
@@ -569,6 +569,7 @@ public class Drive extends SubsystemBase {
   }
 
   public boolean isAtReefRotation() {
-    return DriveCommands.getTargetPose() != null && DriveCommands.getTargetPose().getRotation().minus(rawGyroRotation).getDegrees() < 10;
+    return DriveCommands.getTargetPose() != null
+        && DriveCommands.getTargetPose().getRotation().minus(rawGyroRotation).getDegrees() < 10;
   }
 }

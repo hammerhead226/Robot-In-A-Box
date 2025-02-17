@@ -123,7 +123,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean hasReachedGoal(double goalInches) {
-    return (Math.abs(extenderCurrent.position - goalInches)
+    return (Math.abs(eInputs.elevatorPositionInch - goalInches)
         <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
   }
 
@@ -139,9 +139,9 @@ public class Elevator extends SubsystemBase {
     return (Math.abs(getElevatorError()) <= thersholdInches);
   }
 
-  public void setExtenderGoal(double setpoint) {
-    goal = setpoint;
-    extenderGoal = new TrapezoidProfile.State(setpoint, 0);
+  public void setExtenderGoal(double goal) {
+    this.goal = goal;
+    extenderGoal = new TrapezoidProfile.State(goal, 0);
     // extenderGoal2 = new TrapezoidProfile.State(setpoint, 0);
   }
 
