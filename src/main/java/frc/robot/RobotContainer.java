@@ -352,7 +352,7 @@ public class RobotContainer {
             new ConditionalCommand(
                 new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
                 new InstantCommand(),
-                () -> (!drive.isNearReef() && drive.isAtReefSide())));
+                () -> (!drive.isNearReef() && drive.isAtReefSide() && drive.isAtReefRotation())));
 
     // driveController.x().onTrue(new Stow(elevator, csArm));
     //   elevatorBrakeTrigger.onTrue(new InstantCommand(() -> elevator.breakMode(true), elevator));

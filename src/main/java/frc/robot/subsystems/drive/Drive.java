@@ -567,4 +567,8 @@ public class Drive extends SubsystemBase {
   public boolean isNearReef() {
     return getPose().getTranslation().getDistance(FieldConstants.Reef.center) <= 1.0;
   }
+
+  public boolean isAtReefRotation() {
+    return DriveCommands.getTargetPose() != null && DriveCommands.getTargetPose().getRotation().minus(rawGyroRotation).getDegrees() < 10;
+  }
 }
