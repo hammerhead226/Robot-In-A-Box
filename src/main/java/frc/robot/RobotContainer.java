@@ -242,7 +242,7 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
-            () -> driveController.a().getAsBoolean(),
+            () -> driveController.leftBumper().getAsBoolean(),
             () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.rightTrigger().getAsBoolean(),
             () -> driveController.rightBumper().getAsBoolean(),
@@ -252,7 +252,7 @@ public class RobotContainer {
     // driveController.x().onTrue(new Stow(elevator, csArm));
 
     driveController
-        .a()
+        .leftBumper()
         .onFalse(
             new ConditionalCommand(
                 new ApproachReefPerpendicular(drive).withTimeout(2),

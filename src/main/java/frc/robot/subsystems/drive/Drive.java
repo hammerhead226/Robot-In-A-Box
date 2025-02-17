@@ -475,7 +475,7 @@ public class Drive extends SubsystemBase {
     // https://www.desmos.com/calculator/44dd9koglh
 
     // negate since branchPositions is CW not CCW
-    // +6/12 since branchPositions starts at branch B not the +x axis
+    // +7/12 since branchPositions starts at branch B not the +x axis
     double rawRotations = angle.getRotations();
     double adjustedRotations = -rawRotations + (7.0 / 12.0);
 
@@ -511,6 +511,7 @@ public class Drive extends SubsystemBase {
   }
 
   public boolean isNearReef() {
-    return getPose().getTranslation().getDistance(FieldConstants.Reef.center) <= 1.0;
+    // for reference from reef wall to reef wall is about 65 inches or 1.65 meters
+    return getPose().getTranslation().getDistance(FieldConstants.Reef.center) <= 1.7;
   }
 }
