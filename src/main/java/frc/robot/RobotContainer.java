@@ -14,9 +14,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ReinitializingCommand;
+// import frc.robot.commands.IntakeFromSource;
 import frc.robot.commands.IntakingAlgae;
 import frc.robot.commands.Stow;
-// import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
@@ -73,7 +74,7 @@ public class RobotContainer {
   private Vision vision;
   SuperStructure superStructure;
   // public final Trigger elevatorBrakeTrigger;
-  //   private final Trigger stateTrigger;
+  private final Trigger stateTrigger;
   private final Trigger slowModeTrigger;
   private CoralScorerFlywheel csFlywheel;
 
@@ -283,7 +284,7 @@ public class RobotContainer {
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
     // Configure the button bindings
     // configureButtonBindings();
-    // stateTrigger = new Trigger(() -> superStructure.changedStated());
+    stateTrigger = new Trigger(() -> superStructure.changedStated());
     // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
     slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
@@ -318,7 +319,7 @@ public class RobotContainer {
     // keyboard
     //     .getZButton()
     //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
-    // stateTrigger.onTrue(superStructure.getSuperStructureCommand());
+    stateTrigger.onTrue(new ReinitializingCommand(() -> superStructure.getSuperStructureCommand()));
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
@@ -470,7 +471,6 @@ public class RobotContainer {
         .b()
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
-    manipController.leftBumper().onTrue(superStructure.getSuperStructureCommand());
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm,
     // elevator));

@@ -13,6 +13,7 @@ import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
+import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure {
 
@@ -65,6 +66,8 @@ public class SuperStructure {
   }
 
   public boolean changedStated() {
+    Logger.recordOutput("changedStated wanted state", getWantedState());
+    Logger.recordOutput("changedStated current state", getCurrentState());
 
     return currentState != wantedState;
   }
@@ -82,12 +85,13 @@ public class SuperStructure {
                 elevator.setElevatorTarget(0, 0),
                 csArm.setArmTarget(40, 0),
                 csFlywheel.stopCommand(),
-                led.setStateCommand(LED_STATE.BLUE)));
+                led.setStateCommand(LED_STATE.BLUE),
+                new InstantCommand(() -> System.out.println("the stow command has been run"))));
 
       case L1:
         currentState = SuperStructureState.L1;
         if (elevator.atGoal() && csArm.atGoal(2)) {
-          setWantedState(SuperStructureState.L1ATGOAL);
+          // setWantedState(SuperStructureState.L1ATGOAL);
         }
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -104,7 +108,7 @@ public class SuperStructure {
       case L2:
         currentState = SuperStructureState.L2;
         if (elevator.atGoal() && csArm.atGoal(2)) {
-          setWantedState(SuperStructureState.L1ATGOAL);
+          // setWantedState(SuperStructureState.L1ATGOAL);
         }
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -113,7 +117,7 @@ public class SuperStructure {
       case L3:
         currentState = SuperStructureState.L3;
         if (elevator.atGoal() && csArm.atGoal(2)) {
-          setWantedState(SuperStructureState.L1ATGOAL);
+          // setWantedState(SuperStructureState.L1ATGOAL);
         }
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -122,7 +126,7 @@ public class SuperStructure {
       case L4:
         currentState = SuperStructureState.L4;
         if (elevator.atGoal() && csArm.atGoal(2)) {
-          setWantedState(SuperStructureState.L1ATGOAL);
+          // setWantedState(SuperStructureState.L1ATGOAL);
         }
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
