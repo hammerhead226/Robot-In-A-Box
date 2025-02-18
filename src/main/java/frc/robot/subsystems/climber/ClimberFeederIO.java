@@ -19,4 +19,6 @@ public interface ClimberFeederIO {
   public default void stop() {}
 
   public default void configurePID(double kP, double kI, double kD) {}
+
+  public default void setVoltage(double volts) {}
 }

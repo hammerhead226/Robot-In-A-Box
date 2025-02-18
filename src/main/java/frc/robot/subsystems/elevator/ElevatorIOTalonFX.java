@@ -10,7 +10,6 @@ import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -29,6 +28,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> currentAmps;
   private final CANrange extenderDistance;
+
   public ElevatorIOTalonFX(int lead, int follow) {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ElevatorConstants.CURRENT_LIMIT;
@@ -59,7 +59,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   public void updateInputs(ElevatorIOInputs inputs) {
     BaseStatusSignal.refreshAll(elevatorPosition, elevatorVelocity, appliedVolts, currentAmps);
     if (inputs.elevatorPositionInch <= 34) {
-      inputs.elevatorPositionInch = Units.metersToInches(extenderDistance.getDistance().getValueAsDouble());
+      inputs.elevatorPositionInch =
+          Units.metersToInches(extenderDistance.getDistance().getValueAsDouble());
     }
     inputs.elevatorPositionInch =
         Conversions.motorRotToInches(

@@ -15,7 +15,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -36,6 +35,7 @@ import frc.robot.commands.IntakeFromSourceParallel;
 import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.ReleaseClawParallel;
 import frc.robot.commands.Stow;
+import frc.robot.commands.algaeintoprocesser.ReleaseAlgae;
 import frc.robot.commands.algaeintosource.ReleaseAlgae;
 // import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 import frc.robot.constants.FieldConstants;
@@ -48,12 +48,12 @@ import frc.robot.constants.TunerConstants;
 import frc.robot.statemachines.ClimbStateMachine;
 import frc.robot.statemachines.ClimbStateMachine.CLIMB_STATES;
 import frc.robot.subsystems.SuperStructure;
-import frc.robot.subsystems.coralIntake.flywheels.CoralIntakeSensorIO;
+import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
-import frc.robot.subsystems.coralscorer.CoralScorerFlywheelIOSim;
+import frc.robot.subsystems.coralscorer.CoralSensorIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -64,28 +64,22 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.flywheel.FlywheelIOSim;
+import frc.robot.subsystems.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
 import frc.robot.subsystems.led.LED_IOSim;
 import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArm;
+import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIO;
 import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIOSim;
 import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.KeyboardInputs;
-
 import java.util.Map;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
-import frc.robot.commands.algaeintoprocesser.ReleaseAlgae;
-import frc.robot.subsystems.commoniolayers.FlywheelIO;
-import frc.robot.subsystems.coralscorer.CoralSensorIO;
-import frc.robot.subsystems.flywheel.FlywheelIOSim;
-import frc.robot.subsystems.flywheel.FlywheelIOTalonFX;
-import frc.robot.subsystems.newalgaeintake.AlgaeIntakeArmIO;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -159,11 +153,11 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
         algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOTalonFX(0, 0, 0));
         csFlywheel =
-        new CoralScorerFlywheel(
-            new FlywheelIOTalonFX(),
-            new CoralSensorIO() {},
-            CoralState.DEFAULT,
-            AlgaeState.DEFAULT);
+            new CoralScorerFlywheel(
+                new FlywheelIOTalonFX(),
+                new CoralSensorIO() {},
+                CoralState.DEFAULT,
+                AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, ""));
         superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
@@ -472,15 +466,22 @@ public class RobotContainer {
     // driveController.rightTrigger().onTrue(new ReleaseAlgae(csFlywheel));
 
     // controller.y().onTrue(climbCommands);
-    controller.a().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm, elevator).until(() ->
-    csFlywheel.seesCoral() == CoralState.SENSOR
-    || csFlywheel.seesCoral() == CoralState.CURRENT).withTimeout(5));
-    controller.a()
-    .onFalse(
-        new ParallelCommandGroup(
-            csArm.setArmTarget(60, 4),
-            elevator.setElevatorTarget(0.2, 0.05),
-            new InstantCommand(() -> csFlywheel.runVolts(0))));
+    controller
+        .a()
+        .onTrue(
+            new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
+                .until(
+                    () ->
+                        csFlywheel.seesCoral() == CoralState.SENSOR
+                            || csFlywheel.seesCoral() == CoralState.CURRENT)
+                .withTimeout(5));
+    controller
+        .a()
+        .onFalse(
+            new ParallelCommandGroup(
+                csArm.setArmTarget(60, 4),
+                elevator.setElevatorTarget(0.2, 0.05),
+                new InstantCommand(() -> csFlywheel.runVolts(0))));
 
     // controller
     //     .a()

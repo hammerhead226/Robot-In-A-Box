@@ -55,9 +55,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SimConstants.Mode;
-import frc.robot.constants.SubsystemConstants.AlgaeState;
-import frc.robot.constants.SubsystemConstants.AlignState;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.AlignState;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.vision.ObjectDetection;
 import frc.robot.subsystems.vision.Vision.VisionConsumer;
@@ -325,7 +324,7 @@ public class Drive extends SubsystemBase {
 
   public AlignState seesWall() {
     Logger.recordOutput("see note val", "default");
-    //Change val to accurate value
+    // Change val to accurate value
     if (dsInputs.distance < 13) {
       Logger.recordOutput("see note val", "current");
       lastAlignState = AlignState.IN_POSITION;
@@ -337,7 +336,7 @@ public class Drive extends SubsystemBase {
       return AlignState.ALIGNING;
     }
   }
-  
+
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
   @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
