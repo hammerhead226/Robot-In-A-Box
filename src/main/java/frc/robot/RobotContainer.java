@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.IntakingAlgae;
 import frc.robot.commands.ReinitializingCommand;
 // import frc.robot.commands.IntakeFromSource;
+import frc.robot.commands.IntakingAlgae;
 import frc.robot.commands.Stow;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
@@ -319,7 +319,7 @@ public class RobotContainer {
     // keyboard
     //     .getZButton()
     //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
-    stateTrigger.onTrue(new ReinitializingCommand(() -> superStructure.getSuperStructureCommand(), elevator, csArm, csFlywheel, led));
+    stateTrigger.onTrue(new ReinitializingCommand(() -> superStructure.getSuperStructureCommand()));
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
