@@ -20,6 +20,7 @@ import frc.robot.commands.Stow;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.SuperStructure;
@@ -37,9 +38,9 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
-import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
+import frc.robot.subsystems.led.LED_IOCANdle;
 import frc.robot.subsystems.led.LED_IOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -77,6 +78,12 @@ public class RobotContainer {
   private final Trigger slowModeTrigger;
   private CoralScorerFlywheel csFlywheel;
 
+  // private final SequentialCommandGroup superStructureCommands;
+
+  private SuperStructureState stateSelect() {
+    return superStructure.getCurrentState();
+  }
+
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -103,7 +110,9 @@ public class RobotContainer {
         //         new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
         //         new VisionIOPhotonVision("photon", new Transform3d()));
         // TODO change lead, follower, gyro IDs, etc.
-        elevator = new Elevator(new ElevatorIOTalonFX(8, 9));
+        // elevator = new Elevator(new ElevatorIOTalonFX(8, 9));
+        elevator = new Elevator(new ElevatorIOSim());
+
         // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
         // csFlywheel =
         //     new CoralScorerFlywheel(
@@ -137,7 +146,7 @@ public class RobotContainer {
                 new CoralSensorIO() {},
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
-        led = new LED(new LED_IOSim());
+        led = new LED(new LED_IOCANdle(0, "CAN Bus 2"));
         superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
 
@@ -203,6 +212,9 @@ public class RobotContainer {
         break;
     }
 
+    // superStructureCommands = new
+    // SelectCommand<>(Map.ofEntries(Map.entry(SuperStructureState.STOW,
+    // superStructure.getSuperStructureCommand())), null);
     // Set up auto routines
     // NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
 
@@ -298,12 +310,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void test() {
-    driveController
-        .a()
-        .onTrue(new InstantCommand(() -> elevator.setElevatorTarget(0.1, 0), elevator));
-    driveController
-        .a()
-        .onFalse(new InstantCommand(() -> elevator.setElevatorTarget(0, 0), elevator));
+    // driveController.b().onTrue(elevator.setElevatorTarget(20, 1));
+    // driveController.b().onFalse(elevator.setElevatorTarget(0, 1));
+    driveController.a().onTrue(led.setStateCommand(LED_STATE.BLUE));
+    driveController.y().onTrue(led.setStateCommand(LED_STATE.GREEN));
+    driveController.x().onTrue(led.setStateCommand(LED_STATE.FIRE));
   }
 
   private void configureButtonBindings() {
@@ -330,7 +341,7 @@ public class RobotContainer {
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
             // () -> driveController.a().getAsBoolean(),
-            () -> keyboard.getCButton().getAsBoolean(),
+            () -> driveController.leftBumper().getAsBoolean(),
             () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.rightTrigger().getAsBoolean(),
             () -> driveController.rightBumper().getAsBoolean(),
@@ -346,9 +357,9 @@ public class RobotContainer {
     //             new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
     //             new InstantCommand(),
     //             () -> (!drive.isNearReef() && drive.isAtReefSide())));
-    keyboard
-        .getCButton()
-        .onFalse(
+    driveController
+        .a()
+        .onTrue(
             new ConditionalCommand(
                 new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
                 new InstantCommand(),
@@ -363,11 +374,14 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
     // driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
     driveController
+        .y()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    driveController
         .a()
-        .onTrue(
+        .onFalse(
             new InstantCommand(
                 () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
-
+    // stateTrigger.onTrue(superStructure.getSuperStructureCommand());
     // driveController.a().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
     // driveController
     //     .rightBumper()

@@ -8,7 +8,6 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
@@ -33,7 +32,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ElevatorConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
         SubsystemConstants.ElevatorConstants.CURRENT_LIMIT_ENABLED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -63,7 +62,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
                 elevatorPosition.getValueAsDouble(),
                 5.5,
                 SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO)
-            - 0.051;
+            - 0.051
+            + 0.017;
     inputs.elevatorVelocityInchesPerSecond =
         Conversions.motorRotToInches(
             elevatorVelocity.getValueAsDouble() * 60.,
@@ -85,8 +85,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     this.positionSetpoint = position;
     leader.setControl(
         new PositionVoltage(
-            Conversions.MetersToMotorRot(
-                position, 5.5, SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO)));
+                Conversions.inchesToMotorRot(
+                    position, 5.5, SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO))
+            .withFeedForward(ffVolts));
   }
 
   @Override
@@ -104,9 +105,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     config.kI = kI;
     config.kD = kD;
 
-    config.GravityType = GravityTypeValue.Elevator_Static;
-    config.kG = kG;
-    config.kV = kV;
+    // config.GravityType = GravityTypeValue.Elevator_Static;
+    // config.kG = kG;
+    // config.kV = kV;
 
     leader.getConfigurator().apply(config);
   }

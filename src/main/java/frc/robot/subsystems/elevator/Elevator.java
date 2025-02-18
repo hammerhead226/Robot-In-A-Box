@@ -28,8 +28,10 @@ public class Elevator extends SubsystemBase {
   private static final LoggedTunableNumber kA = new LoggedTunableNumber("Elevator/kA");
 
   // CHANGE THESE VALUES TO MATCH THE ELEVATOR
-  private static final int maxVelocityExtender = 1;
-  private static final int maxAccelerationExtender = 1;
+
+  // cut velocity and acceleration in half
+  private static final int maxVelocityExtender = 170;
+  private static final int maxAccelerationExtender = 100;
 
   private TrapezoidProfile extenderProfile;
   private TrapezoidProfile.Constraints extenderConstraints =
@@ -63,12 +65,12 @@ public class Elevator extends SubsystemBase {
 
     switch (SimConstants.currentMode) {
       case REAL:
-        kS.initDefault(0);
-        kG.initDefault(0);
-        kV.initDefault(0);
+        kS.initDefault(0.17);
+        kG.initDefault(0.2);
+        kV.initDefault(0.1706);
         kA.initDefault(0);
 
-        kP.initDefault(0);
+        kP.initDefault(0.5);
         kI.initDefault(0);
         break;
       case REPLAY:

@@ -36,7 +36,7 @@ public final class SubsystemConstants {
     public static final double EXTEND_SETPOINT_INCH = 0;
     public static final double DEFAULT_THRESHOLD = 0.1;
 
-    public static final double ELEVATOR_GEAR_RATIO = 9;
+    public static final double ELEVATOR_GEAR_RATIO = 12;
     public static final double SCORING_SETPOINT_POS = 0.3;
     public static final double INTAKE_SETPOINT_INCHES = 0.9;
     public static final double PROCESSOR_SETPOINT_INCHES = 0;

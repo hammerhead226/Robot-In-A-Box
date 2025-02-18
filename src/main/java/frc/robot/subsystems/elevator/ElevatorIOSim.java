@@ -16,7 +16,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
   // SIM VARIABLES (CHANGE)
   private int gearBoxMotorCount = 2;
-  private int gearing = 9;
+  private int gearing = 12;
   private double carriageMassKg = Units.lbsToKilograms(7);
   private double drumRadiusMeters = 0.01;
   private double minHeightMeters = 0;
