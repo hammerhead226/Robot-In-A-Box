@@ -20,7 +20,6 @@ public class SuperStructure {
   private final Elevator elevator;
   private final CoralScorerArm csArm;
   private final CoralScorerFlywheel csFlywheel;
-  private final Drive drive;
   private final LED led;
   private SuperStructureState currentState;
   private SuperStructureState wantedState;
