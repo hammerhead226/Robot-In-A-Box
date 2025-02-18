@@ -6,7 +6,6 @@ package frc.robot.statemachines;
 
 import frc.robot.subsystems.climber.ClimberArm;
 // import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import org.littletonrobotics.junction.Logger;
 
 public class ClimbStateMachine {

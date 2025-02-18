@@ -12,8 +12,6 @@ import frc.robot.constants.SubsystemConstants.ElevatorConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.subsystems.climber.ClimberArm;
 import frc.robot.subsystems.climber.ClimberFeeder;
-import frc.robot.subsystems.coralscorer.CoralScorerArm;
-import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
 
@@ -25,8 +23,7 @@ public class IntakingAlgae extends Command {
   private final LED led;
 
   /** Creates a new IntakingAlgae. */
-  public IntakingAlgae(
-      Elevator elevator, ClimberFeeder clFeeder, ClimberArm clArm, LED led) {
+  public IntakingAlgae(Elevator elevator, ClimberFeeder clFeeder, ClimberArm clArm, LED led) {
     this.elevator = elevator;
     this.clFeeder = clFeeder;
     this.clArm = clArm;
