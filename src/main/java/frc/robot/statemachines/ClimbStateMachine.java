@@ -4,16 +4,17 @@
 
 package frc.robot.statemachines;
 
+import frc.robot.subsystems.climber.ClimberArm;
 // import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import org.littletonrobotics.junction.Logger;
 
 public class ClimbStateMachine {
 
-  private final CoralScorerArm csArm;
+  private final ClimberArm clArm;
 
-  public ClimbStateMachine(CoralScorerArm csArm) {
-    this.csArm = csArm;
+  public ClimbStateMachine(ClimberArm clArm) {
+    this.clArm = clArm;
   }
 
   // public enum CLIMB_STATES {

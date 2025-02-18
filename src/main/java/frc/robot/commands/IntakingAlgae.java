@@ -10,6 +10,8 @@ import frc.robot.constants.SubsystemConstants.CoralScorerConstants.AlgaeScorerFl
 import frc.robot.constants.SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants;
 import frc.robot.constants.SubsystemConstants.ElevatorConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
+import frc.robot.subsystems.climber.ClimberArm;
+import frc.robot.subsystems.climber.ClimberFeeder;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.elevator.Elevator;
@@ -18,29 +20,29 @@ import frc.robot.subsystems.led.LED;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakingAlgae extends Command {
   private final Elevator elevator;
-  private final CoralScorerFlywheel algaeIntake;
-  private final CoralScorerArm arm;
+  private final ClimberFeeder clFeeder;
+  private final ClimberArm clArm;
   private final LED led;
 
   /** Creates a new IntakingAlgae. */
   public IntakingAlgae(
-      Elevator elevator, CoralScorerFlywheel algaeIntake, CoralScorerArm arm, LED led) {
+      Elevator elevator, ClimberFeeder clFeeder, ClimberArm clArm, LED led) {
     this.elevator = elevator;
-    this.algaeIntake = algaeIntake;
-    this.arm = arm;
+    this.clFeeder = clFeeder;
+    this.clArm = clArm;
     this.led = led;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(elevator, algaeIntake, arm, led);
+    addRequirements(elevator, clFeeder, clArm, led);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     elevator.setElevatorTarget(12, ElevatorConstants.DEFAULT_THRESHOLD);
-    arm.setPositionDegs(
+    clArm.setPositionDegs(
         CoralScorerArmConstants.INTAKE_SETPOINT_DEG,
         CoralScorerArmConstants.ARM_VELOCITY_DEGPERSEC);
-    algaeIntake.runVelocity(AlgaeScorerFlywheelConstants.FLYWHEEL_VELOCITY_DEGPERSEC);
+    clFeeder.runVelocity(AlgaeScorerFlywheelConstants.FLYWHEEL_VELOCITY_DEGPERSEC);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -52,8 +54,8 @@ public class IntakingAlgae extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    algaeIntake.flywheelStop();
-    arm.setPositionDegs(
+    clFeeder.flywheelStop();
+    clArm.setPositionDegs(
         CoralScorerArmConstants.STOW_SETPOINT_DEG, CoralScorerArmConstants.ARM_VELOCITY_DEGPERSEC);
     elevator.setElevatorTarget(0, ElevatorConstants.DEFAULT_THRESHOLD);
   }
@@ -61,6 +63,6 @@ public class IntakingAlgae extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return algaeIntake.seesAlgae() == AlgaeState.CURRENT;
+    return clFeeder.seesAlgae() == AlgaeState.CURRENT;
   }
 }

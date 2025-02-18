@@ -22,8 +22,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
-import frc.robot.subsystems.algae.FeederIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -32,8 +32,9 @@ public class ClimberFeeder extends SubsystemBase {
   private final ClimberFeederIO io;
   private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
+  // private final AlgaeState algaeState;
 
-  private CoralState lastCoralState;
+  private AlgaeState lastAlgaeState;
   private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
 
   private static final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 1);
@@ -102,28 +103,22 @@ public class ClimberFeeder extends SubsystemBase {
     return new InstantCommand(() -> runVolts(volts), this).withTimeout(5);
   }
 
-  public CoralState getLastCoralState() {
-    return lastCoralState;
+  public AlgaeState getAlgaeState() {
+    return lastAlgaeState;
   }
 
-  public CoralState seesCoral() {
-    Logger.recordOutput("see note val", "default");
-    /*  if ((flyInputs.distance > SubsystemConstants.CORAL_DIST && sInputs.distance < 2150)) {
-      Logger.recordOutput("see note val", "sensor");
-      lastCoralState = CoralState.SENSOR;
-      return CoralState.SENSOR;
-
-    } else */
+  public AlgaeState seesAlgae() {
+    Logger.recordOutput("see coral val", "default");
     if (inputs.currentAmps > 13) { // TODO add additional check to filter out false positives
       // } else if (feedInputs.currentAmps > 10000) {
-      Logger.recordOutput("see note val", "current");
-      lastCoralState = CoralState.CURRENT;
-      return CoralState.CURRENT;
+      Logger.recordOutput("see coral val", "current");
+      lastAlgaeState = AlgaeState.CURRENT;
+      return AlgaeState.CURRENT;
 
     } else {
-      Logger.recordOutput("see note val", "no note");
-      lastCoralState = CoralState.NO_CORAL;
-      return CoralState.NO_CORAL;
+      Logger.recordOutput("see coral val", "no coral");
+      lastAlgaeState = AlgaeState.NO_ALGAE;
+      return AlgaeState.NO_ALGAE;
     }
   }
 

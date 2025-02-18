@@ -36,7 +36,7 @@ import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.ReleaseClawParallel;
 import frc.robot.commands.Stow;
 import frc.robot.commands.algaeintoprocesser.ReleaseAlgae;
-import frc.robot.commands.algaeintosource.ReleaseAlgae;
+// import frc.robot.commands.algaeintosource.ReleaseAlgae;
 // import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 import frc.robot.constants.FieldConstants;
 // import frc.robot.commands.IntakeFromSource;
@@ -48,6 +48,12 @@ import frc.robot.constants.TunerConstants;
 import frc.robot.statemachines.ClimbStateMachine;
 import frc.robot.statemachines.ClimbStateMachine.CLIMB_STATES;
 import frc.robot.subsystems.SuperStructure;
+import frc.robot.subsystems.climber.ClimberArm;
+import frc.robot.subsystems.climber.ClimberArmIOSim;
+import frc.robot.subsystems.climber.ClimberArmIOTalonFX;
+import frc.robot.subsystems.climber.ClimberFeeder;
+import frc.robot.subsystems.climber.ClimberFeederIOSim;
+import frc.robot.subsystems.climber.ClimberFeederIOTalonFX;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
@@ -107,6 +113,8 @@ public class RobotContainer {
   private final Elevator elevator;
   private final AlgaeIntakeArm algaeArm;
   private final Vision vision;
+  private final ClimberArm clArm;
+  private final ClimberFeeder clFeeder;
 
   private final ClimbStateMachine climbStateMachine;
   // private final ObjectDetection objectDetection;
@@ -160,6 +168,8 @@ public class RobotContainer {
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, ""));
         superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
+        clArm = new ClimberArm(new ClimberArmIOTalonFX(0,0,0));
+        clFeeder = new ClimberFeeder(new ClimberFeederIOTalonFX(0));
         break;
         // coralIntake = new IntakeFromSource(new CoralScorerFlywheel(), new CoralScorerArm(), new
         // Elevator());
@@ -198,6 +208,8 @@ public class RobotContainer {
         // objectDetection = new ObjectDetection(new ObjectDetectionConsumer() {}, new
         // ObjectDetectionIO() {});
         superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
+        clArm = new ClimberArm(new ClimberArmIOSim());
+        clFeeder = new ClimberFeeder(new ClimberFeederIOSim());
 
         break;
 
@@ -228,14 +240,15 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
-
+        clArm = new ClimberArm(new ClimberArmIOSim());
+        clFeeder = new ClimberFeeder(new ClimberFeederIOSim());
         // objectDetection = new ObjectDetection(new ObjectDetectionConsumer() {}, new
         // ObjectDetectionIO() {});
         superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
     }
 
-    climbStateMachine = new ClimbStateMachine(csArm);
+    climbStateMachine = new ClimbStateMachine(clArm);
 
     // angles in none and retract aren't set, CHANGE THEM!!
     climbCommands =
