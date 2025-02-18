@@ -16,6 +16,7 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
@@ -69,9 +70,6 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
-  private final DistanceSensorIO distanceSensor;
-  private final DistanceSensorIOInputsAutoLogged dsInputs = new DistanceSensorIOInputsAutoLogged();
-  private final AlignState lastAlignState;
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY =
       new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
@@ -320,21 +318,6 @@ public class Drive extends SubsystemBase {
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
-  }
-
-  public AlignState seesWall() {
-    Logger.recordOutput("see note val", "default");
-    // Change val to accurate value
-    if (dsInputs.distance < 13) {
-      Logger.recordOutput("see note val", "current");
-      lastAlignState = AlignState.IN_POSITION;
-      return AlignState.IN_POSITION;
-
-    } else {
-      Logger.recordOutput("see note val", "no note");
-      lastAlignState = AlignState.ALIGNING;
-      return AlignState.ALIGNING;
-    }
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
