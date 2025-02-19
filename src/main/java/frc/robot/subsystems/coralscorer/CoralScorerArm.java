@@ -49,20 +49,7 @@ public class CoralScorerArm extends SubsystemBase {
   public static PivotVis measuredVisualizer;
   public static PivotVis setpointVisualizer;
 
-  public enum ScoralArmState {
-    ZERO,
-    STOW,
-    L1,
-    L2,
-    L3,
-    L4,
-    SOURCE,
-    PROCESSOR
-  }
-
-  public ScoralArmState wantedState = ScoralArmState.STOW;
-  public ScoralArmState currentState = ScoralArmState.STOW;
-
+  
   /** Creates a new Arm. */
   public CoralScorerArm(ArmIO arm) {
     this.coralScorerArm = arm;
@@ -228,10 +215,7 @@ public class CoralScorerArm extends SubsystemBase {
 
     updateTunableNumbers();
     // state machine stuff
-    if (wantedState != currentState) {
-      currentState = wantedState;
-    }
-
+    
     //   switch (currentState) {
     //     case ZERO:
     //       Stow();

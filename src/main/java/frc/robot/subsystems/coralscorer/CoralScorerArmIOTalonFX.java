@@ -30,7 +30,7 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> currentAmps;
 
-  public CoralScorerArmIOTalonFX(int leadID) {
+  public CoralScorerArmIOTalonFX(int leadID, int canCoderID) {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit =
         SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.CURRENT_LIMIT;
@@ -38,7 +38,9 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
         SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    config.Feedback.FeedbackRemoteSensorID = canCoderID;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    
     leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
 
     leader.getConfigurator().apply(config);

@@ -13,32 +13,23 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
-import frc.robot.constants.SubsystemConstants.CoralState;
-import frc.robot.subsystems.algae.FeederIOInputsAutoLogged;
-import frc.robot.subsystems.commoniolayers.FlywheelIO;
-import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class ClimberFeeder extends SubsystemBase {
-  private final FlywheelIO io;
-  private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
+public class Winch extends SubsystemBase {
+  private final WinchIO io;
+  private final WinchIOInputsAutoLogged inputs = new WinchIOInputsAutoLogged();
   private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
 
-  private CoralState lastCoralState;
-  private final FlywheelIOInputsAutoLogged flyInputs = new FlywheelIOInputsAutoLogged();
-  private final FeederIOInputsAutoLogged feedInputs = new FeederIOInputsAutoLogged();
-
-  private static final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 1);
-  private static final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 1);
-  private static final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 1);
+  private static final LoggedTunableNumber kV = new LoggedTunableNumber("Winch/kV", 1);
+  private static final LoggedTunableNumber kS = new LoggedTunableNumber("Winch/kS", 1);
+  private static final LoggedTunableNumber kA = new LoggedTunableNumber("Winch/kA", 1);
 
   // private final DistanceSensorIOInputsAutoLogged sInputs = new
   // DistanceSensorIOInputsAutoLogged();
   /** Creates a new Flywheel. */
-  public ClimberFeeder(FlywheelIO io) {
+  public Winch(WinchIO io) {
     this.io = io;
 
     // Switch constants based on mode (the physics simulator is treated as a
@@ -68,7 +59,7 @@ public class ClimberFeeder extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("Flywheel/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput("Winch/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
 
     updateTunableNumbers();
@@ -89,7 +80,7 @@ public class ClimberFeeder extends SubsystemBase {
   /** Run closed loop at the specified velocity. */
   public void runVelocity(double velocityRPM) {
     var velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(velocityRPM);
-    io.setVelocity(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
+    io.setVelocityRPM(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
 
     // Log flywheel setpoint
     Logger.recordOutput("Flywheel/SetpointRPM", velocityRPM);
@@ -100,41 +91,16 @@ public class ClimberFeeder extends SubsystemBase {
     return new InstantCommand(() -> runVolts(volts), this);
   }
 
-  public CoralState getLastCoralState() {
-    return lastCoralState;
-  }
-
-  public CoralState seesCoral() {
-    Logger.recordOutput("see note val", "default");
-    /*  if ((flyInputs.distance > SubsystemConstants.CORAL_DIST && sInputs.distance < 2150)) {
-      Logger.recordOutput("see note val", "sensor");
-      lastCoralState = CoralState.SENSOR;
-      return CoralState.SENSOR;
-
-    } else */
-    if (feedInputs.currentAmps > 13) { // TODO add additional check to filter out false positives
-      // } else if (feedInputs.currentAmps > 10000) {
-      Logger.recordOutput("see note val", "current");
-      lastCoralState = CoralState.CURRENT;
-      return CoralState.CURRENT;
-
-    } else {
-      Logger.recordOutput("see note val", "no note");
-      lastCoralState = CoralState.NO_CORAL;
-      return CoralState.NO_CORAL;
-    }
-  }
-
   public Command runVelocityCommand(double velocityRPM) {
 
     return new InstantCommand(() -> runVelocity(velocityRPM), this);
   }
 
-  public Command flywheelStop() {
+  public Command stopWinch() {
     return new InstantCommand(() -> stop(), this);
   }
 
-  /** Stops the flywheel. */
+  /** Stops the Winch. */
   public void stop() {
     io.stop();
   }
@@ -150,14 +116,14 @@ public class ClimberFeeder extends SubsystemBase {
   }
 
   /** Returns the current velocity in RPM. */
-  @AutoLogOutput
-  public double getVelocityRPM() {
-    return Units.radiansPerSecondToRotationsPerMinute(inputs.velocityRadPerSec);
-  }
+  // @AutoLogOutput
+  // public double getVelocityRPM() {
+  //   return Units.radiansPerSecondToRotationsPerMinute(inputs.velocityRadPerSec);
+  // }
 
   /** Returns the current velocity in radians per second. */
   public double getCharacterizationVelocity() {
-    return inputs.velocityRadPerSec;
+    return Units.rotationsPerMinuteToRadiansPerSecond(inputs.winchVelocityRPM);
   }
 
   private void updateTunableNumbers() {

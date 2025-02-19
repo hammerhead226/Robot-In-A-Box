@@ -24,6 +24,10 @@ import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.climber.ClimberArm;
 import frc.robot.subsystems.climber.ClimberArmIOSim;
 import frc.robot.subsystems.climber.ClimberArmIOTalonFX;
+import frc.robot.subsystems.climber.Winch;
+import frc.robot.subsystems.climber.WinchIO;
+import frc.robot.subsystems.climber.WinchIOSim;
+import frc.robot.subsystems.climber.WinchIOTalonFX;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
@@ -73,7 +77,7 @@ public class RobotContainer {
   private ClimberArm climberArm;
   private Vision vision;
   SuperStructure superStructure;
-  private final Flywheel winch;
+  private final Winch winch;
 
   // public final Trigger elevatorBrakeTrigger;
   //   private final Trigger stateTrigger;
@@ -114,7 +118,7 @@ public class RobotContainer {
         // TODO change lead, follower, gyro IDs, etc.
         // elevator = new Elevator(new ElevatorIOTalonFX(8, 9));
         elevator = new Elevator(new ElevatorIOSim());
-        winch = new Flywheel(new FlywheelIOTalonFX());
+        winch = new Winch(new WinchIOTalonFX(12, 13));
         // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
         // csFlywheel =
         //     new CoralScorerFlywheel(
@@ -141,7 +145,7 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
-        climberArm = new ClimberArm(new ClimberArmIOTalonFX(14));
+        climberArm = new ClimberArm(new ClimberArmIOTalonFX(14, 5));
 
         csFlywheel =
             new CoralScorerFlywheel(
@@ -164,7 +168,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
-        winch = new Flywheel(new FlywheelIOTalonFX());
+        winch = new Winch(new WinchIOSim());
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
@@ -211,7 +215,7 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
-        winch = new Flywheel(new FlywheelIOTalonFX());
+        winch = new Winch(new WinchIO() {});
         superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
     }
