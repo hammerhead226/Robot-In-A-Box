@@ -1,14 +1,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.util.function.Supplier;
 
 public class ReinitializingCommand extends Command {
   Command command;
   Supplier<Command> commandSupplier;
 
-  public ReinitializingCommand(Supplier<Command> commandSupplier) {
+  public ReinitializingCommand(Supplier<Command> commandSupplier, Subsystem... requirements) {
     this.commandSupplier = commandSupplier;
+    addRequirements(requirements);
   }
 
   // Called when the command is initially scheduled.
