@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.Climber.ClimberArmIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -41,9 +40,9 @@ public class ClimberArm extends SubsystemBase {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
-        kG.initDefault(0.29);
-        kV.initDefault(1);
-        kP.initDefault(1.123);
+        kG.initDefault(0.0);
+        kV.initDefault(0);
+        kP.initDefault(0);
         break;
       case REPLAY:
         kG.initDefault(0.29);
@@ -129,7 +128,7 @@ public class ClimberArm extends SubsystemBase {
 
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
-    Logger.processInputs("Arm", pInputs);
+    Logger.processInputs("Climber Arm", pInputs);
     Logger.recordOutput("arm error", getArmError());
 
     Logger.recordOutput("arm goal", goalDegrees);

@@ -75,7 +75,7 @@ public class SuperStructure {
 
   public boolean hasStructureReachedGoal() {
 
-    switch (currentState) {
+    switch (wantedState) {
       case STOW:
         return elevator.hasReachedGoal(0) && csArm.hasReachedGoal(0);
       case L1:
@@ -104,7 +104,7 @@ public class SuperStructure {
   public SequentialCommandGroup getSuperStructureCommand() {
     switch (wantedState) {
       case STOW:
-        currentState = SuperStructureState.STOW;
+        // currentState = SuperStructureState.STOW;
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(0, 0),
@@ -113,7 +113,7 @@ public class SuperStructure {
                 led.setStateCommand(LED_STATE.BLUE)));
 
       case L1:
-        currentState = SuperStructureState.L1;
+        // currentState = SuperStructureState.L1;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -130,7 +130,7 @@ public class SuperStructure {
         return new SequentialCommandGroup(led.setStateCommand(LED_STATE.GREEN));
 
       case L2:
-        currentState = SuperStructureState.L2;
+        //  currentState = SuperStructureState.L2;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -139,7 +139,7 @@ public class SuperStructure {
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)));
       case L3:
-        currentState = SuperStructureState.L3;
+        //  currentState = SuperStructureState.L3;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -148,7 +148,7 @@ public class SuperStructure {
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
       case L4:
-        currentState = SuperStructureState.L4;
+        //  currentState = SuperStructureState.L4;
         if (elevator.atGoal() && csArm.atGoal(2)) {
           setWantedState(SuperStructureState.L1ATGOAL);
         }
@@ -158,7 +158,7 @@ public class SuperStructure {
                 csArm.setArmTarget(FieldConstants.ReefHeight.L4.pitch, 2)));
 
       case SOURCE:
-        currentState = SuperStructureState.SOURCE;
+        //  currentState = SuperStructureState.SOURCE;
         if (csFlywheel.seesCoral() == CoralState.CURRENT
             || csFlywheel.seesCoral() == CoralState.SENSOR) {
           return new SequentialCommandGroup(
@@ -174,7 +174,7 @@ public class SuperStructure {
         }
 
       case SCORING_CORAL:
-        currentState = SuperStructureState.SCORING_CORAL;
+        //  currentState = SuperStructureState.SCORING_CORAL;
         if (csFlywheel.seesCoral() == CoralState.SENSOR
             || csFlywheel.seesCoral() == CoralState.CURRENT) {
           return new SequentialCommandGroup(csFlywheel.runVoltsCommmand(1));

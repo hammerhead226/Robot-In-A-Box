@@ -1,17 +1,8 @@
-// Copyright 2021-2024 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.flywheel;
+package frc.robot.subsystems.climber;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -30,7 +21,7 @@ import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Flywheel extends SubsystemBase {
+public class ClimberFeeder extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
   private SimpleMotorFeedforward ffModel;
@@ -47,17 +38,18 @@ public class Flywheel extends SubsystemBase {
   // private final DistanceSensorIOInputsAutoLogged sInputs = new
   // DistanceSensorIOInputsAutoLogged();
   /** Creates a new Flywheel. */
-  public Flywheel(FlywheelIO io) {
+  public ClimberFeeder(FlywheelIO io) {
     this.io = io;
 
     // Switch constants based on mode (the physics simulator is treated as a
     // separate robot with different tuning)
     switch (SimConstants.currentMode) {
       case REAL:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.1);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.01);
         io.configurePID(0.0, 0.0, 0.0);
+        break;
       case REPLAY:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.01);
         io.configurePID(0.0, 0.0, 0.0);
         break;
       case SIM:
@@ -85,14 +77,13 @@ public class Flywheel extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Flywheel", inputs);
+    Logger.processInputs("Winch", inputs);
     updateTunableNumbers();
   }
 
   /** Run open loop at the specified voltage. */
   public void runVolts(double volts) {
     io.setVoltage(volts);
-    Logger.recordOutput("setting volts", volts);
   }
 
   /** Run closed loop at the specified velocity. */

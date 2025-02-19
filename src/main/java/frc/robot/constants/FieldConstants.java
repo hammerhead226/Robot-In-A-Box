@@ -151,10 +151,10 @@ public class FieldConstants {
   }
 
   public enum ReefHeight {
-    L4(Units.inchesToMeters(72), -30),
-    L3(Units.inchesToMeters(47.625), -35),
-    L2(Units.inchesToMeters(31.875), -35),
-    L1(Units.inchesToMeters(18), 0);
+    L4((72), -30),
+    L3(47.625, -35),
+    L2(31.875, -35),
+    L1(18, 0);
 
     ReefHeight(double height, double pitch) {
       this.height = height;
