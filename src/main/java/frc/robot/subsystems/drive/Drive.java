@@ -520,7 +520,7 @@ public class Drive extends SubsystemBase {
     return pathCommand;
   }
 
-  private int getNearestParition(int partitions) {
+  public int getNearestParition(int partitions) {
     Translation2d start = FieldConstants.Reef.center;
     Translation2d end = getPose().getTranslation();
     Translation2d v = end.minus(start);

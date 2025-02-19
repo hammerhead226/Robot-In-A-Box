@@ -45,6 +45,10 @@ public class SuperStructure {
     // this.currentState = wantedState;
   }
 
+  public void setWantedStateForAlgaeIntake(Drive drive) {
+    wantedState = drive.getNearestParition(6)%2 == 0 ? SuperStructureState.A2 : SuperStructureState.A1;
+  }
+
   // public boolean isRobotTooFast() {
   //   return Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec > 50;
   //   // if (Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec > 50) {
