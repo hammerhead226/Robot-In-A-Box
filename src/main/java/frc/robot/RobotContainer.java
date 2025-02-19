@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -370,13 +371,7 @@ public class RobotContainer {
     //   elevatorBrakeTrigger.onTrue(new InstantCommand(() -> elevator.breakMode(true), elevator));
     //  elevatorBrakeTrigger.onFalse(new InstantCommand(() -> elevator.breakMode(false)));
 
-    // keyboard
-    //     .getCButton()
-    //     .onTrue(
-    //         superStructure
-    //             .getSuperStructureCommand().andThen(new InstantCommand(() ->
-    // superStructure.advanceWantedState()))
-    //            );
+   
     //
     // driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
     // driveController
@@ -500,14 +495,14 @@ public class RobotContainer {
 
     manipController
         .leftBumper()
-        .onTrue(
-            new ReinitializingCommand(
-                () -> superStructure.getSuperStructureCommand(),
-                elevator,
-                csArm,
-                csFlywheel,
-                drive,
-                led));
+        .onTrue(new WaitUntilCommand(() -> superStructure.atGoals()).andThen(new ReinitializingCommand(
+            () -> superStructure.getSuperStructureCommand(),
+            elevator,
+            csArm,
+            csFlywheel,
+            drive,
+            led))
+          .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm,
     // elevator));
@@ -522,5 +517,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public CoralScorerArm getScoralArm() {
+    return csArm;
   }
 }
