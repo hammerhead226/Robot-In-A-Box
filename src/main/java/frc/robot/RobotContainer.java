@@ -340,8 +340,8 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
-            // () -> driveController.a().getAsBoolean(),
-            () -> driveController.leftBumper().getAsBoolean(),
+            () -> driveController.a().getAsBoolean(),
+            // () -> driveController.leftBumper().getAsBoolean(),
             () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.rightTrigger().getAsBoolean(),
             () -> driveController.rightBumper().getAsBoolean(),
@@ -350,37 +350,43 @@ public class RobotContainer {
 
     // driveController.x().onTrue(new Stow(elevator, csArm));
 
-    // driveController
-    //     .a()
-    //     .onFalse(
-    //         new ConditionalCommand(
-    //             new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
-    //             new InstantCommand(),
-    //             () -> (!drive.isNearReef() && drive.isAtReefSide())));
     driveController
         .a()
-        .onTrue(
+        .onFalse(
             new ConditionalCommand(
                 new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
                 new InstantCommand(),
-                () -> (!drive.isNearReef() && drive.isAtReefSide() && drive.isAtReefRotation())));
+                () -> (!drive.isNearReef() && drive.isAtReefSide())));
+    // driveController
+    //     .a()
+    //     .onTrue(
+    //         new ConditionalCommand(
+    //             new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
+    //             new InstantCommand(),
+    //             () -> (!drive.isNearReef() && drive.isAtReefSide() &&
+    // drive.isAtReefRotation())));
 
     // driveController.x().onTrue(new Stow(elevator, csArm));
     //   elevatorBrakeTrigger.onTrue(new InstantCommand(() -> elevator.breakMode(true), elevator));
     //  elevatorBrakeTrigger.onFalse(new InstantCommand(() -> elevator.breakMode(false)));
 
-    keyboard
-        .getVButton()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    // keyboard
+    //     .getCButton()
+    //     .onTrue(
+    //         superStructure
+    //             .getSuperStructureCommand().andThen(new InstantCommand(() ->
+    // superStructure.advanceWantedState()))
+    //            );
+    //
     // driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
-    driveController
-        .y()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
-    driveController
-        .a()
-        .onFalse(
-            new InstantCommand(
-                () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
+   driveController.y().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+   driveController.povDown().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+   driveController.povUp().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)).andThen(superStructure.getSuperStructureCommand()));
+    // driveController
+    //     .a()
+    //     .onFalse(
+    //         new InstantCommand(
+    //             () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
     // stateTrigger.onTrue(superStructure.getSuperStructureCommand());
     // driveController.a().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
     // driveController

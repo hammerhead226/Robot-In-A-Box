@@ -169,6 +169,7 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {
 
     Logger.recordOutput("Wanted State", robotContainer.superStructure.getWantedState());
+    Logger.recordOutput("Current State", robotContainer.superStructure.getCurrentState());
   }
 
   /** This function is called once when test mode is enabled. */

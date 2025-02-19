@@ -144,7 +144,7 @@ public final class SubsystemConstants {
   }
 
   public static enum SuperStructureState {
-    NONE,
+    // NONE,
     STOW,
     SOURCE,
     PROCESSOR,
@@ -155,13 +155,9 @@ public final class SubsystemConstants {
     CLIMB_STAGE_ONE,
     CLIMB_STAGE_TWO,
     HANG,
-    L1ATGOAL,
-    //  L2ATGOAL,
-    //   L3ATGOAL,
-    //  L4ATGOAL,
-    DEFAULT,
+    // DEFAULT,
     SCORING_CORAL,
-    READY_FOR_SCORE_REEF
+    // READY_FOR_SCORE_REEF
   }
 
   public static final double CORAL_DIST = -1234; // 1300; // CHANGE THIS
