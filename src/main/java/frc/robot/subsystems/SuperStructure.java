@@ -113,6 +113,22 @@ public class SuperStructure {
                 csFlywheel.stopCommand(),
                 led.setStateCommand(LED_STATE.BLUE)));
 
+      case A1:
+        currentState = SuperStructureState.A1;
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height - 1, 0.1),
+                csArm.setArmTarget(30, 2),
+                led.setStateCommand(LED_STATE.FLASHING_GREEN)));
+    
+      case A2:
+        currentState = SuperStructureState.A2;
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height - 1, 0.1),
+                csArm.setArmTarget(30, 2),
+                led.setStateCommand(LED_STATE.FLASHING_GREEN)));
+      
       case L1:
         currentState = SuperStructureState.L1;
         return new SequentialCommandGroup(
@@ -186,10 +202,13 @@ public class SuperStructure {
         //   break;
       case STOW:
         break;
+      case A1, A2:
+        setWantedState(SuperStructureState.INTAKE_ALGAE);
+        break;
       case L1, L2, L3, L4:
         setWantedState(SuperStructureState.SCORING_CORAL);
         break;
-      case SCORING_CORAL, SOURCE, PROCESSOR:
+      case SCORING_CORAL, SOURCE, PROCESSOR, INTAKE_ALGAE:
         setWantedState(SuperStructureState.STOW);
         break;
       case CLIMB_STAGE_ONE:
