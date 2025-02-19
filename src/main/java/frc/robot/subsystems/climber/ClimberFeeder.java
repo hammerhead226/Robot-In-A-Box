@@ -50,6 +50,8 @@ public class ClimberFeeder extends SubsystemBase {
     // separate robot with different tuning)
     switch (SimConstants.currentMode) {
       case REAL:
+        ffModel = new SimpleMotorFeedforward(0, 0);
+        io.configurePID(0, 0, 0);
       case REPLAY:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);
         io.configurePID(0.0, 0.0, 0.0);

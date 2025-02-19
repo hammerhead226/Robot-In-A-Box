@@ -169,7 +169,7 @@ public class RobotContainer {
         led = new LED(new LED_IOCANdle(0, ""));
         superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         clArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
-        clFeeder = new ClimberFeeder(new ClimberFeederIOTalonFX(0));
+        clFeeder = new ClimberFeeder(new ClimberFeederIOTalonFX(0, 0));
         break;
         // coralIntake = new IntakeFromSource(new CoralScorerFlywheel(), new CoralScorerArm(), new
         // Elevator());

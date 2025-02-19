@@ -10,6 +10,8 @@ public interface ClimberFeederIO {
     public double currentAmps = 0;
     public double appliedVolts = 0;
     public double velocitySetpointRPM = 0;
+    public double velocityRadPerSec = 0;
+    public double positionRad;
   }
 
   public default void updateInputs(FeederIOInputs inputs) {}
@@ -21,4 +23,6 @@ public interface ClimberFeederIO {
   public default void configurePID(double kP, double kI, double kD) {}
 
   public default void setVoltage(double volts) {}
+
+  public default void setVelocity(double velocityRadPerSec, double ffVolts) {}
 }

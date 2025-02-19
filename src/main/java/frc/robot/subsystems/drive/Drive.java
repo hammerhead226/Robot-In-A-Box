@@ -16,7 +16,6 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.hardware.CANrange;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
@@ -57,7 +56,6 @@ import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SimConstants.Mode;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.constants.SubsystemConstants.AlignState;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.vision.ObjectDetection;
 import frc.robot.subsystems.vision.Vision.VisionConsumer;
