@@ -186,22 +186,10 @@ public class SuperStructure {
         //   break;
       case STOW:
         break;
-      case L1:
+      case L1, L2, L3, L4:
         setWantedState(SuperStructureState.SCORING_CORAL);
         break;
-      case L2:
-        setWantedState(SuperStructureState.SCORING_CORAL);
-        break;
-      case L3:
-        setWantedState(SuperStructureState.SCORING_CORAL);
-        break;
-      case L4:
-        setWantedState(SuperStructureState.SCORING_CORAL);
-        break;
-      case SCORING_CORAL:
-        setWantedState(SuperStructureState.STOW);
-        break;
-      case SOURCE:
+      case SCORING_CORAL, SOURCE, PROCESSOR:
         setWantedState(SuperStructureState.STOW);
         break;
       case CLIMB_STAGE_ONE:
@@ -212,9 +200,6 @@ public class SuperStructure {
         break;
       case HANG:
         setWantedState(SuperStructureState.CLIMB_STAGE_ONE);
-        break;
-      case PROCESSOR:
-        setWantedState(SuperStructureState.STOW);
         break;
       default:
         break;

@@ -371,7 +371,6 @@ public class RobotContainer {
     //   elevatorBrakeTrigger.onTrue(new InstantCommand(() -> elevator.breakMode(true), elevator));
     //  elevatorBrakeTrigger.onFalse(new InstantCommand(() -> elevator.breakMode(false)));
 
-   
     //
     // driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
     // driveController
@@ -495,14 +494,17 @@ public class RobotContainer {
 
     manipController
         .leftBumper()
-        .onTrue(new WaitUntilCommand(() -> superStructure.atGoals()).andThen(new ReinitializingCommand(
-            () -> superStructure.getSuperStructureCommand(),
-            elevator,
-            csArm,
-            csFlywheel,
-            drive,
-            led))
-          .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
+        .onTrue(
+            new WaitUntilCommand(() -> superStructure.atGoals())
+                .andThen(
+                    new ReinitializingCommand(
+                        () -> superStructure.getSuperStructureCommand(),
+                        elevator,
+                        csArm,
+                        csFlywheel,
+                        drive,
+                        led))
+                .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm,
     // elevator));
