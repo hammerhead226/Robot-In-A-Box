@@ -129,6 +129,10 @@ public class SuperStructure {
                 csArm.setArmTarget(30, 2),
                 led.setStateCommand(LED_STATE.FLASHING_GREEN)));
       
+      case INTAKE_ALGAE:
+      currentState = SuperStructureState.INTAKE_ALGAE;
+        return new SequentialCommandGroup(csFlywheel.runVoltsCommmand(1));
+      
       case L1:
         currentState = SuperStructureState.L1;
         return new SequentialCommandGroup(
