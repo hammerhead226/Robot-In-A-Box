@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -15,6 +13,7 @@ import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
+import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure {
 
@@ -102,7 +101,7 @@ public class SuperStructure {
 
   public SequentialCommandGroup getSuperStructureCommand() {
     counter++;
-   Logger.recordOutput("bruhufe", counter); 
+    Logger.recordOutput("bruhufe", counter);
     switch (wantedState) {
       case STOW:
         currentState = SuperStructureState.STOW;

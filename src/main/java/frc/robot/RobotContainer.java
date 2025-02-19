@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakingAlgae;
+import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.Stow;
 // import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.SimConstants;
@@ -340,8 +341,7 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
-            () -> driveController.a().getAsBoolean(),
-            // () -> driveController.leftBumper().getAsBoolean(),
+            () -> driveController.leftBumper().getAsBoolean(),
             () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.rightTrigger().getAsBoolean(),
             () -> driveController.rightBumper().getAsBoolean(),
@@ -351,7 +351,7 @@ public class RobotContainer {
     // driveController.x().onTrue(new Stow(elevator, csArm));
 
     driveController
-        .a()
+        .leftBumper()
         .onFalse(
             new ConditionalCommand(
                 new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
@@ -379,9 +379,17 @@ public class RobotContainer {
     //            );
     //
     // driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
-   driveController.y().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
-   driveController.povDown().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
-   driveController.povUp().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)).andThen(superStructure.getSuperStructureCommand()));
+    // driveController
+    //     .y()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    // driveController
+    //     .povDown()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+    // driveController
+    //     .povUp()
+    //     .onTrue(
+    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+    //             .andThen(superStructure.getSuperStructureCommand()));
     // driveController
     //     .a()
     //     .onFalse(
@@ -490,7 +498,16 @@ public class RobotContainer {
         .b()
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
-    manipController.leftBumper().onTrue(superStructure.getSuperStructureCommand());
+    manipController
+        .leftBumper()
+        .onTrue(
+            new ReinitializingCommand(
+                () -> superStructure.getSuperStructureCommand(),
+                elevator,
+                csArm,
+                csFlywheel,
+                drive,
+                led));
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm,
     // elevator));
