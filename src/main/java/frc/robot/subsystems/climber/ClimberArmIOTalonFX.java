@@ -38,7 +38,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
         SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
         SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.CURRENT_LIMIT_ENABLED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.Feedback.FeedbackRemoteSensorID = canCoderID;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -46,10 +46,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
 
     leader.getConfigurator().apply(config);
 
-    leader.setPosition(
-        Conversions.degreesToFalcon(
-            startAngleDegs,
-            CLIMBER_ARM_GEAR_RATIO));
+    leader.setPosition(Conversions.degreesToFalcon(startAngleDegs, CLIMBER_ARM_GEAR_RATIO));
 
     leaderPositionDegs = leader.getPosition();
     velocityDegsPerSec = leader.getVelocity();
@@ -58,8 +55,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
 
     // leader.get
 
-    positionSetpointDegs =
-        SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG;
+    positionSetpointDegs = SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG;
 
     Logger.recordOutput("start angle", startAngleDegs);
 

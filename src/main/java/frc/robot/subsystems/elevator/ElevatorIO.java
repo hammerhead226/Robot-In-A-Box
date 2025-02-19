@@ -10,6 +10,7 @@ public interface ElevatorIO {
     double currentAmps = 0;
     double appliedVolts = 0;
     double positionSetpointInch = 0;
+    double CANrangeDistanceInches;
   }
 
   public default void updateInputs(ElevatorIOInputs inputs) {}

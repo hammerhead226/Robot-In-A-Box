@@ -36,8 +36,6 @@ public class CoralScorerFlywheel extends SubsystemBase {
   private static final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 1);
   private static final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 1);
 
-  
-
   private CoralState lastCoralState;
 
   /** Creates a new Flywheel. */
@@ -84,8 +82,6 @@ public class CoralScorerFlywheel extends SubsystemBase {
   public void periodic() {
     flywheel.updateInputs(inputs);
     Logger.processInputs(" scoral Flywheel", inputs);
-
-   
 
     updateTunableNumbers();
   }
@@ -187,8 +183,6 @@ public class CoralScorerFlywheel extends SubsystemBase {
   public CoralState getLastCoralState() {
     return lastCoralState;
   }
-
-  
 
   public void zero() {
     flywheel.stop();

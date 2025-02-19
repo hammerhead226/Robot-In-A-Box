@@ -49,7 +49,6 @@ public class CoralScorerArm extends SubsystemBase {
   public static PivotVis measuredVisualizer;
   public static PivotVis setpointVisualizer;
 
-  
   /** Creates a new Arm. */
   public CoralScorerArm(ArmIO arm) {
     this.coralScorerArm = arm;
@@ -215,7 +214,7 @@ public class CoralScorerArm extends SubsystemBase {
 
     updateTunableNumbers();
     // state machine stuff
-    
+
     //   switch (currentState) {
     //     case ZERO:
     //       Stow();

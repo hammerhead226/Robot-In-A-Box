@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -40,8 +41,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
-import frc.robot.subsystems.flywheel.Flywheel;
-import frc.robot.subsystems.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
@@ -116,7 +115,7 @@ public class RobotContainer {
         //         new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
         //         new VisionIOPhotonVision("photon", new Transform3d()));
         // TODO change lead, follower, gyro IDs, etc.
-        // elevator = new Elevator(new ElevatorIOTalonFX(8, 9));
+        // elevator = new Elevator(new ElevatorIOTalonFX(8, 9, 0));
         elevator = new Elevator(new ElevatorIOSim());
         winch = new Winch(new WinchIOTalonFX(12, 13));
         // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
@@ -341,6 +340,21 @@ public class RobotContainer {
     // driveController.a().onFalse(new InstantCommand(() -> winch.stop(), winch));
     // driveController.b().onTrue(climberArm.setArmTarget(20, 1));
     // driveController.b().onTrue(climberArm.setArmTarget(0, 1));
+
+    driveController.a().onTrue(climberArm.setArmTarget(0, 1));
+    driveController.x().onTrue(climberArm.setArmTarget(90, 1));
+    driveController
+        .b()
+        .onTrue(
+            new ParallelCommandGroup(
+                winch.runVoltsCommmand(2).until(() -> climberArm.getArmPositionDegs() == 130),
+                climberArm.setArmTarget(130, 1)));
+    driveController
+        .b()
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> winch.stop(), winch),
+                new InstantCommand(() -> climberArm.armStop(), climberArm)));
   }
 
   private void configureButtonBindings() {

@@ -141,6 +141,15 @@ public class Elevator extends SubsystemBase {
     return (Math.abs(getElevatorError()) <= thersholdInches);
   }
 
+  public double getCanRangeDistanceInches() {
+    return eInputs.CANrangeDistanceInches;
+  }
+
+  public Command zeroCommand(double volts) {
+    return new InstantCommand(() -> elevator.runCharacterization(volts), this)
+        .until(() -> getCanRangeDistanceInches() == 0 + 0.5);
+  }
+
   public void setExtenderGoal(double goal) {
     this.goal = goal;
     extenderGoal = new TrapezoidProfile.State(goal, 0);

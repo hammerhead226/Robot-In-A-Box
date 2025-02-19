@@ -40,7 +40,7 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.Feedback.FeedbackRemoteSensorID = canCoderID;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    
+
     leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
 
     leader.getConfigurator().apply(config);

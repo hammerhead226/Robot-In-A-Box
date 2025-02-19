@@ -159,6 +159,11 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    // if(robotContainer.elevator.getCanRangeDistanceInches() != 0){
+    //   robotContainer.elevator.zeroCommand(1);
+    // }
+
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
