@@ -9,9 +9,10 @@ import frc.robot.constants.SubsystemConstants;
 
 public class ClimberFeederIOSim implements ClimberFeederIO {
   private final DCMotor motor = DCMotor.getKrakenX60(1);
-  // 1
+  // Corrected measurementStdDevs array with 2 elements
   private DCMotorSim sim =
-      new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 1, 1), motor, 0.0);
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(motor, 1, 1), motor, new double[] {0.0, 0.0});
 
   private PIDController pid = new PIDController(0, 0, 0);
 
