@@ -162,15 +162,17 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    // robotContainer.getSuperStructure().;
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
 
-    Logger.recordOutput("Wanted State", robotContainer.superStructure.getWantedState());
-    Logger.recordOutput("Current State", robotContainer.superStructure.getCurrentState());
-    Logger.recordOutput("At State Goals", robotContainer.superStructure.atGoals());
+    Logger.recordOutput("Wanted State", robotContainer.getSuperStructure().getWantedState());
+    Logger.recordOutput("Current State", robotContainer.getSuperStructure().getCurrentState());
+    Logger.recordOutput("At State Goals", robotContainer.getSuperStructure().atGoals());
   }
 
   /** This function is called once when test mode is enabled. */

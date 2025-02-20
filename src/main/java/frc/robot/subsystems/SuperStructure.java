@@ -46,9 +46,9 @@ public class SuperStructure {
     // this.currentState = wantedState;
   }
 
-  public void setWantedStateForAlgaeIntake(Drive drive) {
-    wantedState = drive.getNearestParition(6) % 2 == 0 ? SuperStructureState.A2 : SuperStructureState.A1;
-  }
+  // public void setWantedStateForAlgaeIntake(Drive drive) {
+  //   wantedState = drive.getNearestParition(6) % 2 == 0 ? SuperStructureState.A2 : SuperStructureState.A1;
+  // }
 
   // public boolean isRobotTooFast() {
   // return Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec
@@ -227,8 +227,8 @@ public class SuperStructure {
       case CLIMB_STAGE_TWO:
         setWantedState(SuperStructureState.HANG);
         break;
-      se HANG:
-      se ntedState(SuperStructureState.CLIMB_STAGE_ONE);
+      case HANG:
+        setWantedState(SuperStructureState.CLIMB_STAGE_ONE);
         break;
       default:
         break;

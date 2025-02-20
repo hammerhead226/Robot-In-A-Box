@@ -77,17 +77,11 @@ public class RobotContainer {
   public static Elevator elevator;
   private ClimberArm climberArm;
   private Vision vision;
-  SuperStructure superStructure;
+  private SuperStructure superStructure;
   // public final Trigger elevatorBrakeTrigger;
   //   private final Trigger stateTrigger;
   private final Trigger slowModeTrigger;
   private CoralScorerFlywheel csFlywheel;
-
-  // private final SequentialCommandGroup superStructureCommands;
-
-  private SuperStructureState stateSelect() {
-    return superStructure.getCurrentState();
-  }
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -566,4 +560,17 @@ public class RobotContainer {
   public CoralScorerArm getScoralArm() {
     return csArm;
   }
+
+  public Drive getDrive() {
+    return drive;
+  }
+
+  public Elevator getElevator() {
+    return elevator;
+  }
+
+  public SuperStructure getSuperStructure() {
+    return superStructure;
+  }
+
 }
