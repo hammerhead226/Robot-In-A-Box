@@ -30,6 +30,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.*;
 import frc.robot.constants.FieldConstants.Barge;
+import frc.robot.constants.SubsystemConstants.SuperStructureState;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -104,15 +106,16 @@ public class DriveCommands {
    */
   public static Command joystickDrive(
       Drive drive,
+      SuperStructure superStructure,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
-      BooleanSupplier reefAlignAssistSupplier,
+      BooleanSupplier alignAssistSupplier,
       BooleanSupplier reefLeftSupplier,
-      BooleanSupplier reefRightSupplier,
-      BooleanSupplier sourceAlignSupplier,
-      BooleanSupplier processorAlignSupplier,
-      BooleanSupplier anchorAlignSupplier) {
+      BooleanSupplier reefRightSupplier) {
+    // BooleanSupplier sourceAlignSupplier,
+    // BooleanSupplier processorAlignSupplier,
+    // BooleanSupplier anchorAlignSupplier) {
     return Commands.run(
         () -> {
           rotationPID.setTolerance(1);
@@ -146,7 +149,7 @@ public class DriveCommands {
           double speedDebuff = 0.5;
 
           targetPose = null;
-          if (reefAlignAssistSupplier.getAsBoolean()) {
+          if (alignAssistSupplier.getAsBoolean() && superStructure.isTargetAReefState()) {
             Translation2d reefTranslation =
                 drive.isNearReef() ? new Translation2d(-0.5, 0) : new Translation2d(-1.3, 0);
 
@@ -162,20 +165,23 @@ public class DriveCommands {
             }
             Logger.recordOutput("drive targetPose name", "reef");
 
-          } else if (sourceAlignSupplier.getAsBoolean()) {
+          } else if (alignAssistSupplier.getAsBoolean()
+              || superStructure.getWantedState() == SuperStructureState.SOURCE) {
             targetPose = drive.getNearestSource();
             targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
 
             Logger.recordOutput("drive targetPose name", "source");
 
-          } else if (processorAlignSupplier.getAsBoolean()) {
+          } else if (alignAssistSupplier.getAsBoolean()
+              || superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
             targetPose = FieldConstants.Processor.centerFace;
             targetPose =
                 rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
             speedDebuff *= 0.5;
 
             Logger.recordOutput("drive targetPose name", "processor");
-          } else if (anchorAlignSupplier.getAsBoolean()) {
+          } else if (alignAssistSupplier.getAsBoolean()
+              || superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
             targetPose =
                 drive
                     .getPose()
@@ -237,9 +243,10 @@ public class DriveCommands {
                             targetPose.getRotation().getDegrees())),
                     -drive.getMaxAngularSpeedRadPerSec(),
                     drive.getMaxAngularSpeedRadPerSec());
-
-            forwardsAssistEffort = (wantedForwardsVelocity - forwardSpeed) * speedDebuff;
-            sidewaysAssistEffort = (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuff;
+        
+            forwardsAssistEffort = superStructure.isTargetAReefState() ? (wantedForwardsVelocity - forwardSpeed) * speedDebuff : 0;
+            sidewaysAssistEffort = superStructure.isTargetAReefState() ? (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuff : 0;
+            
             rotationAssistEffort = (wantedRotationVelocity - rotationSpeed) * speedDebuff;
 
           } else {

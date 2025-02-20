@@ -16,7 +16,7 @@ import frc.robot.subsystems.led.LED;
 import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure {
-
+  private final Drive drive;
   private final Elevator elevator;
   private final CoralScorerArm csArm;
   private final CoralScorerFlywheel csFlywheel;
@@ -27,11 +27,12 @@ public class SuperStructure {
   int counter = 0;
 
   public SuperStructure(
+      Drive drive,
       Elevator elevator,
       CoralScorerArm csArm,
       CoralScorerFlywheel csFlywheel,
-      Drive drive,
       LED led) {
+    this.drive = drive;
     this.elevator = elevator;
     this.csArm = csArm;
     this.csFlywheel = csFlywheel;
@@ -113,22 +114,28 @@ public class SuperStructure {
                 csFlywheel.stopCommand(),
                 led.setStateCommand(LED_STATE.BLUE)));
 
-      case A1:
-        currentState = SuperStructureState.A1;
+      case INTAKE_ALGAE:
+        double height =
+            drive.getNearestParition(6) % 2 == 0
+                ? FieldConstants.ReefHeight.L4.height
+                : FieldConstants.ReefHeight.L4.height;
+
+        currentState = SuperStructureState.INTAKE_ALGAE;
+        // if (getNearestParition(6)%2 == 0 ? high pos : low pos) {
+
+        // }
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
-                elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height - 1, 0.1),
+                elevator.setElevatorTarget(height - 1, 0.1),
                 csArm.setArmTarget(30, 2),
                 led.setStateCommand(LED_STATE.FLASHING_GREEN)));
-    
-      case A2:
-        currentState = SuperStructureState.A2;
-        return new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height - 1, 0.1),
-                csArm.setArmTarget(30, 2),
-                led.setStateCommand(LED_STATE.FLASHING_GREEN)));
-      
+
+        // return new SequentialCommandGroup(
+        //     new ParallelCommandGroup(
+        //         elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height - 1, 0.1),
+        //         csArm.setArmTarget(30, 2),
+        //         led.setStateCommand(LED_STATE.FLASHING_GREEN)));
+
       case L1:
         currentState = SuperStructureState.L1;
         return new SequentialCommandGroup(
@@ -202,9 +209,6 @@ public class SuperStructure {
         //   break;
       case STOW:
         break;
-      case A1, A2:
-        setWantedState(SuperStructureState.INTAKE_ALGAE);
-        break;
       case L1, L2, L3, L4:
         setWantedState(SuperStructureState.SCORING_CORAL);
         break;
@@ -223,5 +227,12 @@ public class SuperStructure {
       default:
         break;
     }
+  }
+
+  public boolean isTargetAReefState() {
+    return wantedState == SuperStructureState.L1
+        || wantedState == SuperStructureState.L2
+        || wantedState == SuperStructureState.L3
+        || wantedState == SuperStructureState.L4;
   }
 }

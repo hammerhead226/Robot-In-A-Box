@@ -156,7 +156,8 @@ public final class SubsystemConstants {
     CLIMB_STAGE_TWO,
     HANG,
     // DEFAULT,
-    SCORING_CORAL, A1, A2, INTAKE_ALGAE,
+    SCORING_CORAL,
+    INTAKE_ALGAE
     // READY_FOR_SCORE_REEF
   }
 

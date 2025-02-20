@@ -1,11 +1,14 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -149,7 +152,7 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, "CAN Bus 2"));
-        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
+        superStructure = new SuperStructure(drive, elevator, csArm, csFlywheel, led);
         break;
 
       case SIM:
@@ -180,7 +183,7 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOSim());
-        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
+        superStructure = new SuperStructure(drive, elevator, csArm, csFlywheel, led);
         break;
 
       default:
@@ -210,7 +213,7 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
-        superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
+        superStructure = new SuperStructure(drive, elevator, csArm, csFlywheel, led);
         break;
     }
 
@@ -320,7 +323,94 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
+    slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
+    driverControls();
+    manipControls();
+  }
+
+  private void driverControls() {
+    driveController
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            superStructure,
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX(),
+            () -> driveController.leftBumper().getAsBoolean(),
+            () -> driveController.leftTrigger().getAsBoolean(),
+            () -> driveController.rightTrigger().getAsBoolean()));
+
+    driveController
+        .leftBumper()
+        .onFalse(
+            new ConditionalCommand(
+                new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
+                new InstantCommand(),
+                () ->
+                    (!drive.isNearReef() && drive.isAtReefSide())
+                        && superStructure.isTargetAReefState()));
+
+    driveController
+        .rightBumper()
+        .onTrue(
+            new WaitUntilCommand(() -> superStructure.atGoals())
+                .andThen(
+                    new ReinitializingCommand(
+                        () -> superStructure.getSuperStructureCommand(),
+                        elevator,
+                        csArm,
+                        csFlywheel,
+                        drive,
+                        led))
+                .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
+
+    driveController
+        .a()
+        .onTrue(
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
+  }
+
+  private void manipControls() {
+    manipController
+        .x()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+    manipController
+        .y()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    manipController
+        .a()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+    manipController
+        .b()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
+
+    manipController
+        .povDown()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+                .andThen(
+                    new ReinitializingCommand(
+                        () -> superStructure.getSuperStructureCommand(),
+                        elevator,
+                        csArm,
+                        csFlywheel,
+                        drive,
+                        led)));
+  }
+
+  private void testControls() {
     // speedTrigger.onTrue(
     //     new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
     //         .andThen(superStructure.getSuperStructureCommand()));
@@ -332,32 +422,9 @@ public class RobotContainer {
     //     .getZButton()
     //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
     // stateTrigger.onTrue(superStructure.getSuperStructureCommand());
-    slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
-    slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driveController.getLeftY(),
-            () -> -driveController.getLeftX(),
-            () -> -driveController.getRightX(),
-            () -> driveController.leftBumper().getAsBoolean(),
-            () -> driveController.leftTrigger().getAsBoolean(),
-            () -> driveController.rightTrigger().getAsBoolean(),
-            () -> driveController.rightBumper().getAsBoolean(),
-            () -> driveController.b().getAsBoolean(),
-            () -> driveController.x().getAsBoolean()));
 
-    // driveController.x().onTrue(new Stow(elevator, csArm));
-
-    driveController
-        .leftBumper()
-        .onFalse(
-            new ConditionalCommand(
-                new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
-                new InstantCommand(),
-                () -> (!drive.isNearReef() && drive.isAtReefSide())));
     // driveController
     //     .a()
     //     .onTrue(
@@ -479,32 +546,7 @@ public class RobotContainer {
     // keyboard
     //    .getVButton()
     //    .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
-    manipController
-        .x()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
-    manipController
-        .y()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
-    manipController
-        .a()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
-    manipController
-        .b()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
-    manipController
-        .leftBumper()
-        .onTrue(
-            new WaitUntilCommand(() -> superStructure.atGoals())
-                .andThen(
-                    new ReinitializingCommand(
-                        () -> superStructure.getSuperStructureCommand(),
-                        elevator,
-                        csArm,
-                        csFlywheel,
-                        drive,
-                        led))
-                .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm,
     // elevator));
