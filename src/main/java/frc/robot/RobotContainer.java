@@ -417,6 +417,80 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
 
+    // All button bindings (not related to drive)
+
+    // Drive Controller - Align Commands go in Drive
+    driveController.b().onTrue((new ReleaseAlgae(csFlywheel)));
+    driveController.b().onFalse(new InstantCommand(() -> csFlywheel.runVolts(0)));
+
+    driveController.y().onTrue(climbCommands);
+
+    // Manip Controller
+    manipController.rightTrigger().onTrue(new Stow(elevator, csArm));
+
+    manipController
+        .leftBumper()
+        .onTrue(
+            new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
+                .until(
+                    () ->
+                        csFlywheel.seesCoral() == CoralState.SENSOR
+                            || csFlywheel.seesCoral() == CoralState.CURRENT)
+                .withTimeout(5));
+    manipController
+        .leftBumper()
+        .onFalse(
+            new ParallelCommandGroup(
+                new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+
+    manipController
+        .rightBumper()
+        .onTrue(
+            new IntakingAlgaeParallel(elevator, csArm, csFlywheel)
+                .until(() -> csFlywheel.seesAlgae() == AlgaeState.CURRENT)
+                .withTimeout(5));
+    manipController
+        .rightBumper()
+        .onFalse(
+            new ParallelCommandGroup(
+                new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+
+    manipController
+        .a()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
+    manipController
+        .a()
+        .onFalse(
+            new ParallelCommandGroup(
+                new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+
+    manipController
+        .b()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
+    manipController
+        .b()
+        .onFalse(
+            new ParallelCommandGroup(
+                new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+
+    manipController
+        .x()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
+    manipController
+        .x()
+        .onFalse(
+            new ParallelCommandGroup(
+                new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+
+    manipController
+        .y()
+        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+    manipController
+        .y()
+        .onFalse(
+            new ParallelCommandGroup(
+                new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+
     // controller.y().whileTrue(elevator.setElevatorTarget(1.83, 1));
     // controller.y().whileFalse(elevator.setElevatorTarget(1, 1));
 
@@ -478,27 +552,27 @@ public class RobotContainer {
     //     .y()
     //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm,
     // csFlywheel));
-    driveController.leftBumper().onTrue(new AutoAlignToSource(drive, led));
+    // driveController.leftBumper().onTrue(new AutoAlignToSource(drive, led));
 
     // driveController.rightTrigger().onTrue(new ReleaseAlgae(csFlywheel));
 
     // controller.y().onTrue(climbCommands);
-    controller
-        .a()
-        .onTrue(
-            new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
-                .until(
-                    () ->
-                        csFlywheel.seesCoral() == CoralState.SENSOR
-                            || csFlywheel.seesCoral() == CoralState.CURRENT)
-                .withTimeout(5));
-    controller
-        .a()
-        .onFalse(
-            new ParallelCommandGroup(
-                csArm.setArmTarget(60, 4),
-                elevator.setElevatorTarget(0.2, 0.05),
-                new InstantCommand(() -> csFlywheel.runVolts(0))));
+    // controller
+    //     .a()
+    //     .onTrue(
+    //         new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
+    //             .until(
+    //                 () ->
+    //                     csFlywheel.seesCoral() == CoralState.SENSOR
+    //                         || csFlywheel.seesCoral() == CoralState.CURRENT)
+    //             .withTimeout(5));
+    // controller
+    //     .a()
+    //     .onFalse(
+    //         new ParallelCommandGroup(
+    //             csArm.setArmTarget(60, 4),
+    //             elevator.setElevatorTarget(0.2, 0.05),
+    //             new InstantCommand(() -> csFlywheel.runVolts(0))));
 
     // controller
     //     .a()
@@ -524,39 +598,46 @@ public class RobotContainer {
     //     .leftBumper()
     //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm,
     // csFlywheel));
-    manipController
-        .a()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
-    manipController
-        .b()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
+    // manipController
+    //     .a()
+    //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm,
+    // csFlywheel));
+    // manipController
+    //     .b()
+    //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm,
+    // csFlywheel));
 
-    driveController
-        .a()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
-    driveController
-        .b()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
-    driveController
-        .x()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
-    driveController
-        .y()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+    // driveController
+    //     .a()
+    //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm,
+    // csFlywheel));
+    // driveController
+    //     .b()
+    //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm,
+    // csFlywheel));
+    // driveController
+    //     .x()
+    //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm,
+    // csFlywheel));
+    // driveController
+    //     .y()
+    //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm,
+    // csFlywheel));
 
-    controller.y().onTrue(climbCommands);
+    // controller.y().onTrue(climbCommands);
 
-    driveController.leftTrigger().onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
-    controller
-        .leftBumper()
-        .onFalse(
-            new ParallelCommandGroup(
-                csArm.setArmTarget(60, 4),
-                elevator.setElevatorTarget(0.2, 0.05),
-                new InstantCommand(() -> csFlywheel.runVolts(0))));
-    controller
-        .leftBumper()
-        .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+    // driveController.leftTrigger().onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel));
+    // controller
+    //     .leftTrigger()
+    //     .onFalse(
+    //         new ParallelCommandGroup(
+    //             csArm.setArmTarget(60, 4),
+    //             elevator.setElevatorTarget(0.2, 0.05),
+    //             new InstantCommand(() -> csFlywheel.runVolts(0))));
+    // controller
+    //     .leftBumper()
+    //     .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm,
+    // csFlywheel));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
