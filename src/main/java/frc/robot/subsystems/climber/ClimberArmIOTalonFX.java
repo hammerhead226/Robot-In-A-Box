@@ -12,7 +12,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -51,9 +50,9 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
     CANcoderConfiguration coderConfig = new CANcoderConfiguration();
 
     coderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    //OFFSETS IN ROTATIONS 
+    // OFFSETS IN ROTATIONS
     coderConfig.MagnetSensor.withMagnetOffset(0);
-    
+
     config.Feedback.FeedbackRemoteSensorID = canCoderID;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
     config.Feedback.SensorToMechanismRatio = 1.0;

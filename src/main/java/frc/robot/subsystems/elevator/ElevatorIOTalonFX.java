@@ -64,18 +64,18 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   public void updateInputs(ElevatorIOInputs inputs) {
     BaseStatusSignal.refreshAll(elevatorPosition, elevatorVelocity, appliedVolts, currentAmps);
     if (canRangeDistance.getValueAsDouble() <= 12) {
-      inputs.elevatorPositionInch = Units.metersToInches(canRangeDistance.getValueAsDouble());
-      inputs.CANrangeDistanceInches = Units.metersToInches(canRangeDistance.getValueAsDouble());
+      inputs.elevatorPositionInch = Units.metersToInches(canRangeDistance.getValueAsDouble()) * 2 + 4;
+      inputs.CANrangeDistanceInches = Units.metersToInches(canRangeDistance.getValueAsDouble()) * 2 + 4;
     } else {
 
       inputs.elevatorPositionInch =
-          Conversions.motorRotToInches(
+          2 * Conversions.motorRotToInches(
                   elevatorPosition.getValueAsDouble(),
                   5.5,
-                  SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO)
-              - 0.051
-              + 0.017;
-      inputs.CANrangeDistanceInches = Units.metersToInches(canRangeDistance.getValueAsDouble());
+                  SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO) + 8;
+              // - 0.051
+              // + 0.017;
+      inputs.CANrangeDistanceInches = Units.metersToInches(canRangeDistance.getValueAsDouble()) * 2 + 4;
     }
 
     inputs.elevatorVelocityInchesPerSecond =
