@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -28,7 +27,6 @@ import frc.robot.subsystems.climber.ClimberArmIOTalonFX;
 import frc.robot.subsystems.climber.Winch;
 import frc.robot.subsystems.climber.WinchIO;
 import frc.robot.subsystems.climber.WinchIOSim;
-import frc.robot.subsystems.climber.WinchIOTalonFX;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
@@ -73,7 +71,7 @@ public class RobotContainer {
   // private final CoralScorerFlywheel coralIntake;
 
   public static Elevator elevator;
-  private ClimberArm climberArm;
+  public ClimberArm climberArm;
   private Vision vision;
   SuperStructure superStructure;
   private final Winch winch;
@@ -117,7 +115,8 @@ public class RobotContainer {
         // TODO change lead, follower, gyro IDs, etc.
         // elevator = new Elevator(new ElevatorIOTalonFX(8, 9, 0));
         elevator = new Elevator(new ElevatorIOSim());
-        winch = new Winch(new WinchIOTalonFX(12, 13));
+        // winch = new Winch(new WinchIOTalonFX(12, 13));
+        winch = new Winch(new WinchIOSim());
         // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
         // csFlywheel =
         //     new CoralScorerFlywheel(
@@ -144,6 +143,7 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
+
         climberArm = new ClimberArm(new ClimberArmIOTalonFX(14, 5));
 
         csFlywheel =
@@ -341,20 +341,22 @@ public class RobotContainer {
     // driveController.b().onTrue(climberArm.setArmTarget(20, 1));
     // driveController.b().onTrue(climberArm.setArmTarget(0, 1));
 
-    driveController.a().onTrue(climberArm.setArmTarget(0, 1));
-    driveController.x().onTrue(climberArm.setArmTarget(90, 1));
-    driveController
-        .b()
-        .onTrue(
-            new ParallelCommandGroup(
-                winch.runVoltsCommmand(2).until(() -> climberArm.getArmPositionDegs() == 130),
-                climberArm.setArmTarget(130, 1)));
-    driveController
-        .b()
-        .onFalse(
-            new ParallelCommandGroup(
-                new InstantCommand(() -> winch.stop(), winch),
-                new InstantCommand(() -> climberArm.armStop(), climberArm)));
+    driveController.a().onTrue(climberArm.setArmTarget(90, 1));
+    driveController.b().onTrue(climberArm.setArmTarget(0, 1));
+    driveController.y().onTrue(climberArm.zero());
+    // driveController.b().onTrue(new InstantCommand(() -> climberArm.armStop(), climberArm));
+    // driveController
+    //     .b()
+    //     .onTrue(
+    //         new ParallelCommandGroup(
+    //             winch.runVoltsCommmand(2).until(() -> climberArm.getArmPositionDegs() == 130),
+    //             climberArm.setArmTarget(130, 1)));
+    // driveController
+    //     .b()
+    //     .onFalse(
+    //         new ParallelCommandGroup(
+    //             new InstantCommand(() -> winch.stop(), winch),
+    //             new InstantCommand(() -> climberArm.armStop(), climberArm)));
   }
 
   private void configureButtonBindings() {

@@ -33,7 +33,7 @@ public class ClimberArm extends SubsystemBase {
 
   double goalDegrees;
 
-  private ArmFeedforward armFFModel;
+  private final ArmFeedforward armFFModel;
 
   /** Creates a new Arm. */
   public ClimberArm(ClimberArmIO arm) {
@@ -41,7 +41,7 @@ public class ClimberArm extends SubsystemBase {
     switch (SimConstants.currentMode) {
       case REAL:
         kG.initDefault(0.0);
-        kV.initDefault(0);
+        kV.initDefault(0.1);
         kP.initDefault(0);
         break;
       case REPLAY:
@@ -61,9 +61,11 @@ public class ClimberArm extends SubsystemBase {
         break;
     }
 
+    armFFModel = new ArmFeedforward(0, 0.01, 0);
+
     // CHANGE PER ARM
-    maxVelocityDegPerSec = 1;
-    maxAccelerationDegPerSecSquared = 1;
+    maxVelocityDegPerSec = 80;
+    maxAccelerationDegPerSecSquared = 100;
     // maxAccelerationDegPerSecSquared = 180;
 
     armConstraints =
@@ -118,6 +120,10 @@ public class ClimberArm extends SubsystemBase {
         .until(() -> atGoal(thresholdDegrees));
   }
 
+  public Command zero() {
+    return new InstantCommand(() -> arm.zeroPosition(), this);
+  }
+
   @Override
   public void periodic() {
     arm.updateInputs(pInputs);
@@ -140,9 +146,6 @@ public class ClimberArm extends SubsystemBase {
   private void updateTunableNumbers() {
     if (kP.hasChanged(hashCode())) {
       arm.configurePID(kP.get(), 0, 0);
-    }
-    if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode())) {
-      armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
     }
   }
 }

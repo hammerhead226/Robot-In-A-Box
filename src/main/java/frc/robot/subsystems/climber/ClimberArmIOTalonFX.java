@@ -40,8 +40,9 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
         SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    config.Feedback.FeedbackRemoteSensorID = canCoderID;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // config.Feedback.FeedbackRemoteSensorID = canCoderID;
+    // config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
 
     leader.getConfigurator().apply(config);
@@ -97,11 +98,13 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
   public void setPositionSetpointDegs(double positionDegs, double ffVolts) {
     this.positionSetpointDegs = positionDegs;
     leader.setControl(
-        new PositionVoltage(
-            Conversions.degreesToFalcon(
-                positionDegs,
-                SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants
-                    .ARM_GEAR_RATIO))); // CHECK FOR STOW ANGLE (positionDegs - 59)
+        new PositionVoltage(Conversions.degreesToFalcon(positionDegs, CLIMBER_ARM_GEAR_RATIO))
+            .withFeedForward(ffVolts)); // CHECK FOR STOW ANGLE (positionDegs - 59)
+  }
+
+  @Override
+  public void zeroPosition() {
+    leader.setPosition(0);
   }
 
   @Override

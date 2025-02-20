@@ -11,7 +11,7 @@ public class WinchIOSim implements WinchIO {
   private final DCMotor motor = DCMotor.getKrakenX60(1);
   // 1
   private DCMotorSim sim =
-      new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 1, 1), motor, 0.0);
+      new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 1, 1), motor, 0.0, 0.0);
 
   private PIDController pid = new PIDController(0, 0, 0);
 
