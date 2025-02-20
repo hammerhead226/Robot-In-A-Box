@@ -138,7 +138,6 @@ public class RobotContainer {
   }
 
   private final Command climbCommands;
-  final SuperStructure superStructure;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -423,6 +422,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+
   private void test() {
     keyboard
         .getXButton()
@@ -788,4 +788,5 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
+}
 }
