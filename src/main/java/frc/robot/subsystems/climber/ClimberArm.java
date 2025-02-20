@@ -61,10 +61,10 @@ public class ClimberArm extends SubsystemBase {
         break;
     }
 
-    armFFModel = new ArmFeedforward(0, 0.01, 0);
+    armFFModel = new ArmFeedforward(0, 0.01, 0.015);
 
     // CHANGE PER ARM
-    maxVelocityDegPerSec = 80;
+    maxVelocityDegPerSec = 60;
     maxAccelerationDegPerSecSquared = 100;
     // maxAccelerationDegPerSecSquared = 180;
 
