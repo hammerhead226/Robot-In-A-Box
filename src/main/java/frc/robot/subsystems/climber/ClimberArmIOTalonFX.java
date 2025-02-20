@@ -2,13 +2,17 @@ package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -20,6 +24,7 @@ import org.littletonrobotics.junction.Logger;
 public class ClimberArmIOTalonFX implements ClimberArmIO {
 
   private final TalonFX leader;
+  private final CANcoder climbCoder;
 
   private double CLIMBER_ARM_GEAR_RATIO = 20 * 34 / 18;
 
@@ -42,10 +47,22 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     // config.Feedback.FeedbackRemoteSensorID = canCoderID;
     // config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
 
+    CANcoderConfiguration coderConfig = new CANcoderConfiguration();
+
+    coderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+    //OFFSETS IN ROTATIONS 
+    coderConfig.MagnetSensor.withMagnetOffset(0);
+    
+    config.Feedback.FeedbackRemoteSensorID = canCoderID;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+    config.Feedback.SensorToMechanismRatio = 1.0;
+    config.Feedback.RotorToSensorRatio = CLIMBER_ARM_GEAR_RATIO;
+
+    leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
+    climbCoder = new CANcoder(canCoderID, SubsystemConstants.CANBUS);
     leader.getConfigurator().apply(config);
+    climbCoder.getConfigurator().apply(coderConfig);
 
     leader.setPosition(Conversions.degreesToFalcon(startAngleDegs, CLIMBER_ARM_GEAR_RATIO));
 
