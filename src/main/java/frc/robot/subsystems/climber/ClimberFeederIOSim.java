@@ -11,17 +11,8 @@ public class ClimberFeederIOSim implements ClimberFeederIO {
   private final DCMotor motor = DCMotor.getKrakenX60(1);
   // Corrected measurementStdDevs array with 2 elements
   private DCMotorSim sim =
-<<<<<<< Updated upstream
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(motor, 1, 1), motor, new double[] {0.0, 0.0});
-=======
-<<<<<<< HEAD
-      new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 1, 1), motor, 0.0, 0.0);
-=======
-      new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(motor, 1, 1), motor, new double[] {0.0, 0.0});
->>>>>>> 683f32a72d23f1ebcddf549f9fd5acb41a72a1c8
->>>>>>> Stashed changes
 
   private PIDController pid = new PIDController(0, 0, 0);
 
