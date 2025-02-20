@@ -46,15 +46,21 @@ public class SuperStructure {
     // this.currentState = wantedState;
   }
 
-  // public boolean isRobotTooFast() {
-  //   return Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec > 50;
-  //   // if (Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec > 50) {
-  //   //   this.wantedState = SuperStructureState.STOW;
-  //   // }
-  //   // else {
+  public void setWantedStateForAlgaeIntake(Drive drive) {
+    wantedState = drive.getNearestParition(6) % 2 == 0 ? SuperStructureState.A2 : SuperStructureState.A1;
+  }
 
-  //   //   currentState = wantedState;
-  //   // }
+  // public boolean isRobotTooFast() {
+  // return Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec
+  // > 50;
+  // // if (Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec
+  // > 50) {
+  // // this.wantedState = SuperStructureState.STOW;
+  // // }
+  // // else {
+
+  // // currentState = wantedState;
+  // // }
   // }
 
   public SuperStructureState getWantedState() {
@@ -67,7 +73,7 @@ public class SuperStructure {
 
   // public boolean changedStated() {
 
-  //   return currentState != wantedState;
+  // return currentState != wantedState;
   // }
 
   public boolean elevatorExtended() {
@@ -94,7 +100,7 @@ public class SuperStructure {
         return elevator.hasReachedGoal(0) && csArm.hasReachedGoal(40);
       case SCORING_CORAL:
         // return csFlywheel.seesCoral() == CoralState.CURRENT
-        //     || csFlywheel.seesCoral() == CoralState.SENSOR;
+        // || csFlywheel.seesCoral() == CoralState.SENSOR;
         return true;
       default:
         return false;
@@ -221,8 +227,8 @@ public class SuperStructure {
       case CLIMB_STAGE_TWO:
         setWantedState(SuperStructureState.HANG);
         break;
-      case HANG:
-        setWantedState(SuperStructureState.CLIMB_STAGE_ONE);
+      se HANG:
+      se ntedState(SuperStructureState.CLIMB_STAGE_ONE);
         break;
       default:
         break;
