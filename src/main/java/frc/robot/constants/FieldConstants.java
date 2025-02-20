@@ -25,12 +25,12 @@ public class FieldConstants {
   }
 
   public static class Barge {
-    public static final Translation2d farCage =
-        new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(286.779));
-    public static final Translation2d middleCage =
-        new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(242.855));
-    public static final Translation2d closeCage =
-        new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(199.947));
+    public static final Pose2d farCage =
+        new Pose2d(Units.inchesToMeters(345.428), Units.inchesToMeters(286.779), new Rotation2d(0));
+    public static final Pose2d middleCage =
+        new Pose2d(Units.inchesToMeters(345.428), Units.inchesToMeters(242.855), new Rotation2d(0));
+    public static final Pose2d closeCage =
+        new Pose2d(Units.inchesToMeters(345.428), Units.inchesToMeters(199.947), new Rotation2d(0));
 
     // Measured from floor to bottom of cage
     public static final double deepHeight = Units.inchesToMeters(3.125);

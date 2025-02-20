@@ -17,8 +17,7 @@ public class CoralScorerFlywheelIOSim implements FlywheelIO {
   //  private double[] stds = {1, 2, 3};
 
   private DCMotorSim sim =
-      new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(motor, gearBoxMotorCount, gearing), motor, 0.0, 0.0);
+      new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 0.004, gearing), motor);
 
   private PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
@@ -43,7 +42,9 @@ public class CoralScorerFlywheelIOSim implements FlywheelIO {
     sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
 
     inputs.positionRad = 0.0;
-    inputs.velocityRadPerSec = sim.getAngularVelocityRadPerSec();
+    // inputs.velocityRadPerSec =
+    // Units.radiansPerSecondToRotationsPerMinute(sim.getAngularVelocityRadPerSec());
+    inputs.velocityRadPerSec = sim.getAngularVelocityRPM();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = sim.getCurrentDrawAmps();
   }

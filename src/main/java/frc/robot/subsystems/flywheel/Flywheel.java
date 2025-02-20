@@ -23,21 +23,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.CoralState;
+import frc.robot.subsystems.algae.FeederIOInputsAutoLogged;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
-import frc.robot.subsystems.newalgaeintake.FeederIOInputsAutoLogged;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
-  private final SimpleMotorFeedforward ffModel;
+  private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
 
   private CoralState lastCoralState;
   private final FlywheelIOInputsAutoLogged flyInputs = new FlywheelIOInputsAutoLogged();
   private final FeederIOInputsAutoLogged feedInputs = new FeederIOInputsAutoLogged();
+
+  private static final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 1);
+  private static final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 1);
+  private static final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 1);
+
   // private final DistanceSensorIOInputsAutoLogged sInputs = new
   // DistanceSensorIOInputsAutoLogged();
   /** Creates a new Flywheel. */
@@ -53,7 +59,7 @@ public class Flywheel extends SubsystemBase {
         io.configurePID(0.0, 0.0, 0.0);
         break;
       case SIM:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.3);
         io.configurePID(0.0, 0.0, 0.0);
         break;
       default:
@@ -70,12 +76,15 @@ public class Flywheel extends SubsystemBase {
                 null,
                 (state) -> Logger.recordOutput("Flywheel/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
+
+    updateTunableNumbers();
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Flywheel", inputs);
+    updateTunableNumbers();
   }
 
   /** Run open loop at the specified voltage. */
@@ -155,5 +164,11 @@ public class Flywheel extends SubsystemBase {
   /** Returns the current velocity in radians per second. */
   public double getCharacterizationVelocity() {
     return inputs.velocityRadPerSec;
+  }
+
+  private void updateTunableNumbers() {
+    if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
+      ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get(), 1);
+    }
   }
 }

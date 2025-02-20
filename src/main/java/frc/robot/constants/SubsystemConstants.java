@@ -38,6 +38,20 @@ public final class SubsystemConstants {
 
     public static final double ELEVATOR_GEAR_RATIO = 1;
     public static final double SCORING_SETPOINT_POS = 0.3;
+    public static final double INTAKE_SETPOINT_INCHES = 0.9;
+    public static final double PROCESSOR_SETPOINT_INCHES = 0;
+  }
+
+  // @Deprecated
+  public static final class ClimberConstants {
+    public static final double CURRENT_LIMIT = 35.0;
+    public static final boolean CURRENT_LIMIT_ENABLED = true;
+
+    public static final double DEFAULT_THRESHOLD = 0.1;
+    public static final double ARM_GEAR_RATIO = 1;
+
+    public static final double ARM_ZERO_ANGLE = 0;
+    public static final double STOW_SETPOINT_DEG = 0;
   }
 
   @Deprecated
@@ -95,8 +109,59 @@ public final class SubsystemConstants {
   public static enum AlgaeState {
     DEFAULT,
     NO_ALGAE,
-    SENSOR,
     CURRENT,
+  }
+
+  public static enum ElevatorState {
+    ZERO,
+    STOW,
+    L1,
+    L2,
+    L3,
+    L4,
+    SOURCE,
+    PROCESSOR
+  }
+
+  public static enum ScoralFlywheelState {
+    ZERO,
+    INTAKING_CORAL,
+    INTAKING_ALGAE,
+    SCORING_CORAL,
+    SCORING_ALGAE
+  }
+
+  public static enum ClimberState {
+    STOW,
+    STAGE_ONE,
+    STAGE_TWO,
+    HANG
+  }
+
+  public static enum DriveState {
+    FULLSPEED,
+    SLOW
+  }
+
+  public static enum SuperStructureState {
+    NONE,
+    STOW,
+    SOURCE,
+    PROCESSOR,
+    L1,
+    L2,
+    L3,
+    L4,
+    CLIMB_STAGE_ONE,
+    CLIMB_STAGE_TWO,
+    HANG,
+    L1ATGOAL,
+    //  L2ATGOAL,
+    //   L3ATGOAL,
+    //  L4ATGOAL,
+    DEFAULT,
+    SCORING_CORAL,
+    READY_FOR_SCORE_REEF
   }
 
   public static final double CORAL_DIST = -1234; // 1300; // CHANGE THIS
@@ -109,8 +174,16 @@ public final class SubsystemConstants {
     public static final double CURRENT_LIMIT_AMPS = 35.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
 
+<<<<<<< HEAD
     public static class CoralScorerDefinedPositions {
       public static final double INTAKE_SETPOINT_DEG = 0;
+=======
+      public static final double INTAKE_SETPOINT_DEG = 32;
+
+      public static final double ARM_VELOCITY_DEGPERSEC = 10;
+      public static final double DEFAULT_VOLTS = 0;
+
+>>>>>>> refactor-autons
       public static final double ARM_ZERO_ANGLE = 0;
       public static final double STOW_SETPOINT_DEG = 50;
       public static final double SCORING_SETPOINT_DEG = 15;

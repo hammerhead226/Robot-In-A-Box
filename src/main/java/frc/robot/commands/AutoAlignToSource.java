@@ -46,7 +46,8 @@ public class AutoAlignToSource extends Command {
     //   drive.getPose(),
     //   new Pose2d(targetTranslation2d, targetRotation2d)
     // );
-
+    // PathfindingCommand command = new PathfindingCommand(getNearestSourceSide(), new
+    // PathConstraints(3.5, 2.7, 100, 180), null, null, null, null, null, null)
     Pose2d targetPose = getNearestSourceSide();
 
     // FieldConstants.Sources.Lower.Position : FieldConstants.Sources.Higher.Position;

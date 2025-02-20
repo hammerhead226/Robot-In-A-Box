@@ -14,7 +14,8 @@ import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.elevator.Elevator;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/* You should consider using the more terse Command factories API instead
+https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeFromSource extends Command {
   /** Creates a new IntakeFromSource. */
   private final CoralScorerFlywheel coralIntake;
@@ -33,10 +34,8 @@ public class IntakeFromSource extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevator.setElevatorTarget(2, ElevatorConstants.DEFAULT_THRESHOLD);
-    arm.setPositionDegs(
-        CoralScorerDefinedPositions.INTAKE_SETPOINT_DEG,
-        CoralScorerConstants.ARM_VELOCITY_DEGPERSEC);
+    elevator.setExtenderGoal(0.57);
+    arm.setArmGoal(CoralScorerArmConstants.INTAKE_SETPOINT_DEG);
     coralIntake.runVelocity(CoralScorerFlywheelConstants.FLYWHEEL_VELOCITY_DEGPERSEC);
   }
 
@@ -47,10 +46,9 @@ public class IntakeFromSource extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    coralIntake.flywheelStop();
-    arm.setPositionDegs(
-        CoralScorerDefinedPositions.STOW_SETPOINT_DEG, CoralScorerConstants.ARM_VELOCITY_DEGPERSEC);
-    elevator.setElevatorTarget(0, ElevatorConstants.DEFAULT_THRESHOLD);
+    coralIntake.stop();
+    arm.setArmGoal(CoralScorerArmConstants.STOW_SETPOINT_DEG);
+    elevator.setExtenderGoal(ElevatorConstants.RETRACT_SETPOINT_INCH);
   }
 
   // Returns true when the command should end.

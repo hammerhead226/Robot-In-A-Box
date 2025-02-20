@@ -1,16 +1,21 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.ElevatorState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
@@ -33,10 +38,15 @@ public class Elevator extends SubsystemBase {
   private static final int maxAccelerationExtender = 1;
 
   private TrapezoidProfile extenderProfile;
+  private TrapezoidProfile extenderProfile2;
   private TrapezoidProfile.Constraints extenderConstraints =
       new TrapezoidProfile.Constraints(maxVelocityExtender, maxAccelerationExtender);
+  private TrapezoidProfile.Constraints extenderConstraints2 =
+      new TrapezoidProfile.Constraints(maxVelocityExtender - 0.5, maxAccelerationExtender - 0.2);
   private TrapezoidProfile.State extenderGoal = new TrapezoidProfile.State();
   private TrapezoidProfile.State extenderCurrent = new TrapezoidProfile.State();
+  private TrapezoidProfile.State extenderCurrent2 = new TrapezoidProfile.State();
+  private TrapezoidProfile.State extenderGoal2 = new TrapezoidProfile.State();
 
   private double goal;
   private ElevatorFeedforward elevatorFFModel;
@@ -44,6 +54,20 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorVis measuredVisualizer;
   private ElevatorVis setpointVisualizer;
+
+  public enum ElevatorState {
+    ZERO,
+    STOW,
+    L1,
+    L2,
+    L3,
+    L4,
+    SOURCE,
+    PROCESSOR
+  }
+
+  private ElevatorState wantedState = ElevatorState.STOW;
+  private ElevatorState currentState = ElevatorState.STOW;
 
   public Elevator(ElevatorIO elevator) {
     this.elevator = elevator;
@@ -72,15 +96,19 @@ public class Elevator extends SubsystemBase {
         
         break;
       case SIM:
-        kS.initDefault(0);
-        kG.initDefault(0);
-        kV.initDefault(0);
+        kS.initDefault(0.0);
+        kG.initDefault(0.01);
+        kV.initDefault(0.55);
         kA.initDefault(0);
 
-        kP.initDefault(1);
+        kP.initDefault(11);
         kI.initDefault(0);
 
+<<<<<<< HEAD
         
+=======
+        barkG.initDefault(1.7);
+>>>>>>> refactor-autons
         break;
       default:
         kS.initDefault(0);
@@ -97,9 +125,12 @@ public class Elevator extends SubsystemBase {
     measured = new ElevatorVis("measured", Color.kRed);
 
     // CHANGE THIS VALUE TO MATCH THE ELEVATOR
-    setExtenderGoal(1.3);
+    // setExtenderGoal(1.3);
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
+
+    extenderProfile2 = new TrapezoidProfile(extenderConstraints2);
+    extenderCurrent2 = extenderProfile2.calculate(0, extenderCurrent2, extenderGoal2);
 
     measuredVisualizer = new ElevatorVis("measured", Color.kRed);
     setpointVisualizer = new ElevatorVis("setpoint", Color.kGreen);
@@ -108,7 +139,12 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean atGoal() {
-    return (Math.abs(eInputs.elevatorPositionInch - goal)
+    return (Math.abs(extenderCurrent.position - goal)
+        <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
+  }
+
+  public boolean hasReachedGoal(double goalInches) {
+    return (Math.abs(extenderCurrent.position - goalInches)
         <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
   }
 
@@ -127,6 +163,7 @@ public class Elevator extends SubsystemBase {
   public void setExtenderGoal(double setpoint) {
     goal = setpoint;
     extenderGoal = new TrapezoidProfile.State(setpoint, 0);
+    extenderGoal2 = new TrapezoidProfile.State(setpoint, 0);
   }
 
   public void setPositionExtend(double position, double velocity) {
@@ -160,11 +197,108 @@ public class Elevator extends SubsystemBase {
         .until(() -> elevatorAtSetpoint(thersholdInches));
   }
 
+  @AutoLogOutput(key = "elevator")
+  public Pose3d getElevatorPose() {
+    if (getElevatorstage2Pose().getZ() < extenderCurrent.position) {
+      return new Pose3d(0, 0, extenderCurrent2.position + 0.5, new Rotation3d());
+    } else {
+      return new Pose3d(0, 0, extenderCurrent.position + 0.9, new Rotation3d());
+    }
+  }
+
+  @AutoLogOutput(key = "elevatorstage2")
+  public Pose3d getElevatorstage2Pose() {
+
+    return new Pose3d(0, 0, extenderCurrent2.position + 0.5, new Rotation3d());
+  }
+
+  // state stuff
+  public void setWantedState(ElevatorState wantedState) {
+    this.wantedState = wantedState;
+  }
+
+  public void breakMode(boolean brake) {
+    elevator.setBrakeMode(brake);
+  }
+
+  public ElevatorState handleStateTransitions() {
+    return switch (wantedState) {
+      case ZERO -> ElevatorState.ZERO;
+      case STOW -> ElevatorState.STOW;
+      case SOURCE -> ElevatorState.SOURCE;
+      case L1 -> ElevatorState.L1;
+      case L2 -> ElevatorState.L2;
+      case L3 -> ElevatorState.L3;
+      case L4 -> ElevatorState.L4;
+      default -> ElevatorState.ZERO;
+    };
+  }
+
+  // elevator factory
+  public void Stow() {
+    setExtenderGoal(0);
+  }
+
+  public void goToSource() {
+    setExtenderGoal(0);
+  }
+
+  public void gotoFirstLevel() {
+    setExtenderGoal(FieldConstants.ReefHeight.L1.height);
+  }
+
+  public void gotoSecondLevel() {
+    setExtenderGoal(FieldConstants.ReefHeight.L2.height);
+  }
+
+  public void gotoThirdLevel() {
+    setExtenderGoal(FieldConstants.ReefHeight.L3.height);
+  }
+
+  public void gotoFourthLevel() {
+    setExtenderGoal(FieldConstants.ReefHeight.L4.height);
+  }
+
+  public void gotoProcessorLevel() {
+    setExtenderGoal(0);
+  }
+
   @Override
   public void periodic() {
     Logger.recordOutput("Alliance", DriverStation.getAlliance().isPresent());
-
     elevator.updateInputs(eInputs);
+    updateTunableNumbers();
+    // state logic
+    // ElevatorState desiredState = wantedState;
+    if (wantedState != currentState) {
+      currentState = wantedState;
+    }
+
+    switch (currentState) {
+      case ZERO:
+        Stow();
+        break;
+      case SOURCE:
+        goToSource();
+        break;
+      case L1:
+        gotoFirstLevel();
+        break;
+      case L2:
+        gotoSecondLevel();
+        break;
+      case L3:
+        gotoThirdLevel();
+        break;
+      case L4:
+        gotoFourthLevel();
+        break;
+      case PROCESSOR:
+        gotoProcessorLevel();
+      default:
+        Stow();
+    }
+
     measured.update(extenderCurrent.position);
     CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position);
 
@@ -173,6 +307,11 @@ public class Elevator extends SubsystemBase {
             SubsystemConstants.LOOP_PERIOD_SECONDS, extenderCurrent, extenderGoal);
 
     setPositionExtend(extenderCurrent.position, extenderCurrent.velocity);
+
+    extenderCurrent2 =
+        extenderProfile2.calculate(
+            SubsystemConstants.LOOP_PERIOD_SECONDS, extenderCurrent2, extenderGoal2);
+    // handleStates();
 
     Logger.processInputs("Elevator", eInputs);
 
