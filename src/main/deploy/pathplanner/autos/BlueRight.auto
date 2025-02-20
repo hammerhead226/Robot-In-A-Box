@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.4Start "
+            "pathName": "BlueRightStart"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.4Second "
+            "pathName": "BlueRightSecond "
           }
         },
         {
@@ -49,7 +49,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.4Third"
+            "pathName": "BlueRightThird"
           }
         },
         {
@@ -73,7 +73,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.4Fourth"
+            "pathName": "BlueRightFourth"
           }
         },
         {
@@ -91,7 +91,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1.4Fifth"
+            "pathName": "BlueRightFifth"
           }
         },
         {
@@ -116,6 +116,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Reefscape",
   "choreoAuto": false
 }
