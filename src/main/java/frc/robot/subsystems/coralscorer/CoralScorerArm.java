@@ -155,7 +155,7 @@ public class CoralScorerArm extends SubsystemBase {
 
   public void setArmGoal(double goalDegrees) {
     this.goalDegrees = goalDegrees;
-    armGoalStateDegrees = new TrapezoidProfile.State(goalDegrees, 0);
+    armGoalStateDegrees = new TrapezoidProfile.State(goalDegrees, 2);
   }
 
   public void setArmCurrent(double currentDegrees) {
@@ -163,9 +163,10 @@ public class CoralScorerArm extends SubsystemBase {
   }
 
   public Command setArmTarget(double goalDegrees, double thresholdDegrees) {
-
+    // TODO: Change the wait time to an accurate value
     return new InstantCommand(() -> setArmGoal(goalDegrees), this)
-        .until(() -> atGoal(thresholdDegrees));
+        .until(() -> atGoal(thresholdDegrees))
+        .withTimeout(5);
   }
 
   @AutoLogOutput(key = "arm")

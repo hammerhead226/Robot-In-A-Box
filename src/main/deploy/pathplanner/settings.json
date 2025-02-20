@@ -2,6 +2,7 @@
   "robotWidth": 0.9,
   "robotLength": 0.9,
   "holonomicMode": true,
+<<<<<<< HEAD
   "pathFolders": [
     "BlueLeft",
     "BlueMiddleLeft",
@@ -13,6 +14,12 @@
     "RedRight"
   ],
   "autoFolders": [],
+=======
+  "pathFolders": [],
+  "autoFolders": [
+    "Useless Autos"
+  ],
+>>>>>>> BugFixes-2/24
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

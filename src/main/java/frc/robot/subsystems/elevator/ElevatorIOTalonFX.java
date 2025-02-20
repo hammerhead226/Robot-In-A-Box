@@ -6,9 +6,11 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -25,6 +27,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final StatusSignal<AngularVelocity> elevatorVelocity;
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> currentAmps;
+  private final CANrange extenderDistance;
 
   public ElevatorIOTalonFX(int lead, int follow) {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -33,10 +36,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         SubsystemConstants.ElevatorConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-
     leader = new TalonFX(lead, SubsystemConstants.CANIVORE_ID_STRING);
     follower = new TalonFX(follow, SubsystemConstants.CANIVORE_ID_STRING);
-
     leader.getConfigurator().apply(config);
 
     positionSetpoint = SubsystemConstants.ElevatorConstants.RETRACT_SETPOINT_INCH;
@@ -55,6 +56,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     BaseStatusSignal.refreshAll(elevatorPosition, elevatorVelocity, appliedVolts, currentAmps);
+    if (inputs.elevatorPositionInch <= 34) {
+      inputs.elevatorPositionInch =
+          Units.metersToInches(extenderDistance.getDistance().getValueAsDouble());
+    }
     inputs.elevatorPositionInch =
         Conversions.motorRotToInches(
             elevatorPosition.getValueAsDouble(),

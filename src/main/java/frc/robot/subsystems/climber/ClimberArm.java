@@ -6,11 +6,14 @@ package frc.robot.subsystems.climber;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.subsystems.coralscorer.ClimberVis;
+import frc.robot.subsystems.coralscorer.PivotVis;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -34,6 +37,10 @@ public class ClimberArm extends SubsystemBase {
   double goalDegrees;
 
   private ArmFeedforward armFFModel;
+  private final PivotVis measuredVisualizer;
+  private final PivotVis setpointVisualizer;
+  private final ClimberVis climberMeasuredVisualizer;
+  private final ClimberVis climberSetpointVisualizer;
 
   /** Creates a new Arm. */
   public ClimberArm(ClimberArmIO arm) {
@@ -74,6 +81,10 @@ public class ClimberArm extends SubsystemBase {
     // setArmCurrent(getArmPositionDegs());
     armCurrentStateDegrees = armProfile.calculate(0, armCurrentStateDegrees, armGoalStateDegrees);
 
+    measuredVisualizer = new PivotVis("intake vis ", Color.kBrown);
+    setpointVisualizer = new PivotVis("intake setpoint vis", Color.kGreen);
+    climberMeasuredVisualizer = new ClimberVis("climber measured vis", Color.kOrange);
+    climberSetpointVisualizer = new ClimberVis("climber setpoint vis", Color.kGreen);
     updateTunableNumbers();
   }
 
@@ -133,7 +144,12 @@ public class ClimberArm extends SubsystemBase {
 
     Logger.recordOutput("arm goal", goalDegrees);
     // This method will be called once per scheduler run
-
+    measuredVisualizer.update(armCurrentStateDegrees.position);
+    climberMeasuredVisualizer.update(armCurrentStateDegrees.position);
+    setpointVisualizer.update(armGoalStateDegrees.position);
+    climberSetpointVisualizer.update(armGoalStateDegrees.position);
+    measuredVisualizer.updateLength(0.8);
+    setpointVisualizer.updateLength(0.8);
     updateTunableNumbers();
   }
 

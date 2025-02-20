@@ -89,6 +89,7 @@ public class AutoAlignToSource extends Command {
 
   @Override
   public void execute() {
+    led.setState(LED_STATE.FLASHING_BLUE);
     pathCommand.execute();
     led.setState(LED_STATE.FLASHING_YELLOW);
   }

@@ -5,11 +5,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
+import frc.robot.subsystems.led.LED;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ClimberCommands extends Command {
+  private final LED led;
   /** Creates a new ClimberCommands. */
-  public ClimberCommands() {
+  public ClimberCommands(LED led) {
+    this.led = led;
+
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -19,7 +24,9 @@ public class ClimberCommands extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    led.setState(LED_STATE.FLASHING_GREY);
+  }
 
   // Called once the command ends or is interrupted.
   @Override

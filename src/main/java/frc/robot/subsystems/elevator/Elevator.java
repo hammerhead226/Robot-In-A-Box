@@ -156,8 +156,8 @@ public class Elevator extends SubsystemBase {
     return eInputs.positionSetpointInch - eInputs.elevatorPositionInch;
   }
 
-  public boolean elevatorAtSetpoint(double thersholdInches) {
-    return (Math.abs(getElevatorError()) <= thersholdInches);
+  public boolean elevatorAtSetpoint(double thresholdInches) {
+    return (Math.abs(getElevatorError()) <= thresholdInches);
   }
 
   public void setExtenderGoal(double setpoint) {
@@ -191,10 +191,11 @@ public class Elevator extends SubsystemBase {
     return extenderGoal.position == SubsystemConstants.ElevatorConstants.EXTEND_SETPOINT_INCH;
   }
 
-  public Command setElevatorTarget(double goalInches, double thersholdInches) {
-
+  public Command setElevatorTarget(double goalInches, double thresholdInches) {
+    // TODO: Change the wait time to an accurate value
     return new InstantCommand(() -> setExtenderGoal(goalInches), this)
-        .until(() -> elevatorAtSetpoint(thersholdInches));
+        .until(() -> elevatorAtSetpoint(thresholdInches))
+        .withTimeout(5);
   }
 
   @AutoLogOutput(key = "elevator")

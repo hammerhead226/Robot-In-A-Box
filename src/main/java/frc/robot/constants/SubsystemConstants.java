@@ -87,8 +87,14 @@ public final class SubsystemConstants {
     FLASHING_WHITE,
     FLASHING_GREEN,
     FLASHING_RED,
+    FLASHING_PURPLE,
+    FLASHING_ORANGE,
     FLASHING_BLUE,
+    FLASHING_GREY,
+    FLASHING_PINK,
     FLASHING_YELLOW,
+    FLASHING_BLACK,
+    FLASHING_CYAN,
     FIRE,
     OFF
   }
@@ -136,6 +142,11 @@ public final class SubsystemConstants {
     STAGE_ONE,
     STAGE_TWO,
     HANG
+  }
+
+  public static enum AlignState {
+    ALIGNING,
+    IN_POSITION
   }
 
   public static enum DriveState {
