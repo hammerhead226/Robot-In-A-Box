@@ -30,8 +30,8 @@ public class WinchIOTalonFX implements WinchIO {
 
   public WinchIOTalonFX(int leadID, int followID) {
 
-    leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
-    follower = new TalonFX(followID, SubsystemConstants.CANBUS);
+    leader = new TalonFX(leadID, SubsystemConstants.CANIVORE_ID_STRING);
+    follower = new TalonFX(followID, SubsystemConstants.CANIVORE_ID_STRING);
 
     var config = new TalonFXConfiguration();
     config.CurrentLimits.SupplyCurrentLimit = 30.0;

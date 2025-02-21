@@ -92,7 +92,6 @@ public class Elevator extends SubsystemBase {
         kP.initDefault(11);
         // kP.initDefault(0.5);
         kI.initDefault(0);
-        barkG.initDefault(1.7);
         break;
       default:
         kS.initDefault(0);

@@ -13,7 +13,7 @@ public class CoralSensorCANRangeIO implements CoralSensorIO {
   private StatusSignal<Distance> distanceMeters;
 
   public CoralSensorCANRangeIO(int id) {
-    sensor = new CANrange(id, SubsystemConstants.CANBUS);
+    sensor = new CANrange(id, SubsystemConstants.CANIVORE_ID_STRING);
 
     distanceMeters = sensor.getDistance();
 
