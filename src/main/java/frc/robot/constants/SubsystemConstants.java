@@ -67,10 +67,11 @@ public final class SubsystemConstants {
   }
 
   public static class LEDConstants {
-    public static final double COLOR_BLUE = 0.87;
-    public static final double COLOR_RED = 0.61;
-    public static final double COLOR_YELLOW = 0.66;
-    public static final double COLOR_VIOLET = 0.91;
+    public static final int NUMBER_LEDS = 57 + 24 + 13;
+    // public static final double COLOR_BLUE = 0.87;
+    // public static final double COLOR_RED = 0.61;
+    // public static final double COLOR_YELLOW = 0.66;
+    // public static final double COLOR_VIOLET = 0.91;
   }
 
   public static enum LED_STATE {

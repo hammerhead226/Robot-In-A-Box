@@ -1,6 +1,5 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -15,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakingAlgae;
@@ -80,11 +78,11 @@ public class RobotContainer {
   private SuperStructure superStructure;
   // public final Trigger elevatorBrakeTrigger;
   //   private final Trigger stateTrigger;
-  private final Trigger slowModeTrigger;
+  private Trigger slowModeTrigger;
   private CoralScorerFlywheel csFlywheel;
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  private LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -191,13 +189,13 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
-        vision =
-            new Vision(
-                drive.getToPoseEstimatorConsumer(),
-                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-                new VisionIOPhotonVision("photon", new Transform3d()));
+        // vision =
+        //     new Vision(
+        //         drive.getToPoseEstimatorConsumer(),
+        //         new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+        //         new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+        //         new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+        //         new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIO() {});
         climberArm = new ClimberArm(new ClimberArmIOSim());
         csFlywheel =
@@ -252,27 +250,27 @@ public class RobotContainer {
     //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)),
     //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
 
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Top R3a", AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c-R1b(L3)-S3c-R6a(L3)"));
-    autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
-    autoChooser.addDefaultOption("1.1 auto", AutoBuilder.buildAuto("1.1.auto"));
+    // autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Forward)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Reverse)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Top R3a", AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c-R1b(L3)-S3c-R6a(L3)"));
+    // autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
+    // autoChooser.addDefaultOption("1.1 auto", AutoBuilder.buildAuto("1.1.auto"));
     /*
     NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
     NamedCommands.registerCommand(
@@ -296,10 +294,10 @@ public class RobotContainer {
     // configureButtonBindings();
     // stateTrigger = new Trigger(() -> superStructure.changedStated());
     // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
-    slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+    // slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
-    configureButtonBindings();
-    // test();
+    // configureButtonBindings();
+    test();
   }
 
   /**
