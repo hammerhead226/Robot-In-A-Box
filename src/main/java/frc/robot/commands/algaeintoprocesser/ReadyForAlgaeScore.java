@@ -26,6 +26,7 @@ public class ReadyForAlgaeScore extends Command {
   @Override
   public boolean isFinished() {
     return elevator.elevatorAtSetpoint(SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD)
-        && coralScorerArm.atGoal(SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.DEFAULT_THRESHOLD);
+        && coralScorerArm.atGoal(
+            SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.DEFAULT_THRESHOLD);
   }
 }

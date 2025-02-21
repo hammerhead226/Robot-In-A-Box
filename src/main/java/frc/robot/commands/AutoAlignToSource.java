@@ -104,6 +104,5 @@ public class AutoAlignToSource extends Command {
   public boolean isFinished() {
     led.setState(LED_STATE.PURPLE);
     return false;
-    
   }
 }

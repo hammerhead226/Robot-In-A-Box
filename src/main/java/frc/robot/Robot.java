@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.SuperStructure;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -178,7 +177,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
 
-    Logger.recordOutput("Wanted State", superStructure.getSuperStructure().getWantedState());
+    Logger.recordOutput("Wanted State", robotContainer.getSuperStructure().getWantedState());
     Logger.recordOutput("Current State", robotContainer.getSuperStructure().getCurrentState());
     Logger.recordOutput("At State Goals", robotContainer.getSuperStructure().atGoals());
   }

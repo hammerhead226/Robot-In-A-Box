@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.SubsystemConstants.CoralScorerConstants;
 import frc.robot.constants.SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants;
 import frc.robot.constants.SubsystemConstants.CoralScorerConstants.CoralScorerFlywheelConstants;
 import frc.robot.constants.SubsystemConstants.CoralState;

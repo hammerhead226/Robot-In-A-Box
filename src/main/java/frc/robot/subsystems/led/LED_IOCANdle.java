@@ -38,7 +38,6 @@ public class LED_IOCANdle implements LED_IO {
   StrobeAnimation flashBlack = new StrobeAnimation(0, 0, 0, 0, 0.01, 57 + 24);
   StrobeAnimation flashCyan = new StrobeAnimation(204, 255, 255, 0, 0.01, 57 + 24);
 
-
   FireAnimation rainbow =
       new FireAnimation(0.3, 0.03, SubsystemConstants.LEDConstants.NUMBER_LEDS, 0.1, 0.1);
   // ColorFlowAnimation rainbow = new ColorFlowAnimation(0, 0, 255, 0, 0.343, 57,

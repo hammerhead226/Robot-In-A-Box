@@ -61,7 +61,8 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
 
     leader.setPosition(
         Conversions.degreesToFalcon(
-            startAngleDegs, SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_GEAR_RATIO));
+            startAngleDegs,
+            SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_GEAR_RATIO));
 
     leaderPositionDegs = leader.getPosition();
     velocityDegsPerSec = leader.getVelocity();
@@ -118,8 +119,8 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
         new PositionVoltage(
             Conversions.degreesToFalcon(
                 positionDegs,
-                SubsystemConstants.CoralScorerConstants.
-                CoralScorerArmConstants.ARM_GEAR_RATIO))); // CHECK FOR STOW ANGLE (positionDegs - 59)
+                SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants
+                    .ARM_GEAR_RATIO))); // CHECK FOR STOW ANGLE (positionDegs - 59)
   }
 
   @Override
