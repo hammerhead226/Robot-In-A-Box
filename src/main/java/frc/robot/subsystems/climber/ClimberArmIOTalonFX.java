@@ -1,18 +1,17 @@
 package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-// import com.ctre.phoenix6.signrals.InvertedValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -22,10 +21,11 @@ import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 
 public class ClimberArmIOTalonFX implements ClimberArmIO {
-  private final TalonFX leader;
-  private final TalonFX follower;
 
-  private final Pigeon2 pigeon;
+  private final TalonFX leader;
+  private final CANcoder climbCoder;
+
+  private double CLIMBER_ARM_GEAR_RATIO = 20 * 34 / 18;
 
   private double positionSetpointDegs;
 
@@ -35,36 +35,35 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
   private final StatusSignal<AngularVelocity> velocityDegsPerSec;
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> currentAmps;
-  private final StatusSignal<Angle> pitch;
 
-  public ClimberArmIOTalonFX(int leadID, int followID, int gyroID) {
+  public ClimberArmIOTalonFX(int leadID, int canCoderID) {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ClimberConstants.CURRENT_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit =
+        SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
-        SubsystemConstants.ClimberConstants.CURRENT_LIMIT_ENABLED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.CURRENT_LIMIT_ENABLED;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    leader = new TalonFX(leadID, SubsystemConstants.CANIVORE_ID_STRING);
-    follower = new TalonFX(followID, SubsystemConstants.CANIVORE_ID_STRING);
-    pigeon = new Pigeon2(gyroID, SubsystemConstants.CANIVORE_ID_STRING);
-    pigeon.reset();
+    // config.Feedback.FeedbackRemoteSensorID = canCoderID;
+    // config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
+    CANcoderConfiguration coderConfig = new CANcoderConfiguration();
+
+    coderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+    // OFFSETS IN ROTATIONS
+    coderConfig.MagnetSensor.withMagnetOffset(0);
+
+    config.Feedback.FeedbackRemoteSensorID = canCoderID;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+    config.Feedback.SensorToMechanismRatio = 1.0;
+    config.Feedback.RotorToSensorRatio = CLIMBER_ARM_GEAR_RATIO;
+
+    leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
+    climbCoder = new CANcoder(canCoderID, SubsystemConstants.CANBUS);
     leader.getConfigurator().apply(config);
+    climbCoder.getConfigurator().apply(coderConfig);
 
-    follower.setControl(new Follower(leadID, true));
-
-    pitch = pigeon.getRoll();
-
-    startAngleDegs = pitch.getValueAsDouble();
-
-    leader.setPosition(
-        Conversions.degreesToFalcon(
-            startAngleDegs, SubsystemConstants.ClimberConstants.ARM_GEAR_RATIO));
-
-    follower.setPosition(
-        Conversions.degreesToFalcon(
-            startAngleDegs, SubsystemConstants.ClimberConstants.ARM_GEAR_RATIO));
+    leader.setPosition(Conversions.degreesToFalcon(startAngleDegs, CLIMBER_ARM_GEAR_RATIO));
 
     leaderPositionDegs = leader.getPosition();
     velocityDegsPerSec = leader.getVelocity();
@@ -77,27 +76,21 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
 
     Logger.recordOutput("start angle", startAngleDegs);
 
-    pigeon.optimizeBusUtilization();
     leader.optimizeBusUtilization();
-    follower.optimizeBusUtilization();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100, leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps, pitch);
+        100, leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps);
 
     // setBrakeMode(false);
   }
 
   @Override
   public void updateInputs(ClimberArmIOInputs inputs) {
-    BaseStatusSignal.refreshAll(
-        leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps, pitch);
-    inputs.gyroConnected = BaseStatusSignal.refreshAll(pitch).equals(StatusCode.OK);
-    inputs.pitch = pitch.getValueAsDouble() + SubsystemConstants.ClimberConstants.ARM_ZERO_ANGLE;
+    BaseStatusSignal.refreshAll(leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps);
+
     inputs.positionDegs =
-        Conversions.falconToDegrees(
-                (leaderPositionDegs.getValueAsDouble()),
-                SubsystemConstants.ClimberConstants.ARM_GEAR_RATIO)
-            + SubsystemConstants.ClimberConstants.ARM_ZERO_ANGLE;
+        Conversions.falconToDegrees((leaderPositionDegs.getValueAsDouble()), CLIMBER_ARM_GEAR_RATIO)
+            + SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_ZERO_ANGLE;
 
     inputs.velocityDegsPerSec = velocityDegsPerSec.getValueAsDouble();
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
@@ -115,18 +108,19 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
     }
 
     leader.getConfigurator().apply(config);
-    follower.getConfigurator().apply(config);
   }
 
   @Override
   public void setPositionSetpointDegs(double positionDegs, double ffVolts) {
     this.positionSetpointDegs = positionDegs;
     leader.setControl(
-        new PositionVoltage(
-            Conversions.degreesToFalcon(
-                positionDegs,
-                SubsystemConstants.ClimberConstants
-                    .ARM_GEAR_RATIO))); // CHECK FOR STOW ANGLE (positionDegs - 59)
+        new PositionVoltage(Conversions.degreesToFalcon(positionDegs, CLIMBER_ARM_GEAR_RATIO))
+            .withFeedForward(ffVolts)); // CHECK FOR STOW ANGLE (positionDegs - 59)
+  }
+
+  @Override
+  public void zeroPosition() {
+    leader.setPosition(0);
   }
 
   @Override

@@ -10,6 +10,7 @@ public interface ElevatorIO {
     double currentAmps = 0;
     double appliedVolts = 0;
     double positionSetpointInch = 0;
+    double CANrangeDistanceInches;
   }
 
   public default void updateInputs(ElevatorIOInputs inputs) {}
@@ -22,7 +23,8 @@ public interface ElevatorIO {
 
   public default void setVoltage(double volts) {}
 
-  public default void configurePID(double kP, double kI, double kD) {}
+  public default void configurePIDF(
+      double kP, double kI, double kD, double kS, double kG, double kV, double kA) {}
 
   public default void setBrakeMode(boolean brake) {}
 }

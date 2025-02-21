@@ -2,13 +2,16 @@ package frc.robot.subsystems.coralscorer;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -20,7 +23,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class CoralScorerArmIOTalonFX implements ArmIO {
   private final TalonFX leader;
-
+  private final CANcoder scoralCoder;
   private double positionSetpointDegs;
 
   private double startAngleDegs;
@@ -30,7 +33,13 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> currentAmps;
 
-  public CoralScorerArmIOTalonFX(int leadID) {
+  public CoralScorerArmIOTalonFX(int leadID, int canCoderID) {
+    CANcoderConfiguration coderConfig = new CANcoderConfiguration();
+    // change?
+    coderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    // OFFSET IS IN ROTATIONS
+    coderConfig.MagnetSensor.withMagnetOffset(0);
+
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit =
         SubsystemConstants.CoralScorerConstants.CURRENT_LIMIT_AMPS;
@@ -38,10 +47,17 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
         SubsystemConstants.CoralScorerConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    leader = new TalonFX(leadID, SubsystemConstants.CANIVORE_ID_STRING);
+    config.Feedback.FeedbackRemoteSensorID = canCoderID;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    config.Feedback.SensorToMechanismRatio = 1;
+    config.Feedback.RotorToSensorRatio =
+        SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_GEAR_RATIO;
+
+    leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
+    scoralCoder = new CANcoder(canCoderID, SubsystemConstants.CANBUS);
 
     leader.getConfigurator().apply(config);
+    scoralCoder.getConfigurator().apply(coderConfig);
 
     leader.setPosition(
         Conversions.degreesToFalcon(

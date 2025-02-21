@@ -54,6 +54,8 @@ public class Flywheel extends SubsystemBase {
     // separate robot with different tuning)
     switch (SimConstants.currentMode) {
       case REAL:
+        ffModel = new SimpleMotorFeedforward(0.0, 0.1);
+        io.configurePID(0.0, 0.0, 0.0);
       case REPLAY:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);
         io.configurePID(0.0, 0.0, 0.0);
@@ -90,6 +92,7 @@ public class Flywheel extends SubsystemBase {
   /** Run open loop at the specified voltage. */
   public void runVolts(double volts) {
     io.setVoltage(volts);
+    Logger.recordOutput("setting volts", volts);
   }
 
   /** Run closed loop at the specified velocity. */

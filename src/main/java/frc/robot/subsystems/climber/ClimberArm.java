@@ -36,7 +36,7 @@ public class ClimberArm extends SubsystemBase {
 
   double goalDegrees;
 
-  private ArmFeedforward armFFModel;
+  private final ArmFeedforward armFFModel;
   private final PivotVis measuredVisualizer;
   private final PivotVis setpointVisualizer;
   private final ClimberVis climberMeasuredVisualizer;
@@ -47,9 +47,9 @@ public class ClimberArm extends SubsystemBase {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
-        kG.initDefault(0.29);
-        kV.initDefault(1);
-        kP.initDefault(1.123);
+        kG.initDefault(0.0);
+        kV.initDefault(0.1);
+        kP.initDefault(0);
         break;
       case REPLAY:
         kG.initDefault(0.29);
@@ -59,7 +59,7 @@ public class ClimberArm extends SubsystemBase {
       case SIM:
         kG.initDefault(0.29);
         kV.initDefault(1);
-        kP.initDefault(1.123);
+        kP.initDefault(20);
         break;
       default:
         kG.initDefault(0.29);
@@ -68,9 +68,11 @@ public class ClimberArm extends SubsystemBase {
         break;
     }
 
+    armFFModel = new ArmFeedforward(0, 0.01, 0.015);
+
     // CHANGE PER ARM
-    maxVelocityDegPerSec = 1;
-    maxAccelerationDegPerSecSquared = 1;
+    maxVelocityDegPerSec = 60;
+    maxAccelerationDegPerSecSquared = 100;
     // maxAccelerationDegPerSecSquared = 180;
 
     armConstraints =
@@ -129,6 +131,10 @@ public class ClimberArm extends SubsystemBase {
         .until(() -> atGoal(thresholdDegrees));
   }
 
+  public Command zero() {
+    return new InstantCommand(() -> arm.zeroPosition(), this);
+  }
+
   @Override
   public void periodic() {
     arm.updateInputs(pInputs);
@@ -139,7 +145,7 @@ public class ClimberArm extends SubsystemBase {
 
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
-    Logger.processInputs("Arm", pInputs);
+    Logger.processInputs("Climber Arm", pInputs);
     Logger.recordOutput("arm error", getArmError());
 
     Logger.recordOutput("arm goal", goalDegrees);
@@ -156,9 +162,6 @@ public class ClimberArm extends SubsystemBase {
   private void updateTunableNumbers() {
     if (kP.hasChanged(hashCode())) {
       arm.configurePID(kP.get(), 0, 0);
-    }
-    if (kG.hasChanged(hashCode()) || kV.hasChanged(hashCode())) {
-      armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
     }
   }
 }

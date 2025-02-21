@@ -13,7 +13,7 @@ public class CoralScorerArmIOSim implements ArmIO {
 
   // SIM VARIABLES (CHANGE)
   private int gearBoxMotorCount = 1;
-  private double gearing = 13;
+  private double gearing = 21;
   private double armLength = Units.inchesToMeters(12); // CHANGE PER ARM
   private double momentOfInertia =
       SingleJointedArmSim.estimateMOI(armLength, Units.lbsToKilograms(5)); // CHANGE PER ARM

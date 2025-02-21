@@ -1,32 +1,29 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
-import frc.robot.subsystems.coralscorer.CoralScorerArm.ScoralArmState;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
-import frc.robot.subsystems.coralscorer.CoralScorerFlywheel.ScoralFlywheelState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.Elevator.ElevatorState;
 import frc.robot.subsystems.led.LED;
 
-public class SuperStructure extends SubsystemBase {
+public class SuperStructure {
 
   private final Elevator elevator;
   private final CoralScorerArm csArm;
   private final CoralScorerFlywheel csFlywheel;
   private final Drive drive;
   private final LED led;
-  // private SuperStructureState currentState;
   private SuperStructureState currentState;
-  private SuperStructureState lastState;
-  public boolean override = false;
   private SuperStructureState wantedState;
-  public boolean successfullScore = false;
+  public boolean override = false;
 
   public SuperStructure(
       Elevator elevator,
@@ -39,88 +36,46 @@ public class SuperStructure extends SubsystemBase {
     this.csFlywheel = csFlywheel;
     this.drive = drive;
     this.led = led;
-    lastState = SuperStructureState.STOW;
-    currentState = SuperStructureState.STOW;
     wantedState = SuperStructureState.STOW;
+    currentState = SuperStructureState.STOW;
   }
 
   public void setWantedState(SuperStructureState wantedState) {
     this.wantedState = wantedState;
-    // requestedState = wantedState;
     // this.currentState = wantedState;
   }
 
-  public SuperStructureState getState() {
+  // public boolean isRobotTooFast() {
+  //   return Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec > 50;
+  //   // if (Drive.chassisSpeedMetersPerSec > 2 || Drive.rotationVelocityDegsPerSec > 50) {
+  //   //   this.wantedState = SuperStructureState.STOW;
+  //   // }
+  //   // else {
+
+  //   //   currentState = wantedState;
+  //   // }
+  // }
+
+  public SuperStructureState getWantedState() {
+    return wantedState;
+  }
+
+  public SuperStructureState getCurrentState() {
     return currentState;
   }
 
-  public void Stow() {
-    elevator.setWantedState(ElevatorState.STOW);
-    csArm.setWantedState(ScoralArmState.STOW);
-    csFlywheel.setWantedState(ScoralFlywheelState.ZERO);
+  public boolean changedStated() {
+
+    return currentState != wantedState;
   }
 
-  public void goToSource() {
-    elevator.setWantedState(ElevatorState.SOURCE);
-    csArm.setWantedState(ScoralArmState.SOURCE);
-    csFlywheel.setWantedState(ScoralFlywheelState.INTAKING_CORAL);
-  }
-
-  public void gotoFirstLevel() {
-    elevator.setWantedState(ElevatorState.L1);
-    csArm.setWantedState(ScoralArmState.L1);
-    csFlywheel.setWantedState(ScoralFlywheelState.ZERO);
-    led.setState(LED_STATE.FLASHING_YELLOW);
-  }
-
-  public void gotoSecondLevel() {
-    elevator.setWantedState(ElevatorState.L2);
-    csArm.setWantedState(ScoralArmState.L2);
-    csFlywheel.setWantedState(ScoralFlywheelState.ZERO);
-    led.setState(LED_STATE.FLASHING_YELLOW);
-  }
-
-  public void gotoThirdLevel() {
-    elevator.setWantedState(ElevatorState.L3);
-    csArm.setWantedState(ScoralArmState.L3);
-    csFlywheel.setWantedState(ScoralFlywheelState.ZERO);
-    led.setState(LED_STATE.FLASHING_YELLOW);
-  }
-
-  public void gotoFourthLevel() {
-    elevator.setWantedState(ElevatorState.L4);
-    csArm.setWantedState(ScoralArmState.L4);
-    csFlywheel.setWantedState(ScoralFlywheelState.ZERO);
-    led.setState(LED_STATE.FLASHING_YELLOW);
-  }
-
-  public void gotoProcessorLevel() {
-    elevator.setWantedState(ElevatorState.PROCESSOR);
-    csArm.setWantedState(ScoralArmState.PROCESSOR);
-    csFlywheel.setWantedState(ScoralFlywheelState.ZERO);
-    led.setState(LED_STATE.FLASHING_YELLOW);
-  }
-
-  public void score() {
-    csFlywheel.setWantedState(ScoralFlywheelState.SCORING_CORAL);
-  }
-
-  public void scored() {
-    successfullScore = true;
-  }
-
-  public boolean hasScored() {
-    return false;
-  }
-
-  public boolean subsystemsAtGoal() {
-
-    return elevator.atGoal() || csArm.atGoal(2);
+  public boolean elevatorExtended() {
+    return elevator.isExtended();
   }
 
   public boolean hasStructureReachedGoal() {
 
-    switch (currentState) {
+    switch (wantedState) {
       case STOW:
         return elevator.hasReachedGoal(0) && csArm.hasReachedGoal(0);
       case L1:
@@ -146,76 +101,96 @@ public class SuperStructure extends SubsystemBase {
     }
   }
 
-  public void applyState() {
-    switch (currentState) {
+  public SequentialCommandGroup getSuperStructureCommand() {
+    switch (wantedState) {
       case STOW:
-        Stow();
+        // currentState = SuperStructureState.STOW;
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                elevator.setElevatorTarget(0, 0),
+                csArm.setArmTarget(40, 0),
+                csFlywheel.stopCommand(),
+                led.setStateCommand(LED_STATE.BLUE)));
 
-        break;
-      case SOURCE:
-        if (csFlywheel.seesCoral() == CoralState.SENSOR) {
-          Stow();
-          led.setState(LED_STATE.GREEN);
-        } else {
-          goToSource();
-          led.setState(LED_STATE.FLASHING_YELLOW);
-        }
-        break;
       case L1:
-        gotoFirstLevel();
+        // currentState = SuperStructureState.L1;
+        if (elevator.atGoal() && csArm.atGoal(2)) {
+          setWantedState(SuperStructureState.L1ATGOAL);
+        }
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                elevator.setElevatorTarget(FieldConstants.ReefHeight.L1.height, 0.1),
+                csArm.setArmTarget(FieldConstants.ReefHeight.L1.pitch, 2),
+                led.setStateCommand(LED_STATE.FLASHING_GREEN)));
+        //  csFlywheel.runVoltsCommmand(12),
+        // new WaitCommand(1),
+        // led.setStateCommand(LED_STATE.GREEN)
 
-        break;
+      case L1ATGOAL:
+        return new SequentialCommandGroup(led.setStateCommand(LED_STATE.GREEN));
+
       case L2:
-        gotoSecondLevel();
-
-        break;
+        //  currentState = SuperStructureState.L2;
+        if (elevator.atGoal() && csArm.atGoal(2)) {
+          setWantedState(SuperStructureState.L1ATGOAL);
+        }
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
+                csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)));
       case L3:
-        gotoThirdLevel();
-
-        break;
+        //  currentState = SuperStructureState.L3;
+        if (elevator.atGoal() && csArm.atGoal(2)) {
+          setWantedState(SuperStructureState.L1ATGOAL);
+        }
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
+                csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
       case L4:
-        gotoFourthLevel();
+        //  currentState = SuperStructureState.L4;
+        if (elevator.atGoal() && csArm.atGoal(2)) {
+          setWantedState(SuperStructureState.L1ATGOAL);
+        }
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 0.1),
+                csArm.setArmTarget(FieldConstants.ReefHeight.L4.pitch, 2)));
 
-        break;
-      case PROCESSOR:
-        gotoProcessorLevel();
-        break;
-      case SCORING_CORAL:
-        // score();
+      case SOURCE:
+        //  currentState = SuperStructureState.SOURCE;
         if (csFlywheel.seesCoral() == CoralState.CURRENT
             || csFlywheel.seesCoral() == CoralState.SENSOR) {
-          scored();
+          return new SequentialCommandGroup(
+              new WaitCommand(0.5),
+              new InstantCommand(() -> setWantedState(SuperStructureState.STOW)));
 
         } else {
-          score();
-          scored();
+          return new SequentialCommandGroup(
+              new ParallelCommandGroup(
+                  elevator.setElevatorTarget(1, 0.1),
+                  csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)),
+              csFlywheel.runVelocityCommand(200));
         }
-        break;
+
+      case SCORING_CORAL:
+        //  currentState = SuperStructureState.SCORING_CORAL;
+        if (csFlywheel.seesCoral() == CoralState.SENSOR
+            || csFlywheel.seesCoral() == CoralState.CURRENT) {
+          return new SequentialCommandGroup(csFlywheel.runVoltsCommmand(1));
+        } else {
+          return new SequentialCommandGroup(
+              new WaitCommand(0.5),
+              new ParallelCommandGroup(
+                  elevator.setElevatorTarget(0, 0),
+                  csArm.setArmTarget(40, 0),
+                  csFlywheel.stopCommand(),
+                  led.setStateCommand(LED_STATE.BLUE)));
+        }
 
       default:
-        Stow();
-        led.setState(LED_STATE.BLUE);
-    }
-  }
-
-  @Override
-  public void periodic() {
-    // Logger.recordOutput("current State", currentState)
-    if (Drive.speedX > 1 || Drive.speedY > 1) {
-      currentState = SuperStructureState.STOW;
-    } else if (wantedState != currentState) {
-      currentState = wantedState;
-    }
-
-    applyState();
-
-    if (successfullScore) {
-      setWantedState(SuperStructureState.STOW);
-      successfullScore = false;
-    }
-
-    if (elevator.atGoal() && csArm.atGoal(2)) {
-      led.setState(LED_STATE.GREEN);
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(elevator.setElevatorTarget(0, 0), csArm.setArmTarget(40, 0)));
     }
   }
 }

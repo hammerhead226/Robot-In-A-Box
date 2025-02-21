@@ -2,11 +2,11 @@ package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ClimberFeederIO {
+public interface WinchIO {
   @AutoLog
-  public static class FeederIOInputs {
-    public double feederVelocityRPM = 0;
-    public double feederRotations;
+  public static class WinchIOInputs {
+    public double winchVelocityRPM = 0;
+    public double winchPositionRads;
     public double currentAmps = 0;
     public double appliedVolts = 0;
     public double velocitySetpointRPM = 0;
@@ -14,9 +14,11 @@ public interface ClimberFeederIO {
     public double positionRad;
   }
 
-  public default void updateInputs(FeederIOInputs inputs) {}
+  public default void updateInputs(WinchIOInputs inputs) {}
 
-  public default void setVelocityRPS(double velocityRPS, double ffVolts) {}
+  public default void setVelocityRPM(double velocityRPS, double ffVolts) {}
+
+  public default void setVoltage(double volts) {}
 
   public default void stop() {}
 

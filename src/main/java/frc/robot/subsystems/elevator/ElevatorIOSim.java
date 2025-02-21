@@ -18,7 +18,7 @@ public class ElevatorIOSim implements ElevatorIO {
   private int gearBoxMotorCount = 2;
   private int gearing = 12;
   private double carriageMassKg = Units.lbsToKilograms(7);
-  private double drumRadiusMeters = 0.03;
+  private double drumRadiusMeters = 0.01;
   private double minHeightMeters = 0;
   private double maxHeightMeters = 1.9;
   private boolean simulateGravity = true;
@@ -87,7 +87,8 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   @Override
-  public void configurePID(double kP, double kI, double kD) {
+  public void configurePIDF(
+      double kP, double kI, double kD, double kS, double kG, double kV, double kA) {
     pid.setPID(kP, kI, kD);
   }
 

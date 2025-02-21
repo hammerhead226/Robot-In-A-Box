@@ -36,7 +36,7 @@ public final class SubsystemConstants {
     public static final double EXTEND_SETPOINT_INCH = 0;
     public static final double DEFAULT_THRESHOLD = 0.1;
 
-    public static final double ELEVATOR_GEAR_RATIO = 1;
+    public static final double ELEVATOR_GEAR_RATIO = 12;
     public static final double SCORING_SETPOINT_POS = 0.3;
     public static final double INTAKE_SETPOINT_INCHES = 0.9;
     public static final double PROCESSOR_SETPOINT_INCHES = 0;
@@ -54,7 +54,7 @@ public final class SubsystemConstants {
     public static final double STOW_SETPOINT_DEG = 0;
   }
 
-  @Deprecated
+  // @Deprecated
   public static final class ArmConstants {
     public static final double CURRENT_LIMIT = 35.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
@@ -178,23 +178,18 @@ public final class SubsystemConstants {
   public static final double CORAL_DIST = -1234; // 1300; // CHANGE THIS
 
   public static class CoralScorerConstants {
-    public static final double DEFAULT_THRESHOLD = 1;
-    public static final double ARM_GEAR_RATIO = 1;
-    public static final double ARM_VELOCITY_DEGPERSEC = 10;
-    public static final double DEFAULT_VOLTS = 0;
-    public static final double CURRENT_LIMIT_AMPS = 35.0;
-    public static final boolean CURRENT_LIMIT_ENABLED = true;
+    public static class CoralScorerArmConstants {
+      public static final double CURRENT_LIMIT = 35.0;
+      public static final boolean CURRENT_LIMIT_ENABLED = true;
 
-<<<<<<< HEAD
-    public static class CoralScorerDefinedPositions {
-      public static final double INTAKE_SETPOINT_DEG = 0;
-=======
+      public static final double DEFAULT_THRESHOLD = 1;
+      public static final double ARM_GEAR_RATIO = 21;
+
       public static final double INTAKE_SETPOINT_DEG = 32;
 
       public static final double ARM_VELOCITY_DEGPERSEC = 10;
       public static final double DEFAULT_VOLTS = 0;
 
->>>>>>> refactor-autons
       public static final double ARM_ZERO_ANGLE = 0;
       public static final double STOW_SETPOINT_DEG = 50;
       public static final double SCORING_SETPOINT_DEG = 15;

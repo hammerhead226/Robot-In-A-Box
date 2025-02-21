@@ -26,4 +26,7 @@ public interface ClimberArmIO {
   public default void stop() {}
 
   public default void configurePID(double kP, double kI, double kD) {}
+
+  public default void zeroPosition() {}
+  ;
 }

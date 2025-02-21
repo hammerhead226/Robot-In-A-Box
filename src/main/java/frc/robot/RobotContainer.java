@@ -1,24 +1,8 @@
-// Copyright 2021-2025 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeFromSourceParallel;
@@ -65,17 +48,17 @@ import frc.robot.subsystems.climber.ClimberFeeder;
 import frc.robot.subsystems.climber.ClimberFeederIOSim;
 import frc.robot.subsystems.climber.ClimberFeederIOTalonFX;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
+import frc.robot.subsystems.climber.Winch;
+import frc.robot.subsystems.climber.WinchIO;
+import frc.robot.subsystems.climber.WinchIOSim;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
-import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.coralscorer.CoralSensorIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
@@ -112,30 +95,31 @@ public class RobotContainer {
   private final SendableChooser autos;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
-  private final Joystick joystikc = new Joystick(0);
-  private final JoystickButton btn = new JoystickButton(joystikc, 4);
-  private final KeyboardInputs keyboard = new KeyboardInputs(0);
-
-  private final CoralScorerArm csArm;
-  // private final CoralScorerFlywheel coralIntake;
-
-  private final Elevator elevator;
-  private final AlgaeIntakeArm algaeArm;
-  private final Vision vision;
-  final SuperStructure superStructure;
-  public final Trigger elevatorBrakeTrigger;
-  // private final Trigger stateTrigger;
-  private final ClimberArm clArm;
-  private final ClimberFeeder clFeeder;
-  private final ClimbStateMachine climbStateMachine;
-  // private final ObjectDetection objectDetection;
-  // private final ObjectDetectionConsumer odConsumer;
-  // private final ObjectDetectionIO odIO;
-
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final CommandXboxController manipController = new CommandXboxController(1);
-  private final CoralScorerFlywheel csFlywheel;
+  //   private final Joystick joystikc = new Joystick(0);
+  //   private final JoystickButton btn = new JoystickButton(joystikc, 4);
+  //   private final KeyboardInputs keyboard = new KeyboardInputs(0);
+
+  private CoralScorerArm csArm;
+  // private final CoralScorerFlywheel coralIntake;
+
+  public static Elevator elevator;
+  public ClimberArm climberArm;
+  private Vision vision;
+  SuperStructure superStructure;
+  private final Winch winch;
+
+  // public final Trigger elevatorBrakeTrigger;
+  //   private final Trigger stateTrigger;
+  // private final Trigger slowModeTrigger;
+  private CoralScorerFlywheel csFlywheel;
+
+  private final Command superStructureCommands;
+
+  private SuperStructureState stateSelect() {
+    return superStructure.getWantedState();
+  }
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -151,15 +135,46 @@ public class RobotContainer {
     switch (SimConstants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
+        // drive =
+        //     new Drive(
+        //         new GyroIOPigeon2(),
+        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
+        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
+        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
+        //         new ModuleIOTalonFX(TunerConstants.BackRight));
+
+        //  csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
+
+        // vision =
+        //     new Vision(
+        //         drive.getToPoseEstimatorConsumer(),
+        //         new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+        //         new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+        //         new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+        //         new VisionIOPhotonVision("photon", new Transform3d()));
+        // TODO change lead, follower, gyro IDs, etc.
+        // elevator = new Elevator(new ElevatorIOTalonFX(8, 9, 0));
+        elevator = new Elevator(new ElevatorIOSim());
+        // winch = new Winch(new WinchIOTalonFX(12, 13));
+        winch = new Winch(new WinchIOSim());
+        // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
+        // csFlywheel =
+        //     new CoralScorerFlywheel(
+        //         new CoralScorerFlywheelIOSim(),
+        //         new CoralSensorIO() {},
+        //         CoralState.DEFAULT,
+        //         AlgaeState.DEFAULT);
+        // led = new LED(new LED_IOCANdle(0, ""));
+        // superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         drive =
             new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+                new GyroIO() {},
+                new ModuleIOSim(TunerConstants.FrontLeft),
+                new ModuleIOSim(TunerConstants.FrontRight),
+                new ModuleIOSim(TunerConstants.BackLeft),
+                new ModuleIOSim(TunerConstants.BackRight));
 
-        csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
+        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
 
         vision =
             new Vision(
@@ -168,16 +183,16 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
-        // TODO change lead, follower, gyro IDs, etc.
-        elevator = new Elevator(new ElevatorIOTalonFX(0, 0));
-        algaeArm = new AlgaeIntakeArm(new AlgaeIntakeArmIOTalonFX(0, 0, 0));
+
+        climberArm = new ClimberArm(new ClimberArmIOTalonFX(14, 5));
+
         csFlywheel =
             new CoralScorerFlywheel(
                 new FlywheelIOTalonFX(),
                 new CoralSensorIO() {},
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
-        led = new LED(new LED_IOCANdle(0, ""));
+        led = new LED(new LED_IOCANdle(0, "CAN Bus 2"));
         superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         clArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
         clFeeder = new ClimberFeeder(new ClimberFeederIOTalonFX(0, 0));
@@ -198,7 +213,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
 
         csArm = new CoralScorerArm(new CoralScorerArmIOSim());
-
+        winch = new Winch(new WinchIOSim());
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
@@ -251,50 +266,65 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
-        clArm = new ClimberArm(new ClimberArmIOSim());
-        clFeeder = new ClimberFeeder(new ClimberFeederIOSim());
-        // objectDetection = new ObjectDetection(new ObjectDetectionConsumer() {}, new
-        // ObjectDetectionIO() {});
+        winch = new Winch(new WinchIO() {});
         superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         break;
     }
 
-    climbStateMachine = new ClimbStateMachine(clArm);
+    superStructureCommands =
+        new SelectCommand<>(
+            Map.ofEntries(
+                Map.entry(SuperStructureState.STOW, superStructure.getSuperStructureCommand()),
+                Map.entry(SuperStructureState.L1, superStructure.getSuperStructureCommand()),
+                Map.entry(SuperStructureState.L2, superStructure.getSuperStructureCommand()),
+                Map.entry(SuperStructureState.L3, superStructure.getSuperStructureCommand()),
+                Map.entry(SuperStructureState.L4, superStructure.getSuperStructureCommand()),
+                Map.entry(SuperStructureState.SOURCE, superStructure.getSuperStructureCommand()),
+                Map.entry(
+                    SuperStructureState.SCORING_CORAL, superStructure.getSuperStructureCommand()),
+                Map.entry(
+                    SuperStructureState.CLIMB_STAGE_ONE, superStructure.getSuperStructureCommand()),
+                Map.entry(
+                    SuperStructureState.CLIMB_STAGE_TWO,
+                    superStructure.getSuperStructureCommand())),
+            () -> superStructure.getWantedState());
+    // Set up auto routines
+    // NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
 
-
-    NamedCommands.registerCommand(
-        "L1",
-        new SequentialCommandGroup(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)),
-            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    NamedCommands.registerCommand(
-        "L2",
-        new SequentialCommandGroup(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)),
-            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    NamedCommands.registerCommand(
-        "L3",
-        new SequentialCommandGroup(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)),
-            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    NamedCommands.registerCommand(
-        "L4",
-        new SequentialCommandGroup(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)),
-            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    NamedCommands.registerCommand(
-        "STOW ", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
-    NamedCommands.registerCommand(
-        "SCORE",
-        new SequentialCommandGroup(
-            new InstantCommand(
-                () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
-            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    NamedCommands.registerCommand(
-        "INTAKE",
-        new SequentialCommandGroup(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)),
-            new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
+    // NamedCommands.registerCommand(
+    //     "L1",
+    //     new SequentialCommandGroup(
+    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)),
+    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
+    // NamedCommands.registerCommand(
+    //     "L2",
+    //     new SequentialCommandGroup(
+    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)),
+    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
+    // NamedCommands.registerCommand(
+    //     "L3",
+    //     new SequentialCommandGroup(
+    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)),
+    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
+    // NamedCommands.registerCommand(
+    //     "L4",
+    //     new SequentialCommandGroup(
+    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)),
+    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
+    // NamedCommands.registerCommand(
+    //     "STOW ", new InstantCommand(() ->
+    // superStructure.setWantedState(SuperStructureState.STOW)));
+    // NamedCommands.registerCommand(
+    //     "SCORE",
+    //     new SequentialCommandGroup(
+    //         new InstantCommand(
+    //             () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
+    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
+    // NamedCommands.registerCommand(
+    //     "INTAKE",
+    //     new SequentialCommandGroup(
+    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)),
+    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -417,10 +447,12 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
     // Configure the button bindings
     // configureButtonBindings();
-    // stateTrigger = new Trigger(() -> superStructure.shouldTrigger());
-    elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
-
-    configureButtonBindings();
+    // stateTrigger = new Trigger(() -> superStructure.changedStated());
+    // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
+    // slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+    // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+    // configureButtonBindings();
+    test();
   }
 
   /**
@@ -429,28 +461,66 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-
   private void test() {
-    // keyboard.getCButton().whileTrue(new AlignToCage(drive));
-    keyboard
-        .getXButton()
-        .onTrue(new ReleaseClawParallel(ReefHeight.L2, elevator, csArm, csFlywheel));
-    keyboard
-        .getZButton()
-        .onTrue(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm, csFlywheel));
+    // driveController.b().onTrue(elevator.setElevatorTarget(20, 1));
+    // driveController.b().onFalse(elevator.setElevatorTarget(0, 1));
+    //     driveController.a().onTrue(led.setStateCommand(LED_STATE.BLUE));
+    //     driveController.y().onTrue(led.setStateCommand(LED_STATE.GREEN));
+    //     driveController.x().onTrue(led.setStateCommand(LED_STATE.FIRE));
+    // driveController.a().onTrue(winch.runVoltsCommmand(1));
+    // driveController.a().onFalse(new InstantCommand(() -> winch.stop(), winch));
+    // driveController.b().onTrue(climberArm.setArmTarget(20, 1));
+    // driveController.b().onTrue(climberArm.setArmTarget(0, 1));
 
-    keyboard
-        .getXButton()
-        .whileFalse(new ReleaseClawParallel(ReefHeight.L2, elevator, csArm, csFlywheel));
-    keyboard
-        .getZButton()
-        .whileFalse(new ReleaseClawParallel(ReefHeight.L1, elevator, csArm, csFlywheel));
+    driveController.a().onTrue(climberArm.setArmTarget(90, 1));
+    driveController.b().onTrue(climberArm.setArmTarget(0, 1));
+    driveController.y().onTrue(climberArm.zero());
+    // driveController.b().onTrue(new InstantCommand(() -> climberArm.armStop(), climberArm));
+    // driveController
+    //     .b()
+    //     .onTrue(
+    //         new ParallelCommandGroup(
+    //             winch.runVoltsCommmand(2).until(() -> climberArm.getArmPositionDegs() == 130),
+    //             climberArm.setArmTarget(130, 1)));
+    // driveController
+    //     .b()
+    //     .onFalse(
+    //         new ParallelCommandGroup(
+    //             new InstantCommand(() -> winch.stop(), winch),
+    //             new InstantCommand(() -> climberArm.armStop(), climberArm)));
   }
 
   private void configureButtonBindings() {
 
-    // controller.a().onTrue(new Stow(csArm, elevator));
+    // speedTrigger.onTrue(
+    //     new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+    //         .andThen(superStructure.getSuperStructureCommand()));
+    // keyboard.getCButton().whileTrue(new AlignToCage(drive));
+    // keyboard
+    //     .getXButton()
+    //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L2));
+    // keyboard
+    //     .getZButton()
+    //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
+    // stateTrigger.onTrue(superStructure.getSuperStructureCommand());
+    //    slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(false)));
+    //  slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
+
     // Default command, normal field-relative drive
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -driveController.getLeftY(),
+    //         () -> -driveController.getLeftX(),
+    //         () -> -driveController.getRightX(),
+    //         // () -> driveController.a().getAsBoolean(),
+    //         () -> driveController.leftBumper().getAsBoolean(),
+    //         () -> driveController.leftTrigger().getAsBoolean(),
+    //         () -> driveController.rightTrigger().getAsBoolean(),
+    //         () -> driveController.rightBumper().getAsBoolean(),
+    //         () -> driveController.b().getAsBoolean(),
+    //         () -> driveController.x().getAsBoolean()));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -465,25 +535,47 @@ public class RobotContainer {
             () -> driveController.x().getAsBoolean()));
 
     // driveController.x().onTrue(new Stow(elevator, csArm));
-    elevatorBrakeTrigger.onTrue(new InstantCommand(() -> elevator.breakMode(true), elevator));
-    elevatorBrakeTrigger.onFalse(new InstantCommand(() -> elevator.breakMode(false)));
 
-    driveController
-        .y()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
-    // driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
+    // driveController
+    //     .a()
+    //     .onFalse(
+    //         new ConditionalCommand(
+    //             new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
+    //             new InstantCommand(),
+    //             () -> (!drive.isNearReef() && drive.isAtReefSide())));
     driveController
         .a()
         .onTrue(
-            new InstantCommand(
-                () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
-        .leftBumper()
-        .onFalse(
             new ConditionalCommand(
-                new ApproachReefPerpendicular(drive).withTimeout(2),
+                new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
                 new InstantCommand(),
-                () -> (!drive.isNearReef() && drive.isAtReefSide())));
+                () -> (!drive.isNearReef() && drive.isAtReefSide() && drive.isAtReefRotation())));
 
+    // driveController.x().onTrue(new Stow(elevator, csArm));
+    //   elevatorBrakeTrigger.onTrue(new InstantCommand(() -> elevator.breakMode(true), elevator));
+    //  elevatorBrakeTrigger.onFalse(new InstantCommand(() -> elevator.breakMode(false)));
+
+    // keyboard
+    //     .getVButton()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    // driveController.y().onFalse(new InstantCommand(() -> csFlywheel.stop(), csFlywheel));
+    driveController
+        .y()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    driveController
+        .a()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+    driveController
+        .x()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+    driveController.b().onTrue(superStructureCommands);
+    // driveController
+    //     .a()
+    //     .onFalse(
+    //         new InstantCommand(
+    //             () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
+
+    // stateTrigger.onTrue(superStructure.getSuperStructureCommand());
     // driveController.a().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
     // driveController
     //     .rightBumper()
@@ -700,6 +792,7 @@ public class RobotContainer {
         .b()
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
+    manipController.leftBumper().onTrue(superStructure.getSuperStructureCommand());
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm,
     // elevator));
