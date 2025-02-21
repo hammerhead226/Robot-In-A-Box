@@ -7,6 +7,7 @@ public final class BuildConstants {
   public static final String VERSION = "unspecified";
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   public static final int GIT_REVISION = 142;
   public static final String GIT_SHA = "de97e6ee6911bd5fce491831e0c5c5368d6770c0";
   public static final String GIT_DATE = "2025-02-05 20:24:46 EST";
@@ -21,6 +22,14 @@ public final class BuildConstants {
   public static final String GIT_BRANCH = "refactor-autons";
   public static final String BUILD_DATE = "2025-02-19 21:54:48 EST";
   public static final long BUILD_UNIX_TIME = 1740020088852L;
+=======
+  public static final int GIT_REVISION = 154;
+  public static final String GIT_SHA = "5a4068d8676fc131bfeb51e8938848d54e80ed1e";
+  public static final String GIT_DATE = "2025-02-13 18:42:13 EST";
+  public static final String GIT_BRANCH = "drive-command-refactor";
+  public static final String BUILD_DATE = "2025-02-17 18:11:28 EST";
+  public static final long BUILD_UNIX_TIME = 1739833888136L;
+>>>>>>> drive-command-refactor
   public static final int DIRTY = 128;
 >>>>>>> refactor-autons
 =======

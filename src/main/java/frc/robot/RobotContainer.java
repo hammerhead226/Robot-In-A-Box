@@ -33,6 +33,13 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.AutoAlignToSource;
 import frc.robot.commands.AutoPickupCoral;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AlignToReefAuto;
+import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeFromSourceParallel;
 import frc.robot.commands.IntakingAlgaeParallel;
@@ -424,6 +431,7 @@ public class RobotContainer {
    */
 
   private void test() {
+    // keyboard.getCButton().whileTrue(new AlignToCage(drive));
     keyboard
         .getXButton()
         .onTrue(new ReleaseClawParallel(ReefHeight.L2, elevator, csArm, csFlywheel));
@@ -469,6 +477,12 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(
                 () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)));
+        .leftBumper()
+        .onFalse(
+            new ConditionalCommand(
+                new ApproachReefPerpendicular(drive).withTimeout(2),
+                new InstantCommand(),
+                () -> (!drive.isNearReef() && drive.isAtReefSide())));
 
     // driveController.a().onFalse(new SetClawLevel(ElevatorState.STOW, elevator, csArm));
     // driveController
@@ -536,8 +550,6 @@ public class RobotContainer {
     // Drive Controller - Align Commands go in Drive
     driveController.b().onTrue((new ReleaseAlgae(csFlywheel)));
     driveController.b().onFalse(new InstantCommand(() -> csFlywheel.runVolts(0)));
-
-    driveController.y().onTrue(climbCommands);
 
     // Manip Controller
     manipController.rightTrigger().onTrue(new Stow(elevator, csArm));
