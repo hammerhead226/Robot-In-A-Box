@@ -67,10 +67,11 @@ public final class SubsystemConstants {
   }
 
   public static class LEDConstants {
-    public static final double COLOR_BLUE = 0.87;
-    public static final double COLOR_RED = 0.61;
-    public static final double COLOR_YELLOW = 0.66;
-    public static final double COLOR_VIOLET = 0.91;
+    public static final int NUMBER_LEDS = 57 + 24 + 13;
+    // public static final double COLOR_BLUE = 0.87;
+    // public static final double COLOR_RED = 0.61;
+    // public static final double COLOR_YELLOW = 0.66;
+    // public static final double COLOR_VIOLET = 0.91;
   }
 
   public static enum LED_STATE {
@@ -155,7 +156,7 @@ public final class SubsystemConstants {
   }
 
   public static enum SuperStructureState {
-    NONE,
+    // NONE,
     STOW,
     SOURCE,
     PROCESSOR,
@@ -166,13 +167,10 @@ public final class SubsystemConstants {
     CLIMB_STAGE_ONE,
     CLIMB_STAGE_TWO,
     HANG,
-    L1ATGOAL,
-    //  L2ATGOAL,
-    //   L3ATGOAL,
-    //  L4ATGOAL,
-    DEFAULT,
+    // DEFAULT,
     SCORING_CORAL,
-    READY_FOR_SCORE_REEF
+    INTAKE_ALGAE
+    // READY_FOR_SCORE_REEF
   }
 
   public static final double CORAL_DIST = -1234; // 1300; // CHANGE THIS
@@ -183,7 +181,7 @@ public final class SubsystemConstants {
       public static final boolean CURRENT_LIMIT_ENABLED = true;
 
       public static final double DEFAULT_THRESHOLD = 1;
-      public static final double ARM_GEAR_RATIO = 21;
+      public static final double ARM_GEAR_RATIO = (25 / 1) / (12 / 25);
 
       public static final double INTAKE_SETPOINT_DEG = 32;
 

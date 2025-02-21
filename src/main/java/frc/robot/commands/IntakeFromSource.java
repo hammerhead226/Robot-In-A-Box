@@ -54,10 +54,9 @@ public class IntakeFromSource extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    coralIntake.flywheelStop();
-    arm.setPositionDegs(
-        CoralScorerArmConstants.STOW_SETPOINT_DEG, CoralScorerArmConstants.ARM_VELOCITY_DEGPERSEC);
-    elevator.setElevatorTarget(0, ElevatorConstants.DEFAULT_THRESHOLD);
+    // coralIntake.stop();
+    arm.setArmGoal(CoralScorerArmConstants.STOW_SETPOINT_DEG);
+    elevator.setExtenderGoal(ElevatorConstants.RETRACT_SETPOINT_INCH);
   }
 
   // Returns true when the command should end.

@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface CoralSensorIO {
   @AutoLog
   public static class CoralSensorIOInputs {
-    public double distance = 0; // assuming distance or proximity sensor
+    public double distanceInches = 0; // assuming distance or proximity sensor
     public boolean connected = false;
   }
 
