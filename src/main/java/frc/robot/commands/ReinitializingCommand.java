@@ -21,7 +21,7 @@ public class ReinitializingCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    this.command = commandSupplier.get();
+    this.command = commandSupplier.get(); //is it this. or no this.
     command.initialize();
   }
 

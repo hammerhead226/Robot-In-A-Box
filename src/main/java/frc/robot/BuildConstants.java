@@ -10,6 +10,7 @@ public final class BuildConstants {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   public static final int GIT_REVISION = 142;
   public static final String GIT_SHA = "de97e6ee6911bd5fce491831e0c5c5368d6770c0";
   public static final String GIT_DATE = "2025-02-05 20:24:46 EST";
@@ -60,6 +61,15 @@ public final class BuildConstants {
   public static final long BUILD_UNIX_TIME = 1740099732403L;
   public static final int DIRTY = 128;
 >>>>>>> origin/climber-refactor
+=======
+  public static final int GIT_REVISION = 196;
+  public static final String GIT_SHA = "1ec2a7f29a01d8ecc257b3d27dd5b7ad8fbb19d0";
+  public static final String GIT_DATE = "2025-02-18 18:41:02 EST";
+  public static final String GIT_BRANCH = "superstruct-command";
+  public static final String BUILD_DATE = "2025-02-18 19:29:27 EST";
+  public static final long BUILD_UNIX_TIME = 1739924967747L;
+  public static final int DIRTY = 128;
+>>>>>>> superstruct-command
 
   private BuildConstants() {}
 }

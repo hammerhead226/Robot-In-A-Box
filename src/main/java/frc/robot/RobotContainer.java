@@ -118,6 +118,9 @@ public class RobotContainer {
   // public final Trigger elevatorBrakeTrigger;
   //   private final Trigger stateTrigger;
   // private final Trigger slowModeTrigger;
+
+  private final Trigger stateTrigger;
+
   private CoralScorerFlywheel csFlywheel;
 
   private final Command superStructureCommands;
@@ -459,7 +462,7 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
     // Configure the button bindings
     // configureButtonBindings();
-    // stateTrigger = new Trigger(() -> superStructure.changedStated());
+    stateTrigger = new Trigger(() -> superStructure.changedStated());
     // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
     // slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
@@ -601,9 +604,12 @@ public class RobotContainer {
     // keyboard
     //     .getZButton()
     //     .onTrue(new IntakingAlgaeParallel(elevator, csArm, csFlywheel, ReefHeight.L1));
-    // stateTrigger.onTrue(superStructure.getSuperStructureCommand());
-    //    slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(false)));
-    //  slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
+    // stateTrigger.onTrue(new ReinitializingCommand(
+    //     () -> superStructure.getSuperStructureCommand(),
+    //     elevator, csArm, csFlywheel, led
+    //     ));
+    slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
+    slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
     // Default command, normal field-relative drive
     // drive.setDefaultCommand(
@@ -871,6 +877,11 @@ public class RobotContainer {
     //    .getVButton()
     //    .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
 
+    manipController
+        .leftBumper()
+        .onTrue(
+            new ReinitializingCommand(
+                () -> superStructure.getSuperStructureCommand(), elevator, csArm, csFlywheel, led));
     // manipController.leftBumper().whileTrue(new AutoAlignToSource(drive, led));
     // manipController.leftBumper().onTrue(new IntakeFromSourceParallel(csFlywheel, csArm,
     // elevator));

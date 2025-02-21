@@ -74,7 +74,10 @@ public class SuperStructure {
     return currentState;
   }
 
-  // public boolean changedStated() {
+  public boolean changedStated() {
+    Logger.recordOutput("changedStated wanted state", getWantedState());
+    Logger.recordOutput("changedStated current state", getCurrentState());
+  }
 
   // return currentState != wantedState;
   // }
@@ -121,7 +124,8 @@ public class SuperStructure {
                 elevator.setElevatorTarget(0, 2),
                 csArm.setArmTarget(40, 2),
                 csFlywheel.stopCommand(),
-                led.setStateCommand(LED_STATE.BLUE)));
+                led.setStateCommand(LED_STATE.BLUE),
+                new InstantCommand(() -> System.out.println("the stow command has been run"))));
 
       case INTAKE_ALGAE:
         double height =
@@ -147,6 +151,9 @@ public class SuperStructure {
 
       case L1:
         currentState = SuperStructureState.L1;
+        if (elevator.atGoal() && csArm.atGoal(2)) {
+          // setWantedState(SuperStructureState.L1ATGOAL);
+        }
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L1.height, 0.1),
@@ -158,18 +165,27 @@ public class SuperStructure {
 
       case L2:
         currentState = SuperStructureState.L2;
+        if (elevator.atGoal() && csArm.atGoal(2)) {
+          // setWantedState(SuperStructureState.L1ATGOAL);
+        }
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)));
       case L3:
         currentState = SuperStructureState.L3;
+        if (elevator.atGoal() && csArm.atGoal(2)) {
+          // setWantedState(SuperStructureState.L1ATGOAL);
+        }
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
                 csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
       case L4:
         currentState = SuperStructureState.L4;
+        if (elevator.atGoal() && csArm.atGoal(2)) {
+          // setWantedState(SuperStructureState.L1ATGOAL);
+        }
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 0.1),
