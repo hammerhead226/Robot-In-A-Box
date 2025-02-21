@@ -243,10 +243,16 @@ public class DriveCommands {
                             targetPose.getRotation().getDegrees())),
                     -drive.getMaxAngularSpeedRadPerSec(),
                     drive.getMaxAngularSpeedRadPerSec());
-        
-            forwardsAssistEffort = superStructure.isTargetAReefState() ? (wantedForwardsVelocity - forwardSpeed) * speedDebuff : 0;
-            sidewaysAssistEffort = superStructure.isTargetAReefState() ? (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuff : 0;
-            
+
+            forwardsAssistEffort =
+                superStructure.isTargetAReefState()
+                    ? (wantedForwardsVelocity - forwardSpeed) * speedDebuff
+                    : 0;
+            sidewaysAssistEffort =
+                superStructure.isTargetAReefState()
+                    ? (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuff
+                    : 0;
+
             rotationAssistEffort = (wantedRotationVelocity - rotationSpeed) * speedDebuff;
 
           } else {

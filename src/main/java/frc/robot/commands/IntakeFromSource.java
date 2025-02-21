@@ -45,7 +45,7 @@ public class IntakeFromSource extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    coralIntake.stop();
+    // coralIntake.stop();
     arm.setArmGoal(CoralScorerArmConstants.STOW_SETPOINT_DEG);
     elevator.setExtenderGoal(ElevatorConstants.RETRACT_SETPOINT_INCH);
   }

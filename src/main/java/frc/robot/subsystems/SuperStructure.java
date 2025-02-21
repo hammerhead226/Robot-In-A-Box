@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
@@ -47,7 +49,8 @@ public class SuperStructure {
   }
 
   // public void setWantedStateForAlgaeIntake(Drive drive) {
-  //   wantedState = drive.getNearestParition(6) % 2 == 0 ? SuperStructureState.A2 : SuperStructureState.A1;
+  //   wantedState = drive.getNearestParition(6) % 2 == 0 ? SuperStructureState.A2 :
+  // SuperStructureState.A1;
   // }
 
   // public boolean isRobotTooFast() {
@@ -174,25 +177,34 @@ public class SuperStructure {
 
       case SOURCE:
         currentState = SuperStructureState.SOURCE;
-        if (csFlywheel.seesCoral() == CoralState.CURRENT
-            || csFlywheel.seesCoral() == CoralState.SENSOR) {
-          return new SequentialCommandGroup(
-              new WaitCommand(0.5),
-              new InstantCommand(() -> setWantedState(SuperStructureState.STOW)));
+        // if (csFlywheel.seesCoral() == CoralState.CURRENT
+        //     || csFlywheel.seesCoral() == CoralState.SENSOR) {
+        //   return new SequentialCommandGroup(
+        //       new WaitCommand(0.5),
+        //       new InstantCommand(() -> setWantedState(SuperStructureState.STOW)));
 
-        } else {
-          return new SequentialCommandGroup(
-              new ParallelCommandGroup(
-                  elevator.setElevatorTarget(1, 0.1),
-                  csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)),
-              csFlywheel.runVelocityCommand(200));
-        }
+        // } else {
+        return new SequentialCommandGroup(
+            new IntakeFromSource(csFlywheel, csArm, elevator),
+            new WaitCommand(0.5),
+            new InstantCommand(() -> csFlywheel.stop()));
+        // return new SequentialCommandGroup(
+        //     new ParallelCommandGroup(
+        //         elevator.setElevatorTarget(1, 0.1),
+        //         csArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)),
+        //     csFlywheel.runVelocityCommand(200).until(() -> csFlywheel.seesCoral() !=
+        // CoralState.NO_CORAL)).andThen(null);
+        // }
 
       case SCORING_CORAL:
         currentState = SuperStructureState.SCORING_CORAL;
         // if (csFlywheel.seesCoral() == CoralState.SENSOR
         // || csFlywheel.seesCoral() == CoralState.CURRENT) {
-        return new SequentialCommandGroup(csFlywheel.runVoltsCommmand(1));
+        return new SequentialCommandGroup(
+            csFlywheel.runVoltsCommmand(1),
+            new WaitUntilCommand(() -> csFlywheel.seesCoral() == CoralState.NO_CORAL),
+            new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)),
+            getSuperStructureCommand());
         // } else {
         //   return new SequentialCommandGroup(
         //       new WaitCommand(0.5),
