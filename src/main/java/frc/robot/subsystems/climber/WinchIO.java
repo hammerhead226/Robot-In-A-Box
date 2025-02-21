@@ -24,7 +24,5 @@ public interface WinchIO {
 
   public default void configurePID(double kP, double kI, double kD) {}
 
-  public default void setVoltage(double volts) {}
-
   public default void setVelocity(double velocityRadPerSec, double ffVolts) {}
 }

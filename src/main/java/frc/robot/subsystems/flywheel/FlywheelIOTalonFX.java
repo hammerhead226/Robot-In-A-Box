@@ -33,8 +33,8 @@ import frc.robot.subsystems.commoniolayers.FlywheelIO;
 public class FlywheelIOTalonFX implements FlywheelIO {
   private static final double GEAR_RATIO = 9;
 
-  private final TalonFX leader = new TalonFX(12, SubsystemConstants.CANBUS);
-  private final TalonFX follower = new TalonFX(13, SubsystemConstants.CANBUS);
+  private final TalonFX leader = new TalonFX(12, SubsystemConstants.CANIVORE_ID_STRING);
+  private final TalonFX follower = new TalonFX(13, SubsystemConstants.CANIVORE_ID_STRING);
 
   private final StatusSignal<Angle> leaderPosition = leader.getPosition();
   private final StatusSignal<AngularVelocity> leaderVelocity = leader.getVelocity();

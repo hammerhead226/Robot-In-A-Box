@@ -162,6 +162,9 @@ public class FieldConstants {
     L2(31.875, -35),
     L1(18, 0);
 
+    public double height;
+    public double pitch;
+
     ReefHeight(double height, double pitch) {
       this.height = height;
       this.pitch = pitch; // in degrees

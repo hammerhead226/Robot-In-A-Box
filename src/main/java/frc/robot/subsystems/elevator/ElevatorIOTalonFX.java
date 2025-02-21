@@ -41,9 +41,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    leader = new TalonFX(lead, SubsystemConstants.CANBUS);
-    follower = new TalonFX(follow, SubsystemConstants.CANBUS);
-    distanceSensor = new CANrange(canRangeID, SubsystemConstants.CANBUS);
+    leader = new TalonFX(lead, SubsystemConstants.CANIVORE_ID_STRING);
+    follower = new TalonFX(follow, SubsystemConstants.CANIVORE_ID_STRING);
+    distanceSensor = new CANrange(canRangeID, SubsystemConstants.CANIVORE_ID_STRING);
 
     leader.getConfigurator().apply(config);
 

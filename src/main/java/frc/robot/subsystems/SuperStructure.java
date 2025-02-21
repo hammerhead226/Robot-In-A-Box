@@ -74,11 +74,6 @@ public class SuperStructure {
     return currentState;
   }
 
-  public boolean changedStated() {
-    Logger.recordOutput("changedStated wanted state", getWantedState());
-    Logger.recordOutput("changedStated current state", getCurrentState());
-  }
-
   // return currentState != wantedState;
   // }
 
@@ -201,7 +196,7 @@ public class SuperStructure {
 
         // } else {
         return new SequentialCommandGroup(
-            new IntakeFromSource(csFlywheel, csArm, elevator),
+            new IntakeFromSource(csFlywheel, csArm, elevator, led),
             new WaitCommand(0.5),
             new InstantCommand(() -> csFlywheel.stop()));
         // return new SequentialCommandGroup(

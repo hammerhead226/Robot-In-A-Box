@@ -33,7 +33,7 @@ public class AlgaeIntakeFeederIOTalonFX implements AlgaeIntakeFeederIO {
         SubsystemConstants.CoralScorerConstants.AlgaeScorerFlywheelConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    feeder = new TalonFX(id, SubsystemConstants.CANBUS);
+    feeder = new TalonFX(id, SubsystemConstants.CANIVORE_ID_STRING);
 
     feeder.getConfigurator().apply(config);
 

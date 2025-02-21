@@ -6,12 +6,6 @@ import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.elevator.Elevator;
 
 public class SetClawLevel extends ParallelCommandGroup {
-<<<<<<< HEAD
-  public SetClawLevel(ReefHeight scoringLevel, Elevator elevator, CoralScorerArm pivot) {
-    addCommands(
-        elevator.setElevatorTarget(scoringLevel.height, 0.5),
-        pivot.setArmTarget(scoringLevel.pitch, 1));
-=======
   private final Elevator elevator;
   private final CoralScorerArm pivot;
   private final ElevatorState scoringLevel;
@@ -21,6 +15,5 @@ public class SetClawLevel extends ParallelCommandGroup {
     this.elevator = elevator;
     this.scoringLevel = scoringLevel;
     addCommands(pivot.setArmTarget(50, 1));
->>>>>>> refactor-autons
   }
 }

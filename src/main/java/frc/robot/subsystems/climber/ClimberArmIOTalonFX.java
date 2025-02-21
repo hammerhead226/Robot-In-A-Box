@@ -58,8 +58,8 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
     config.Feedback.SensorToMechanismRatio = 1.0;
     config.Feedback.RotorToSensorRatio = CLIMBER_ARM_GEAR_RATIO;
 
-    leader = new TalonFX(leadID, SubsystemConstants.CANBUS);
-    climbCoder = new CANcoder(canCoderID, SubsystemConstants.CANBUS);
+    leader = new TalonFX(leadID, SubsystemConstants.CANIVORE_ID_STRING);
+    climbCoder = new CANcoder(canCoderID, SubsystemConstants.CANIVORE_ID_STRING);
     leader.getConfigurator().apply(config);
     climbCoder.getConfigurator().apply(coderConfig);
 
