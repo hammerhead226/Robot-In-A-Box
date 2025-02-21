@@ -89,8 +89,8 @@ public class CoralScorerArm extends SubsystemBase {
 
     measuredVisualizer = new PivotVis("measured", Color.kRed);
     // CHANGE PER ARM
-    maxVelocityDegPerSec = 90;
-    maxAccelerationDegPerSecSquared = 180;
+    maxVelocityDegPerSec = 9; // was at 90
+    maxAccelerationDegPerSecSquared = 18; // was at 190
     // maxAccelerationDegPerSecSquared = 180;
 
     armConstraints =

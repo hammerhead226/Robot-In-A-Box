@@ -52,7 +52,7 @@ public class ClimberArm extends SubsystemBase {
       case SIM:
         kG.initDefault(0.29);
         kV.initDefault(1);
-        kP.initDefault(1.123);
+        kP.initDefault(20);
         break;
       default:
         kG.initDefault(0.29);
