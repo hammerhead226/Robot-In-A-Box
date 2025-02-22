@@ -38,9 +38,7 @@ public class IntakeFromSource extends Command {
   @Override
   public void initialize() {
     elevator.setElevatorTarget(2, ElevatorConstants.DEFAULT_THRESHOLD);
-    arm.setPositionDegs(
-        CoralScorerArmConstants.INTAKE_SETPOINT_DEG,
-        CoralScorerArmConstants.ARM_VELOCITY_DEGPERSEC);
+    arm.setArmGoal(CoralScorerArmConstants.INTAKE_SETPOINT_DEG);
     coralIntake.runVelocity(CoralScorerFlywheelConstants.FLYWHEEL_VELOCITY_DEGPERSEC);
   }
 

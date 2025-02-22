@@ -24,6 +24,7 @@ public class ApproachReefPerpendicular extends Command {
   private final Drive drive;
   private final SuperStructure superStructure;
   Command pathCommand;
+  Pose2d targetPose = new Pose2d();
   /** Creates a new ApproachReefPerpendicular. */
   public ApproachReefPerpendicular(Drive drive, SuperStructure superStructure) {
     this.drive = drive;
@@ -35,7 +36,7 @@ public class ApproachReefPerpendicular extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Pose2d targetPose =
+    targetPose =
         DriveCommands.rotateAndNudge(
             drive.getLastReefFieldPose(), new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
     // new Pose2d(

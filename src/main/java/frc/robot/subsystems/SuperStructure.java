@@ -4,8 +4,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.IntakeFromSource;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.IntakeFromSourceParallel;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
@@ -177,7 +179,7 @@ public class SuperStructure {
                 csArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
       case L4:
         currentState = SuperStructureState.L4;
-        if (elevator.atGoal() && csArm.atGoal(2)) {
+        if (elevator.atGoal() && csArm.atGoal(5)) {
           // setWantedState(SuperStructureState.L1ATGOAL);
         }
         return new SequentialCommandGroup(
@@ -195,7 +197,7 @@ public class SuperStructure {
 
         // } else {
         return new SequentialCommandGroup(
-            new IntakeFromSource(csFlywheel, csArm, elevator, led),
+            new IntakeFromSourceParallel(csFlywheel, csArm, elevator),
             new WaitCommand(0.5),
             new InstantCommand(() -> csFlywheel.stop()));
         // return new SequentialCommandGroup(
@@ -211,7 +213,7 @@ public class SuperStructure {
 
         return new SequentialCommandGroup(
             csFlywheel.runVoltsCommmand(1),
-            // new WaitUntilCommand(() -> csFlywheel.seesCoral() == CoralState.NO_CORAL),
+            new WaitUntilCommand(() -> csFlywheel.seesCoral() == CoralState.NO_CORAL),
             new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
       default:
         return new SequentialCommandGroup(
@@ -240,6 +242,7 @@ public class SuperStructure {
       case HANG:
         setWantedState(SuperStructureState.CLIMB_STAGE_ONE);
         break;
+
       default:
         break;
     }

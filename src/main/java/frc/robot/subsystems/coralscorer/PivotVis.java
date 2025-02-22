@@ -1,5 +1,6 @@
 package frc.robot.subsystems.coralscorer;
 
+import edu.wpi.first.math.util.Units;
 // import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -35,7 +36,7 @@ public class PivotVis {
   }
 
   public void updateVertical(double position) {
-    root.setPosition(50.1, position);
+    root.setPosition(50.1, Units.inchesToMeters(position));
     Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
   }
 

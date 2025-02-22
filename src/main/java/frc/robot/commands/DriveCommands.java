@@ -149,9 +149,9 @@ public class DriveCommands {
           double speedDebuff = 0.5;
 
           targetPose = null;
-          if (alignAssistSupplier.getAsBoolean() && superStructure.isTargetAReefState()) {
+          if (alignAssistSupplier.getAsBoolean()) {
             Translation2d reefTranslation =
-                drive.isNearReef() ? new Translation2d(-0.5, 0) : new Translation2d(-1.3, 0);
+                drive.isNearReef() ? new Translation2d(-0.3, -0.3) : new Translation2d(-0.3, -0.3);
 
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
