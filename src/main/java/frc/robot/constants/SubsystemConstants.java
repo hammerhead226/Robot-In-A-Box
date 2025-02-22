@@ -59,7 +59,7 @@ public final class SubsystemConstants {
       public static final boolean CURRENT_LIMIT_ENABLED = true;
 
       public static final double DEFAULT_THRESHOLD = 1;
-      public static final double ARM_GEAR_RATIO = (25.0 / 1) / (12 / 25);
+      public static final double ARM_GEAR_RATIO = (25.0 / 1) / (14.0 / 32);
 
       public static final double INTAKE_SETPOINT_DEG = 32;
 

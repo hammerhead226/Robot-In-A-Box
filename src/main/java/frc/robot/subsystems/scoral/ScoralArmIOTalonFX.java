@@ -19,7 +19,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.ArmIO;
-import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 
 public class ScoralArmIOTalonFX implements ArmIO {
@@ -29,7 +28,7 @@ public class ScoralArmIOTalonFX implements ArmIO {
 
   private double startAngleDegs;
 
-  private final StatusSignal<Angle> leaderPositionRotations;
+  private StatusSignal<Angle> leaderPositionRotations;
   private final StatusSignal<AngularVelocity> velocityDegsPerSec;
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> currentAmps;
@@ -37,32 +36,39 @@ public class ScoralArmIOTalonFX implements ArmIO {
   public ScoralArmIOTalonFX(int leadID, int canCoderID) {
     CANcoderConfiguration coderConfig = new CANcoderConfiguration();
     // change?
-    coderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    coderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     // OFFSET IS IN ROTATIONS
-    coderConfig.MagnetSensor.withMagnetOffset(Units.degreesToRotations(58));
+    // coderConfig.MagnetSensor.withMagnetOffset(Units.degreesToRotations(58));
 
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit =
         SubsystemConstants.CoralScorerConstants.ScoralArmConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
         SubsystemConstants.CoralScorerConstants.ScoralArmConstants.CURRENT_LIMIT_ENABLED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    config.Feedback.FeedbackRemoteSensorID = canCoderID;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    // config.Feedback.FeedbackRemoteSensorID = canCoderID;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     // config.Feedback.SensorToMechanismRatio = 1;
+    config.Feedback.SensorToMechanismRatio = 1;
+    // SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO;
     // config.Feedback.RotorToSensorRatio =
-    //     SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_GEAR_RATIO;
+    //     SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO;
     leader = new TalonFX(leadID);
     scoralCoder = new CANcoder(canCoderID);
 
     leader.getConfigurator().apply(config);
     scoralCoder.getConfigurator().apply(coderConfig);
-
     leader.setPosition(
-        Conversions.degreesToFalcon(
-            startAngleDegs,
-            SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO));
+        (scoralCoder.getAbsolutePosition().getValueAsDouble() - Units.degreesToRotations(57 - 12))
+            * SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO);
+    // leader.setPosition(1 * 360.);
+    // leader.setPosition(
+    //     Units.degreesToRotations(scoralCoder.getAbsolutePosition().getValueAsDouble())
+    //         / SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO);
+    // Conversions.degreesToFalcon(
+    //     Units.rotationsToDegrees(scoralCoder.getAbsolutePosition().getValueAsDouble()),
+    //     SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO));
 
     leaderPositionRotations = leader.getPosition();
     velocityDegsPerSec = leader.getVelocity();
@@ -88,10 +94,23 @@ public class ScoralArmIOTalonFX implements ArmIO {
   public void updateInputs(ArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         leaderPositionRotations, velocityDegsPerSec, appliedVolts, currentAmps);
-
-    // inputs.positionDegs =
-    //     Conversions.falconToDegrees(scoralCoder.getAbsolutePosition().getValueAsDouble(), 1);
-    inputs.positionDegs = Units.rotationsToDegrees(leaderPositionRotations.getValueAsDouble());
+    Logger.recordOutput("scoral arm motor rotations", leaderPositionRotations.getValueAsDouble());
+    Logger.recordOutput(
+        "scoral arm motor setpoint",
+        Units.degreesToRotations(this.positionSetpointDegs)
+            * SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO);
+    inputs.positionDegs =
+        Units.rotationsToDegrees(leaderPositionRotations.getValueAsDouble())
+            / SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO;
+    // inputs.positionDegs = Units.rotationsToDegrees(leaderPositionRotations.getValueAsDouble());
+    // * 360.
+    // / SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO;
+    // * 360.
+    // / SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO;
+    // Units.rotationsToDegrees(
+    //     leaderPositionRotations.getValueAsDouble()
+    //         / SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO);
+    // / SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO;
     // inputs.positionDegs =
     //     Conversions.falconToDegrees(
     //             (leaderPositionDegs.getValueAsDouble()),
@@ -104,7 +123,9 @@ public class ScoralArmIOTalonFX implements ArmIO {
     inputs.positionSetpointDegs = positionSetpointDegs;
     Logger.recordOutput(
         "cancoder arm position degs",
-        Units.rotationsToDegrees(scoralCoder.getAbsolutePosition().getValueAsDouble()));
+        Units.rotationsToDegrees(
+            scoralCoder.getAbsolutePosition().getValueAsDouble()
+                - Units.degreesToRotations(57 - 12)));
   }
 
   @Override
@@ -122,9 +143,12 @@ public class ScoralArmIOTalonFX implements ArmIO {
   @Override
   public void setPositionSetpointDegs(double positionDegs, double ffVolts) {
     this.positionSetpointDegs = positionDegs;
+
     // leader.setVoltage(1);
     leader.setControl(
-        new PositionVoltage(Conversions.degreesToFalcon(positionDegs, (25.0 / 1.0) / (12.0 / 25.0)))
+        new PositionVoltage(
+                Units.degreesToRotations(positionDegs)
+                    * SubsystemConstants.CoralScorerConstants.ScoralArmConstants.ARM_GEAR_RATIO)
             .withFeedForward(ffVolts)); // CHECK FOR STOW ANGLE (positionDegs - 59)
   }
 

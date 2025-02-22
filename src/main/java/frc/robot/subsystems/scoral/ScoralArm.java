@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -54,11 +55,15 @@ public class ScoralArm extends SubsystemBase {
     this.coralScorerArm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
-        kG.initDefault(0);
-        kV.initDefault(0.2);
-        kP.initDefault(0);
+        // kG.initDefault(0.32);
+        kG.initDefault(0.04);
+        // kG.initDefault(0);4
+        // kV.initDefault(0.8);
+        kV.initDefault(0);
+        kP.initDefault(0.5);
         kA.initDefault(0);
         kS.initDefault(0);
+        // kS.initDefault(0);
         kI.initDefault(0);
         break;
       case REPLAY:
@@ -70,7 +75,7 @@ public class ScoralArm extends SubsystemBase {
         kI.initDefault(1);
         break;
       case SIM:
-        kG.initDefault(0.33);
+        kG.initDefault(0.32);
         kV.initDefault(0.01);
         kP.initDefault(20);
         kA.initDefault(0);
@@ -89,18 +94,17 @@ public class ScoralArm extends SubsystemBase {
 
     measuredVisualizer = new PivotVis("measured", Color.kRed);
     // CHANGE PER ARM
-    maxVelocityDegPerSec = 9; // was at 90
-    maxAccelerationDegPerSecSquared = 18; // was at 190
+    maxVelocityDegPerSec = 150; // was at 90
+    maxAccelerationDegPerSecSquared = 690; // was at 190
     // maxAccelerationDegPerSecSquared = 180;
 
     armConstraints =
         new TrapezoidProfile.Constraints(maxVelocityDegPerSec, maxAccelerationDegPerSecSquared);
     armProfile = new TrapezoidProfile(armConstraints);
-
     // setArmGoal(-90);
     // setArmCurrent(getArmPositionDegs());
     armCurrentStateDegrees = armProfile.calculate(0, armCurrentStateDegrees, armGoalStateDegrees);
-    armFFModel = new ArmFeedforward(0, kG.get(), kV.get(), 0);
+    armFFModel = new ArmFeedforward(kS.get(), kG.get(), kV.get(), 0);
 
     measuredVisualizer = new PivotVis("measured pivot scoral", Color.kAzure);
     setpointVisualizer = new PivotVis("setpoint pivot scoral", Color.kGreen);
@@ -130,12 +134,18 @@ public class ScoralArm extends SubsystemBase {
 
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
+    Logger.recordOutput(
+        "scoral ffvolts",
+        armFFModel.calculate(
+            Units.degreesToRadians(positionDegs), Units.degreesToRadians(velocityDegsPerSec)));
     coralScorerArm.setPositionSetpointDegs(
-        positionDegs, armFFModel.calculate(positionDegs, velocityDegsPerSec));
+        positionDegs,
+        armFFModel.calculate(
+            Units.degreesToRadians(positionDegs), Units.degreesToRadians(velocityDegsPerSec)));
   }
 
   public void setVolts(double volts) {
-    coralScorerArm.setVoltage(0.1);
+    coralScorerArm.setVoltage(volts);
   }
 
   public void armStop() {
@@ -208,7 +218,7 @@ public class ScoralArm extends SubsystemBase {
 
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
-    Logger.processInputs("Coral Arm", csaInputs);
+    Logger.processInputs("Scoral Arm", csaInputs);
     Logger.recordOutput("arm error", getArmError());
 
     Logger.recordOutput("arm goal", goalDegrees);
@@ -249,11 +259,11 @@ public class ScoralArm extends SubsystemBase {
     if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode())) {
       coralScorerArm.configurePID(kP.get(), kI.get(), 0);
     }
-    if (kG.hasChanged(hashCode())
-        || kV.hasChanged(hashCode())
-        || kA.hasChanged(hashCode())
-        || kS.hasChanged(hashCode())) {
-      armFFModel = new ArmFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
-    }
+    // if (kG.hasChanged(hashCode())
+    //     || kV.hasChanged(hashCode())
+    //     || kA.hasChanged(hashCode())
+    //     || kS.hasChanged(hashCode())) {
+    //   armFFModel = new ArmFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
+    // }
   }
 }

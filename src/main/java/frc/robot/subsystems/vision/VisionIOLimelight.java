@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import frc.robot.util.LimelightHelpers;
 
 /** IO implementation for real Limelight hardware. */
 public class VisionIOLimelight implements VisionIO {
@@ -46,6 +47,10 @@ public class VisionIOLimelight implements VisionIO {
    * @param name The configured name of the Limelight.
    * @param rotationSupplier Supplier for the current estimated rotation, used for MegaTag 2.
    */
+
+
+  //  if disable mode init thoddle mode itu or smth
+
   public VisionIOLimelight(String name, Supplier<Rotation2d> rotationSupplier) {
     var table = NetworkTableInstance.getDefault().getTable(name);
     this.rotationSupplier = rotationSupplier;
@@ -71,6 +76,15 @@ public class VisionIOLimelight implements VisionIO {
     inputs.latestTargetObservation =
         new TargetObservation(
             Rotation2d.fromDegrees(txSubscriber.get()), Rotation2d.fromDegrees(tySubscriber.get()));
+
+    // if (DriverStation.isDisabled()) {
+    //   LimelightHelpers.setIMUMode(1); // Use external IMU yaw and configure internal IMU's fused yaw
+    // } else if (DriverStation.isEnabled()) {
+    //   LimelightHelpers.setIMUMode(2); // Use internal IMU for MT2 localization
+    // }
+    
+
+    LimelightHelpers.SetIMUMode("limelight-reef", 3);
 
     // Update orientation for MegaTag 2
     orientationPublisher.accept(
