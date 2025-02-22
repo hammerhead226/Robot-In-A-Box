@@ -19,8 +19,7 @@ public class IntakingAlgaeParallel extends ParallelCommandGroup {
   private final ScoralArm arm;
   private final ScoralRollers algaeIntake;
   /** Creates a new IntakingAlgaeParallel. */
-  public IntakingAlgaeParallel(
-      Elevator elevator, ScoralArm arm, ScoralRollers algaeIntake) {
+  public IntakingAlgaeParallel(Elevator elevator, ScoralArm arm, ScoralRollers algaeIntake) {
     this.elevator = elevator;
     this.arm = arm;
     this.algaeIntake = algaeIntake;

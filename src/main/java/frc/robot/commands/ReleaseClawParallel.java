@@ -13,10 +13,7 @@ public class ReleaseClawParallel extends ParallelCommandGroup {
   private final ReefHeight scoringLevel;
 
   public ReleaseClawParallel(
-      ReefHeight scoringLevel,
-      Elevator elevator,
-      ScoralArm pivot,
-      ScoralRollers flywheel) {
+      ReefHeight scoringLevel, Elevator elevator, ScoralArm pivot, ScoralRollers flywheel) {
     this.pivot = pivot;
     this.elevator = elevator;
     this.flywheel = flywheel;

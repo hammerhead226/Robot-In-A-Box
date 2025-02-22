@@ -100,11 +100,12 @@ public class LED_IOCANdle implements LED_IO {
         candle.setLEDs(255, 0, 0, 0, 0, SubsystemConstants.LEDConstants.NUMBER_LEDS);
         break;
       case BLUE:
-        // TODO:: DEFAULT COLOR | BLUE
+        // TODO:: DEFAULT COLOR and when hanging
         candle.clearAnimation(0);
         candle.setLEDs(0, 0, 255, 0, 0, SubsystemConstants.LEDConstants.NUMBER_LEDS);
         break;
       case YELLOW:
+        // TODO:: PROCESSOR
         candle.clearAnimation(0);
         // led.set(Constants.LEDConstants.COLOR_YELLOW);
         // candle.setLEDs(255, 255, 0, 0, 32, 25);
@@ -114,6 +115,7 @@ public class LED_IOCANdle implements LED_IO {
         // led.set(Constants.LEDConstants.COLOR_VIOLET);
         break;
       case GREY:
+        // TODO:: SOURCE
         candle.clearAnimation(0);
         candle.setLEDs(137, 129, 123);
         break;
@@ -130,7 +132,7 @@ public class LED_IOCANdle implements LED_IO {
         candle.setLEDs(255, 30, 0);
         break;
       case FLASHING_GREEN:
-        // TODO:: SCORING | FLASHING GREEN
+        // TODO:: SCORING
         candle.animate(flashGreen, 0);
         break;
       case FLASHING_RED:

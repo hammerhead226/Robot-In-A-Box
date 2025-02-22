@@ -19,8 +19,7 @@ public class IntakeFromSourceParallel extends ParallelCommandGroup {
   private final Elevator elevator;
 
   /** Creates a new IntakeFromSourceTestTwo. */
-  public IntakeFromSourceParallel(
-      ScoralRollers coralIntake, ScoralArm arm, Elevator elevator) {
+  public IntakeFromSourceParallel(ScoralRollers coralIntake, ScoralArm arm, Elevator elevator) {
     this.coralIntake = coralIntake;
     this.elevator = elevator;
     this.arm = arm;

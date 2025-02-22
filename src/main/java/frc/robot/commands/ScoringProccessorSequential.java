@@ -18,8 +18,7 @@ public class ScoringProccessorSequential extends SequentialCommandGroup {
   private final ScoralArm csArm;
   private final Elevator elevator;
 
-  public ScoringProccessorSequential(
-      ScoralRollers csFlywheel, ScoralArm csArm, Elevator elevator) {
+  public ScoringProccessorSequential(ScoralRollers csFlywheel, ScoralArm csArm, Elevator elevator) {
     this.csFlywheel = csFlywheel;
     this.elevator = elevator;
     this.csArm = csArm;

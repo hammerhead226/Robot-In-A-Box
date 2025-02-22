@@ -24,8 +24,7 @@ public class IntakeFromSource extends Command {
   private final Elevator elevator;
   private final LED led;
 
-  public IntakeFromSource(
-      ScoralRollers coralIntake, ScoralArm arm, Elevator elevator, LED led) {
+  public IntakeFromSource(ScoralRollers coralIntake, ScoralArm arm, Elevator elevator, LED led) {
     this.coralIntake = coralIntake;
     this.elevator = elevator;
     this.arm = arm;

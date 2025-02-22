@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.commands.IntakeFromSourceParallel;
 import frc.robot.commands.ScoringProccessorSequential;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SubsystemConstants.CoralState;
@@ -16,7 +15,6 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.subsystems.scoral.ScoralRollers;
-
 import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure {
@@ -31,11 +29,7 @@ public class SuperStructure {
   int counter = 0;
 
   public SuperStructure(
-      Drive drive,
-      Elevator elevator,
-      ScoralArm scoralArm,
-      ScoralRollers scoralRollers,
-      LED led) {
+      Drive drive, Elevator elevator, ScoralArm scoralArm, ScoralRollers scoralRollers, LED led) {
     this.drive = drive;
     this.elevator = elevator;
     this.scoralArm = scoralArm;
@@ -46,12 +40,17 @@ public class SuperStructure {
   }
 
   public void setWantedState(SuperStructureState wantedState) {
-    if (wantedState == SuperStructureState.L1 || wantedState == SuperStructureState.L2 || wantedState == SuperStructureState.L3 || wantedState == SuperStructureState.L4) {
+    if (wantedState == SuperStructureState.L1
+        || wantedState == SuperStructureState.L2
+        || wantedState == SuperStructureState.L3
+        || wantedState == SuperStructureState.L4) {
       led.setState(LED_STATE.RED);
     } else if (wantedState == SuperStructureState.SOURCE) {
       led.setState(LED_STATE.GREY);
     } else if (wantedState == SuperStructureState.PROCESSOR) {
       led.setState(LED_STATE.YELLOW);
+    } else if (wantedState == SuperStructureState.CLIMB_STAGE_ONE) {
+      led.setState(LED_STATE.PAPAYA_ORANGE);
     }
     this.wantedState = wantedState;
   }
@@ -130,7 +129,6 @@ public class SuperStructure {
                 led.setStateCommand(LED_STATE.FLASHING_GREEN)));
 
       case L1:
-
         currentState = SuperStructureState.L1;
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -139,21 +137,18 @@ public class SuperStructure {
                 led.setStateCommand(LED_STATE.FLASHING_GREEN)));
 
       case L2:
-
         currentState = SuperStructureState.L2;
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
                 scoralArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)));
       case L3:
-
         currentState = SuperStructureState.L3;
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
                 scoralArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
       case L4:
-        
         currentState = SuperStructureState.L4;
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -164,7 +159,10 @@ public class SuperStructure {
         currentState = SuperStructureState.SOURCE;
         return new SequentialCommandGroup(
             scoralRollers.runVoltsCommmand(5),
-            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.CURRENT || scoralRollers.seesCoral() == CoralState.SENSOR),
+            new WaitUntilCommand(
+                () ->
+                    scoralRollers.seesCoral() == CoralState.CURRENT
+                        || scoralRollers.seesCoral() == CoralState.SENSOR),
             new WaitCommand(0.5),
             new InstantCommand(() -> scoralRollers.stop()),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
@@ -189,9 +187,17 @@ public class SuperStructure {
                 new InstantCommand(() -> System.out.println("the stow command has been run"))),
             new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
             new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
+      case CLIMB_STAGE_ONE:
+        return new SequentialCommandGroup();
+      case CLIMB_STAGE_TWO:
+        return new SequentialCommandGroup();
+      case HANG:
+        led.setState(LED_STATE.BLUE);
+        return new SequentialCommandGroup();
       default:
         return new SequentialCommandGroup(
-            new ParallelCommandGroup(elevator.setElevatorTarget(0, 0), scoralArm.setArmTarget(40, 0)));
+            new ParallelCommandGroup(
+                elevator.setElevatorTarget(0, 0), scoralArm.setArmTarget(40, 0)));
     }
   }
 
