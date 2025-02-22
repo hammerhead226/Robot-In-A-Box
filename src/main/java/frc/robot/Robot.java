@@ -28,6 +28,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import frc.robot.util.LimelightHelpers;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -128,11 +129,14 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     robotContainer.getLED().setState(LED_STATE.FIRE);
+    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50); 
   }
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50);
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override

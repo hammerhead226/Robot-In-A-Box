@@ -47,7 +47,10 @@ public class VisionIOLimelight implements VisionIO {
    * @param name The configured name of the Limelight.
    * @param rotationSupplier Supplier for the current estimated rotation, used for MegaTag 2.
    */
-  
+
+
+  //  if disable mode init thoddle mode itu or smth
+
   public VisionIOLimelight(String name, Supplier<Rotation2d> rotationSupplier) {
     var table = NetworkTableInstance.getDefault().getTable(name);
     this.rotationSupplier = rotationSupplier;
@@ -79,6 +82,7 @@ public class VisionIOLimelight implements VisionIO {
     // } else if (DriverStation.isEnabled()) {
     //   LimelightHelpers.setIMUMode(2); // Use internal IMU for MT2 localization
     // }
+    
 
     LimelightHelpers.SetIMUMode("limelight-reef", 3);
 
