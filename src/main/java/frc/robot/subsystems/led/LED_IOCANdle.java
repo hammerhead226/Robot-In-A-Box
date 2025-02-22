@@ -93,10 +93,9 @@ public class LED_IOCANdle implements LED_IO {
   @Override
   public void setLEDState(LED_STATE state) {
     ledState = state;
-    // candle.setLEDs(0, 0, 0);
     switch (ledState) {
       case RED:
-        // TODO:: MANUAL INTAKE | RED
+        // TODO:: reef level selected
         candle.clearAnimation(0);
         candle.setLEDs(255, 0, 0, 0, 0, SubsystemConstants.LEDConstants.NUMBER_LEDS);
         break;
@@ -104,10 +103,6 @@ public class LED_IOCANdle implements LED_IO {
         // TODO:: DEFAULT COLOR | BLUE
         candle.clearAnimation(0);
         candle.setLEDs(0, 0, 255, 0, 0, SubsystemConstants.LEDConstants.NUMBER_LEDS);
-        break;
-      case FLASHING_PURPLE:
-        candle.clearAnimation(0);
-        candle.setLEDs(119, 0, 200, 0, 0, 57 + 24);
         break;
       case YELLOW:
         candle.clearAnimation(0);
@@ -126,7 +121,6 @@ public class LED_IOCANdle implements LED_IO {
         candle.clearAnimation(0);
         candle.setLEDs(0, 255, 0, 0, 0, SubsystemConstants.LEDConstants.NUMBER_LEDS);
         break;
-
       case PURPLE:
         candle.clearAnimation(0);
         candle.setLEDs(255, 0, 255);
@@ -135,45 +129,12 @@ public class LED_IOCANdle implements LED_IO {
         candle.clearAnimation(0);
         candle.setLEDs(255, 30, 0);
         break;
-      case WILLIAMS_BLUE:
-        candle.clearAnimation(0);
-        candle.setLEDs(0, 160, 222);
-        break;
-      case HALF_FLASH_RED_HALF_FLASH_WHITE:
-        // TODO:: INTAKING FROM SOURCE | HALF_FLASH_RED_HALF_FLASH_WHITE
-        candle.clearAnimation(0);
-        candle.animate(halfFlashWhite);
-        // candle.setLEDs(255, 0, 0, 0, 32, 28);
-        candle.setLEDs(255, 0, 0, 0, 32, 25);
-        break;
-      case FLASHING_GREY:
-        candle.animate(flashGrey, 0);
-        break;
-      case FLASHING_PINK:
-        candle.animate(flashPink, 0);
-        break;
-      case FLASHING_BLACK:
-        candle.animate(flashBlack, 0);
-        break;
-      case FLASHING_WHITE:
-        // TODO:: SIGNAL TO HUMAN PLAYER | FLASHING WHITE
-        candle.animate(flashWhite, 0);
-        break;
-      case FLASHING_CYAN:
-        candle.animate(flashCyan, 0);
-        break;
-      case FLASHING_YELLOW:
-        candle.animate(flashYellow, 0);
-        break;
-      case FLASHING_ORANGE:
-        candle.animate(flashOrange, 0);
-        break;
       case FLASHING_GREEN:
-        // TODO:: AIMBOT | FLASHING GREEN
+        // TODO:: SCORING | FLASHING GREEN
         candle.animate(flashGreen, 0);
         break;
       case FLASHING_RED:
-        // TODO:: TRAJECTORY INTAKE | FLASHING RED
+        // TODO:: auto align to reef
         candle.animate(flashRed, 0);
         break;
       case FLASHING_BLUE:

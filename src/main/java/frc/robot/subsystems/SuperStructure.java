@@ -46,6 +46,13 @@ public class SuperStructure {
   }
 
   public void setWantedState(SuperStructureState wantedState) {
+    if (wantedState == SuperStructureState.L1 || wantedState == SuperStructureState.L2 || wantedState == SuperStructureState.L3 || wantedState == SuperStructureState.L4) {
+      led.setState(LED_STATE.RED);
+    } else if (wantedState == SuperStructureState.SOURCE) {
+      led.setState(LED_STATE.GREY);
+    } else if (wantedState == SuperStructureState.PROCESSOR) {
+      led.setState(LED_STATE.YELLOW);
+    }
     this.wantedState = wantedState;
   }
 
@@ -98,6 +105,7 @@ public class SuperStructure {
     Logger.recordOutput("bruhufe", counter);
     switch (wantedState) {
       case STOW:
+        led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW;
         return new SequentialCommandGroup(
             scoralRollers.stopCommand(),
@@ -122,6 +130,7 @@ public class SuperStructure {
                 led.setStateCommand(LED_STATE.FLASHING_GREEN)));
 
       case L1:
+
         currentState = SuperStructureState.L1;
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -130,18 +139,21 @@ public class SuperStructure {
                 led.setStateCommand(LED_STATE.FLASHING_GREEN)));
 
       case L2:
+
         currentState = SuperStructureState.L2;
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
                 scoralArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)));
       case L3:
+
         currentState = SuperStructureState.L3;
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
                 scoralArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
       case L4:
+        
         currentState = SuperStructureState.L4;
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -151,18 +163,21 @@ public class SuperStructure {
       case SOURCE:
         currentState = SuperStructureState.SOURCE;
         return new SequentialCommandGroup(
-            new IntakeFromSourceParallel(scoralRollers, scoralArm, elevator),
+            scoralRollers.runVoltsCommmand(5),
+            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.CURRENT || scoralRollers.seesCoral() == CoralState.SENSOR),
             new WaitCommand(0.5),
             new InstantCommand(() -> scoralRollers.stop()),
+            new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
             new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
             new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
       case PROCESSOR:
+        led.setState(LED_STATE.FLASHING_GREEN);
         currentState = SuperStructureState.PROCESSOR;
         return new ScoringProccessorSequential(scoralRollers, scoralArm, elevator);
 
       case SCORING_CORAL:
         currentState = SuperStructureState.SCORING_CORAL;
-
+        led.setState(LED_STATE.FLASHING_GREEN);
         return new SequentialCommandGroup(
             scoralRollers.runVoltsCommmand(1),
             new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.NO_CORAL),

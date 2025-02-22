@@ -458,6 +458,7 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive,
             superStructure,
+            led,
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
@@ -677,5 +678,9 @@ public class RobotContainer {
 
   public SuperStructure getSuperStructure() {
     return superStructure;
+  }
+
+  public LED getLED() {
+    return led;
   }
 }

@@ -30,9 +30,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.*;
 import frc.robot.constants.FieldConstants.Barge;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.led.LED;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -107,6 +110,7 @@ public class DriveCommands {
   public static Command joystickDrive(
       Drive drive,
       SuperStructure superStructure,
+      LED led,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
@@ -150,6 +154,7 @@ public class DriveCommands {
 
           targetPose = null;
           if (reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()) {
+            led.setState(LED_STATE.FLASHING_RED);
             Translation2d reefTranslation =
                 drive.isNearReef() ? new Translation2d(-0.5, 0) : new Translation2d(-1.3, 0);
 
