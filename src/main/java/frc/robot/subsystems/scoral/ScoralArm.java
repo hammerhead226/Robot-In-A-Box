@@ -54,8 +54,8 @@ public class ScoralArm extends SubsystemBase {
     this.coralScorerArm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
-        kG.initDefault(0);
-        kV.initDefault(0.2);
+        kG.initDefault(0.03);
+        kV.initDefault(0);
         kP.initDefault(0);
         kA.initDefault(0);
         kS.initDefault(0);
@@ -208,7 +208,7 @@ public class ScoralArm extends SubsystemBase {
 
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
-    Logger.processInputs("Coral Arm", csaInputs);
+    Logger.processInputs("Scoral Arm", csaInputs);
     Logger.recordOutput("arm error", getArmError());
 
     Logger.recordOutput("arm goal", goalDegrees);
