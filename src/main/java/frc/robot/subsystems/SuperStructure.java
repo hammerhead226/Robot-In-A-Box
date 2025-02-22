@@ -3,10 +3,12 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.ScoringProccessorSequential;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
@@ -109,8 +111,8 @@ public class SuperStructure {
         return new SequentialCommandGroup(
             scoralRollers.stopCommand(),
             new ParallelCommandGroup(
-                elevator.setElevatorTarget(0, 2),
-                scoralArm.setArmTarget(40, 2),
+                elevator.setElevatorTarget(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH, 2),
+                scoralArm.setArmTarget(SubsystemConstants.CoralScorerConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2),
                 scoralRollers.stopCommand(),
                 led.setStateCommand(LED_STATE.BLUE),
                 new InstantCommand(() -> System.out.println("the stow command has been run"))));

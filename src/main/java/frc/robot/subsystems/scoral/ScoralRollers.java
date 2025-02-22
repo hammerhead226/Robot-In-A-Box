@@ -14,7 +14,6 @@ import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
-import frc.robot.subsystems.coralscorer.CoralSensorIOInputsAutoLogged;
 import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
 import frc.robot.util.Elastic.Notification.NotificationLevel;
@@ -26,7 +25,7 @@ public class ScoralRollers extends SubsystemBase {
   private final FlywheelIO rollers;
   private final ScoralSensorIO sensor;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
-  private final CoralSensorIOInputsAutoLogged sInputs = new CoralSensorIOInputsAutoLogged();
+  private final ScoralSensorIOInputsAutoLogged sInputs = new ScoralSensorIOInputsAutoLogged();
   private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
   private AlgaeState lastAlgaeState;

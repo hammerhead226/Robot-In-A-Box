@@ -20,7 +20,7 @@ public class ScoralSensorCANRangeIO implements ScoralSensorIO {
     BaseStatusSignal.setUpdateFrequencyForAll(100, distanceMeters);
   }
 
-  public void updateInputs(CoralSensorIOInputs inputs) {
+  public void updateInputs(ScoralSensorIOInputs inputs) {
     BaseStatusSignal.refreshAll(distanceMeters);
     inputs.connected = sensor.isConnected();
     inputs.distanceInches = Units.metersToInches(distanceMeters.getValueAsDouble());
