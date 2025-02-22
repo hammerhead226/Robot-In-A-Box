@@ -34,8 +34,8 @@ public class Elevator extends SubsystemBase {
   private static final int maxAccelerationExtender = 80;
 
   private TrapezoidProfile extenderProfile;
-  private TrapezoidProfile.Constraints extenderConstraints =
-      new TrapezoidProfile.Constraints(maxVelocityExtender, maxAccelerationExtender);
+  private TrapezoidProfile.Constraints extenderConstraints = new TrapezoidProfile.Constraints(maxVelocityExtender,
+      maxAccelerationExtender);
   private TrapezoidProfile.State extenderGoal = new TrapezoidProfile.State();
   private TrapezoidProfile.State extenderCurrent = new TrapezoidProfile.State();
 
@@ -47,14 +47,14 @@ public class Elevator extends SubsystemBase {
   private ElevatorVis setpointVisualizer;
 
   // public enum ElevatorState {
-  //   ZERO,
-  //   STOW,
-  //   L1,
-  //   L2,
-  //   L3,
-  //   L4,
-  //   SOURCE,
-  //   PROCESSOR
+  // ZERO,
+  // STOW,
+  // L1,
+  // L2,
+  // L3,
+  // L4,
+  // SOURCE,
+  // PROCESSOR
   // }
 
   // private ElevatorState wantedState = ElevatorState.STOW;
@@ -119,13 +119,12 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean atGoal() {
-    return (Math.abs(extenderCurrent.position - goal)
-        <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
+    return (Math.abs(extenderCurrent.position - goal) <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
   }
 
   public boolean hasReachedGoal(double goalInches) {
-    return (Math.abs(eInputs.carriagePositionInch - goalInches)
-        <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
+    return (Math
+        .abs(eInputs.carriagePositionInch - goalInches) <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
   }
 
   public double getElevatorPosition() {
@@ -174,9 +173,8 @@ public class Elevator extends SubsystemBase {
 
   public void setConstraints(
       double maxVelocityMetersPerSec, double maxAccelerationMetersPerSecSquared) {
-    extenderConstraints =
-        new TrapezoidProfile.Constraints(
-            maxVelocityMetersPerSec, maxAccelerationMetersPerSecSquared);
+    extenderConstraints = new TrapezoidProfile.Constraints(
+        maxVelocityMetersPerSec, maxAccelerationMetersPerSecSquared);
     extenderProfile = new TrapezoidProfile(extenderConstraints);
   }
 
@@ -193,16 +191,16 @@ public class Elevator extends SubsystemBase {
 
   // @AutoLogOutput(key = "elevator")
   // public Pose3d getElevatorPose() {
-  //   if (getElevatorstage2Pose().getZ() < extenderCurrent.position) {
-  //     return new Pose3d(0, 0, extenderCurrent2.position + 0.5, new Rotation3d());
-  //   } else {
-  //     return new Pose3d(0, 0, extenderCurrent.position + 0.9, new Rotation3d());
-  //   }
+  // if (getElevatorstage2Pose().getZ() < extenderCurrent.position) {
+  // return new Pose3d(0, 0, extenderCurrent2.position + 0.5, new Rotation3d());
+  // } else {
+  // return new Pose3d(0, 0, extenderCurrent.position + 0.9, new Rotation3d());
+  // }
   // }
 
   // state stuff
   // public void setWantedState(ElevatorState wantedState) {
-  //   this.wantedState = wantedState;
+  // this.wantedState = wantedState;
   // }
 
   public void breakMode(boolean brake) {
@@ -210,45 +208,45 @@ public class Elevator extends SubsystemBase {
   }
 
   // public ElevatorState handleStateTransitions() {
-  //   return switch (wantedState) {
-  //     case ZERO -> ElevatorState.ZERO;
-  //     case STOW -> ElevatorState.STOW;
-  //     case SOURCE -> ElevatorState.SOURCE;
-  //     case L1 -> ElevatorState.L1;
-  //     case L2 -> ElevatorState.L2;
-  //     case L3 -> ElevatorState.L3;
-  //     case L4 -> ElevatorState.L4;
-  //     default -> ElevatorState.ZERO;
-  //   };
+  // return switch (wantedState) {
+  // case ZERO -> ElevatorState.ZERO;
+  // case STOW -> ElevatorState.STOW;
+  // case SOURCE -> ElevatorState.SOURCE;
+  // case L1 -> ElevatorState.L1;
+  // case L2 -> ElevatorState.L2;
+  // case L3 -> ElevatorState.L3;
+  // case L4 -> ElevatorState.L4;
+  // default -> ElevatorState.ZERO;
+  // };
   // }
 
   // // elevator factory
   // public void Stow() {
-  //   setExtenderGoal(0);
+  // setExtenderGoal(0);
   // }
 
   // public void goToSource() {
-  //   setExtenderGoal(0);
+  // setExtenderGoal(0);
   // }
 
   // public void gotoFirstLevel() {
-  //   setExtenderGoal(FieldConstants.ReefHeight.L1.height);
+  // setExtenderGoal(FieldConstants.ReefHeight.L1.height);
   // }
 
   // public void gotoSecondLevel() {
-  //   setExtenderGoal(FieldConstants.ReefHeight.L2.height);
+  // setExtenderGoal(FieldConstants.ReefHeight.L2.height);
   // }
 
   // public void gotoThirdLevel() {
-  //   setExtenderGoal(FieldConstants.ReefHeight.L3.height);
+  // setExtenderGoal(FieldConstants.ReefHeight.L3.height);
   // }
 
   // public void gotoFourthLevel() {
-  //   setExtenderGoal(FieldConstants.ReefHeight.L4.height);
+  // setExtenderGoal(FieldConstants.ReefHeight.L4.height);
   // }
 
   // public void gotoProcessorLevel() {
-  //   setExtenderGoal(0);
+  // setExtenderGoal(0);
   // }
 
   @Override
@@ -259,40 +257,39 @@ public class Elevator extends SubsystemBase {
     // state logic
     // ElevatorState desiredState = wantedState;
     // if (wantedState != currentState) {
-    //   currentState = wantedState;
+    // currentState = wantedState;
     // }
 
     // switch (currentState) {
-    //   case ZERO:
-    //     Stow();
-    //     break;
-    //   case SOURCE:
-    //     goToSource();
-    //     break;
-    //   case L1:
-    //     gotoFirstLevel();
-    //     break;
-    //   case L2:
-    //     gotoSecondLevel();
-    //     break;
-    //   case L3:
-    //     gotoThirdLevel();
-    //     break;
-    //   case L4:
-    //     gotoFourthLevel();
-    //     break;
-    //   case PROCESSOR:
-    //     gotoProcessorLevel();
-    //   default:
-    //     Stow();
+    // case ZERO:
+    // Stow();
+    // break;
+    // case SOURCE:
+    // goToSource();
+    // break;
+    // case L1:
+    // gotoFirstLevel();
+    // break;
+    // case L2:
+    // gotoSecondLevel();
+    // break;
+    // case L3:
+    // gotoThirdLevel();
+    // break;
+    // case L4:
+    // gotoFourthLevel();
+    // break;
+    // case PROCESSOR:
+    // gotoProcessorLevel();
+    // default:
+    // Stow();
     // }
 
     measured.update(extenderCurrent.position);
     ScoralArm.measuredVisualizer.updateVertical(extenderCurrent.position);
 
-    extenderCurrent =
-        extenderProfile.calculate(
-            SubsystemConstants.LOOP_PERIOD_SECONDS, extenderCurrent, extenderGoal);
+    extenderCurrent = extenderProfile.calculate(
+        SubsystemConstants.LOOP_PERIOD_SECONDS, extenderCurrent, extenderGoal);
 
     setPositionExtend(extenderCurrent.position, extenderCurrent.velocity);
 

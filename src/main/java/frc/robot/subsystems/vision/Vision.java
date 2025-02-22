@@ -116,6 +116,19 @@ public class Vision extends SubsystemBase {
                 || observation.pose().getY() < 0.0
                 || observation.pose().getY() > aprilTagLayout.getFieldWidth();
 
+        Logger.recordOutput("blah/blahX", observation.pose().getX());
+        Logger.recordOutput(
+            "blah/blahXBOOL", observation.pose().getX() > aprilTagLayout.getFieldLength());
+        Logger.recordOutput("blah/blahY", observation.pose().getY());
+        Logger.recordOutput(
+            "blah/blahYBOOL", observation.pose().getY() > aprilTagLayout.getFieldWidth());
+        Logger.recordOutput("blah/blahZ", observation.pose().getZ());
+        Logger.recordOutput("blah/blahZError", maxZError);
+        Logger.recordOutput("blah/blahZBOOL", observation.pose().getZ() > maxZError);
+
+        Logger.recordOutput("blah/rejectPose", rejectPose);
+        Logger.recordOutput("blah/tagCount", observation.tagCount());
+
         // Add pose to log
         robotPoses.add(observation.pose());
         if (rejectPose) {
@@ -123,6 +136,7 @@ public class Vision extends SubsystemBase {
         } else {
           robotPosesAccepted.add(observation.pose());
           //  poseBuffer.addSample(observation.timestamp(), observation.pose().toPose2d());
+          // drive.addVisionMeasurement(observation.pose().toPose2d(), observation.timestamp());
         }
 
         // Skip if rejected
@@ -143,6 +157,13 @@ public class Vision extends SubsystemBase {
           linearStdDev *= cameraStdDevFactors[cameraIndex];
           angularStdDev *= cameraStdDevFactors[cameraIndex];
         }
+
+        Logger.recordOutput("blah/AVGTGDIST", observation.averageTagDistance());
+        Logger.recordOutput("blah/STDFACTOR", stdDevFactor);
+        Logger.recordOutput("blah/LINNYYY", linearStdDev);
+        Logger.recordOutput("blah/ANGEEYY", angularStdDev);
+        Logger.recordOutput("blah/BASEEYYYY", angularStdDevBaseline);
+        Logger.recordOutput("blah/BASEEYYYYFACYY", angularStdDevMegatag2Factor);
 
         // Send vision observation
         consumer.accept(

@@ -33,23 +33,28 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final StatusSignal<Distance> canRangeDistance;
 
   public ElevatorIOTalonFX(int lead, int follow, int canRangeID) {
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ElevatorConstants.CURRENT_LIMIT;
-    config.CurrentLimits.StatorCurrentLimitEnable =
+    TalonFXConfiguration leadConfig = new TalonFXConfiguration();
+    leadConfig.CurrentLimits.StatorCurrentLimit =
+        SubsystemConstants.ElevatorConstants.CURRENT_LIMIT;
+    leadConfig.CurrentLimits.StatorCurrentLimitEnable =
         SubsystemConstants.ElevatorConstants.CURRENT_LIMIT_ENABLED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    leadConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    leadConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    leadConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     leader = new TalonFX(lead, SubsystemConstants.CANIVORE_ID_STRING);
     follower = new TalonFX(follow, SubsystemConstants.CANIVORE_ID_STRING);
     distanceSensor = new CANrange(canRangeID, SubsystemConstants.CANIVORE_ID_STRING);
 
-    leader.getConfigurator().apply(config);
+    leader.getConfigurator().apply(leadConfig);
 
     carriagePositionSetpoint = SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
 
     follower.setControl(new Follower(lead, true));
+
+    TalonFXConfiguration followerConfig = new TalonFXConfiguration();
+    followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    follower.getConfigurator().apply(followerConfig);
 
     elevatorPosition = leader.getPosition();
     elevatorVelocity = leader.getVelocity();
@@ -153,5 +158,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     } else {
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     }
+    leader.getConfigurator().apply(config);
+    follower.getConfigurator().apply(config);
   }
 }
