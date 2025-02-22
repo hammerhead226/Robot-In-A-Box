@@ -5,7 +5,9 @@ import static frc.robot.constants.RobotMap.*;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,6 +46,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
@@ -58,8 +61,7 @@ import frc.robot.subsystems.scoral.ScoralSensorIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-
-import org.littletonrobotics.junction.Logger;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -95,18 +97,20 @@ public class RobotContainer {
 
   private ScoralRollers scoralRollers;
 
-  // public final Trigger elevatorBrakeTrigger;
+  public final Trigger elevatorBrakeTrigger;
   //   private final Trigger stateTrigger;
   private Trigger slowModeTrigger;
   private Trigger reefAlignTrigger;
 
   // Dashboard inputs
   private LoggedDashboardChooser<Command> autoChooser;
+  private DigitalInput brakeSwitch;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (SimConstants.currentMode) {
       case REAL:
+        brakeSwitch = new DigitalInput(2);
         // // Real robot, instantiate hardware IO implementations
         // // TODO change lead, follower, gyro IDs, etc.
         // // elevator = new Elevator(new ElevatorIOTalonFX(8, 9, 0));
@@ -149,7 +153,12 @@ public class RobotContainer {
         // superStructure = new SuperStructure(drive, elevator, csArm, csFlywheel, led);
         // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0));
 
-        elevator = new Elevator(new ElevatorIO() {});
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    RobotMap.ElevatorIDs.leftElevatorID,
+                    RobotMap.ElevatorIDs.rightElevatorID,
+                    RobotMap.ElevatorIDs.elevatorCANrangeID));
         // winch = new Winch(new WinchIOTalonFX(12, 13));
         winch = new Winch(new WinchIO() {});
         // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
@@ -214,10 +223,13 @@ public class RobotContainer {
 
         scoralArm = new ScoralArm(new ScoralArmIOSim());
         winch = new Winch(new WinchIOSim());
+        // Transform3d bruh = new Transform3d(new Transform2d());
+        Rotation3d bruh = new Rotation3d();
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
-                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                new VisionIOPhotonVisionSim(
+                    "camera 1 sim", new Transform3d(0, 0, 0, bruh), drive::getPose),
                 new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
@@ -395,7 +407,7 @@ public class RobotContainer {
     // Configure the button bindings
     // configureButtonBindings();
     // stateTrigger = new Trigger(() -> superStructure.changedStated());
-    // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
+    elevatorBrakeTrigger = new Trigger(() -> brakeSwitch.get());
     slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     reefAlignTrigger =
         new Trigger(
@@ -403,8 +415,8 @@ public class RobotContainer {
                 driveController.leftTrigger().getAsBoolean()
                     || driveController.rightTrigger().getAsBoolean());
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
-    // configureButtonBindings();
-    test();
+    configureButtonBindings();
+    // test();
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -538,6 +550,11 @@ public class RobotContainer {
                         scoralRollers,
                         drive,
                         led)));
+
+    elevatorBrakeTrigger.onTrue(
+        new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
+    elevatorBrakeTrigger.onFalse(
+        new InstantCommand(() -> elevator.setBrake(true)).ignoringDisable(true));
   }
 
   private void manipControls() {

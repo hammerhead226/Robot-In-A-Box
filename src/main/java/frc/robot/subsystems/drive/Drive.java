@@ -439,9 +439,11 @@ public class Drive extends SubsystemBase {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs) {
+      Logger.recordOutput("visionRobotPoseMetersTHREE", visionRobotPoseMeters); // THREE
+
       poseEstimator.addVisionMeasurement(
           visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
-      Logger.recordOutput("visionRobotPoseMetersTHREE", visionRobotPoseMeters); // THREE
+      // Logger.recordOutput("visionRobotPoseMetersTHREE", visionRobotPoseMeters); // THREE
     }
   }
 

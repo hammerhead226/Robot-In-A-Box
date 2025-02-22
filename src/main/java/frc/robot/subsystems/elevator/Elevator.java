@@ -180,6 +180,11 @@ public class Elevator extends SubsystemBase {
     return extenderGoal.position >= 0.4;
   }
 
+  public void setBrake(boolean brake) {
+
+    elevator.setBrakeMode(brake);
+  }
+
   public Command setElevatorTarget(double goalInches, double thresholdInches) {
     // TODO: Change the wait time to an accurate value
     return new InstantCommand(() -> setExtenderGoal(goalInches), this)
