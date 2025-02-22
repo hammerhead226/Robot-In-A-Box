@@ -3,13 +3,13 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.IntakeAlgae;
+import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ScoringProccessorSequential;
+import frc.robot.commands.goToReefHeight;
+import frc.robot.commands.goToStow;
+import frc.robot.commands.scoringCoral;
 import frc.robot.constants.FieldConstants;
-import frc.robot.constants.SubsystemConstants;
-import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.drive.Drive;
@@ -108,14 +108,7 @@ public class SuperStructure {
       case STOW:
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW;
-        return new SequentialCommandGroup(
-            scoralRollers.stopCommand(),
-            new ParallelCommandGroup(
-                elevator.setElevatorTarget(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH, 2),
-                scoralArm.setArmTarget(SubsystemConstants.CoralScorerConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2),
-                scoralRollers.stopCommand(),
-                led.setStateCommand(LED_STATE.BLUE),
-                new InstantCommand(() -> System.out.println("the stow command has been run"))));
+        return new goToStow(elevator, scoralArm, scoralRollers);
 
       case INTAKE_ALGAE:
         double height =
@@ -124,52 +117,51 @@ public class SuperStructure {
                 : FieldConstants.ReefHeight.L4.height;
 
         currentState = SuperStructureState.INTAKE_ALGAE;
-        return new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                elevator.setElevatorTarget(height - 1, 0.1),
-                scoralArm.setArmTarget(30, 2),
-                led.setStateCommand(LED_STATE.FLASHING_GREEN)));
+        return new IntakeAlgae(elevator, scoralArm, scoralRollers, height);
 
       case L1:
         currentState = SuperStructureState.L1;
-        return new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                elevator.setElevatorTarget(FieldConstants.ReefHeight.L1.height, 0.1),
-                scoralArm.setArmTarget(FieldConstants.ReefHeight.L1.pitch, 2),
-                led.setStateCommand(LED_STATE.FLASHING_GREEN)));
+        return new goToReefHeight(
+            elevator,
+            scoralArm,
+            FieldConstants.ReefHeight.L1.height,
+            FieldConstants.ReefHeight.L1.pitch);
 
       case L2:
         currentState = SuperStructureState.L2;
-        return new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                elevator.setElevatorTarget(FieldConstants.ReefHeight.L2.height, 0.1),
-                scoralArm.setArmTarget(FieldConstants.ReefHeight.L2.pitch, 2)));
+        return new goToReefHeight(
+            elevator,
+            scoralArm,
+            FieldConstants.ReefHeight.L2.height,
+            FieldConstants.ReefHeight.L2.pitch);
+
       case L3:
         currentState = SuperStructureState.L3;
-        return new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                elevator.setElevatorTarget(FieldConstants.ReefHeight.L3.height, 0.1),
-                scoralArm.setArmTarget(FieldConstants.ReefHeight.L3.pitch, 2)));
+        return new goToReefHeight(
+            elevator,
+            scoralArm,
+            FieldConstants.ReefHeight.L3.height,
+            FieldConstants.ReefHeight.L3.pitch);
+
       case L4:
         currentState = SuperStructureState.L4;
-        return new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                elevator.setElevatorTarget(FieldConstants.ReefHeight.L4.height, 0.1),
-                scoralArm.setArmTarget(FieldConstants.ReefHeight.L4.pitch, 2)));
+        return new goToReefHeight(
+            elevator,
+            scoralArm,
+            FieldConstants.ReefHeight.L4.height,
+            FieldConstants.ReefHeight.L4.pitch);
 
       case SOURCE:
         currentState = SuperStructureState.SOURCE;
-        return new SequentialCommandGroup(
-            scoralRollers.runVoltsCommmand(5),
-            new WaitUntilCommand(
-                () ->
-                    scoralRollers.seesCoral() == CoralState.CURRENT
-                        || scoralRollers.seesCoral() == CoralState.SENSOR),
-            new WaitCommand(0.5),
-            new InstantCommand(() -> scoralRollers.stop()),
-            new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
-            new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
-            new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
+        return new IntakingCoral(scoralRollers)
+            .andThen(
+                new InstantCommand(() -> led.setState(LED_STATE.BLUE))
+                    .andThen(
+                        new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW))
+                            .andThen(
+                                new InstantCommand(
+                                    () -> this.setWantedState(SuperStructureState.STOW)))));
+
       case PROCESSOR:
         led.setState(LED_STATE.FLASHING_GREEN);
         currentState = SuperStructureState.PROCESSOR;
@@ -179,16 +171,12 @@ public class SuperStructure {
         currentState = SuperStructureState.SCORING_CORAL;
         led.setState(LED_STATE.FLASHING_GREEN);
         return new SequentialCommandGroup(
-            scoralRollers.runVoltsCommmand(1),
-            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.NO_CORAL),
-            new ParallelCommandGroup(
-                elevator.setElevatorTarget(0, 2),
-                scoralArm.setArmTarget(40, 2),
-                scoralRollers.stopCommand(),
-                led.setStateCommand(LED_STATE.BLUE),
-                new InstantCommand(() -> System.out.println("the stow command has been run"))),
+            new scoringCoral(scoralRollers),
+            new goToStow(elevator, scoralArm, scoralRollers),
+            led.setStateCommand(LED_STATE.BLUE),
             new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
             new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
+
       case CLIMB_STAGE_ONE:
         return new SequentialCommandGroup();
       case CLIMB_STAGE_TWO:

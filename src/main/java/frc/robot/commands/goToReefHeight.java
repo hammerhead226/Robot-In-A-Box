@@ -4,30 +4,29 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.constants.SubsystemConstants.ElevatorConstants;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.scoral.ScoralArm;
-import frc.robot.subsystems.scoral.ScoralRollers;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class IntakingAlgaeParallel extends ParallelCommandGroup {
+public class goToReefHeight extends SequentialCommandGroup {
+  /** Creates a new goToReefHeight. */
+  private final ScoralArm scoralArm;
+
   private final Elevator elevator;
-  private final ScoralArm arm;
-  private final ScoralRollers algaeIntake;
-  /** Creates a new IntakingAlgaeParallel. */
-  public IntakingAlgaeParallel(Elevator elevator, ScoralArm arm, ScoralRollers algaeIntake) {
-    this.elevator = elevator;
-    this.arm = arm;
-    this.algaeIntake = algaeIntake;
+
+  public goToReefHeight(
+      Elevator m_elevator, ScoralArm m_scoralArm, double heightInch, double pitchDegs) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+    this.elevator = m_elevator;
+    this.scoralArm = m_scoralArm;
+
     addCommands(
-        elevator.setElevatorTarget(1, ElevatorConstants.DEFAULT_THRESHOLD),
-        arm.setArmTarget(70, 2),
-        new InstantCommand(() -> algaeIntake.runVolts(5)));
+        new ParallelCommandGroup(
+            elevator.setElevatorTarget(heightInch, 0.1), scoralArm.setArmTarget(pitchDegs, 2)));
   }
 }

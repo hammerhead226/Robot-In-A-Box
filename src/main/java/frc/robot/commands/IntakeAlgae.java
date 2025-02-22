@@ -4,8 +4,9 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.subsystems.scoral.ScoralRollers;
@@ -13,22 +14,25 @@ import frc.robot.subsystems.scoral.ScoralRollers;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class IntakeFromSourceParallel extends ParallelCommandGroup {
-  private final ScoralRollers coralIntake;
-  private final ScoralArm arm;
+public class IntakeAlgae extends SequentialCommandGroup {
+  /** Creates a new IntakeAlgae. */
+  private final ScoralArm scoralArm;
+
+  private final ScoralRollers scoralRollers;
   private final Elevator elevator;
+  private Drive drive;
 
-  /** Creates a new IntakeFromSourceTestTwo. */
-  public IntakeFromSourceParallel(ScoralRollers coralIntake, ScoralArm arm, Elevator elevator) {
-    this.coralIntake = coralIntake;
-    this.elevator = elevator;
-    this.arm = arm;
-
+  public IntakeAlgae(
+      Elevator m_elevator, ScoralArm m_scoralArm, ScoralRollers m_scoralRollers, double height) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+
+    this.elevator = m_elevator;
+    this.scoralArm = m_scoralArm;
+    this.scoralRollers = m_scoralRollers;
+
     addCommands(
-        elevator.setElevatorTarget(0.75, 0.01),
-        arm.setArmTarget(32, 2),
-        new InstantCommand(() -> coralIntake.runVolts(5)));
+        new ParallelCommandGroup(
+            elevator.setElevatorTarget(height - 1, 0.1), scoralArm.setArmTarget(30, 2)));
   }
 }

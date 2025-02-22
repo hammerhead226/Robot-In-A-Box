@@ -32,6 +32,7 @@ public class ScoralRollersIOTalonFX implements FlywheelIO {
     config.CurrentLimits.SupplyCurrentLimit = 30.0;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
     leader.getConfigurator().apply(config);
 
     leaderPosition = leader.getPosition();
@@ -56,7 +57,7 @@ public class ScoralRollersIOTalonFX implements FlywheelIO {
 
   @Override
   public void setVoltage(double volts) {
-    leader.setControl(new VoltageOut(volts));
+    leader.setControl(new VoltageOut(-volts));
   }
 
   @Override

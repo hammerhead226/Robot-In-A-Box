@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static frc.robot.constants.RobotMap.*;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,22 +16,15 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // import frc.robot.ClimbStateMachine.java.ClimbStateMachine;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AlignToReefAuto;
 import frc.robot.commands.ApproachReefPerpendicular;
-import frc.robot.commands.AutoAlignToSource;
-import frc.robot.commands.AutoPickupCoral;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.IntakeFromSourceParallel;
-import frc.robot.commands.IntakingAlgaeParallel;
+import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ReinitializingCommand;
-import frc.robot.commands.ReleaseClawParallel;
 // import frc.robot.commands.algaeintosource.ReleaseAlgae;
 // import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
-import frc.robot.constants.FieldConstants;
 import frc.robot.constants.RobotMap;
 // import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.SimConstants;
-import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
@@ -44,29 +39,26 @@ import frc.robot.subsystems.climber.WinchIOSim;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
-
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
 import frc.robot.subsystems.led.LED_IOSim;
 import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.subsystems.scoral.ScoralArmIOSim;
-import frc.robot.subsystems.scoral.ScoralArmIOTalonFX;
 import frc.robot.subsystems.scoral.ScoralRollers;
 import frc.robot.subsystems.scoral.ScoralRollersIOSim;
+import frc.robot.subsystems.scoral.ScoralRollersIOTalonFX;
+import frc.robot.subsystems.scoral.ScoralSensorCANRangeIO;
 import frc.robot.subsystems.scoral.ScoralSensorIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import static frc.robot.constants.RobotMap.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -175,7 +167,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        scoralArm = new ScoralArm(new ScoralArmIOTalonFX(10, 19));
+        // scoralArm = new ScoralArm(new ScoralArmIOTalonFX(10, 19));
+        scoralArm = new ScoralArm(new ScoralArmIOSim());
 
         vision =
             new Vision(
@@ -188,13 +181,20 @@ public class RobotContainer {
         // climberArm = new ClimberArm(new ClimberArmIOTalonFX(14, 5));
         climberArm = new ClimberArm(new ClimberArmIO() {});
 
+        // scoralRollers =
+        //     new ScoralRollers(
+        //         new ScoralRollersIOSim(),
+        //         new ScoralSensorIO() {},
+        //         CoralState.DEFAULT,
+        //         AlgaeState.DEFAULT);
         scoralRollers =
             new ScoralRollers(
-                new ScoralRollersIOSim(),
-                new ScoralSensorIO() {},
+                new ScoralRollersIOTalonFX(RobotMap.CoralScorerArmIDs.coralScorerFlywheelID),
+                new ScoralSensorCANRangeIO(RobotMap.CoralScorerArmIDs.coralScorerCANrangeID),
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, "CAN Bus 2"));
+        superStructure = new SuperStructure(drive, elevator, scoralArm, scoralRollers, led);
 
         break;
       case SIM:
@@ -327,35 +327,30 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "ReleaseClawL1",
-        new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, scoralArm, scoralRollers));
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1))
+            .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "ReleaseClawL2",
-        new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, scoralArm, scoralRollers));
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2))
+            .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "ReleaseClawL3",
-        new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, scoralArm, scoralRollers));
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3))
+            .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "ReleaseClawL4",
-        new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, scoralArm, scoralRollers));
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4))
+            .andThen(superStructure.getSuperStructureCommand()));
 
-    NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
-    NamedCommands.registerCommand("AutoAlignToSource", new AutoAlignToSource(drive, led));
     NamedCommands.registerCommand(
         "IntakeFromSource",
-        new IntakeFromSourceParallel(scoralRollers, scoralArm, elevator)
-            .until(
-                () ->
-                    scoralRollers.seesCoral() == CoralState.SENSOR
-                        || scoralRollers.seesCoral() == CoralState.CURRENT)
-            .withTimeout(5));
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE))
+            .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "IntakingAlgae",
-        new IntakingAlgaeParallel(elevator, scoralArm, scoralRollers)
-            .until(() -> scoralRollers.seesAlgae() == AlgaeState.CURRENT)
-            .withTimeout(5));
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE))
+            .andThen(superStructure.getSuperStructureCommand()));
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
-
-    NamedCommands.registerCommand("AutoPickupCoral", new AutoPickupCoral(null, drive, led));
 
     // autos = new SendableChooser<>();
 
@@ -403,8 +398,8 @@ public class RobotContainer {
                 driveController.leftTrigger().getAsBoolean()
                     || driveController.rightTrigger().getAsBoolean());
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
-    configureButtonBindings();
-    // test();
+    // configureButtonBindings();
+    test();
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -423,10 +418,15 @@ public class RobotContainer {
     // driveController.b().onTrue(climberArm.setArmTarget(20, 1));
     // driveController.b().onTrue(climberArm.setArmTarget(0, 1));
 
-    driveController.a().onTrue(scoralArm.setArmTarget(20, 1));
-    driveController.a().onFalse(new InstantCommand(() -> scoralArm.armStop()));
-    driveController.b().onTrue(scoralArm.setArmTarget(0, 1));
-    driveController.b().onFalse(new InstantCommand(() -> scoralArm.armStop()));
+    // driveController.a().onTrue(scoralArm.setArmTarget(20, 1));
+    // driveController.a().onFalse(new InstantCommand(() -> scoralArm.armStop()));
+    // driveController.b().onTrue(scoralArm.setArmTarget(0, 1));
+    // driveController.b().onFalse(new InstantCommand(() -> scoralArm.armStop()));
+    driveController.b().onTrue(scoralRollers.runVoltsCommmand(2));
+    driveController.b().onFalse(scoralRollers.stopCommand());
+
+    driveController.a().onTrue(new IntakingCoral(scoralRollers));
+    driveController.a().onFalse(scoralRollers.stopCommand());
     // driveController.b().onTrue(new InstantCommand(() -> climberArm.armStop(), climberArm));
     // driveController
     //     .b()

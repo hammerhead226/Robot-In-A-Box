@@ -79,7 +79,9 @@ public class ScoralRollers extends SubsystemBase {
   @Override
   public void periodic() {
     rollers.updateInputs(inputs);
+    sensor.updateInputs(sInputs);
     Logger.processInputs(" scoral Flywheel", inputs);
+    Logger.processInputs("scoral flywheel canrange", sInputs);
 
     updateTunableNumbers();
   }
@@ -161,12 +163,13 @@ public class ScoralRollers extends SubsystemBase {
 
   public CoralState seesCoral() {
     Logger.recordOutput("see note val", "default");
+
     if ((sInputs.distanceInches < SubsystemConstants.CORAL_DIST)) {
       Logger.recordOutput("see note val", "sensor");
       lastCoralState = CoralState.SENSOR;
       return CoralState.SENSOR;
 
-    } else if (inputs.currentAmps > 13) {
+    } else if (inputs.currentAmps > 30) {
       Logger.recordOutput("see note val", "current");
       lastCoralState = CoralState.CURRENT;
       return CoralState.CURRENT;

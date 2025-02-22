@@ -11,7 +11,7 @@ import frc.robot.subsystems.commoniolayers.FlywheelIO;
 public class ScoralRollersIOSim implements FlywheelIO {
   // CHANGE THESE VALUES TO MATCH YOUR MOTOR AND GEARBOX
   private int gearBoxMotorCount = 1;
-  private double gearing = 1;
+  private double gearing = 1.5;
   //  private double momentOfInertia = 1;
   private DCMotor motor = DCMotor.getKrakenX60Foc(gearBoxMotorCount);
   //  private double[] stds = {1, 2, 3};
@@ -38,7 +38,7 @@ public class ScoralRollersIOSim implements FlywheelIO {
               clampedValueHighVolts);
       sim.setInputVoltage(appliedVolts);
     }
-
+    // sim.setInputVoltage(appliedVolts);
     sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
 
     inputs.positionRad = 0.0;

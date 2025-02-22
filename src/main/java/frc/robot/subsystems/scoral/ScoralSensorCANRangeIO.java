@@ -5,7 +5,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANrange;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
-import frc.robot.constants.SubsystemConstants;
 
 public class ScoralSensorCANRangeIO implements ScoralSensorIO {
   private final CANrange sensor;
@@ -13,7 +12,7 @@ public class ScoralSensorCANRangeIO implements ScoralSensorIO {
   private StatusSignal<Distance> distanceMeters;
 
   public ScoralSensorCANRangeIO(int id) {
-    sensor = new CANrange(id, SubsystemConstants.CANIVORE_ID_STRING);
+    sensor = new CANrange(id);
 
     distanceMeters = sensor.getDistance();
 
