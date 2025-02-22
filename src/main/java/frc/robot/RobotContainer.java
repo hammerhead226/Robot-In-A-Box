@@ -427,7 +427,7 @@ public class RobotContainer {
     // driveController.a().onFalse(new InstantCommand(() -> winch.stop(), winch));
     // driveController.b().onTrue(climberArm.setArmTarget(20, 1));
     // driveController.b().onTrue(climberArm.setArmTarget(0, 1));
-
+    // driveController.a().onTrue(new InstantCommand(() -> scoralArm.setVolts(2)));
     driveController.a().onTrue(scoralArm.setArmTarget(50, 1));
     driveController.a().onFalse(new InstantCommand(() -> scoralArm.armStop()));
     driveController.b().onTrue(scoralArm.setArmTarget(100, 1));

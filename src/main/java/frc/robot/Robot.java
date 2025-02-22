@@ -174,7 +174,8 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-
+    robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
+    robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
     // robotContainer.getSuperStructure().;
   }
 
