@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // import frc.robot.ClimbStateMachine.java.ClimbStateMachine;
@@ -109,7 +111,7 @@ public class RobotContainer {
   }
   // public final Trigger elevatorBrakeTrigger;
   //   private final Trigger stateTrigger;
-  private Trigger slowModeTrigger;
+  //   private Trigger slowModeTrigger;
 
   // Dashboard inputs
   private LoggedDashboardChooser<Command> autoChooser;
@@ -280,40 +282,39 @@ public class RobotContainer {
     // Set up auto routines
     // NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
 
-    // NamedCommands.registerCommand(
-    //     "L1",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    // NamedCommands.registerCommand(
-    //     "L2",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    // NamedCommands.registerCommand(
-    //     "L3",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    // NamedCommands.registerCommand(
-    //     "L4",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    // NamedCommands.registerCommand(
-    //     "STOW ", new InstantCommand(() ->
-    // superStructure.setWantedState(SuperStructureState.STOW)));
-    // NamedCommands.registerCommand(
-    //     "SCORE",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(
-    //             () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
-    // NamedCommands.registerCommand(
-    //     "INTAKE",
-    //     new SequentialCommandGroup(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)),
-    //         new WaitUntilCommand(() -> superStructure.hasStructureReachedGoal())));
+    NamedCommands.registerCommand(
+        "L1",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)),
+            new WaitUntilCommand(() -> superStructure.atGoals())));
+    NamedCommands.registerCommand(
+        "L2",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)),
+            new WaitUntilCommand(() -> superStructure.atGoals())));
+    NamedCommands.registerCommand(
+        "L3",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)),
+            new WaitUntilCommand(() -> superStructure.atGoals())));
+    NamedCommands.registerCommand(
+        "L4",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)),
+            new WaitUntilCommand(() -> superStructure.atGoals())));
+    NamedCommands.registerCommand(
+        "STOW ", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)));
+    NamedCommands.registerCommand(
+        "SCORE",
+        new SequentialCommandGroup(
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
+            new WaitUntilCommand(() -> superStructure.atGoals())));
+    NamedCommands.registerCommand(
+        "INTAKE",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)),
+            new WaitUntilCommand(() -> superStructure.atGoals())));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -336,114 +337,115 @@ public class RobotContainer {
     //     "Top R3a", AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c-R1b(L3)-S3c-R6a(L3)"));
     // autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
     // autoChooser.addDefaultOption("1.1 auto", AutoBuilder.buildAuto("1.1.auto"));
-    /*
-     // angles in none and retract aren't set, CHANGE THEM!!
-     climbCommands =
-         new SelectCommand<>(
-             Map.ofEntries(
-                 Map.entry(
-                     CLIMB_STATES.EXTEND,
-                     algaeArm
-                         .setArmTarget(160, 5)
-                         .andThen(climbStateMachine::advanceTargetState, algaeArm)),
-                 Map.entry(
-                     CLIMB_STATES.RETRACT,
-                     algaeArm
-                         .setArmTarget(60, 5)
-                         .andThen(climbStateMachine::advanceTargetState, algaeArm)),
-                 Map.entry(
-                     CLIMB_STATES.NONE,
-                     algaeArm
-                         .setArmTarget(30, 5)
-                         .andThen(climbStateMachine::advanceTargetState, algaeArm))),
-             this::climbSelect);
-     // Set up auto routines
 
-     // Set up SysId routines
+    // angles in none and retract aren't set, CHANGE THEM!!
+    //  climbCommands =
+    //      new SelectCommand<>(
+    //          Map.ofEntries(
+    //              Map.entry(
+    //                  CLIMB_STATES.EXTEND,
+    //                  algaeArm
+    //                      .setArmTarget(160, 5)
+    //                      .andThen(climbStateMachine::advanceTargetState, algaeArm)),
+    //              Map.entry(
+    //                  CLIMB_STATES.RETRACT,
+    //                  algaeArm
+    //                      .setArmTarget(60, 5)
+    //                      .andThen(climbStateMachine::advanceTargetState, algaeArm)),
+    //              Map.entry(
+    //                  CLIMB_STATES.NONE,
+    //                  algaeArm
+    //                      .setArmTarget(30, 5)
+    //                      .andThen(climbStateMachine::advanceTargetState, algaeArm))),
+    //          this::climbSelect);
+    // Set up auto routines
 
-     NamedCommands.registerCommand(
-         "ReleaseClawL1",
-         new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
-     NamedCommands.registerCommand(
-         "ReleaseClawL2",
-         new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
-     NamedCommands.registerCommand(
-         "ReleaseClawL3",
-         new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
-     NamedCommands.registerCommand(
-         "ReleaseClawL4",
-         new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+    // Set up SysId routines
 
-     NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
-     NamedCommands.registerCommand("AutoAlignToSource", new AutoAlignToSource(drive, led));
-     NamedCommands.registerCommand(
-         "IntakeFromSource",
-         new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
-             .until(
-                 () ->
-                     csFlywheel.seesCoral() == CoralState.SENSOR
-                         || csFlywheel.seesCoral() == CoralState.CURRENT)
-             .withTimeout(5));
-     NamedCommands.registerCommand(
-         "IntakingAlgae",
-         new IntakingAlgaeParallel(elevator, csArm, csFlywheel)
-             .until(() -> csFlywheel.seesAlgae() == AlgaeState.CURRENT)
-             .withTimeout(5));
-     NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
+    NamedCommands.registerCommand(
+        "ReleaseClawL1",
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
+    NamedCommands.registerCommand(
+        "ReleaseClawL2",
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
+    NamedCommands.registerCommand(
+        "ReleaseClawL3",
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
+    NamedCommands.registerCommand(
+        "ReleaseClawL4",
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
 
-     // NamedCommands.registerCommand(
-     // "AlgaeIntoProcessor", new AlgaeIntoProcessor(elevator, csArm, csFlywheel));
-     // NamedCommands.registerCommand("ReadyForAlgaeScore", new ReadyForAlgaeScore(elevator, csArm));
+    //  NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
+    //  NamedCommands.registerCommand("AutoAlignToSource", new AutoAlignToSource(drive, led));
+    NamedCommands.registerCommand(
+        "IntakeFromSource",
+        new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
+            .until(
+                () ->
+                    csFlywheel.seesCoral() == CoralState.SENSOR
+                        || csFlywheel.seesCoral() == CoralState.CURRENT)
+            .withTimeout(5));
+    NamedCommands.registerCommand(
+        "IntakingAlgae",
+        new IntakingAlgaeParallel(elevator, csArm, csFlywheel)
+            .until(() -> csFlywheel.seesAlgae() == AlgaeState.CURRENT)
+            .withTimeout(5));
+    NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
-     NamedCommands.registerCommand("ReleaseAlgae", new ReleaseAlgae(csFlywheel));
+    // NamedCommands.registerCommand(
+    // "AlgaeIntoProcessor", new AlgaeIntoProcessor(elevator, csArm, csFlywheel));
+    // NamedCommands.registerCommand("ReadyForAlgaeScore", new ReadyForAlgaeScore(elevator, csArm));
 
-     NamedCommands.registerCommand("AutoPickupCoral", new AutoPickupCoral(null, drive, led));
-    */
+    NamedCommands.registerCommand("ReleaseAlgae", new ReleaseAlgae(csFlywheel));
+
+    //  NamedCommands.registerCommand("AutoPickupCoral", new AutoPickupCoral(null, drive, led));
+
     autos = new SendableChooser<>();
-    /*
-      // autos.addOption("AutoTest",
-      // AutoBuilder.buildAuto("Bottom-R5a(L4)-S3c-R6a(L4)-F2-R6b(L4)-S2c"));
-      // autos.addOption("AutoTestTwo",
-      // AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
-      autos.addOption(
-          "AutoSourceBottom", AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
-      autos.addOption(
-          "AutoSourceMiddle", AutoBuilder.buildAuto("Middle-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
-      autos.addOption("AutoSourceTop", AutoBuilder.buildAuto("Top-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
-      autos.addOption("AutoTestTop", AutoBuilder.buildAuto("Top-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
-      autos.addOption(
-          "AutoTestMiddle", AutoBuilder.buildAuto("Middle-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
-      autos.addOption(
-          "AutoTestBottom", AutoBuilder.buildAuto("Bottom-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
 
-      //     autoChooser.addOption(
-      //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-      // autoChooser.addOption(
-      //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-      // autoChooser.addOption(
-      //     "Drive SysId (Quasistatic Forward)",
-      //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      // autoChooser.addOption(
-      //     "Drive SysId (Quasistatic Reverse)",
-      //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      // autoChooser.addOption(
-      //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-      // autoChooser.addOption(
-      //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-      // autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
-      // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
+    // autos.addOption("AutoTest",
+    // AutoBuilder.buildAuto("Bottom-R5a(L4)-S3c-R6a(L4)-F2-R6b(L4)-S2c"));
+    // autos.addOption("AutoTestTwo",
+    // AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+    autos.addOption(
+        "AutoSourceBottom", AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+    autos.addOption(
+        "AutoSourceMiddle", AutoBuilder.buildAuto("Middle-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+    autos.addOption("AutoSourceTop", AutoBuilder.buildAuto("Top-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+    autos.addOption("AutoTestTop", AutoBuilder.buildAuto("Top-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
+    autos.addOption(
+        "AutoTestMiddle", AutoBuilder.buildAuto("Middle-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
+    autos.addOption(
+        "AutoTestBottom", AutoBuilder.buildAuto("Bottom-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
 
-      autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
-      // Configure the button bindings
-      // configureButtonBindings();
-      stateTrigger = new Trigger(() -> superStructure.changedStated());
-      // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
-      // slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
-      // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
-      // configureButtonBindings();
-      test();
-    }*/
+    //     autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Forward)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Reverse)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
+    // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
+
+    //   autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
+    //   // Configure the button bindings
+    //   // configureButtonBindings();
+    //   stateTrigger = new Trigger(() -> superStructure.changedStated());
+    // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
+    // slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+    // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+    // configureButtonBindings();
+    // test();
+    configureButtonBindings();
   }
+
   /*
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -480,8 +482,8 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
-    slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
+    // slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
+    // slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
     driverControls();
     manipControls();
@@ -582,8 +584,8 @@ public class RobotContainer {
     //     () -> superStructure.getSuperStructureCommand(),
     //     elevator, csArm, csFlywheel, led
     //     ));
-    slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
-    slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
+    // slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
+    // slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
     // Default command, normal field-relative drive
     // drive.setDefaultCommand(
