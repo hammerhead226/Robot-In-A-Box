@@ -10,22 +10,22 @@ import frc.robot.constants.SubsystemConstants.CoralScorerConstants.CoralScorerFl
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.ElevatorConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
-import frc.robot.subsystems.coralscorer.CoralScorerArm;
-import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
+import frc.robot.subsystems.scoral.ScoralArm;
+import frc.robot.subsystems.scoral.ScoralRollers;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeFromSource extends Command {
   /** Creates a new IntakeFromSource. */
-  private final CoralScorerFlywheel coralIntake;
+  private final ScoralRollers coralIntake;
 
-  private final CoralScorerArm arm;
+  private final ScoralArm arm;
   private final Elevator elevator;
   private final LED led;
 
   public IntakeFromSource(
-      CoralScorerFlywheel coralIntake, CoralScorerArm arm, Elevator elevator, LED led) {
+      ScoralRollers coralIntake, ScoralArm arm, Elevator elevator, LED led) {
     this.coralIntake = coralIntake;
     this.elevator = elevator;
     this.arm = arm;

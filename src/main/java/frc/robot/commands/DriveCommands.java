@@ -110,7 +110,7 @@ public class DriveCommands {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
-      BooleanSupplier alignAssistSupplier,
+      BooleanSupplier angleAssistSupplier,
       BooleanSupplier reefLeftSupplier,
       BooleanSupplier reefRightSupplier) {
     // BooleanSupplier sourceAlignSupplier,
@@ -146,10 +146,10 @@ public class DriveCommands {
 
           double rotationSpeed = speeds.omegaRadiansPerSecond;
 
-          double speedDebuff = 0.5;
+          double speedDebuff = 0.75;
 
           targetPose = null;
-          if (alignAssistSupplier.getAsBoolean() && superStructure.isTargetAReefState()) {
+          if (reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()) {
             Translation2d reefTranslation =
                 drive.isNearReef() ? new Translation2d(-0.5, 0) : new Translation2d(-1.3, 0);
 
@@ -165,14 +165,14 @@ public class DriveCommands {
             }
             Logger.recordOutput("drive targetPose name", "reef");
 
-          } else if (alignAssistSupplier.getAsBoolean()
+          } else if (angleAssistSupplier.getAsBoolean()
               && superStructure.getWantedState() == SuperStructureState.SOURCE) {
             targetPose = drive.getNearestSource();
             targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
 
             Logger.recordOutput("drive targetPose name", "source");
 
-          } else if (alignAssistSupplier.getAsBoolean()
+          } else if (angleAssistSupplier.getAsBoolean()
               && superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
             targetPose = FieldConstants.Processor.centerFace;
             targetPose =
@@ -180,7 +180,7 @@ public class DriveCommands {
             speedDebuff *= 0.5;
 
             Logger.recordOutput("drive targetPose name", "processor");
-          } else if (alignAssistSupplier.getAsBoolean()
+          } else if (angleAssistSupplier.getAsBoolean()
               && superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
             targetPose =
                 drive
@@ -245,11 +245,11 @@ public class DriveCommands {
                     drive.getMaxAngularSpeedRadPerSec());
 
             forwardsAssistEffort =
-                superStructure.isTargetAReefState()
+                reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()
                     ? (wantedForwardsVelocity - forwardSpeed) * speedDebuff
                     : 0;
             sidewaysAssistEffort =
-                superStructure.isTargetAReefState()
+                reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()
                     ? (wantedSidewaysVelocity - sidewaysSpeed) * speedDebuff
                     : 0;
 

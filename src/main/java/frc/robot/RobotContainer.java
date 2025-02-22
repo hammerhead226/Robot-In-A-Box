@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // import frc.robot.ClimbStateMachine.java.ClimbStateMachine;
@@ -24,8 +23,6 @@ import frc.robot.commands.IntakeFromSourceParallel;
 import frc.robot.commands.IntakingAlgaeParallel;
 import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.ReleaseClawParallel;
-import frc.robot.commands.Stow;
-import frc.robot.commands.algaeintoprocesser.ReleaseAlgae;
 // import frc.robot.commands.algaeintosource.ReleaseAlgae;
 // import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 import frc.robot.constants.FieldConstants;
@@ -43,12 +40,6 @@ import frc.robot.subsystems.climber.Winch;
 import frc.robot.subsystems.climber.WinchIO;
 import frc.robot.subsystems.climber.WinchIOSim;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
-import frc.robot.subsystems.coralscorer.CoralScorerArm;
-import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
-import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
-import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
-import frc.robot.subsystems.coralscorer.CoralScorerFlywheelIOSim;
-import frc.robot.subsystems.coralscorer.CoralSensorIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -56,11 +47,16 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
-import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
 import frc.robot.subsystems.led.LED_IOSim;
+import frc.robot.subsystems.scoral.ScoralArm;
+import frc.robot.subsystems.scoral.ScoralArmIOSim;
+import frc.robot.subsystems.scoral.ScoralArmIOTalonFX;
+import frc.robot.subsystems.scoral.ScoralRollers;
+import frc.robot.subsystems.scoral.ScoralRollersIOSim;
+import frc.robot.subsystems.scoral.ScoralSensorIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -84,7 +80,7 @@ public class RobotContainer {
   //   private final JoystickButton btn = new JoystickButton(joystikc, 4);
   //   private final KeyboardInputs keyboard = new KeyboardInputs(0);
 
-  private CoralScorerArm csArm;
+  private ScoralArm scoralArm;
   // private final CoralScorerFlywheel coralIntake;
 
   public static Elevator elevator;
@@ -97,11 +93,12 @@ public class RobotContainer {
   //   private final Trigger stateTrigger;
   // private final Trigger slowModeTrigger;
 
-  private CoralScorerFlywheel csFlywheel;
+  private ScoralRollers scoralRollers;
 
   // public final Trigger elevatorBrakeTrigger;
   //   private final Trigger stateTrigger;
   private Trigger slowModeTrigger;
+  private Trigger reefAlignTrigger;
 
   // Dashboard inputs
   private LoggedDashboardChooser<Command> autoChooser;
@@ -172,7 +169,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(10, 19));
+        scoralArm = new ScoralArm(new ScoralArmIOTalonFX(10, 19));
 
         vision =
             new Vision(
@@ -185,10 +182,10 @@ public class RobotContainer {
         // climberArm = new ClimberArm(new ClimberArmIOTalonFX(14, 5));
         climberArm = new ClimberArm(new ClimberArmIO() {});
 
-        csFlywheel =
-            new CoralScorerFlywheel(
-                new CoralScorerFlywheelIOSim(),
-                new CoralSensorIO() {},
+        scoralRollers =
+            new ScoralRollers(
+                new ScoralRollersIOSim(),
+                new ScoralSensorIO() {},
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, "CAN Bus 2"));
@@ -204,7 +201,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        scoralArm = new ScoralArm(new ScoralArmIOSim());
         winch = new Winch(new WinchIOSim());
         vision =
             new Vision(
@@ -214,14 +211,14 @@ public class RobotContainer {
                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIOSim());
-        csFlywheel =
-            new CoralScorerFlywheel(
-                new FlywheelIOSim(),
-                new CoralSensorIO() {},
+        scoralRollers =
+            new ScoralRollers(
+                new ScoralRollersIOSim(),
+                new ScoralSensorIO() {},
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOSim());
-        superStructure = new SuperStructure(drive, elevator, csArm, csFlywheel, led);
+        superStructure = new SuperStructure(drive, elevator, scoralArm, scoralRollers, led);
         climberArm = new ClimberArm(new ClimberArmIOSim());
         break;
 
@@ -235,7 +232,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
+        scoralArm = new ScoralArm(new ScoralArmIOSim());
         // vision =
         //     new Vision(
         //         drive.getToPoseEstimatorConsumer(),
@@ -244,17 +241,17 @@ public class RobotContainer {
         //         new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
         //         new VisionIOPhotonVision("photon", new Transform3d()));
         elevator = new Elevator(new ElevatorIO() {});
-        csFlywheel =
-            new CoralScorerFlywheel(
+        scoralRollers =
+            new ScoralRollers(
                 new FlywheelIO() {},
-                new CoralSensorIO() {},
+                new ScoralSensorIO() {},
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
 
         winch = new Winch(new WinchIO() {});
 
-        superStructure = new SuperStructure(drive, elevator, csArm, csFlywheel, led);
+        superStructure = new SuperStructure(drive, elevator, scoralArm, scoralRollers, led);
         break;
     }
 
@@ -324,39 +321,33 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "ReleaseClawL1",
-        new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, scoralArm, scoralRollers));
     NamedCommands.registerCommand(
         "ReleaseClawL2",
-        new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, scoralArm, scoralRollers));
     NamedCommands.registerCommand(
         "ReleaseClawL3",
-        new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, scoralArm, scoralRollers));
     NamedCommands.registerCommand(
         "ReleaseClawL4",
-        new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
+        new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, scoralArm, scoralRollers));
 
     NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
     NamedCommands.registerCommand("AutoAlignToSource", new AutoAlignToSource(drive, led));
     NamedCommands.registerCommand(
         "IntakeFromSource",
-        new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
+        new IntakeFromSourceParallel(scoralRollers, scoralArm, elevator)
             .until(
                 () ->
-                    csFlywheel.seesCoral() == CoralState.SENSOR
-                        || csFlywheel.seesCoral() == CoralState.CURRENT)
+                    scoralRollers.seesCoral() == CoralState.SENSOR
+                        || scoralRollers.seesCoral() == CoralState.CURRENT)
             .withTimeout(5));
     NamedCommands.registerCommand(
         "IntakingAlgae",
-        new IntakingAlgaeParallel(elevator, csArm, csFlywheel)
-            .until(() -> csFlywheel.seesAlgae() == AlgaeState.CURRENT)
+        new IntakingAlgaeParallel(elevator, scoralArm, scoralRollers)
+            .until(() -> scoralRollers.seesAlgae() == AlgaeState.CURRENT)
             .withTimeout(5));
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
-
-    // NamedCommands.registerCommand(
-    // "AlgaeIntoProcessor", new AlgaeIntoProcessor(elevator, csArm, csFlywheel));
-    // NamedCommands.registerCommand("ReadyForAlgaeScore", new ReadyForAlgaeScore(elevator, csArm));
-
-    NamedCommands.registerCommand("ReleaseAlgae", new ReleaseAlgae(csFlywheel));
 
     NamedCommands.registerCommand("AutoPickupCoral", new AutoPickupCoral(null, drive, led));
 
@@ -400,6 +391,11 @@ public class RobotContainer {
     // stateTrigger = new Trigger(() -> superStructure.changedStated());
     // elevatorBrakeTrigger = new Trigger(() -> RobotController.getUserButton());
     slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+    reefAlignTrigger =
+        new Trigger(
+            () ->
+                driveController.leftTrigger().getAsBoolean()
+                    || driveController.rightTrigger().getAsBoolean());
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     configureButtonBindings();
     // test();
@@ -421,10 +417,10 @@ public class RobotContainer {
     // driveController.b().onTrue(climberArm.setArmTarget(20, 1));
     // driveController.b().onTrue(climberArm.setArmTarget(0, 1));
 
-    driveController.a().onTrue(csArm.setArmTarget(20, 1));
-    driveController.a().onFalse(new InstantCommand(() -> csArm.armStop()));
-    driveController.b().onTrue(csArm.setArmTarget(0, 1));
-    driveController.b().onFalse(new InstantCommand(() -> csArm.armStop()));
+    driveController.a().onTrue(scoralArm.setArmTarget(20, 1));
+    driveController.a().onFalse(new InstantCommand(() -> scoralArm.armStop()));
+    driveController.b().onTrue(scoralArm.setArmTarget(0, 1));
+    driveController.b().onFalse(new InstantCommand(() -> scoralArm.armStop()));
     // driveController.b().onTrue(new InstantCommand(() -> climberArm.armStop(), climberArm));
     // driveController
     //     .b()
@@ -469,15 +465,11 @@ public class RobotContainer {
             () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.rightTrigger().getAsBoolean()));
 
-    driveController
-        .leftBumper()
-        .onFalse(
-            new ConditionalCommand(
-                new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
-                new InstantCommand(),
-                () ->
-                    (!drive.isNearReef() && drive.isAtReefSide())
-                        && superStructure.isTargetAReefState()));
+    reefAlignTrigger.onFalse(
+        new ConditionalCommand(
+            new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
+            new InstantCommand(),
+            () -> (!drive.isNearReef() && drive.isAtReefSide())));
 
     driveController
         .rightBumper()
@@ -487,8 +479,8 @@ public class RobotContainer {
                     new ReinitializingCommand(
                         () -> superStructure.getSuperStructureCommand(),
                         elevator,
-                        csArm,
-                        csFlywheel,
+                        scoralArm,
+                        scoralRollers,
                         drive,
                         led))
                 .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
@@ -499,40 +491,41 @@ public class RobotContainer {
             new InstantCommand(
                 () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
 
+    driveController
+        .x()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+    driveController
+        .y()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    driveController
+        .povUp()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+    driveController
+        .b()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
-                driveController
-                .x()
-                .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
-                driveController
-                .y()
-                .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
-                driveController
-                .povUp()
-                .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
-                driveController
-                .b()
-                .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
+    driveController
+        .povUp()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
 
-                driveController
-                .povUp()
-                .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
+    driveController
+        .povLeft()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
 
-                driveController
-                .povLeft()
-                .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
-        
-                driveController
-                .povDown()
-                .onTrue(
-                    new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
-                        .andThen(
-                            new ReinitializingCommand(
-                                () -> superStructure.getSuperStructureCommand(),
-                                elevator,
-                                csArm,
-                                csFlywheel,
-                                drive,
-                                led)));
+    driveController
+        .povDown()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+                .andThen(
+                    new ReinitializingCommand(
+                        () -> superStructure.getSuperStructureCommand(),
+                        elevator,
+                        scoralArm,
+                        scoralRollers,
+                        drive,
+                        led)));
   }
 
   private void manipControls() {
@@ -557,105 +550,110 @@ public class RobotContainer {
                     new ReinitializingCommand(
                         () -> superStructure.getSuperStructureCommand(),
                         elevator,
-                        csArm,
-                        csFlywheel,
+                        scoralArm,
+                        scoralRollers,
                         drive,
                         led)));
   }
 
-//   private void testControls() {
-//     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
-//     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
+  //   private void testControls() {
+  //     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
+  //     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
-//     drive.setDefaultCommand(
-//         DriveCommands.joystickDrive(
-//             drive,
-//             superStructure,
-//             () -> -driveController.getLeftY(),
-//             () -> -driveController.getLeftX(),
-//             () -> -driveController.getRightX(),
-//             () -> driveController.leftBumper().getAsBoolean(),
-//             () -> driveController.leftTrigger().getAsBoolean(),
-//             () -> driveController.rightTrigger().getAsBoolean()));
+  //     drive.setDefaultCommand(
+  //         DriveCommands.joystickDrive(
+  //             drive,
+  //             superStructure,
+  //             () -> -driveController.getLeftY(),
+  //             () -> -driveController.getLeftX(),
+  //             () -> -driveController.getRightX(),
+  //             () -> driveController.leftBumper().getAsBoolean(),
+  //             () -> driveController.leftTrigger().getAsBoolean(),
+  //             () -> driveController.rightTrigger().getAsBoolean()));
 
-//     // Drive Controller - Align Commands go in Drive
-//     driveController.b().onTrue((new ReleaseAlgae(csFlywheel)));
-//     driveController.b().onFalse(new InstantCommand(() -> csFlywheel.runVolts(0)));
+  //     // Drive Controller - Align Commands go in Drive
+  //     driveController.b().onTrue((new ReleaseAlgae(csFlywheel)));
+  //     driveController.b().onFalse(new InstantCommand(() -> csFlywheel.runVolts(0)));
 
-//     // Manip Controller
-//     manipController.rightTrigger().onTrue(new Stow(elevator, csArm));
+  //     // Manip Controller
+  //     manipController.rightTrigger().onTrue(new Stow(elevator, csArm));
 
-//     manipController
-//         .leftBumper()
-//         .onTrue(
-//             new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
-//                 .until(
-//                     () ->
-//                         csFlywheel.seesCoral() == CoralState.SENSOR
-//                             || csFlywheel.seesCoral() == CoralState.CURRENT)
-//                 .withTimeout(5));
-//     manipController
-//         .leftBumper()
-//         .onFalse(
-//             new ParallelCommandGroup(
-//                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+  //     manipController
+  //         .leftBumper()
+  //         .onTrue(
+  //             new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
+  //                 .until(
+  //                     () ->
+  //                         csFlywheel.seesCoral() == CoralState.SENSOR
+  //                             || csFlywheel.seesCoral() == CoralState.CURRENT)
+  //                 .withTimeout(5));
+  //     manipController
+  //         .leftBumper()
+  //         .onFalse(
+  //             new ParallelCommandGroup(
+  //                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
 
-//     manipController
-//         .rightBumper()
-//         .onTrue(
-//             new IntakingAlgaeParallel(elevator, csArm, csFlywheel)
-//                 .until(() -> csFlywheel.seesAlgae() == AlgaeState.CURRENT)
-//                 .withTimeout(5));
-//     manipController
-//         .rightBumper()
-//         .onFalse(
-//             new ParallelCommandGroup(
-//                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+  //     manipController
+  //         .rightBumper()
+  //         .onTrue(
+  //             new IntakingAlgaeParallel(elevator, csArm, csFlywheel)
+  //                 .until(() -> csFlywheel.seesAlgae() == AlgaeState.CURRENT)
+  //                 .withTimeout(5));
+  //     manipController
+  //         .rightBumper()
+  //         .onFalse(
+  //             new ParallelCommandGroup(
+  //                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
 
-//     manipController
-//         .a()
-//         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm, csFlywheel));
-//     manipController
-//         .a()
-//         .onFalse(
-//             new ParallelCommandGroup(
-//                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+  //     manipController
+  //         .a()
+  //         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L1, elevator, csArm,
+  // csFlywheel));
+  //     manipController
+  //         .a()
+  //         .onFalse(
+  //             new ParallelCommandGroup(
+  //                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
 
-//     manipController
-//         .b()
-//         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm, csFlywheel));
-//     manipController
-//         .b()
-//         .onFalse(
-//             new ParallelCommandGroup(
-//                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+  //     manipController
+  //         .b()
+  //         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L2, elevator, csArm,
+  // csFlywheel));
+  //     manipController
+  //         .b()
+  //         .onFalse(
+  //             new ParallelCommandGroup(
+  //                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
 
-//     manipController
-//         .x()
-//         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm, csFlywheel));
-//     manipController
-//         .x()
-//         .onFalse(
-//             new ParallelCommandGroup(
-//                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+  //     manipController
+  //         .x()
+  //         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L3, elevator, csArm,
+  // csFlywheel));
+  //     manipController
+  //         .x()
+  //         .onFalse(
+  //             new ParallelCommandGroup(
+  //                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
 
-//     manipController
-//         .y()
-//         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm, csFlywheel));
-//     manipController
-//         .y()
-//         .onFalse(
-//             new ParallelCommandGroup(
-//                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+  //     manipController
+  //         .y()
+  //         .onTrue(new ReleaseClawParallel(FieldConstants.ReefHeight.L4, elevator, csArm,
+  // csFlywheel));
+  //     manipController
+  //         .y()
+  //         .onFalse(
+  //             new ParallelCommandGroup(
+  //                 new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
 
-//     manipController
-//         .leftBumper()
-//         .onTrue(
-//             new ReinitializingCommand(
-//                 () -> superStructure.getSuperStructureCommand(), elevator, csArm, csFlywheel, led));
+  //     manipController
+  //         .leftBumper()
+  //         .onTrue(
+  //             new ReinitializingCommand(
+  //                 () -> superStructure.getSuperStructureCommand(), elevator, csArm, csFlywheel,
+  // led));
 
-//     manipController.rightBumper().onFalse(new Stow(elevator, csArm));
-//   }
+  //     manipController.rightBumper().onFalse(new Stow(elevator, csArm));
+  //   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -665,8 +663,8 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  public CoralScorerArm getScoralArm() {
-    return csArm;
+  public ScoralArm getScoralArm() {
+    return scoralArm;
   }
 
   public Drive getDrive() {

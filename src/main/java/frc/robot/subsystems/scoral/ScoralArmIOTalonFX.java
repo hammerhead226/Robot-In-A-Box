@@ -1,4 +1,4 @@
-package frc.robot.subsystems.coralscorer;
+package frc.robot.subsystems.scoral;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -22,7 +22,7 @@ import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.util.Conversions;
 import org.littletonrobotics.junction.Logger;
 
-public class CoralScorerArmIOTalonFX implements ArmIO {
+public class ScoralArmIOTalonFX implements ArmIO {
   private final TalonFX leader;
   private final CANcoder scoralCoder;
   private double positionSetpointDegs;
@@ -34,7 +34,7 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> currentAmps;
 
-  public CoralScorerArmIOTalonFX(int leadID, int canCoderID) {
+  public ScoralArmIOTalonFX(int leadID, int canCoderID) {
     CANcoderConfiguration coderConfig = new CANcoderConfiguration();
     // change?
     coderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;

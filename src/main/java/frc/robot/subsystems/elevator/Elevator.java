@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.coralscorer.CoralScorerArm;
+import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -284,7 +284,7 @@ public class Elevator extends SubsystemBase {
     // }
 
     measured.update(extenderCurrent.position);
-    CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position);
+    ScoralArm.measuredVisualizer.updateVertical(extenderCurrent.position);
 
     extenderCurrent =
         extenderProfile.calculate(
@@ -297,8 +297,8 @@ public class Elevator extends SubsystemBase {
     measuredVisualizer.update(0.55 + extenderCurrent.position);
     setpointVisualizer.update(0.55 + extenderGoal.position);
 
-    CoralScorerArm.measuredVisualizer.updateVertical(extenderCurrent.position + 0.1);
-    CoralScorerArm.setpointVisualizer.updateVertical(extenderGoal.position + 0.1);
+    ScoralArm.measuredVisualizer.updateVertical(extenderCurrent.position + 0.1);
+    ScoralArm.setpointVisualizer.updateVertical(extenderGoal.position + 0.1);
     // Logger.recordOutput("setpoint for elevator",)
 
     updateTunableNumbers();

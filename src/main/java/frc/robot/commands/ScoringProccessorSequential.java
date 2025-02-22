@@ -6,20 +6,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.coralscorer.CoralScorerArm;
-import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.scoral.ScoralArm;
+import frc.robot.subsystems.scoral.ScoralRollers;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoringProccessorSequential extends SequentialCommandGroup {
-  private final CoralScorerFlywheel csFlywheel;
-  private final CoralScorerArm csArm;
+  private final ScoralRollers csFlywheel;
+  private final ScoralArm csArm;
   private final Elevator elevator;
 
   public ScoringProccessorSequential(
-      CoralScorerFlywheel csFlywheel, CoralScorerArm csArm, Elevator elevator) {
+      ScoralRollers csFlywheel, ScoralArm csArm, Elevator elevator) {
     this.csFlywheel = csFlywheel;
     this.elevator = elevator;
     this.csArm = csArm;

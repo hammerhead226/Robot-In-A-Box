@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.coralscorer.ClimberVis;
-import frc.robot.subsystems.coralscorer.PivotVis;
+import frc.robot.subsystems.scoral.ClimberVis;
+import frc.robot.subsystems.scoral.PivotVis;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 

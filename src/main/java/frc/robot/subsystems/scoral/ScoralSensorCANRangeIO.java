@@ -1,4 +1,4 @@
-package frc.robot.subsystems.coralscorer;
+package frc.robot.subsystems.scoral;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -7,12 +7,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.constants.SubsystemConstants;
 
-public class CoralSensorCANRangeIO implements CoralSensorIO {
+public class ScoralSensorCANRangeIO implements ScoralSensorIO {
   private final CANrange sensor;
 
   private StatusSignal<Distance> distanceMeters;
 
-  public CoralSensorCANRangeIO(int id) {
+  public ScoralSensorCANRangeIO(int id) {
     sensor = new CANrange(id, SubsystemConstants.CANIVORE_ID_STRING);
 
     distanceMeters = sensor.getDistance();
@@ -21,6 +21,7 @@ public class CoralSensorCANRangeIO implements CoralSensorIO {
   }
 
   public void updateInputs(CoralSensorIOInputs inputs) {
+    BaseStatusSignal.refreshAll(distanceMeters);
     inputs.connected = sensor.isConnected();
     inputs.distanceInches = Units.metersToInches(distanceMeters.getValueAsDouble());
   }

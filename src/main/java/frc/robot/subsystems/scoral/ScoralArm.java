@@ -1,4 +1,4 @@
-package frc.robot.subsystems.coralscorer;
+package frc.robot.subsystems.scoral;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -17,7 +17,7 @@ import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class CoralScorerArm extends SubsystemBase {
+public class ScoralArm extends SubsystemBase {
   private final ArmIO coralScorerArm;
   private final ArmIOInputsAutoLogged csaInputs = new ArmIOInputsAutoLogged();
 
@@ -50,7 +50,7 @@ public class CoralScorerArm extends SubsystemBase {
   public static PivotVis setpointVisualizer;
 
   /** Creates a new Arm. */
-  public CoralScorerArm(ArmIO arm) {
+  public ScoralArm(ArmIO arm) {
     this.coralScorerArm = arm;
     switch (SimConstants.currentMode) {
       case REAL:

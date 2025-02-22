@@ -1,8 +1,8 @@
-package frc.robot.subsystems.coralscorer;
+package frc.robot.subsystems.scoral;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface CoralSensorIO {
+public interface ScoralSensorIO {
   @AutoLog
   public static class CoralSensorIOInputs {
     public double distanceInches = 0; // assuming distance or proximity sensor
