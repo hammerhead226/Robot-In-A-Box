@@ -46,15 +46,14 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
     config.CurrentLimits.StatorCurrentLimitEnable =
         SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.Feedback.FeedbackRemoteSensorID = canCoderID;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     config.Feedback.SensorToMechanismRatio = 1;
     config.Feedback.RotorToSensorRatio =
         SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_GEAR_RATIO;
-
-    leader = new TalonFX(leadID, SubsystemConstants.CANIVORE_ID_STRING);
-    scoralCoder = new CANcoder(canCoderID, SubsystemConstants.CANIVORE_ID_STRING);
+    leader = new TalonFX(leadID);
+    scoralCoder = new CANcoder(canCoderID);
 
     leader.getConfigurator().apply(config);
     scoralCoder.getConfigurator().apply(coderConfig);
@@ -88,13 +87,17 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
   public void updateInputs(ArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps);
 
-    inputs.positionDegs =
-        Conversions.falconToDegrees(
-                (leaderPositionDegs.getValueAsDouble()),
-                SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_GEAR_RATIO)
-            + SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_ZERO_ANGLE;
+    // inputs.positionDegs =
+    //     Conversions.falconToDegrees(scoralCoder.getAbsolutePosition().getValueAsDouble(), 1);
+    inputs.positionDegs = Conversions.falconToDegrees(leaderPositionDegs.getValueAsDouble(), 1);
+    // inputs.positionDegs =
+    //     Conversions.falconToDegrees(
+    //             (leaderPositionDegs.getValueAsDouble()),
+    //             SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_GEAR_RATIO)
+    //         + SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_ZERO_ANGLE;
 
-    inputs.velocityDegsPerSec = velocityDegsPerSec.getValueAsDouble();
+    inputs.velocityDegsPerSec =
+        Conversions.falconToDegrees(velocityDegsPerSec.getValueAsDouble(), 1);
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
     inputs.positionSetpointDegs = positionSetpointDegs;
@@ -115,12 +118,18 @@ public class CoralScorerArmIOTalonFX implements ArmIO {
   @Override
   public void setPositionSetpointDegs(double positionDegs, double ffVolts) {
     this.positionSetpointDegs = positionDegs;
+    // leader.setVoltage(1);
     leader.setControl(
         new PositionVoltage(
-            Conversions.degreesToFalcon(
-                positionDegs,
-                SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants
-                    .ARM_GEAR_RATIO))); // CHECK FOR STOW ANGLE (positionDegs - 59)
+                Conversions.degreesToFalcon(
+                    positionDegs,
+                    SubsystemConstants.CoralScorerConstants.CoralScorerArmConstants.ARM_GEAR_RATIO))
+            .withFeedForward(ffVolts)); // CHECK FOR STOW ANGLE (positionDegs - 59)
+  }
+
+  @Override
+  public void setVoltage(double volts) {
+    leader.setVoltage(volts);
   }
 
   @Override
