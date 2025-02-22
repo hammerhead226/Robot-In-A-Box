@@ -149,9 +149,9 @@ public class DriveCommands {
           double speedDebuff = 0.5;
 
           targetPose = null;
-          if (alignAssistSupplier.getAsBoolean()) {
+          if (alignAssistSupplier.getAsBoolean() && superStructure.isTargetAReefState()) {
             Translation2d reefTranslation =
-                drive.isNearReef() ? new Translation2d(-0.3, -0.3) : new Translation2d(-0.3, -0.3);
+                drive.isNearReef() ? new Translation2d(-0.5, 0) : new Translation2d(-1.3, 0);
 
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
@@ -264,6 +264,8 @@ public class DriveCommands {
             wantedRotationVelocity = rotationSpeed;
             rotationAssistEffort = 0;
           }
+
+          Logger.recordOutput("target pose", targetPose);
 
           Logger.recordOutput("Forwards Profile Position", forwardsPID.getSetpoint().position);
           Logger.recordOutput("Sideways Profile Position", sidewaysPID.getSetpoint().position);
