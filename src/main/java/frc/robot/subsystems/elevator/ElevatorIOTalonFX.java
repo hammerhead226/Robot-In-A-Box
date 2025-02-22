@@ -11,7 +11,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -25,7 +24,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX follower;
   private final CANrange distanceSensor;
 
-  private double positionSetpoint;
+  private double carriagePositionSetpoint;
+  private double firstStagePositionSetpoint;
   private final StatusSignal<Angle> elevatorPosition;
   private final StatusSignal<AngularVelocity> elevatorVelocity;
   private final StatusSignal<Voltage> appliedVolts;
@@ -47,7 +47,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     leader.getConfigurator().apply(config);
 
-    positionSetpoint = SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
+    carriagePositionSetpoint = SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
 
     follower.setControl(new Follower(lead, true));
 
@@ -63,25 +63,36 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     BaseStatusSignal.refreshAll(elevatorPosition, elevatorVelocity, appliedVolts, currentAmps);
-    if (canRangeDistance.getValueAsDouble() <= 12) {
-      inputs.elevatorPositionInch =
-          Units.metersToInches(canRangeDistance.getValueAsDouble()) * 2 + 4;
-      inputs.CANrangeDistanceInches =
-          Units.metersToInches(canRangeDistance.getValueAsDouble()) * 2 + 4;
-    } else {
+    inputs.carriagePositionInch =
+        Conversions.firstStageToCarriageInches(
+            Conversions.motorRotToInches(
+                elevatorPosition.getValueAsDouble(),
+                5.5,
+                SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO));
+    inputs.firstStagePositionInch =
+        Conversions.motorRotToInches(
+            elevatorPosition.getValueAsDouble(),
+            5.5,
+            SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO);
+    // if (canRangeDistance.getValueAsDouble() <= 12) {
+    //   inputs.elevatorPositionInch =
+    //       Units.metersToInches(canRangeDistance.getValueAsDouble()) * 2 + 4;
+    //   inputs.CANrangeDistanceInches =
+    //       Units.metersToInches(canRangeDistance.getValueAsDouble()) * 2 + 4;
+    // } else {
 
-      inputs.elevatorPositionInch =
-          2
-                  * Conversions.motorRotToInches(
-                      elevatorPosition.getValueAsDouble(),
-                      5.5,
-                      SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO)
-              + 8;
-      // - 0.051
-      // + 0.017;
-      inputs.CANrangeDistanceInches =
-          Units.metersToInches(canRangeDistance.getValueAsDouble()) * 2 + 4;
-    }
+    //   inputs.elevatorPositionInch =
+    //       2
+    //               * Conversions.motorRotToInches(
+    //                   elevatorPosition.getValueAsDouble(),
+    //                   5.5,
+    //                   SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO)
+    //           + 8;
+    //   // - 0.051
+    //   // + 0.017;
+    //   inputs.CANrangeDistanceInches =
+    //       Units.metersToInches(canRangeDistance.getValueAsDouble()) * 2 + 4;
+    // }
 
     inputs.elevatorVelocityInchesPerSecond =
         Conversions.motorRotToInches(
@@ -90,7 +101,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
             SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO);
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
-    inputs.positionSetpointInch = positionSetpoint;
+    inputs.carriagePositionSetpointInch = carriagePositionSetpoint;
+    inputs.firstStagePositionSetpointInch = firstStagePositionSetpoint;
   }
 
   @Override
@@ -100,8 +112,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   // weird how we give the setpoint in meters and it sets it to meters in sim?
   // we'll have to see what the exact bug is but for now work with meters
   @Override
-  public void setPositionSetpoint(double position, double ffVolts) {
-    this.positionSetpoint = position;
+  public void setFirstStagePositionSetpoint(double position, double ffVolts) {
+    this.firstStagePositionSetpoint = position;
+    this.carriagePositionSetpoint = Conversions.firstStageToCarriageInches(position);
+
     leader.setControl(
         new PositionVoltage(
                 Conversions.inchesToMotorRot(
@@ -111,7 +125,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void stop() {
-    this.positionSetpoint = elevatorPosition.getValueAsDouble();
+    this.carriagePositionSetpoint = elevatorPosition.getValueAsDouble();
     leader.stopMotor();
   }
 

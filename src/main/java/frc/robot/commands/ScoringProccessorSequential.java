@@ -24,7 +24,7 @@ public class ScoringProccessorSequential extends SequentialCommandGroup {
     this.csArm = csArm;
 
     addCommands(
-        elevator.setElevatorTarget(0.25, 0.01),
+        elevator.setFirstStageTarget(0.25, 0.01),
         csArm.setArmTarget(190, 2),
         new InstantCommand(() -> csFlywheel.runVolts(5)));
   }

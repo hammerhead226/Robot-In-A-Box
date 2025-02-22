@@ -3,15 +3,17 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.GoToReefHeight;
+import frc.robot.commands.GoToStowL4;
 import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ScoringProccessorSequential;
-import frc.robot.commands.goToReefHeight;
-import frc.robot.commands.goToStow;
 import frc.robot.commands.scoringCoral;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
+import frc.robot.subsystems.climber.ClimberArm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
@@ -25,18 +27,25 @@ public class SuperStructure {
   private final ScoralArm scoralArm;
   private final ScoralRollers scoralRollers;
   private final LED led;
+  private final ClimberArm climberArm;
   private SuperStructureState currentState;
   private SuperStructureState wantedState;
   public boolean override = false;
   int counter = 0;
 
   public SuperStructure(
-      Drive drive, Elevator elevator, ScoralArm scoralArm, ScoralRollers scoralRollers, LED led) {
+      Drive drive,
+      Elevator elevator,
+      ScoralArm scoralArm,
+      ScoralRollers scoralRollers,
+      LED led,
+      ClimberArm climberArm) {
     this.drive = drive;
     this.elevator = elevator;
     this.scoralArm = scoralArm;
     this.scoralRollers = scoralRollers;
     this.led = led;
+    this.climberArm = climberArm;
     wantedState = SuperStructureState.STOW;
     currentState = SuperStructureState.STOW;
   }
@@ -58,6 +67,9 @@ public class SuperStructure {
   }
 
   public void setCurrentState(SuperStructureState currentState) {
+    // if (currentState == SuperStructureState.STOW) {
+    //   led.setState(LED_STATE.BLUE);
+    // }
     this.currentState = currentState;
   }
 
@@ -108,7 +120,7 @@ public class SuperStructure {
       case STOW:
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW;
-        return new goToStow(elevator, scoralArm, scoralRollers);
+        return new GoToStowL4(elevator, scoralArm, scoralRollers);
 
       case INTAKE_ALGAE:
         double height =
@@ -121,7 +133,7 @@ public class SuperStructure {
 
       case L1:
         currentState = SuperStructureState.L1;
-        return new goToReefHeight(
+        return new GoToReefHeight(
             elevator,
             scoralArm,
             FieldConstants.ReefHeight.L1.height,
@@ -129,27 +141,15 @@ public class SuperStructure {
 
       case L2:
         currentState = SuperStructureState.L2;
-        return new goToReefHeight(
-            elevator,
-            scoralArm,
-            FieldConstants.ReefHeight.L2.height,
-            FieldConstants.ReefHeight.L2.pitch);
+        return new GoToReefHeight(elevator, scoralArm, 7, 74);
 
       case L3:
         currentState = SuperStructureState.L3;
-        return new goToReefHeight(
-            elevator,
-            scoralArm,
-            FieldConstants.ReefHeight.L3.height,
-            FieldConstants.ReefHeight.L3.pitch);
+        return new GoToReefHeight(elevator, scoralArm, 14, 74);
 
       case L4:
         currentState = SuperStructureState.L4;
-        return new goToReefHeight(
-            elevator,
-            scoralArm,
-            FieldConstants.ReefHeight.L4.height,
-            FieldConstants.ReefHeight.L4.pitch);
+        return new GoToReefHeight(elevator, scoralArm, 27.3, 63);
 
       case SOURCE:
         currentState = SuperStructureState.SOURCE;
@@ -169,16 +169,18 @@ public class SuperStructure {
 
       case SCORING_CORAL:
         currentState = SuperStructureState.SCORING_CORAL;
-        led.setState(LED_STATE.FLASHING_GREEN);
+
         return new SequentialCommandGroup(
+            new InstantCommand(() -> led.setState(LED_STATE.FLASHING_GREEN)),
             new scoringCoral(scoralRollers),
-            new goToStow(elevator, scoralArm, scoralRollers),
-            led.setStateCommand(LED_STATE.BLUE),
+            new WaitCommand(1),
+            new GoToStowL4(elevator, scoralArm, scoralRollers),
+            new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
             new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
             new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
 
       case CLIMB_STAGE_ONE:
-        return new SequentialCommandGroup();
+        return new SequentialCommandGroup(climberArm.setArmTarget(0, 2));
       case CLIMB_STAGE_TWO:
         return new SequentialCommandGroup();
       case HANG:
@@ -187,7 +189,7 @@ public class SuperStructure {
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
-                elevator.setElevatorTarget(0, 0), scoralArm.setArmTarget(40, 0)));
+                elevator.setFirstStageTarget(0, 0), scoralArm.setArmTarget(40, 0)));
     }
   }
 

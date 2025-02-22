@@ -22,13 +22,13 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.TunerConstants;
+import frc.robot.util.LimelightHelpers;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import frc.robot.util.LimelightHelpers;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -128,8 +128,9 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
+    robotContainer.getScoralRollers().stop();
     robotContainer.getLED().setState(LED_STATE.FIRE);
-    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50); 
+    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50);
   }
 
   /** This function is called periodically when disabled. */
@@ -176,6 +177,16 @@ public class Robot extends LoggedRobot {
     }
     robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
     robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
+
+    robotContainer
+        .getElevator()
+        .setFirstStageCurrent(robotContainer.getElevator().getElevatorPosition());
+    robotContainer
+        .getElevator()
+        .setFirstStageGoal(robotContainer.getElevator().getElevatorPosition());
+
+    robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
+    robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
     // robotContainer.getSuperStructure().;
   }
 

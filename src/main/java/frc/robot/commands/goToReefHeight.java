@@ -4,21 +4,21 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.scoral.ScoralArm;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class goToReefHeight extends SequentialCommandGroup {
+public class GoToReefHeight extends SequentialCommandGroup {
   /** Creates a new goToReefHeight. */
   private final ScoralArm scoralArm;
 
   private final Elevator elevator;
 
-  public goToReefHeight(
+  public GoToReefHeight(
       Elevator m_elevator, ScoralArm m_scoralArm, double heightInch, double pitchDegs) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
@@ -26,7 +26,11 @@ public class goToReefHeight extends SequentialCommandGroup {
     this.scoralArm = m_scoralArm;
 
     addCommands(
-        new ParallelCommandGroup(
-            elevator.setElevatorTarget(heightInch, 0.1), scoralArm.setArmTarget(pitchDegs, 2)));
+        new SequentialCommandGroup(
+            elevator.setFirstStageTarget(heightInch, 0.1),
+            new WaitUntilCommand(() -> elevator.atGoal()),
+            scoralArm.setArmTarget(pitchDegs, 2)));
+
+    //
   }
 }

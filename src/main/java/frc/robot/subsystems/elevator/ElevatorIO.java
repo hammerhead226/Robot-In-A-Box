@@ -5,11 +5,13 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ElevatorIO {
   @AutoLog
   public static class ElevatorIOInputs {
-    double elevatorPositionInch = 0;
+    double carriagePositionInch = 0;
+    double firstStagePositionInch = 0;
+    double firstStagePositionSetpointInch = 0;
     double elevatorVelocityInchesPerSecond = 0;
     double currentAmps = 0;
     double appliedVolts = 0;
-    double positionSetpointInch = 0;
+    double carriagePositionSetpointInch = 0;
     double CANrangeDistanceInches;
   }
 
@@ -17,7 +19,7 @@ public interface ElevatorIO {
 
   public default void runCharacterization(double volts) {}
 
-  public default void setPositionSetpoint(double position, double ffVolts) {}
+  public default void setFirstStagePositionSetpoint(double position, double ffVolts) {}
 
   public default void stop() {}
 

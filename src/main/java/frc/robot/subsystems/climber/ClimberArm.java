@@ -48,8 +48,8 @@ public class ClimberArm extends SubsystemBase {
     switch (SimConstants.currentMode) {
       case REAL:
         kG.initDefault(0.0);
-        kV.initDefault(0.1);
-        kP.initDefault(0);
+        kV.initDefault(0.6);
+        kP.initDefault(0.4);
         break;
       case REPLAY:
         kG.initDefault(0.29);

@@ -5,8 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.subsystems.scoral.ScoralRollers;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -21,8 +19,7 @@ public class scoringCoral extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
 
     this.scoralRollers = m_scoralRollers;
-    addCommands(
-        scoralRollers.runVoltsCommmand(1),
-        new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.NO_CORAL));
+    addCommands(scoralRollers.runVoltsCommmand(4));
+    // new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.NO_CORAL));
   }
 }

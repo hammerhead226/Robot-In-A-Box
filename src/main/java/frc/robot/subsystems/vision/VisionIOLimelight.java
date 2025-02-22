@@ -22,12 +22,12 @@ import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.util.LimelightHelpers;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import frc.robot.util.LimelightHelpers;
 
 /** IO implementation for real Limelight hardware. */
 public class VisionIOLimelight implements VisionIO {
@@ -47,7 +47,6 @@ public class VisionIOLimelight implements VisionIO {
    * @param name The configured name of the Limelight.
    * @param rotationSupplier Supplier for the current estimated rotation, used for MegaTag 2.
    */
-
 
   //  if disable mode init thoddle mode itu or smth
 
@@ -78,11 +77,11 @@ public class VisionIOLimelight implements VisionIO {
             Rotation2d.fromDegrees(txSubscriber.get()), Rotation2d.fromDegrees(tySubscriber.get()));
 
     // if (DriverStation.isDisabled()) {
-    //   LimelightHelpers.setIMUMode(1); // Use external IMU yaw and configure internal IMU's fused yaw
+    //   LimelightHelpers.setIMUMode(1); // Use external IMU yaw and configure internal IMU's fused
+    // yaw
     // } else if (DriverStation.isEnabled()) {
     //   LimelightHelpers.setIMUMode(2); // Use internal IMU for MT2 localization
     // }
-    
 
     LimelightHelpers.SetIMUMode("limelight-reef", 3);
 

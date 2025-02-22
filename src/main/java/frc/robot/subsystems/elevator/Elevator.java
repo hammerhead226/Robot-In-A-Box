@@ -30,8 +30,8 @@ public class Elevator extends SubsystemBase {
   // CHANGE THESE VALUES TO MATCH THE ELEVATOR
 
   // cut velocity and acceleration in half
-  private static final int maxVelocityExtender = 170;
-  private static final int maxAccelerationExtender = 100;
+  private static final int maxVelocityExtender = 120;
+  private static final int maxAccelerationExtender = 80;
 
   private TrapezoidProfile extenderProfile;
   private TrapezoidProfile.Constraints extenderConstraints =
@@ -124,16 +124,16 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean hasReachedGoal(double goalInches) {
-    return (Math.abs(eInputs.elevatorPositionInch - goalInches)
+    return (Math.abs(eInputs.carriagePositionInch - goalInches)
         <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
   }
 
   public double getElevatorPosition() {
-    return eInputs.elevatorPositionInch;
+    return eInputs.firstStagePositionInch;
   }
 
   private double getElevatorError() {
-    return eInputs.positionSetpointInch - eInputs.elevatorPositionInch;
+    return eInputs.carriagePositionSetpointInch - eInputs.carriagePositionInch;
   }
 
   public boolean elevatorAtSetpoint(double thresholdInches) {
@@ -149,14 +149,18 @@ public class Elevator extends SubsystemBase {
         .until(() -> getCanRangeDistanceInches() == 0 + 0.5);
   }
 
-  public void setExtenderGoal(double goal) {
+  public void setFirstStageCurrent(double currentInches) {
+    extenderCurrent = new TrapezoidProfile.State(currentInches, 0);
+  }
+
+  public void setFirstStageGoal(double goal) {
     this.goal = goal;
     extenderGoal = new TrapezoidProfile.State(goal, 0);
     // extenderGoal2 = new TrapezoidProfile.State(setpoint, 0);
   }
 
   public void setPositionExtend(double position, double velocity) {
-    elevator.setPositionSetpoint(position, elevatorFFModel.calculate(velocity));
+    elevator.setFirstStagePositionSetpoint(position, elevatorFFModel.calculate(velocity));
   }
 
   public void elevatorStop() {
@@ -180,9 +184,9 @@ public class Elevator extends SubsystemBase {
     return extenderGoal.position >= 0.4;
   }
 
-  public Command setElevatorTarget(double goalInches, double thresholdInches) {
+  public Command setFirstStageTarget(double firstStageGoalInches, double thresholdInches) {
     // TODO: Change the wait time to an accurate value
-    return new InstantCommand(() -> setExtenderGoal(goalInches), this)
+    return new InstantCommand(() -> setFirstStageGoal(firstStageGoalInches), this)
         .until(() -> elevatorAtSetpoint(thresholdInches))
         .withTimeout(5);
   }

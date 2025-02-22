@@ -32,7 +32,7 @@ public final class SubsystemConstants {
     public static final double CURRENT_LIMIT = 40.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
 
-    public static final double STOW_SETPOINT_INCH = 0;
+    public static final double STOW_SETPOINT_INCH = 0.3;
 
     public static final double DEFAULT_THRESHOLD = 0.1;
 
@@ -67,7 +67,7 @@ public final class SubsystemConstants {
       public static final double DEFAULT_VOLTS = 0;
 
       public static final double ARM_ZERO_ANGLE = 0;
-      public static final double STOW_SETPOINT_DEG = 50;
+      public static final double STOW_SETPOINT_DEG = 96;
       public static final double SCORING_SETPOINT_DEG = 15;
     }
 
