@@ -65,6 +65,8 @@ import frc.robot.subsystems.scoral.ScoralSensorIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import static frc.robot.constants.RobotMap.*;
 
@@ -180,10 +182,11 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive.getToPoseEstimatorConsumer(),
-                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-                new VisionIOPhotonVision("photon", new Transform3d()));
+                new VisionIOLimelight("limelight-reef", drive.getRawGyroRotationSupplier())
+                // new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                // new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                // new VisionIOPhotonVision("photon", new Transform3d())
+                );
 
         // climberArm = new ClimberArm(new ClimberArmIOTalonFX(14, 5));
         climberArm = new ClimberArm(new ClimberArmIO() {});
