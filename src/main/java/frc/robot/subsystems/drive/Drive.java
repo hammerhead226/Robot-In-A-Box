@@ -395,6 +395,7 @@ public class Drive extends SubsystemBase {
       Matrix<N3, N1> visionMeasurementStdDevs) {
     poseEstimator.addVisionMeasurement(
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+    Logger.recordOutput("visionRobotPoseMetersTWO", visionRobotPoseMeters); // TWO
   }
 
   public void addObjectMeasurement(
@@ -440,6 +441,7 @@ public class Drive extends SubsystemBase {
         Matrix<N3, N1> visionMeasurementStdDevs) {
       poseEstimator.addVisionMeasurement(
           visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+      Logger.recordOutput("visionRobotPoseMetersTHREE", visionRobotPoseMeters); // THREE
     }
   }
 

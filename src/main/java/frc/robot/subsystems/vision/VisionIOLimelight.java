@@ -22,12 +22,13 @@ import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.util.LimelightHelpers;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import frc.robot.util.LimelightHelpers;
+import org.littletonrobotics.junction.Logger;
 
 /** IO implementation for real Limelight hardware. */
 public class VisionIOLimelight implements VisionIO {
@@ -48,7 +49,6 @@ public class VisionIOLimelight implements VisionIO {
    * @param rotationSupplier Supplier for the current estimated rotation, used for MegaTag 2.
    */
 
-
   //  if disable mode init thoddle mode itu or smth
 
   public VisionIOLimelight(String name, Supplier<Rotation2d> rotationSupplier) {
@@ -67,7 +67,8 @@ public class VisionIOLimelight implements VisionIO {
   @Override
   public void updateInputs(VisionIOInputs inputs) {
     // Update connection status based on whether an update has been seen in the last 250ms
-    inputs.connected = (RobotController.getFPGATime() - latencySubscriber.getLastChange()) < 250;
+    inputs.connected =
+        ((RobotController.getFPGATime() - latencySubscriber.getLastChange()) / 1000) < 250;
 
     // Update heartbeat
     inputs.heartBeat = hbSubscriber.get();
@@ -77,12 +78,14 @@ public class VisionIOLimelight implements VisionIO {
         new TargetObservation(
             Rotation2d.fromDegrees(txSubscriber.get()), Rotation2d.fromDegrees(tySubscriber.get()));
 
+    Logger.recordOutput("latestTargetObsONE", inputs.latestTargetObservation); // ONE
+
     // if (DriverStation.isDisabled()) {
-    //   LimelightHelpers.setIMUMode(1); // Use external IMU yaw and configure internal IMU's fused yaw
+    //   LimelightHelpers.setIMUMode(1); // Use external IMU yaw and configure internal IMU's fused
+    // yaw
     // } else if (DriverStation.isEnabled()) {
     //   LimelightHelpers.setIMUMode(2); // Use internal IMU for MT2 localization
     // }
-    
 
     LimelightHelpers.SetIMUMode("limelight-reef", 3);
 
@@ -93,43 +96,43 @@ public class VisionIOLimelight implements VisionIO {
         .flush(); // Increases network traffic but recommended by Limelight
 
     // Read new pose observations from NetworkTables
+    // Read new pose observations from NetworkTables
     Set<Integer> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
     for (var rawSample : megatag1Subscriber.readQueue()) {
       if (rawSample.value.length == 0) continue;
-      for (int i = 10; i < rawSample.value.length; i += 7) {
+      for (int i = 11; i < rawSample.value.length; i += 7) {
         tagIds.add((int) rawSample.value[i]);
       }
-      inputs.poseTimeStamp = rawSample.timestamp * 1.0e-9 - rawSample.value[7] * 1.0e-3;
       poseObservations.add(
           new PoseObservation(
               // Timestamp, based on server timestamp of publish and latency
-              rawSample.timestamp * 1.0e-9 - rawSample.value[7] * 1.0e-3,
+              rawSample.timestamp * 1.0e-6 - rawSample.value[6] * 1.0e-3,
 
               // 3D pose estimate
               parsePose(rawSample.value),
 
               // Ambiguity, using only the first tag because ambiguity isn't applicable for multitag
-              rawSample.value.length >= 17 ? rawSample.value[16] : 0.0,
+              rawSample.value.length >= 18 ? rawSample.value[17] : 0.0,
 
               // Tag count
-              (int) rawSample.value[8],
+              (int) rawSample.value[7],
 
               // Average tag distance
-              rawSample.value[10],
+              rawSample.value[9],
 
               // Observation type
               PoseObservationType.MEGATAG_1));
     }
     for (var rawSample : megatag2Subscriber.readQueue()) {
       if (rawSample.value.length == 0) continue;
-      for (int i = 10; i < rawSample.value.length; i += 7) {
+      for (int i = 11; i < rawSample.value.length; i += 7) {
         tagIds.add((int) rawSample.value[i]);
       }
       poseObservations.add(
           new PoseObservation(
               // Timestamp, based on server timestamp of publish and latency
-              rawSample.timestamp * 1.0e-9 - rawSample.value[7] * 1.0e-3,
+              rawSample.timestamp * 1.0e-6 - rawSample.value[6] * 1.0e-3,
 
               // 3D pose estimate
               parsePose(rawSample.value),
@@ -138,10 +141,10 @@ public class VisionIOLimelight implements VisionIO {
               0.0,
 
               // Tag count
-              (int) rawSample.value[8],
+              (int) rawSample.value[7],
 
               // Average tag distance
-              rawSample.value[10],
+              rawSample.value[9],
 
               // Observation type
               PoseObservationType.MEGATAG_2));

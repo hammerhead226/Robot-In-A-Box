@@ -22,13 +22,13 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.TunerConstants;
+import frc.robot.util.LimelightHelpers;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import frc.robot.util.LimelightHelpers;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -129,7 +129,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     robotContainer.getLED().setState(LED_STATE.FIRE);
-    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50); 
+    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50);
   }
 
   /** This function is called periodically when disabled. */
