@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -63,7 +62,6 @@ import frc.robot.subsystems.led.LED_IOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import java.util.Map;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -262,24 +260,26 @@ public class RobotContainer {
         break;
     }
 
-    superStructureCommands =
-        new SelectCommand<>(
-            Map.ofEntries(
-                Map.entry(SuperStructureState.STOW, superStructure.getSuperStructureCommand()),
-                Map.entry(SuperStructureState.L1, superStructure.getSuperStructureCommand()),
-                Map.entry(SuperStructureState.L2, superStructure.getSuperStructureCommand()),
-                Map.entry(SuperStructureState.L3, superStructure.getSuperStructureCommand()),
-                Map.entry(SuperStructureState.L4, superStructure.getSuperStructureCommand()),
-                Map.entry(SuperStructureState.SOURCE, superStructure.getSuperStructureCommand()),
-                Map.entry(
-                    SuperStructureState.SCORING_CORAL, superStructure.getSuperStructureCommand()),
-                Map.entry(
-                    SuperStructureState.CLIMB_STAGE_ONE, superStructure.getSuperStructureCommand()),
-                Map.entry(
-                    SuperStructureState.CLIMB_STAGE_TWO,
-                    superStructure.getSuperStructureCommand())),
-            () -> superStructure.getWantedState());
-    // Set up auto routines
+    // superStructureCommands =
+    //     new SelectCommand<>(
+    //         Map.ofEntries(
+    //             Map.entry(SuperStructureState.STOW, superStructure.getSuperStructureCommand()),
+    //             Map.entry(SuperStructureState.L1, superStructure.getSuperStructureCommand()),
+    //             Map.entry(SuperStructureState.L2, superStructure.getSuperStructureCommand()),
+    //             Map.entry(SuperStructureState.L3, superStructure.getSuperStructureCommand()),
+    //             Map.entry(SuperStructureState.L4, superStructure.getSuperStructureCommand()),
+    //             Map.entry(SuperStructureState.SOURCE, superStructure.getSuperStructureCommand()),
+    //             Map.entry(
+    //                 SuperStructureState.SCORING_CORAL,
+    // superStructure.getSuperStructureCommand()),
+    //             Map.entry(
+    //                 SuperStructureState.CLIMB_STAGE_ONE,
+    // superStructure.getSuperStructureCommand()),
+    //             Map.entry(
+    //                 SuperStructureState.CLIMB_STAGE_TWO,
+    //                 superStructure.getSuperStructureCommand())),
+    //         () -> superStructure.getWantedState());
+    // // Set up auto routines
     // NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive, led));
 
     NamedCommands.registerCommand(
@@ -717,20 +717,20 @@ public class RobotContainer {
     // Manip Controller
     manipController.rightTrigger().onTrue(new Stow(elevator, csArm));
 
-    manipController
-        .leftBumper()
-        .onTrue(
-            new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
-                .until(
-                    () ->
-                        csFlywheel.seesCoral() == CoralState.SENSOR
-                            || csFlywheel.seesCoral() == CoralState.CURRENT)
-                .withTimeout(5));
-    manipController
-        .leftBumper()
-        .onFalse(
-            new ParallelCommandGroup(
-                new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
+    // manipController
+    //     .leftBumper()
+    //     .onTrue(
+    //         new IntakeFromSourceParallel(csFlywheel, csArm, elevator)
+    //             .until(
+    //                 () ->
+    //                     csFlywheel.seesCoral() == CoralState.SENSOR
+    //                         || csFlywheel.seesCoral() == CoralState.CURRENT)
+    //             .withTimeout(5));
+    // manipController
+    //     .leftBumper()
+    //     .onFalse(
+    //         new ParallelCommandGroup(
+    //             new Stow(elevator, csArm), new InstantCommand(() -> csFlywheel.runVolts(0))));
 
     manipController
         .rightBumper()

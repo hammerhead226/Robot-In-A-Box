@@ -4,10 +4,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.FieldConstants;
-import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
@@ -82,30 +80,31 @@ public class SuperStructure {
   }
 
   public boolean atGoals() {
-    switch (currentState) {
-      case STOW:
-        return elevator.hasReachedGoal(0) && csArm.hasReachedGoal(40);
-      case L1:
-        return elevator.hasReachedGoal(FieldConstants.ReefHeight.L1.height)
-            && csArm.hasReachedGoal(FieldConstants.ReefHeight.L1.pitch);
-      case L2:
-        return elevator.hasReachedGoal(FieldConstants.ReefHeight.L2.height)
-            && csArm.hasReachedGoal(FieldConstants.ReefHeight.L2.pitch);
-      case L3:
-        return elevator.hasReachedGoal(FieldConstants.ReefHeight.L3.height)
-            && csArm.hasReachedGoal(FieldConstants.ReefHeight.L3.pitch);
-      case L4:
-        return elevator.hasReachedGoal(FieldConstants.ReefHeight.L4.height)
-            && csArm.hasReachedGoal(FieldConstants.ReefHeight.L4.pitch);
-      case SOURCE:
-        return elevator.hasReachedGoal(0) && csArm.hasReachedGoal(40);
-      case SCORING_CORAL:
-        // return csFlywheel.seesCoral() == CoralState.CURRENT
-        // || csFlywheel.seesCoral() == CoralState.SENSOR;
-        return true;
-      default:
-        return false;
-    }
+    // switch (currentState) {
+    // case STOW:
+    //   return elevator.hasReachedGoal(0) && csArm.hasReachedGoal(40);
+    // case L1:
+    //   return elevator.hasReachedGoal(FieldConstants.ReefHeight.L1.height)
+    //       && csArm.hasReachedGoal(FieldConstants.ReefHeight.L1.pitch);
+    // case L2:
+    //   return elevator.hasReachedGoal(FieldConstants.ReefHeight.L2.height)
+    //       && csArm.hasReachedGoal(FieldConstants.ReefHeight.L2.pitch);
+    // case L3:
+    //   return elevator.hasReachedGoal(FieldConstants.ReefHeight.L3.height)
+    //       && csArm.hasReachedGoal(FieldConstants.ReefHeight.L3.pitch);
+    // case L4:
+    //   return elevator.hasReachedGoal(FieldConstants.ReefHeight.L4.height)
+    //       && csArm.hasReachedGoal(FieldConstants.ReefHeight.L4.pitch);
+    // case SOURCE:
+    //   return elevator.hasReachedGoal(0) && csArm.hasReachedGoal(40);
+    // case SCORING_CORAL:
+    //   // return csFlywheel.seesCoral() == CoralState.CURRENT
+    //   // || csFlywheel.seesCoral() == CoralState.SENSOR;
+    //   return true;
+    // default:
+    //   return false;
+    // }
+    return true;
   }
 
   public SequentialCommandGroup getSuperStructureCommand() {
@@ -209,23 +208,11 @@ public class SuperStructure {
 
       case SCORING_CORAL:
         currentState = SuperStructureState.SCORING_CORAL;
-        // if (csFlywheel.seesCoral() == CoralState.SENSOR
-        // || csFlywheel.seesCoral() == CoralState.CURRENT) {
+
         return new SequentialCommandGroup(
             csFlywheel.runVoltsCommmand(1),
-            new WaitUntilCommand(() -> csFlywheel.seesCoral() == CoralState.NO_CORAL),
-            new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)),
-            getSuperStructureCommand());
-        // } else {
-        //   return new SequentialCommandGroup(
-        //       new WaitCommand(0.5),
-        //       new ParallelCommandGroup(
-        //           elevator.setElevatorTarget(0, 0),
-        //           csArm.setArmTarget(40, 0),
-        //           csFlywheel.stopCommand(),
-        //           led.setStateCommand(LED_STATE.BLUE)));
-        // }
-
+            // new WaitUntilCommand(() -> csFlywheel.seesCoral() == CoralState.NO_CORAL),
+            new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(elevator.setElevatorTarget(0, 0), csArm.setArmTarget(40, 0)));

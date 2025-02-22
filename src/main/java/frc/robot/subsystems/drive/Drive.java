@@ -123,8 +123,8 @@ public class Drive extends SubsystemBase {
   private Pose2d lastReefFieldPose;
   public boolean slowMode = false;
 
-  private double linearSpeedMultiplier = 0.3;
-  private double angularSpeedMultiplier = 0.1;
+  private double linearSpeedMultiplier = 1;
+  private double angularSpeedMultiplier = 1;
 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
