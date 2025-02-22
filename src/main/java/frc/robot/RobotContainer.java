@@ -199,6 +199,8 @@ public class RobotContainer {
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(0, "CAN Bus 2"));
 
+        superStructure = new SuperStructure(drive, elevator, scoralArm, scoralRollers, led);
+
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -406,8 +408,8 @@ public class RobotContainer {
                 driveController.leftTrigger().getAsBoolean()
                     || driveController.rightTrigger().getAsBoolean());
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
-    configureButtonBindings();
-    // test();
+    // configureButtonBindings();
+    test();
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -426,9 +428,9 @@ public class RobotContainer {
     // driveController.b().onTrue(climberArm.setArmTarget(20, 1));
     // driveController.b().onTrue(climberArm.setArmTarget(0, 1));
 
-    driveController.a().onTrue(scoralArm.setArmTarget(20, 1));
+    driveController.a().onTrue(scoralArm.setArmTarget(50, 1));
     driveController.a().onFalse(new InstantCommand(() -> scoralArm.armStop()));
-    driveController.b().onTrue(scoralArm.setArmTarget(0, 1));
+    driveController.b().onTrue(scoralArm.setArmTarget(100, 1));
     driveController.b().onFalse(new InstantCommand(() -> scoralArm.armStop()));
     // driveController.b().onTrue(new InstantCommand(() -> climberArm.armStop(), climberArm));
     // driveController

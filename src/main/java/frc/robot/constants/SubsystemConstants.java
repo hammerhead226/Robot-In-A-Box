@@ -33,7 +33,7 @@ public final class SubsystemConstants {
     public static final boolean CURRENT_LIMIT_ENABLED = true;
 
     public static final double STOW_SETPOINT_INCH = 0;
-    
+
     public static final double DEFAULT_THRESHOLD = 0.1;
 
     public static final double ELEVATOR_GEAR_RATIO = 12;
@@ -59,7 +59,7 @@ public final class SubsystemConstants {
       public static final boolean CURRENT_LIMIT_ENABLED = true;
 
       public static final double DEFAULT_THRESHOLD = 1;
-      public static final double ARM_GEAR_RATIO = (25.0 / 1) / (12 / 25);
+      public static final double ARM_GEAR_RATIO = (25.0 / 1) / (12.0 / 25);
 
       public static final double INTAKE_SETPOINT_DEG = 32;
 
@@ -204,6 +204,4 @@ public final class SubsystemConstants {
   }
 
   public static final double CORAL_DIST = -1234; // 1300; // CHANGE THIS
-
- 
 }
