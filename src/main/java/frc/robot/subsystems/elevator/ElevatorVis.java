@@ -1,5 +1,6 @@
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.math.util.Units;
 // import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -33,7 +34,7 @@ public class ElevatorVis {
     // Sets the extending length of the elevator
     // elevatorRoot.setPosition(50, position);
     // elevatorRoot.setPosition(50, position);
-    elevatorMecha.setLength(length);
+    elevatorMecha.setLength(Units.inchesToMeters(length));
     // elevatorRoot.setPosition(50, position);
     Logger.recordOutput("ElevatorVis/mechanism2d/" + elevatorKey, this.elevatorPanel);
   }

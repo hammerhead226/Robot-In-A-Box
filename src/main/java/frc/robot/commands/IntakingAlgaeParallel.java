@@ -7,20 +7,19 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.constants.SubsystemConstants.ElevatorConstants;
-import frc.robot.subsystems.coralscorer.CoralScorerArm;
-import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.scoral.ScoralArm;
+import frc.robot.subsystems.scoral.ScoralRollers;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class IntakingAlgaeParallel extends ParallelCommandGroup {
   private final Elevator elevator;
-  private final CoralScorerArm arm;
-  private final CoralScorerFlywheel algaeIntake;
+  private final ScoralArm arm;
+  private final ScoralRollers algaeIntake;
   /** Creates a new IntakingAlgaeParallel. */
-  public IntakingAlgaeParallel(
-      Elevator elevator, CoralScorerArm arm, CoralScorerFlywheel algaeIntake) {
+  public IntakingAlgaeParallel(Elevator elevator, ScoralArm arm, ScoralRollers algaeIntake) {
     this.elevator = elevator;
     this.arm = arm;
     this.algaeIntake = algaeIntake;

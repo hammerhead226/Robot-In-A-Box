@@ -1,4 +1,4 @@
-package frc.robot.subsystems.coralscorer;
+package frc.robot.subsystems.scoral;
 
 // import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;

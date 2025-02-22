@@ -24,6 +24,7 @@ public class ApproachReefPerpendicular extends Command {
   private final Drive drive;
   private final SuperStructure superStructure;
   Command pathCommand;
+  Pose2d targetPose = new Pose2d();
   /** Creates a new ApproachReefPerpendicular. */
   public ApproachReefPerpendicular(Drive drive, SuperStructure superStructure) {
     this.drive = drive;
@@ -35,7 +36,7 @@ public class ApproachReefPerpendicular extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Pose2d targetPose =
+    targetPose =
         DriveCommands.rotateAndNudge(
             drive.getLastReefFieldPose(), new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
     // new Pose2d(
@@ -45,7 +46,7 @@ public class ApproachReefPerpendicular extends Command {
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), targetPose);
     List<EventMarker> eventMarkers = new ArrayList<>();
     eventMarkers.add(
-        new EventMarker("test trigger", 0.7, superStructure.getSuperStructureCommand()));
+        new EventMarker("test trigger", 0.1, superStructure.getSuperStructureCommand()));
     PathPlannerPath path =
         new PathPlannerPath(
             waypoints,
@@ -74,6 +75,7 @@ public class ApproachReefPerpendicular extends Command {
   @Override
   public void end(boolean interrupted) {
     pathCommand.cancel();
+    superStructure.advanceWantedState();
   }
 
   // Returns true when the command should end.

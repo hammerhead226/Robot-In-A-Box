@@ -6,21 +6,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.subsystems.coralscorer.CoralScorerArm;
-import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.scoral.ScoralArm;
+import frc.robot.subsystems.scoral.ScoralRollers;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class IntakeFromSourceParallel extends ParallelCommandGroup {
-  private final CoralScorerFlywheel coralIntake;
-  private final CoralScorerArm arm;
+  private final ScoralRollers coralIntake;
+  private final ScoralArm arm;
   private final Elevator elevator;
 
   /** Creates a new IntakeFromSourceTestTwo. */
-  public IntakeFromSourceParallel(
-      CoralScorerFlywheel coralIntake, CoralScorerArm arm, Elevator elevator) {
+  public IntakeFromSourceParallel(ScoralRollers coralIntake, ScoralArm arm, Elevator elevator) {
     this.coralIntake = coralIntake;
     this.elevator = elevator;
     this.arm = arm;

@@ -1,17 +1,4 @@
-// Copyright 2021-2024 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
-package frc.robot.subsystems.flywheel;
+package frc.robot.subsystems.scoral;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -22,47 +9,54 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
-import frc.robot.subsystems.algae.FeederIOInputsAutoLogged;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
+import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.Notification;
+import frc.robot.util.Elastic.Notification.NotificationLevel;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Flywheel extends SubsystemBase {
-  private final FlywheelIO io;
+public class ScoralRollers extends SubsystemBase {
+  private final FlywheelIO rollers;
+  private final ScoralSensorIO sensor;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
+  private final ScoralSensorIOInputsAutoLogged sInputs = new ScoralSensorIOInputsAutoLogged();
   private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
-
-  private CoralState lastCoralState;
-  private final FlywheelIOInputsAutoLogged flyInputs = new FlywheelIOInputsAutoLogged();
-  private final FeederIOInputsAutoLogged feedInputs = new FeederIOInputsAutoLogged();
+  private AlgaeState lastAlgaeState;
 
   private static final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 1);
   private static final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 1);
   private static final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 1);
 
-  // private final DistanceSensorIOInputsAutoLogged sInputs = new
-  // DistanceSensorIOInputsAutoLogged();
+  private CoralState lastCoralState;
+
   /** Creates a new Flywheel. */
-  public Flywheel(FlywheelIO io) {
-    this.io = io;
+  public ScoralRollers(
+      FlywheelIO rollers,
+      ScoralSensorIO sensor,
+      CoralState lastCoralState,
+      AlgaeState lastAlgaeState) {
+    this.rollers = rollers;
+    this.sensor = sensor;
+    this.lastCoralState = lastCoralState;
 
     // Switch constants based on mode (the physics simulator is treated as a
     // separate robot with different tuning)
     switch (SimConstants.currentMode) {
       case REAL:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.1);
-        io.configurePID(0.0, 0.0, 0.0);
       case REPLAY:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);
-        io.configurePID(0.0, 0.0, 0.0);
+        rollers.configurePID(0.0, 0.0, 0.0);
         break;
       case SIM:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.3);
-        io.configurePID(0.0, 0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.1);
+        rollers.configurePID(0, 0.0, 0.0);
         break;
       default:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);
@@ -84,59 +78,36 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Flywheel", inputs);
+    rollers.updateInputs(inputs);
+    Logger.processInputs(" scoral Flywheel", inputs);
+
     updateTunableNumbers();
   }
 
   /** Run open loop at the specified voltage. */
   public void runVolts(double volts) {
-    io.setVoltage(volts);
-    Logger.recordOutput("setting volts", volts);
+    rollers.setVoltage(volts);
   }
 
   /** Run closed loop at the specified velocity. */
   public void runVelocity(double velocityRPM) {
     var velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(velocityRPM);
-    io.setVelocity(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
+    rollers.setVelocity(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
 
     // Log flywheel setpoint
     Logger.recordOutput("Flywheel/SetpointRPM", velocityRPM);
   }
 
   public Command runVoltsCommmand(double volts) {
-
-    return new InstantCommand(() -> runVolts(volts), this).withTimeout(5);
-  }
-
-  public CoralState getLastCoralState() {
-    return lastCoralState;
-  }
-
-  public CoralState seesCoral() {
-    Logger.recordOutput("see note val", "default");
-    /*  if ((flyInputs.distance > SubsystemConstants.CORAL_DIST && sInputs.distance < 2150)) {
-      Logger.recordOutput("see note val", "sensor");
-      lastCoralState = CoralState.SENSOR;
-      return CoralState.SENSOR;
-
-    } else */
-    if (feedInputs.currentAmps > 13) { // TODO add additional check to filter out false positives
-      // } else if (feedInputs.currentAmps > 10000) {
-      Logger.recordOutput("see note val", "current");
-      lastCoralState = CoralState.CURRENT;
-      return CoralState.CURRENT;
-
-    } else {
-      Logger.recordOutput("see note val", "no note");
-      lastCoralState = CoralState.NO_CORAL;
-      return CoralState.NO_CORAL;
-    }
+    Elastic.sendNotification(
+        new Notification(
+            NotificationLevel.INFO, "Notice", "Flywheel is being run at " + volts + " volts."));
+    return new InstantCommand(() -> runVolts(volts), this);
   }
 
   public Command runVelocityCommand(double velocityRPM) {
 
-    return new InstantCommand(() -> runVelocity(velocityRPM), this);
+    return new InstantCommand(() -> runVelocity(velocityRPM), this).withTimeout(5);
   }
 
   public Command flywheelStop() {
@@ -145,7 +116,12 @@ public class Flywheel extends SubsystemBase {
 
   /** Stops the flywheel. */
   public void stop() {
-    io.stop();
+    rollers.stop();
+  }
+
+  public Command stopCommand() {
+
+    return new InstantCommand(() -> stop(), this);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
@@ -156,6 +132,20 @@ public class Flywheel extends SubsystemBase {
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysId.dynamic(direction);
+  }
+
+  public AlgaeState seesAlgae() {
+    Logger.recordOutput("see note val", "default");
+    if (inputs.currentAmps > 13) {
+      Logger.recordOutput("see note val", "current");
+      lastAlgaeState = AlgaeState.CURRENT;
+      return AlgaeState.CURRENT;
+
+    } else {
+      Logger.recordOutput("see note val", "no note");
+      lastAlgaeState = AlgaeState.NO_ALGAE;
+      return AlgaeState.NO_ALGAE;
+    }
   }
 
   /** Returns the current velocity in RPM. */
@@ -169,9 +159,52 @@ public class Flywheel extends SubsystemBase {
     return inputs.velocityRadPerSec;
   }
 
+  public CoralState seesCoral() {
+    Logger.recordOutput("see note val", "default");
+    if ((sInputs.distanceInches < SubsystemConstants.CORAL_DIST)) {
+      Logger.recordOutput("see note val", "sensor");
+      lastCoralState = CoralState.SENSOR;
+      return CoralState.SENSOR;
+
+    } else if (inputs.currentAmps > 13) {
+      Logger.recordOutput("see note val", "current");
+      lastCoralState = CoralState.CURRENT;
+      return CoralState.CURRENT;
+
+    } else {
+      Logger.recordOutput("see note val", "no note");
+      lastCoralState = CoralState.NO_CORAL;
+      return CoralState.NO_CORAL;
+    }
+  }
+
+  public CoralState getLastCoralState() {
+    return lastCoralState;
+  }
+
+  public void zero() {
+    rollers.stop();
+  }
+
+  public void intakeCoral() {
+    rollers.setVoltage(-2);
+  }
+
+  public void intakeAlgae() {
+    rollers.setVoltage(-1);
+  }
+
+  public void scoreCoral() {
+    rollers.setVoltage(2);
+  }
+
+  public void scoreAlgae() {
+    rollers.setVoltage(2);
+  }
+
   private void updateTunableNumbers() {
     if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
-      ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get(), 1);
+      ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
     }
   }
 }

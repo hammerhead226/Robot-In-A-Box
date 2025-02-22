@@ -3,16 +3,15 @@ package frc.robot.constants;
 public class RobotMap {
 
   public static class CoralScorerArmIDs {
-    public static final int coralScorerRotationID = 10; //Is Arm Rotation in Phoenix Tuner.
+    public static final int coralScorerRotationID = 10; // Is Arm Rotation in Phoenix Tuner.
     public static final int coralScorerRotationCANcoderID = 19;
     public static final int coralScorerFlywheelID = 11;
     public static final int coralScorerCANrangeID = 15;
-
   }
 
   public static class ElevatorIDs {
     public static final int leftElevatorID = 8;
-    public static final int rightElevatorID = 9;  
+    public static final int rightElevatorID = 9;
     public static final int elevatorCANrangeID = 18;
   }
 
@@ -26,11 +25,7 @@ public class RobotMap {
     public static final int deployClimbCANcoderID = 16;
   }
 
-  public static class ledIDs {
-    public static final int CANdleID = 0;
-  }
-
-
+  public static class ledIDs {}
 
   // Add examples of vars
   public static class exampleIDs {

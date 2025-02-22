@@ -1,17 +1,4 @@
-// Copyright 2021-2024 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
-package frc.robot.subsystems.flywheel;
+package frc.robot.subsystems.scoral;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -21,17 +8,16 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 
-public class FlywheelIOSim implements FlywheelIO {
+public class ScoralRollersIOSim implements FlywheelIO {
   // CHANGE THESE VALUES TO MATCH YOUR MOTOR AND GEARBOX
   private int gearBoxMotorCount = 1;
   private double gearing = 1;
-  private double momentOfInertia = 1;
+  //  private double momentOfInertia = 1;
   private DCMotor motor = DCMotor.getKrakenX60Foc(gearBoxMotorCount);
-  private double[] stds = {1, 2, 3};
+  //  private double[] stds = {1, 2, 3};
 
   private DCMotorSim sim =
-      new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(motor, gearBoxMotorCount, gearing), motor, 0.0, 0.1);
+      new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 0.004, gearing), motor);
 
   private PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
@@ -56,7 +42,9 @@ public class FlywheelIOSim implements FlywheelIO {
     sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
 
     inputs.positionRad = 0.0;
-    inputs.velocityRadPerSec = sim.getAngularVelocityRadPerSec();
+    // inputs.velocityRadPerSec =
+    // Units.radiansPerSecondToRotationsPerMinute(sim.getAngularVelocityRadPerSec());
+    inputs.velocityRadPerSec = sim.getAngularVelocityRPM();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = sim.getCurrentDrawAmps();
   }

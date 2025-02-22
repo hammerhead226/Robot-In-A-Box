@@ -1,4 +1,4 @@
-package frc.robot.subsystems.coralscorer;
+package frc.robot.subsystems.scoral;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -17,7 +17,7 @@ import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class CoralScorerArm extends SubsystemBase {
+public class ScoralArm extends SubsystemBase {
   private final ArmIO coralScorerArm;
   private final ArmIOInputsAutoLogged csaInputs = new ArmIOInputsAutoLogged();
 
@@ -50,16 +50,16 @@ public class CoralScorerArm extends SubsystemBase {
   public static PivotVis setpointVisualizer;
 
   /** Creates a new Arm. */
-  public CoralScorerArm(ArmIO arm) {
+  public ScoralArm(ArmIO arm) {
     this.coralScorerArm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
-        kG.initDefault(0.29);
-        kV.initDefault(1);
-        kP.initDefault(1.123);
-        kA.initDefault(1);
-        kS.initDefault(1);
-        kI.initDefault(1);
+        kG.initDefault(0);
+        kV.initDefault(0.2);
+        kP.initDefault(0);
+        kA.initDefault(0);
+        kS.initDefault(0);
+        kI.initDefault(0);
         break;
       case REPLAY:
         kG.initDefault(0.29);
@@ -134,13 +134,17 @@ public class CoralScorerArm extends SubsystemBase {
         positionDegs, armFFModel.calculate(positionDegs, velocityDegsPerSec));
   }
 
+  public void setVolts(double volts) {
+    coralScorerArm.setVoltage(0.1);
+  }
+
   public void armStop() {
     coralScorerArm.stop();
   }
 
   public void setArmGoal(double goalDegrees) {
     this.goalDegrees = goalDegrees;
-    armGoalStateDegrees = new TrapezoidProfile.State(goalDegrees, 2);
+    armGoalStateDegrees = new TrapezoidProfile.State(goalDegrees, 0);
   }
 
   public void setArmCurrent(double currentDegrees) {
@@ -148,10 +152,9 @@ public class CoralScorerArm extends SubsystemBase {
   }
 
   public Command setArmTarget(double goalDegrees, double thresholdDegrees) {
-    // TODO: Change the wait time to an accurate value
+
     return new InstantCommand(() -> setArmGoal(goalDegrees), this)
-        .until(() -> atGoal(thresholdDegrees))
-        .withTimeout(5);
+        .until(() -> atGoal(thresholdDegrees));
   }
 
   @AutoLogOutput(key = "arm")

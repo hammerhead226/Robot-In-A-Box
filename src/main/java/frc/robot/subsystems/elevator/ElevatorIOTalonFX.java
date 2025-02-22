@@ -47,7 +47,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     leader.getConfigurator().apply(config);
 
-    positionSetpoint = SubsystemConstants.ElevatorConstants.RETRACT_SETPOINT_INCH;
+    positionSetpoint = SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
 
     follower.setControl(new Follower(lead, true));
 
