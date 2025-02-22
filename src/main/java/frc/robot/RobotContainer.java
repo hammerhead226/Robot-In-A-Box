@@ -28,8 +28,10 @@ import frc.robot.commands.algaeintoprocesser.ReleaseAlgae;
 // import frc.robot.commands.algaeintosource.ReleaseAlgae;
 // import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.RobotMap;
 // import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
@@ -45,15 +47,20 @@ import frc.robot.subsystems.climber.WinchIOTalonFX;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.coralscorer.CoralScorerArm;
 import frc.robot.subsystems.coralscorer.CoralScorerArmIOSim;
+import frc.robot.subsystems.coralscorer.CoralScorerArmIOTalonFX;
 import frc.robot.subsystems.coralscorer.CoralScorerFlywheel;
+import frc.robot.subsystems.coralscorer.CoralScorerFlywheelIOTalonFX;
 import frc.robot.subsystems.coralscorer.CoralSensorIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.led.LED;
@@ -65,6 +72,7 @@ import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import java.util.Map;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import static frc.robot.constants.RobotMap.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -127,67 +135,35 @@ public class RobotContainer {
     switch (SimConstants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        // drive =
-        //     new Drive(
-        //         new GyroIOPigeon2(),
-        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
-        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
-        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
-        //         new ModuleIOTalonFX(TunerConstants.BackRight));
+         drive =
+             new Drive(
+                 new GyroIOPigeon2(),
+                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                 new ModuleIOTalonFX(TunerConstants.FrontRight),
+                 new ModuleIOTalonFX(TunerConstants.BackLeft),
+                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        //  csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(1));
-
-        // vision =
-        //     new Vision(
-        //         drive.getToPoseEstimatorConsumer(),
-        //         new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-        //         new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-        //         new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-        //         new VisionIOPhotonVision("photon", new Transform3d()));
-        // TODO change lead, follower, gyro IDs, etc.
-        // elevator = new Elevator(new ElevatorIOTalonFX(8, 9, 0));
-        elevator = new Elevator(new ElevatorIOSim());
-        // winch = new Winch(new WinchIOTalonFX(12, 13));
-        // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
-        // csFlywheel =
-        //     new CoralScorerFlywheel(
-        //         new CoralScorerFlywheelIOSim(),
-        //         new CoralSensorIO() {},
-        //         CoralState.DEFAULT,
-        //         AlgaeState.DEFAULT);
-        // led = new LED(new LED_IOCANdle(0, ""));
-        // superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
-
-        csArm = new CoralScorerArm(new CoralScorerArmIOSim());
-
+        csArm = new CoralScorerArm(new CoralScorerArmIOTalonFX(CoralScorerArmIDs.coralScorerRotationID, CoralScorerArmIDs.coralScorerRotationCANcoderID));
+        
         vision =
-            new Vision(
-                drive.getToPoseEstimatorConsumer(),
-                new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-                new VisionIOPhotonVision("photon", new Transform3d()));
-
-        climberArm = new ClimberArm(new ClimberArmIOTalonFX(14, 5));
-
+             new Vision(
+                 drive.getToPoseEstimatorConsumer(),
+                 new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
+                 new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                 new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                 new VisionIOPhotonVision("photon", new Transform3d()));
+        // TODO change lead, follower, gyro IDs, etc.
+        elevator = new Elevator(new ElevatorIOTalonFX(ElevatorIDs.leftElevatorID, ElevatorIDs.rightElevatorID, ElevatorIDs.elevatorCANrangeID));
+        winch = new Winch(new WinchIOTalonFX(WinchIDs.leftWinchID, WinchIDs.rightWinchID));
         csFlywheel =
-            new CoralScorerFlywheel(
-                new FlywheelIOTalonFX(),
-                new CoralSensorIO() {},
-                CoralState.DEFAULT,
-                AlgaeState.DEFAULT);
-        led = new LED(new LED_IOCANdle(0, "CAN Bus 2"));
+             new CoralScorerFlywheel(
+                 new CoralScorerFlywheelIOTalonFX(CoralScorerArmIDs.coralScorerFlywheelID),
+                 new CoralSensorIO() {},
+                 CoralState.DEFAULT,
+                 AlgaeState.DEFAULT);
+        led = new LED(new LED_IOCANdle(ledIDs.CANdleID, SubsystemConstants.CANIVORE_ID_STRING));
+        climberArm = new ClimberArm(new ClimberArmIOTalonFX(ClimbIDs.deployClimbID, ClimbIDs.deployClimbCANcoderID));
         superStructure = new SuperStructure(drive, elevator, csArm, csFlywheel, led);
-        climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0));
-        winch = new Winch(new WinchIOTalonFX(0, 0));
-
         break;
         // coralIntake = new IntakeFromSource(new CoralScorerFlywheel(), new CoralScorerArm(), new
         // Elevator());
