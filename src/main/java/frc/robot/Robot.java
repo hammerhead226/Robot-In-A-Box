@@ -180,10 +180,10 @@ public class Robot extends LoggedRobot {
 
     robotContainer
         .getElevator()
-        .setFirstStageCurrent(robotContainer.getElevator().getElevatorPosition());
+        .setElevatorCurrent(robotContainer.getElevator().getElevatorPosition());
     robotContainer
         .getElevator()
-        .setFirstStageGoal(robotContainer.getElevator().getElevatorPosition());
+        .setElevatorGoal(robotContainer.getElevator().getElevatorPosition());
 
     robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
     robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());

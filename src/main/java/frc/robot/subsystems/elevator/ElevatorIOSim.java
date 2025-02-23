@@ -60,9 +60,9 @@ public class ElevatorIOSim implements ElevatorIO {
     velocityInchesPerSecond = Units.metersToInches(sim.getVelocityMetersPerSecond());
     currentAmps = sim.getCurrentDrawAmps();
 
-    inputs.carriagePositionSetpointInch = positionSetpointInches;
+    inputs.positionSetpointInch = positionSetpointInches;
     inputs.appliedVolts = appliedVolts;
-    inputs.carriagePositionInch = positionInch;
+    inputs.positionInch = positionInch;
     inputs.elevatorVelocityInchesPerSecond = velocityInchesPerSecond;
     inputs.currentAmps = currentAmps;
 
@@ -75,7 +75,7 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   @Override
-  public void setFirstStagePositionSetpoint(double position, double ffVolts) {
+  public void setPositionSetpoint(double position, double ffVolts) {
     appliedVolts = ffVolts;
     pid.setSetpoint(position);
   }

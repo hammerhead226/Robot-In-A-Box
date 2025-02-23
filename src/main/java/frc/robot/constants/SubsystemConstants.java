@@ -21,13 +21,6 @@ public final class SubsystemConstants {
   public static final double LOOP_PERIOD_SECONDS = 0.02;
   public static final boolean tuningMode = true;
 
-  public static class IntakeConstants {
-    public static final double CURRENT_LIMIT = 40.0;
-    public static final boolean CURRENT_LIMIT_ENABLED = true;
-  }
-
-  // public static final class ShooterConstants {} removed as is not relevant to current robot.
-
   public static class ElevatorConstants {
     public static final double CURRENT_LIMIT = 40.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
@@ -36,12 +29,17 @@ public final class SubsystemConstants {
 
     public static final double DEFAULT_THRESHOLD = 0.1;
 
-    public static final double ELEVATOR_GEAR_RATIO = 12;
+    public static final double ELEVATOR_GEAR_RATIO = 12.;
 
     public static final double PROCESSOR_SETPOINT_INCHES = 0;
+
+    // TODO:: NEED TO FIND
+    public static final double L1_SETPOINT_INCHES = 0;
+    public static final double L2_SETPOINT_INCHES = 7;
+    public static final double L3_SETPOINT_INCHES = 14;
+    public static final double L4_SETPOINT_INCHES = 27.3;
   }
 
-  // @Deprecated
   public static final class ClimberConstants {
     public static final double CURRENT_LIMIT = 35.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
@@ -49,59 +47,36 @@ public final class SubsystemConstants {
     public static final double DEFAULT_THRESHOLD = 0.1;
     public static final double ARM_GEAR_RATIO = 1;
 
-    public static final double ARM_ZERO_ANGLE = 0;
-    public static final double STOW_SETPOINT_DEG = 0;
+    public static final double STOW_SETPOINT_DEG = 90;
+    public static final double DEPLOY_SETPOINT_DEG = 0;
   }
 
-  public static class CoralScorerConstants {
-    public static class ScoralArmConstants {
-      public static final double CURRENT_LIMIT = 35.0;
-      public static final boolean CURRENT_LIMIT_ENABLED = true;
-
-      public static final double DEFAULT_THRESHOLD = 1;
-      public static final double ARM_GEAR_RATIO = (25.0 / 1) / (14.0 / 32);
-
-      public static final double INTAKE_SETPOINT_DEG = 32;
-
-      public static final double ARM_VELOCITY_DEGPERSEC = 10;
-      public static final double DEFAULT_VOLTS = 0;
-
-      public static final double ARM_ZERO_ANGLE = 0;
-      public static final double STOW_SETPOINT_DEG = 96;
-      public static final double SCORING_SETPOINT_DEG = 15;
-    }
-
-    public static class AlgaeScorerFlywheelConstants {
-      public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 10;
-      public static final double THRESHOLD = 0;
-      public static final boolean CURRENT_LIMIT_ENABLED = false;
-      public static final double CURRENT_LIMIT = 0;
-    }
-
-    public static class ScoralRollersConstants {
-      public static final String CoralScorerFlywheelConstants = null;
-      public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 10;
-    }
-  }
-
-  // @Deprecated
-  public static final class ArmConstants {
+  public static class ScoralArmConstants {
     public static final double CURRENT_LIMIT = 35.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
 
-    public static final double DEFAULT_THRESHOLD = 0.1;
-    public static final double ARM_GEAR_RATIO = 1;
+    public static final double DEFAULT_THRESHOLD = 1;
+    public static final double ARM_GEAR_RATIO = (25.0 / 1) / (14.0 / 32);
 
-    public static final double ARM_ZERO_ANGLE = 0;
-    public static final double STOW_SETPOINT_DEG = 0;
+    public static final double STOW_SETPOINT_DEG = 96;
+    public static final double LOW_CORAL_SCORING_SETPOINT_DEG = 74;
+    public static final double L4_CORAL_SCORING_SETPOINT_DEG = 63;
+  }
+
+  public static class AlgaeScorerFlywheelConstants {
+    public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 10;
+    public static final double THRESHOLD = 0;
+    public static final boolean CURRENT_LIMIT_ENABLED = false;
+    public static final double CURRENT_LIMIT = 0;
+  }
+
+  public static class ScoralRollersConstants {
+    public static final String CoralScorerFlywheelConstants = null;
+    public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 10;
   }
 
   public static class LEDConstants {
     public static final int NUMBER_LEDS = 57 + 24 + 13;
-    // public static final double COLOR_BLUE = 0.87;
-    // public static final double COLOR_RED = 0.61;
-    // public static final double COLOR_YELLOW = 0.66;
-    // public static final double COLOR_VIOLET = 0.91;
   }
 
   public static enum LED_STATE {

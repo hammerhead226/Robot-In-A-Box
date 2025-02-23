@@ -16,15 +16,11 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-// import frc.robot.ClimbStateMachine.java.ClimbStateMachine;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ReinitializingCommand;
-// import frc.robot.commands.algaeintosource.ReleaseAlgae;
-// import frc.robot.commands.algaeintoprocesser.AlgaeIntoProcesser;
 import frc.robot.constants.RobotMap;
-// import frc.robot.commands.IntakeFromSource;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
@@ -113,47 +109,6 @@ public class RobotContainer {
         brakeSwitch = new DigitalInput(2);
         elevatorBrakeTrigger = new Trigger(() -> brakeSwitch.get());
         // // Real robot, instantiate hardware IO implementations
-        // // TODO change lead, follower, gyro IDs, etc.
-        // // elevator = new Elevator(new ElevatorIOTalonFX(8, 9, 0));
-        // elevator = new Elevator(new ElevatorIOSim());
-        // // winch = new Winch(new WinchIOTalonFX(12, 13));
-        // winch = new Winch(new WinchIOSim());
-        // // csFlywheel =
-        // // new CoralScorerFlywheel(
-        // // new CoralScorerFlywheelIOSim(),
-        // // new CoralSensorIO() {},
-        // // CoralState.DEFAULT,
-        // // AlgaeState.DEFAULT);
-        // // led = new LED(new LED_IOCANdle(0, ""));
-        // // superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive,
-        // led);
-        // drive =
-        // new Drive(
-        // new GyroIO() {},
-        // new ModuleIOSim(TunerConstants.FrontLeft),
-        // new ModuleIOSim(TunerConstants.FrontRight),
-        // new ModuleIOSim(TunerConstants.BackLeft),
-        // new ModuleIOSim(TunerConstants.BackRight));
-
-        // csArm = new CoralScorerArm(new CoralScorerArmIOSim());
-
-        // vision =
-        // new Vision(
-        // drive.getToPoseEstimatorConsumer(),
-        // new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-        // new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-        // new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-        // new VisionIOPhotonVision("photon", new Transform3d()));
-
-        // csFlywheel =
-        // new CoralScorerFlywheel(
-        // new FlywheelIOTalonFX(),
-        // new CoralSensorIO() {},
-        // CoralState.DEFAULT,
-        // AlgaeState.DEFAULT);
-        // led = new LED(new LED_IOCANdle(0, "CAN Bus 2"));
-        // superStructure = new SuperStructure(drive, elevator, csArm, csFlywheel, led);
-        // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0));
 
         elevator =
             new Elevator(
@@ -163,15 +118,6 @@ public class RobotContainer {
                     RobotMap.ElevatorIDs.elevatorCANrangeID));
         // winch = new Winch(new WinchIOTalonFX(12, 13));
         winch = new Winch(new WinchIO() {});
-        // climberArm = new ClimberArm(new ClimberArmIOTalonFX(0, 0, 0));
-        // csFlywheel =
-        // new CoralScorerFlywheel(
-        // new CoralScorerFlywheelIOSim(),
-        // new CoralSensorIO() {},
-        // CoralState.DEFAULT,
-        // AlgaeState.DEFAULT);
-        // led = new LED(new LED_IOCANdle(0, ""));
-        // superStructure = new SuperStructure(elevator, csArm, csFlywheel, drive, led);
         drive =
             new Drive(
                 new GyroIO() {},
@@ -180,7 +126,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        // scoralArm = new ScoralArm(new ScoralArmIOTalonFX(10, 19));
         scoralArm =
             new ScoralArm(
                 new ScoralArmIOTalonFX(
@@ -247,13 +192,15 @@ public class RobotContainer {
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOSim());
+
+        climberArm = new ClimberArm(new ClimberArmIOSim());
+
         superStructure =
             new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm);
-        climberArm = new ClimberArm(new ClimberArmIOSim());
         break;
 
       default:
-      elevatorBrakeTrigger = new Trigger(() -> true);
+        elevatorBrakeTrigger = new Trigger(() -> true);
         // Replayed robot, disable IO implementations
         drive =
             new Drive(
@@ -438,7 +385,7 @@ public class RobotContainer {
     // Configure the button bindings
     // configureButtonBindings();
     // stateTrigger = new Trigger(() -> superStructure.changedStated());
-        
+
     slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     reefAlignTrigger =
         new Trigger(

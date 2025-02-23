@@ -38,10 +38,9 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
 
   public ClimberArmIOTalonFX(int leadID, int canCoderID) {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.CurrentLimits.StatorCurrentLimit =
-        SubsystemConstants.CoralScorerConstants.ScoralArmConstants.CURRENT_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ScoralArmConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
-        SubsystemConstants.CoralScorerConstants.ScoralArmConstants.CURRENT_LIMIT_ENABLED;
+        SubsystemConstants.ScoralArmConstants.CURRENT_LIMIT_ENABLED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     // config.Feedback.FeedbackRemoteSensorID = canCoderID;

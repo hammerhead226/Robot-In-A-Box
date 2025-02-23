@@ -5,21 +5,33 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.subsystems.scoral.ScoralRollers;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class scoringCoral extends SequentialCommandGroup {
+public class ScoringCoral extends SequentialCommandGroup {
   /** Creates a new scoringCoral. */
   private final ScoralRollers scoralRollers;
 
-  public scoringCoral(ScoralRollers m_scoralRollers) {
+  private final Elevator elevator;
+  private final ScoralArm scoralArm;
+
+  public ScoringCoral(Elevator elevator, ScoralArm scoralArm, ScoralRollers scoralRollers) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
-    this.scoralRollers = m_scoralRollers;
-    addCommands(scoralRollers.runVoltsCommmand(4));
+    this.scoralRollers = scoralRollers;
+    this.elevator = elevator;
+    this.scoralArm = scoralArm;
+    addCommands(
+        // new InstantCommand(() -> led.setState(LED_STATE.FLASHING_GREEN)),
+        scoralRollers.runVoltsCommmand(4),
+        new WaitCommand(1),
+        new GoToStow(elevator, scoralArm, scoralRollers));
     // new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.NO_CORAL));
   }
 }

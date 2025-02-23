@@ -129,16 +129,16 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean hasReachedGoal(double goalInches) {
-    return (Math.abs(eInputs.carriagePositionInch - goalInches)
+    return (Math.abs(eInputs.positionInch - goalInches)
         <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
   }
 
   public double getElevatorPosition() {
-    return eInputs.firstStagePositionInch;
+    return eInputs.positionInch;
   }
 
   private double getElevatorError() {
-    return eInputs.carriagePositionSetpointInch - eInputs.carriagePositionInch;
+    return eInputs.positionSetpointInch - eInputs.positionInch;
   }
 
   public boolean elevatorAtSetpoint(double thresholdInches) {
@@ -154,18 +154,18 @@ public class Elevator extends SubsystemBase {
         .until(() -> getCanRangeDistanceInches() == 0 + 0.5);
   }
 
-  public void setFirstStageCurrent(double currentInches) {
+  public void setElevatorCurrent(double currentInches) {
     extenderCurrent = new TrapezoidProfile.State(currentInches, 0);
   }
 
-  public void setFirstStageGoal(double goal) {
+  public void setElevatorGoal(double goal) {
     this.goal = goal;
     extenderGoal = new TrapezoidProfile.State(goal, 0);
     // extenderGoal2 = new TrapezoidProfile.State(setpoint, 0);
   }
 
   public void setPositionExtend(double position, double velocity) {
-    elevator.setFirstStagePositionSetpoint(position, elevatorFFModel.calculate(velocity));
+    elevator.setPositionSetpoint(position, elevatorFFModel.calculate(velocity));
   }
 
   public void elevatorStop() {
@@ -189,108 +189,22 @@ public class Elevator extends SubsystemBase {
     return extenderGoal.position >= 0.4;
   }
 
-  public Command setFirstStageTarget(double firstStageGoalInches, double thresholdInches) {
+  public Command setElevatorTarget(double elevatorGoalInches, double thresholdInches) {
     // TODO: Change the wait time to an accurate value
-    return new InstantCommand(() -> setFirstStageGoal(firstStageGoalInches), this)
+    return new InstantCommand(() -> setElevatorGoal(elevatorGoalInches), this)
         .until(() -> elevatorAtSetpoint(thresholdInches))
         .withTimeout(5);
   }
 
-  // @AutoLogOutput(key = "elevator")
-  // public Pose3d getElevatorPose() {
-  // if (getElevatorstage2Pose().getZ() < extenderCurrent.position) {
-  // return new Pose3d(0, 0, extenderCurrent2.position + 0.5, new Rotation3d());
-  // } else {
-  // return new Pose3d(0, 0, extenderCurrent.position + 0.9, new Rotation3d());
-  // }
-  // }
-
-  // state stuff
-  // public void setWantedState(ElevatorState wantedState) {
-  // this.wantedState = wantedState;
-  // }
-
   public void breakMode(boolean brake) {
     elevator.setBrakeMode(brake);
   }
-
-  // public ElevatorState handleStateTransitions() {
-  // return switch (wantedState) {
-  // case ZERO -> ElevatorState.ZERO;
-  // case STOW -> ElevatorState.STOW;
-  // case SOURCE -> ElevatorState.SOURCE;
-  // case L1 -> ElevatorState.L1;
-  // case L2 -> ElevatorState.L2;
-  // case L3 -> ElevatorState.L3;
-  // case L4 -> ElevatorState.L4;
-  // default -> ElevatorState.ZERO;
-  // };
-  // }
-
-  // // elevator factory
-  // public void Stow() {
-  // setExtenderGoal(0);
-  // }
-
-  // public void goToSource() {
-  // setExtenderGoal(0);
-  // }
-
-  // public void gotoFirstLevel() {
-  // setExtenderGoal(FieldConstants.ReefHeight.L1.height);
-  // }
-
-  // public void gotoSecondLevel() {
-  // setExtenderGoal(FieldConstants.ReefHeight.L2.height);
-  // }
-
-  // public void gotoThirdLevel() {
-  // setExtenderGoal(FieldConstants.ReefHeight.L3.height);
-  // }
-
-  // public void gotoFourthLevel() {
-  // setExtenderGoal(FieldConstants.ReefHeight.L4.height);
-  // }
-
-  // public void gotoProcessorLevel() {
-  // setExtenderGoal(0);
-  // }
 
   @Override
   public void periodic() {
     Logger.recordOutput("Alliance", DriverStation.getAlliance().isPresent());
     elevator.updateInputs(eInputs);
     updateTunableNumbers();
-    // state logic
-    // ElevatorState desiredState = wantedState;
-    // if (wantedState != currentState) {
-    // currentState = wantedState;
-    // }
-
-    // switch (currentState) {
-    // case ZERO:
-    // Stow();
-    // break;
-    // case SOURCE:
-    // goToSource();
-    // break;
-    // case L1:
-    // gotoFirstLevel();
-    // break;
-    // case L2:
-    // gotoSecondLevel();
-    // break;
-    // case L3:
-    // gotoThirdLevel();
-    // break;
-    // case L4:
-    // gotoFourthLevel();
-    // break;
-    // case PROCESSOR:
-    // gotoProcessorLevel();
-    // default:
-    // Stow();
-    // }
 
     measured.update(extenderCurrent.position);
     ScoralArm.measuredVisualizer.updateVertical(extenderCurrent.position);
@@ -308,7 +222,6 @@ public class Elevator extends SubsystemBase {
 
     ScoralArm.measuredVisualizer.updateVertical(extenderCurrent.position + 0.1);
     ScoralArm.setpointVisualizer.updateVertical(extenderGoal.position + 0.1);
-    // Logger.recordOutput("setpoint for elevator",)
 
     updateTunableNumbers();
   }
