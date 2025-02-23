@@ -118,6 +118,11 @@ public class Elevator extends SubsystemBase {
     updateTunableNumbers();
   }
 
+  public void setBrake(boolean brake) {
+
+    elevator.setBrakeMode(brake);
+  }
+  
   public boolean atGoal() {
     return (Math.abs(extenderCurrent.position - goal) <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
   }
