@@ -97,6 +97,7 @@ public class RobotContainer {
   // private final Trigger stateTrigger;
   private Trigger slowModeTrigger;
   private Trigger reefAlignTrigger;
+  private Trigger firstTimeReefAlignPressedTrigger;
 
   // Dashboard inputs
   private LoggedDashboardChooser<Command> autoChooser;

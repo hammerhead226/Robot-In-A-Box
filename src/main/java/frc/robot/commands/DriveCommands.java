@@ -65,6 +65,8 @@ public class DriveCommands {
   private static double wantedRotationVelocityRadsPerSec = 0;
   private static double wantedForwardsVelocityMetersPerSec = 0;
 
+  private static int counter = 0;
+
   private static double forwardsAssistEffort = 0;
   private static double sidewaysAssistEffort = 0;
   private static double rotationAssistEffort = 0;
@@ -157,8 +159,9 @@ public class DriveCommands {
 
           double speedDebuff = 0.75;
 
-          targetPose = null;
           if (reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()) {
+            counter++;
+
             led.setState(LED_STATE.FLASHING_RED);
             Translation2d reefTranslation =
                 drive.isNearReef()
@@ -169,52 +172,51 @@ public class DriveCommands {
                         SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
                         SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
 
-            if (reefLeftSupplier.getAsBoolean()) {
+            if (reefLeftSupplier.getAsBoolean() && counter == 1) {
               targetPose = drive.getNearestCenterLeft();
               targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
-            } else if (reefRightSupplier.getAsBoolean()) {
+            } else if (reefRightSupplier.getAsBoolean() && counter == 1) {
               targetPose = drive.getNearestCenterRight();
               targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
-            } else {
-              targetPose = drive.getNearestCenter();
-              targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
-            }
+            } 
             Logger.recordOutput("drive targetPose name", "reef");
 
-          } else if (angleAssistSupplier.getAsBoolean()
-              && superStructure.getWantedState() == SuperStructureState.SOURCE) {
-            targetPose = drive.getNearestSource();
-            targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
+          } else if (angleAssistSupplier.getAsBoolean()) {
+            counter = 0;
+            if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
+              targetPose = drive.getNearestSource();
+              targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
+  
+              Logger.recordOutput("drive targetPose name", "source");
+            } else if (superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
+              targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
+              targetPose =
+                  rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
+              speedDebuff *= 0.5;
+              Logger.recordOutput("drive targetPose name", "processor");
+            } else if (superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
+                targetPose =
+                  drive
+                      .getPose()
+                      .nearest(
+                          new ArrayList<>(
+                              Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage).stream()
+                                  .map(pose -> Drive.transformPerAlliance(pose))
+                                  .collect(Collectors.toList())));
+                targetPose =
+                    rotateAndNudge(
+                        new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
+                        new Translation2d(-0.5, 0),
+                        new Rotation2d(0));
 
-            Logger.recordOutput("drive targetPose name", "source");
-
-          } else if (angleAssistSupplier.getAsBoolean()
-              && superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
-            targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
-            targetPose =
-                rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
-            speedDebuff *= 0.5;
-            Logger.recordOutput("drive targetPose name", "processor");
-          } else if (angleAssistSupplier.getAsBoolean()
-              && superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
-            targetPose =
-                drive
-                    .getPose()
-                    .nearest(
-                        new ArrayList<>(
-                            Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage).stream()
-                                .map(pose -> Drive.transformPerAlliance(pose))
-                                .collect(Collectors.toList())));
-            targetPose =
-                rotateAndNudge(
-                    new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
-                    new Translation2d(-0.5, 0),
-                    new Rotation2d(0));
-
-            Logger.recordOutput("drive targetPose name", "anchor");
+                Logger.recordOutput("drive targetPose name", "anchor");
+            } 
           } else {
-            Logger.recordOutput("drive targetPose name", "none");
+            counter = 0;
+          Logger.recordOutput("drive targetPose name", "none");
           }
+
+          Logger.recordOutput("counter", counter);
 
           if (targetPose != null && !targetPose.equals(previousTargetPose)) {
             previousTargetPose = targetPose;
