@@ -7,9 +7,10 @@
     "BlueMiddleLeft",
     "BlueMiddleRight",
     "BlueRight",
+    "BlueLeftPush",
     "RedLeft",
-    "RedMiddleRight",
     "RedMiddleLeft",
+    "RedMiddleRight",
     "RedRight"
   ],
   "autoFolders": [],
