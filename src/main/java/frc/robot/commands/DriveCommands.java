@@ -305,13 +305,13 @@ public class DriveCommands {
           Logger.recordOutput("Driver Alignment/Rotation Assist Effort", rotationAssistEffort);
 
           if (!drive.isSlowMode()) {
+            forwardSlewRateLimiter.changeRateLimit(8);
+            sidewaysSlewRateLimiter.changeRateLimit(8);
+            rotationSlewRateLimiter.changeRateLimit(30);
+          } else {
             forwardSlewRateLimiter.changeRateLimit(4);
             sidewaysSlewRateLimiter.changeRateLimit(4);
             rotationSlewRateLimiter.changeRateLimit(5);
-          } else {
-            forwardSlewRateLimiter.changeRateLimit(1);
-            sidewaysSlewRateLimiter.changeRateLimit(1);
-            rotationSlewRateLimiter.changeRateLimit(2);
           }
           double finalInputForwardVelocityMetersPerSec =
               forwardSlewRateLimiter.calculate(forwardSpeed + forwardsAssistEffort);
