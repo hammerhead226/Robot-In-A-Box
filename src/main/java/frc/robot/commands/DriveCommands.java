@@ -178,7 +178,7 @@ public class DriveCommands {
             } else if (reefRightSupplier.getAsBoolean() && counter == 1) {
               targetPose = drive.getNearestCenterRight();
               targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
-            } 
+            }
             Logger.recordOutput("drive targetPose name", "reef");
 
           } else if (angleAssistSupplier.getAsBoolean()) {
@@ -186,7 +186,7 @@ public class DriveCommands {
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
               targetPose = drive.getNearestSource();
               targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
-  
+
               Logger.recordOutput("drive targetPose name", "source");
             } else if (superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
               targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
@@ -195,25 +195,26 @@ public class DriveCommands {
               speedDebuff *= 0.5;
               Logger.recordOutput("drive targetPose name", "processor");
             } else if (superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
-                targetPose =
+              targetPose =
                   drive
                       .getPose()
                       .nearest(
                           new ArrayList<>(
-                              Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage).stream()
+                              Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage)
+                                  .stream()
                                   .map(pose -> Drive.transformPerAlliance(pose))
                                   .collect(Collectors.toList())));
-                targetPose =
-                    rotateAndNudge(
-                        new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
-                        new Translation2d(-0.5, 0),
-                        new Rotation2d(0));
+              targetPose =
+                  rotateAndNudge(
+                      new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
+                      new Translation2d(-0.5, 0),
+                      new Rotation2d(0));
 
-                Logger.recordOutput("drive targetPose name", "anchor");
-            } 
+              Logger.recordOutput("drive targetPose name", "anchor");
+            }
           } else {
             counter = 0;
-          Logger.recordOutput("drive targetPose name", "none");
+            Logger.recordOutput("drive targetPose name", "none");
           }
 
           Logger.recordOutput("counter", counter);
@@ -335,15 +336,24 @@ public class DriveCommands {
           Logger.recordOutput("slew forward", finalInputForwardVelocityMetersPerSec);
           Logger.recordOutput("slew side", finalInputSidewaysVelocityMetersPerSec);
           Logger.recordOutput("slew rotate", finalInputRotationVelocityRadsPerSec);
+
+          double totalInputSpeed =
+              Math.hypot(
+                  finalInputForwardVelocityMetersPerSec, finalInputSidewaysVelocityMetersPerSec);
+          double scale =
+              totalInputSpeed > drive.getMaxLinearSpeedMetersPerSec()
+                  ? drive.getMaxLinearSpeedMetersPerSec() / totalInputSpeed
+                  : 1;
+
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   new ChassisSpeeds(
                       MathUtil.clamp(
-                          finalInputForwardVelocityMetersPerSec,
+                          finalInputForwardVelocityMetersPerSec * scale,
                           -drive.getMaxLinearSpeedMetersPerSec(),
                           drive.getMaxLinearSpeedMetersPerSec()),
                       MathUtil.clamp(
-                          finalInputSidewaysVelocityMetersPerSec, //
+                          finalInputSidewaysVelocityMetersPerSec * scale, //
                           -drive.getMaxLinearSpeedMetersPerSec(),
                           drive.getMaxLinearSpeedMetersPerSec()),
                       MathUtil.clamp(
