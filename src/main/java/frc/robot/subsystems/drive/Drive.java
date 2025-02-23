@@ -414,17 +414,22 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
-    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * linearSpeedMultiplier;
+    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 1;
   }
 
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
-    return (getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS) * angularSpeedMultiplier;
+    return (getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS) * 1;
   }
 
   public void enableSlowMode(boolean enabled) {
-    linearSpeedMultiplier = enabled ? 0.3 : 1;
-    angularSpeedMultiplier = enabled ? 0.1 : 1;
+    slowMode = enabled;
+    // linearSpeedMultiplier = enabled ? 0.3 : 1;
+    // angularSpeedMultiplier = enabled ? 0.1 : 1;
+  }
+
+  public boolean isSlowMode() {
+    return slowMode;
   }
 
   /** Returns an array of module translations. */

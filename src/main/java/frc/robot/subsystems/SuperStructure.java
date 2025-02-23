@@ -30,6 +30,7 @@ public class SuperStructure {
   private final ClimberArm climberArm;
   private SuperStructureState currentState;
   private SuperStructureState wantedState;
+  private SuperStructureState lastReefState;
   public boolean override = false;
   int counter = 0;
 
@@ -48,6 +49,7 @@ public class SuperStructure {
     this.climberArm = climberArm;
     wantedState = SuperStructureState.STOW;
     currentState = SuperStructureState.STOW;
+    lastReefState = SuperStructureState.L4;
   }
 
   public void setWantedState(SuperStructureState wantedState) {
@@ -143,6 +145,7 @@ public class SuperStructure {
 
       case L1:
         currentState = SuperStructureState.L1;
+        lastReefState = SuperStructureState.L1;
         return new GoToReefHeight(
             elevator,
             scoralArm,
@@ -151,6 +154,7 @@ public class SuperStructure {
 
       case L2:
         currentState = SuperStructureState.L2;
+        lastReefState = SuperStructureState.L2;
         return new GoToReefHeight(
             elevator,
             scoralArm,
@@ -159,6 +163,7 @@ public class SuperStructure {
 
       case L3:
         currentState = SuperStructureState.L3;
+        lastReefState = SuperStructureState.L3;
         return new GoToReefHeight(
             elevator,
             scoralArm,
@@ -167,6 +172,7 @@ public class SuperStructure {
 
       case L4:
         currentState = SuperStructureState.L4;
+        lastReefState = SuperStructureState.L4;
         return new GoToReefHeight(
             elevator,
             scoralArm,
@@ -181,8 +187,7 @@ public class SuperStructure {
                     .andThen(
                         new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW))
                             .andThen(
-                                new InstantCommand(
-                                    () -> this.setWantedState(SuperStructureState.STOW)))));
+                                new InstantCommand(() -> this.setWantedState(lastReefState)))));
 
       case PROCESSOR:
         led.setState(LED_STATE.FLASHING_GREEN);
@@ -212,10 +217,10 @@ public class SuperStructure {
         return new SequentialCommandGroup(
             climberArm.setArmTarget(SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2));
       case CLIMB_STAGE_TWO:
-      currentState = SuperStructureState.CLIMB_STAGE_TWO;
+        currentState = SuperStructureState.CLIMB_STAGE_TWO;
         return new SequentialCommandGroup();
       case HANG:
-      currentState = SuperStructureState.HANG;
+        currentState = SuperStructureState.HANG;
         led.setState(LED_STATE.BLUE);
         return new SequentialCommandGroup();
       default:
