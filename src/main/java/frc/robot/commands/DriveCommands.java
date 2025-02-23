@@ -148,7 +148,9 @@ public class DriveCommands {
           targetPose = null;
           if (reefAlignAssistSupplier.getAsBoolean()) {
             Translation2d reefTranslation =
-                drive.isNearReef() ? new Translation2d(-0.5, 0) : new Translation2d(-1.3, 0);
+                drive.isNearReef() ? 
+                new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET) : 
+                new Translation2d(SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET, SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
 
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
@@ -169,7 +171,7 @@ public class DriveCommands {
             Logger.recordOutput("drive targetPose name", "source");
 
           } else if (processorAlignSupplier.getAsBoolean()) {
-            targetPose = FieldConstants.Processor.centerFace;
+            targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
             targetPose =
                 rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
             speedDebuff *= 0.5;
@@ -271,23 +273,27 @@ public class DriveCommands {
           Logger.recordOutput("Forwards Assist Effort", forwardsAssistEffort);
           Logger.recordOutput("Sideways Assist Effort", sidewaysAssistEffort);
           Logger.recordOutput("Rotation Assist Effort", rotationAssistEffort);
-
-          drive.runVelocity(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  new ChassisSpeeds(
-                      MathUtil.clamp(
-                          forwardSpeed + forwardsAssistEffort,
-                          -drive.getMaxLinearSpeedMetersPerSec(),
-                          drive.getMaxLinearSpeedMetersPerSec()),
-                      MathUtil.clamp(
-                          sidewaysSpeed + sidewaysAssistEffort, //
-                          -drive.getMaxLinearSpeedMetersPerSec(),
-                          drive.getMaxLinearSpeedMetersPerSec()),
-                      MathUtil.clamp(
-                          rotationSpeed + rotationAssistEffort,
-                          -drive.getMaxAngularSpeedRadPerSec(),
-                          drive.getMaxAngularSpeedRadPerSec())),
-                  drive.getRotation()));
+          
+          boolean isFlipped =
+              DriverStation.getAlliance().isPresent()
+                  && DriverStation.getAlliance().get() == Alliance.Red;
+                
+          ChassisSpeeds inputSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            speeds, 
+            isFlipped ?
+              drive.getRotation().plus(Rotation2d.kPi) :
+              drive.getRotation()
+            );
+          ChassisSpeeds assistSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+              new ChassisSpeeds(
+                forwardsAssistEffort, 
+                sidewaysAssistEffort, 
+                rotationAssistEffort
+                ), 
+                drive.getRotation()
+            );
+          
+          drive.runVelocity(inputSpeeds.plus(assistSpeeds));
         },
         drive);
   }

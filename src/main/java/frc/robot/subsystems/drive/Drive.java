@@ -434,18 +434,26 @@ public class Drive extends SubsystemBase {
   public Pose2d getNearestCenter() {
     int index = getNearestParition(6);
     Logger.recordOutput("align to reef center target index", index);
-    lastReefFieldPose = FieldConstants.Reef.centerFaces[index];
+    lastReefFieldPose = transformPerAlliance(FieldConstants.Reef.centerFaces[index]);
     return lastReefFieldPose;
   }
 
   public Pose2d getNearestCenterLeft() {
-    int index = getNearestParition(6) * 2 + 1;
+    int index = getNearestParition(6) * 2;
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == Alliance.Blue) {
+      index += 1;
+    }
     Logger.recordOutput("align to reef center left target index", index);
     return passBranchFieldPose(index);
   }
 
   public Pose2d getNearestCenterRight() {
     int index = getNearestParition(6) * 2;
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == Alliance.Red) {
+      index += 1;
+    }
     Logger.recordOutput("align to reef center left target index", index);
     return passBranchFieldPose(index);
   }
@@ -458,7 +466,11 @@ public class Drive extends SubsystemBase {
 
   private Pose2d passBranchFieldPose(int index) {
     lastReefFieldPose =
-        FieldConstants.Reef.branchPositions.get(index).get(FieldConstants.ReefHeight.L1).toPose2d();
+        transformPerAlliance(
+            FieldConstants.Reef.branchPositions
+                .get(index)
+                .get(FieldConstants.ReefHeight.L1)
+                .toPose2d());
     return lastReefFieldPose;
   }
 
@@ -467,7 +479,7 @@ public class Drive extends SubsystemBase {
   }
 
   private int getNearestParition(int partitions) {
-    Translation2d start = FieldConstants.Reef.center;
+    Translation2d start = transformPerAlliance(FieldConstants.Reef.center);
     Translation2d end = getPose().getTranslation();
     Translation2d v = end.minus(start);
     Rotation2d angle = new Rotation2d(v.getX(), v.getY());
@@ -477,7 +489,14 @@ public class Drive extends SubsystemBase {
     // negate since branchPositions is CW not CCW
     // +7/12 since branchPositions starts at branch B not the +x axis
     double rawRotations = angle.getRotations();
-    double adjustedRotations = -rawRotations + (7.0 / 12.0);
+    double adjustedRotations = -rawRotations;
+
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == Alliance.Blue) {
+      adjustedRotations += (7.0 / 12.0);
+    } else {
+      adjustedRotations += (1.0 / 12.0);
+    }
 
     // % 1 to just get the fractional part of the rotation
     // multiply by 12 before flooring so [0,1) maps to 0,1,2...partitions-2,partitions-1 evenly
@@ -513,5 +532,35 @@ public class Drive extends SubsystemBase {
   public boolean isNearReef() {
     // for reference from reef wall to reef wall is about 65 inches or 1.65 meters
     return getPose().getTranslation().getDistance(FieldConstants.Reef.center) <= 1.7;
+  }
+
+  // takes in a Pose2d from blue alliance's perspective and flips it if we are on red allience
+  public static Pose2d transformPerAlliance(Pose2d pose) {
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == Alliance.Blue) {
+      return pose;
+    }
+    return new Pose2d(
+      transformPerAlliance(pose.getTranslation()),
+      transformPerAlliance(pose.getRotation()));
+  }
+
+  // takes in a Pose2d from blue alliance's perspective and flips it if we are on red allience
+  public static Translation2d transformPerAlliance(Translation2d translation) {
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == Alliance.Blue) {
+      return translation;
+    }
+    return translation.rotateAround(
+        new Translation2d(FieldConstants.fieldLength / 2, FieldConstants.fieldWidth / 2),
+        Rotation2d.kPi);
+  }
+
+  public static Rotation2d transformPerAlliance(Rotation2d rotation) {
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == Alliance.Blue) {
+      return rotation;
+    }
+    return rotation.rotateBy(Rotation2d.kPi);
   }
 }
