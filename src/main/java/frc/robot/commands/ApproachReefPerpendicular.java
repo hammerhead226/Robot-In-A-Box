@@ -15,6 +15,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SuperStructure;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,10 @@ public class ApproachReefPerpendicular extends Command {
   public void initialize() {
     targetPose =
         DriveCommands.rotateAndNudge(
-            drive.getLastReefFieldPose(), new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
+            drive.getLastReefFieldPose(), 
+            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET), 
+            new Rotation2d(Math.PI)
+            );
     // new Pose2d(
     //     drive.getNearestSide().getTranslation().minus(drive.getOffset()),
     //     drive.getNearestSide().getRotation());

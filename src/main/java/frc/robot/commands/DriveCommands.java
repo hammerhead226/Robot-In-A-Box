@@ -75,22 +75,25 @@ public class DriveCommands {
     return targetPose;
   }
 
-  // private static ProfiledPIDController goof = new ProfiledPIDController(1.5, 0, 0, )
+  // private static ProfiledPIDController goof = new ProfiledPIDController(1.5, 0,
+  // 0, )
 
   // profiled controllers
   static SlewRateLimiter forwardSlewRateLimiter = new SlewRateLimiter(0.8);
   static SlewRateLimiter sidewaysSlewRateLimiter = new SlewRateLimiter(0.8);
   static SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.8);
 
-  static ProfiledPIDController sidewaysPID =
-      new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
-  static ProfiledPIDController forwardsPID =
-      new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
-  static ProfiledPIDController rotationPID =
-      new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
-  // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70, 120));
+  static ProfiledPIDController sidewaysPID = new ProfiledPIDController(7, 1, 0.5,
+      new TrapezoidProfile.Constraints(3, 4.5));
+  static ProfiledPIDController forwardsPID = new ProfiledPIDController(7, 1, 0.5,
+      new TrapezoidProfile.Constraints(3, 4.5));
+  static ProfiledPIDController rotationPID = new ProfiledPIDController(2.9, 0., 0.2,
+      new TrapezoidProfile.Constraints(120, 150));
+  // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70,
+  // 120));
 
-  private DriveCommands() {}
+  private DriveCommands() {
+  }
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
@@ -107,7 +110,8 @@ public class DriveCommands {
   }
 
   /**
-   * Field relative drive command using two joysticks (controlling linear and angular velocities).
+   * Field relative drive command using two joysticks (controlling linear and
+   * angular velocities).
    */
   public static Command joystickDrive(
       Drive drive,
@@ -130,8 +134,8 @@ public class DriveCommands {
           forwardsPID.setTolerance(0.1);
 
           // Get linear velocity
-          Translation2d linearVelocity =
-              getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+          Translation2d linearVelocity = getLinearVelocityFromJoysticks(xSupplier.getAsDouble(),
+              ySupplier.getAsDouble());
 
           // Apply rotation deadband
           double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
@@ -140,11 +144,10 @@ public class DriveCommands {
           omega = Math.copySign(omega * omega, omega);
           Logger.recordOutput("LinearVelocityX: ", linearVelocity.getX());
           // Convert to field relative speeds & send command
-          ChassisSpeeds speeds =
-              new ChassisSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec());
+          ChassisSpeeds speeds = new ChassisSpeeds(
+              linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+              linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+              omega * drive.getMaxAngularSpeedRadPerSec());
 
           double forwardSpeed = speeds.vxMetersPerSecond;
 
@@ -157,8 +160,11 @@ public class DriveCommands {
           targetPose = null;
           if (reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()) {
             led.setState(LED_STATE.FLASHING_RED);
-            Translation2d reefTranslation =
-                drive.isNearReef() ? new Translation2d(-0.5, 0) : new Translation2d(-1.3, 0);
+            Translation2d reefTranslation = drive.isNearReef()
+                ? new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                    SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET)
+                : new Translation2d(SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
+                    SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
 
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
@@ -181,25 +187,21 @@ public class DriveCommands {
 
           } else if (angleAssistSupplier.getAsBoolean()
               && superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
-            targetPose = FieldConstants.Processor.centerFace;
-            targetPose =
-                rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
+            targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
+            targetPose = rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
             speedDebuff *= 0.5;
-
             Logger.recordOutput("drive targetPose name", "processor");
           } else if (angleAssistSupplier.getAsBoolean()
               && superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
-            targetPose =
-                drive
-                    .getPose()
-                    .nearest(
-                        new ArrayList<>(
-                            Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage)));
-            targetPose =
-                rotateAndNudge(
-                    new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
-                    new Translation2d(-0.5, 0),
-                    new Rotation2d(0));
+            targetPose = drive
+                .getPose()
+                .nearest(
+                    new ArrayList<>(
+                        Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage)));
+            targetPose = rotateAndNudge(
+                new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
+                new Translation2d(-0.5, 0),
+                new Rotation2d(0));
 
             Logger.recordOutput("drive targetPose name", "anchor");
           } else {
@@ -236,29 +238,24 @@ public class DriveCommands {
 
             rotationErrorDegrees = driveDegrees - targetDegrees;
 
-            wantedForwardsVelocityMetersPerSec =
-                MathUtil.clamp(
-                    forwardsPID.calculate(drive.getPose().getX(), targetPose.getX()), -3, 3);
-            wantedSidewaysVelocityMetersPerSec =
-                MathUtil.clamp(
-                    sidewaysPID.calculate(drive.getPose().getY(), targetPose.getY()), -3, 3);
-            wantedRotationVelocityRadsPerSec =
-                MathUtil.clamp(
-                    Math.toRadians(
-                        rotationPID.calculate(
-                            drive.getRotation().getDegrees(),
-                            targetPose.getRotation().getDegrees())),
-                    -drive.getMaxAngularSpeedRadPerSec(),
-                    drive.getMaxAngularSpeedRadPerSec());
+            wantedForwardsVelocityMetersPerSec = MathUtil.clamp(
+                forwardsPID.calculate(drive.getPose().getX(), targetPose.getX()), -3, 3);
+            wantedSidewaysVelocityMetersPerSec = MathUtil.clamp(
+                sidewaysPID.calculate(drive.getPose().getY(), targetPose.getY()), -3, 3);
+            wantedRotationVelocityRadsPerSec = MathUtil.clamp(
+                Math.toRadians(
+                    rotationPID.calculate(
+                        drive.getRotation().getDegrees(),
+                        targetPose.getRotation().getDegrees())),
+                -drive.getMaxAngularSpeedRadPerSec(),
+                drive.getMaxAngularSpeedRadPerSec());
 
-            forwardsAssistEffort =
-                reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()
-                    ? (wantedForwardsVelocityMetersPerSec - forwardSpeed) * speedDebuff
-                    : 0;
-            sidewaysAssistEffort =
-                reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()
-                    ? (wantedSidewaysVelocityMetersPerSec - sidewaysSpeed) * speedDebuff
-                    : 0;
+            forwardsAssistEffort = reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()
+                ? (wantedForwardsVelocityMetersPerSec - forwardSpeed) * speedDebuff
+                : 0;
+            sidewaysAssistEffort = reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()
+                ? (wantedSidewaysVelocityMetersPerSec - sidewaysSpeed) * speedDebuff
+                : 0;
 
             rotationAssistEffort = (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff;
 
@@ -313,12 +310,12 @@ public class DriveCommands {
             sidewaysSlewRateLimiter.changeRateLimit(4);
             rotationSlewRateLimiter.changeRateLimit(5);
           }
-          double finalInputForwardVelocityMetersPerSec =
-              forwardSlewRateLimiter.calculate(forwardSpeed + forwardsAssistEffort);
-          double finalInputSidewaysVelocityMetersPerSec =
-              sidewaysSlewRateLimiter.calculate(sidewaysSpeed + sidewaysAssistEffort);
-          double finalInputRotationVelocityRadsPerSec =
-              rotationSlewRateLimiter.calculate(rotationSpeed + rotationAssistEffort);
+          double finalInputForwardVelocityMetersPerSec = forwardSlewRateLimiter
+              .calculate(forwardSpeed + forwardsAssistEffort);
+          double finalInputSidewaysVelocityMetersPerSec = sidewaysSlewRateLimiter
+              .calculate(sidewaysSpeed + sidewaysAssistEffort);
+          double finalInputRotationVelocityRadsPerSec = rotationSlewRateLimiter
+              .calculate(rotationSpeed + rotationAssistEffort);
 
           Logger.recordOutput("slew forward", finalInputForwardVelocityMetersPerSec);
           Logger.recordOutput("slew side", finalInputSidewaysVelocityMetersPerSec);
@@ -355,8 +352,10 @@ public class DriveCommands {
   }
 
   /**
-   * Field relative drive command using joystick for linear control and PID for angular control.
-   * Possible use cases include snapping to an angle, aiming at a vision target, or controlling
+   * Field relative drive command using joystick for linear control and PID for
+   * angular control.
+   * Possible use cases include snapping to an angle, aiming at a vision target,
+   * or controlling
    * absolute rotation with a joystick.
    */
   public static Command joystickDriveAtAngle(
@@ -366,44 +365,40 @@ public class DriveCommands {
       Supplier<Rotation2d> rotationSupplier) {
 
     // Create PID controller
-    ProfiledPIDController angleController =
-        new ProfiledPIDController(
-            ANGLE_KP,
-            0.0,
-            ANGLE_KD,
-            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+    ProfiledPIDController angleController = new ProfiledPIDController(
+        ANGLE_KP,
+        0.0,
+        ANGLE_KD,
+        new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Construct command
     return Commands.run(
-            () -> {
-              // Get linear velocity
-              Translation2d linearVelocity =
-                  getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+        () -> {
+          // Get linear velocity
+          Translation2d linearVelocity = getLinearVelocityFromJoysticks(xSupplier.getAsDouble(),
+              ySupplier.getAsDouble());
 
-              // Calculate angular speed
-              double omega =
-                  angleController.calculate(
-                      drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
+          // Calculate angular speed
+          double omega = angleController.calculate(
+              drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
 
-              // Convert to field relative speeds & send command
-              ChassisSpeeds speeds =
-                  new ChassisSpeeds(
-                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                      omega);
-              boolean isFlipped =
-                  DriverStation.getAlliance().isPresent()
-                      && DriverStation.getAlliance().get() == Alliance.Red;
-              drive.runVelocity(
-                  ChassisSpeeds.fromFieldRelativeSpeeds(
-                      speeds,
-                      isFlipped
-                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : drive.getRotation()));
-              double rotationSpeed;
-            },
-            drive)
+          // Convert to field relative speeds & send command
+          ChassisSpeeds speeds = new ChassisSpeeds(
+              linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+              linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+              omega);
+          boolean isFlipped = DriverStation.getAlliance().isPresent()
+              && DriverStation.getAlliance().get() == Alliance.Red;
+          drive.runVelocity(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  speeds,
+                  isFlipped
+                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getRotation()));
+          double rotationSpeed;
+        },
+        drive)
 
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
@@ -412,7 +407,8 @@ public class DriveCommands {
   /**
    * Measures the velocity feedforward constants for the drive motors.
    *
-   * <p>This command should only be used in voltage control mode.
+   * <p>
+   * This command should only be used in voltage control mode.
    */
   public static Command feedforwardCharacterization(Drive drive) {
     List<Double> velocitySamples = new LinkedList<>();
@@ -429,10 +425,10 @@ public class DriveCommands {
 
         // Allow modules to orient
         Commands.run(
-                () -> {
-                  drive.runCharacterization(0.0);
-                },
-                drive)
+            () -> {
+              drive.runCharacterization(0.0);
+            },
+            drive)
             .withTimeout(FF_START_DELAY),
 
         // Start timer
@@ -440,13 +436,13 @@ public class DriveCommands {
 
         // Accelerate and gather data
         Commands.run(
-                () -> {
-                  double voltage = timer.get() * FF_RAMP_RATE;
-                  drive.runCharacterization(voltage);
-                  velocitySamples.add(drive.getFFCharacterizationVelocity());
-                  voltageSamples.add(voltage);
-                },
-                drive)
+            () -> {
+              double voltage = timer.get() * FF_RAMP_RATE;
+              drive.runCharacterization(voltage);
+              velocitySamples.add(drive.getFFCharacterizationVelocity());
+              voltageSamples.add(voltage);
+            },
+            drive)
 
             // When cancelled, calculate and print results
             .finallyDo(
@@ -509,11 +505,11 @@ public class DriveCommands {
 
             // Update gyro delta
             Commands.run(
-                    () -> {
-                      var rotation = drive.getRotation();
-                      state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
-                      state.lastAngle = rotation;
-                    })
+                () -> {
+                  var rotation = drive.getRotation();
+                  state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
+                  state.lastAngle = rotation;
+                })
 
                 // When cancelled, calculate and print results
                 .finallyDo(

@@ -21,6 +21,18 @@ public final class SubsystemConstants {
   public static final double LOOP_PERIOD_SECONDS = 0.02;
   public static final boolean tuningMode = true;
 
+  public static final double NEAR_FAR_AT_REEF_OFFSET = -0.5;
+  public static final double NEAR_FAR_AWAY_REEF_OFFSET = -1.3;
+  public static final double LEFT_RIGHT_BRANCH_OFFSET = 1;
+
+  public static class IntakeConstants {
+    public static final double CURRENT_LIMIT = 40.0;
+    public static final boolean CURRENT_LIMIT_ENABLED = true;
+  }
+
+  public static final class ShooterConstants {
+  }
+
   public static class ElevatorConstants {
     public static final double CURRENT_LIMIT = 40.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
