@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
@@ -148,9 +149,13 @@ public class DriveCommands {
           targetPose = null;
           if (reefAlignAssistSupplier.getAsBoolean()) {
             Translation2d reefTranslation =
-                drive.isNearReef() ? 
-                new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET) : 
-                new Translation2d(SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET, SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
+                drive.isNearReef()
+                    ? new Translation2d(
+                        SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                        SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET)
+                    : new Translation2d(
+                        SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
+                        SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
 
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
@@ -183,7 +188,9 @@ public class DriveCommands {
                     .getPose()
                     .nearest(
                         new ArrayList<>(
-                            Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage)));
+                            Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage).stream()
+                                .map(pose -> Drive.transformPerAlliance(pose))
+                                .collect(Collectors.toList())));
             targetPose =
                 rotateAndNudge(
                     new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
@@ -273,26 +280,21 @@ public class DriveCommands {
           Logger.recordOutput("Forwards Assist Effort", forwardsAssistEffort);
           Logger.recordOutput("Sideways Assist Effort", sidewaysAssistEffort);
           Logger.recordOutput("Rotation Assist Effort", rotationAssistEffort);
-          
+
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
-                
-          ChassisSpeeds inputSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            speeds, 
-            isFlipped ?
-              drive.getRotation().plus(Rotation2d.kPi) :
-              drive.getRotation()
-            );
-          ChassisSpeeds assistSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-              new ChassisSpeeds(
-                forwardsAssistEffort, 
-                sidewaysAssistEffort, 
-                rotationAssistEffort
-                ), 
-                drive.getRotation()
-            );
-          
+
+          ChassisSpeeds inputSpeeds =
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  speeds,
+                  isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation());
+          ChassisSpeeds assistSpeeds =
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  new ChassisSpeeds(
+                      forwardsAssistEffort, sidewaysAssistEffort, rotationAssistEffort),
+                  drive.getRotation());
+
           drive.runVelocity(inputSpeeds.plus(assistSpeeds));
         },
         drive);

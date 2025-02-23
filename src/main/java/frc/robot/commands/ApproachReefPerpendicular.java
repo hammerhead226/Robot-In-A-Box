@@ -36,10 +36,11 @@ public class ApproachReefPerpendicular extends Command {
   public void initialize() {
     Pose2d targetPose =
         DriveCommands.rotateAndNudge(
-            drive.getLastReefFieldPose(), 
-            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET), 
-            new Rotation2d(Math.PI)
-            );
+            drive.getLastReefFieldPose(),
+            new Translation2d(
+                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+            new Rotation2d(Math.PI));
     // new Pose2d(
     //     drive.getNearestSide().getTranslation().minus(drive.getOffset()),
     //     drive.getNearestSide().getRotation());

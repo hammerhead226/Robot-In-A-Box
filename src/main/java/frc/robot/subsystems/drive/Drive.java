@@ -512,14 +512,17 @@ public class Drive extends SubsystemBase {
   public Pose2d getNearestSource() {
     if (getPose()
             .getTranslation()
-            .getDistance(FieldConstants.CoralStation.leftCenterFace.getTranslation())
+            .getDistance(
+                transformPerAlliance(FieldConstants.CoralStation.leftCenterFace.getTranslation()))
         < getPose()
             .getTranslation()
-            .getDistance(FieldConstants.CoralStation.rightCenterFace.getTranslation())) {
-      return FieldConstants.CoralStation.leftCenterFace;
+            .getDistance(
+                transformPerAlliance(
+                    FieldConstants.CoralStation.rightCenterFace.getTranslation()))) {
+      return transformPerAlliance(FieldConstants.CoralStation.leftCenterFace);
 
     } else {
-      return FieldConstants.CoralStation.rightCenterFace;
+      return transformPerAlliance(FieldConstants.CoralStation.rightCenterFace);
     }
   }
 
@@ -541,8 +544,7 @@ public class Drive extends SubsystemBase {
       return pose;
     }
     return new Pose2d(
-      transformPerAlliance(pose.getTranslation()),
-      transformPerAlliance(pose.getRotation()));
+        transformPerAlliance(pose.getTranslation()), transformPerAlliance(pose.getRotation()));
   }
 
   // takes in a Pose2d from blue alliance's perspective and flips it if we are on red allience
