@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
@@ -160,11 +161,14 @@ public class DriveCommands {
           targetPose = null;
           if (reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()) {
             led.setState(LED_STATE.FLASHING_RED);
-            Translation2d reefTranslation = drive.isNearReef()
-                ? new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-                    SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET)
-                : new Translation2d(SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
-                    SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
+            Translation2d reefTranslation =
+                drive.isNearReef()
+                    ? new Translation2d(
+                        SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                        SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET)
+                    : new Translation2d(
+                        SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
+                        SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
 
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
@@ -193,15 +197,19 @@ public class DriveCommands {
             Logger.recordOutput("drive targetPose name", "processor");
           } else if (angleAssistSupplier.getAsBoolean()
               && superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
-            targetPose = drive
-                .getPose()
-                .nearest(
-                    new ArrayList<>(
-                        Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage)));
-            targetPose = rotateAndNudge(
-                new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
-                new Translation2d(-0.5, 0),
-                new Rotation2d(0));
+                targetPose =
+                drive
+                    .getPose()
+                    .nearest(
+                        new ArrayList<>(
+                            Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage).stream()
+                                .map(pose -> Drive.transformPerAlliance(pose))
+                                .collect(Collectors.toList())));
+            targetPose =
+                rotateAndNudge(
+                    new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
+                    new Translation2d(-0.5, 0),
+                    new Rotation2d(0));
 
             Logger.recordOutput("drive targetPose name", "anchor");
           } else {
