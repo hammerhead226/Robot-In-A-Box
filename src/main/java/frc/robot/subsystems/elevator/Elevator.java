@@ -34,8 +34,8 @@ public class Elevator extends SubsystemBase {
   private static final int maxAccelerationExtender = 80;
 
   private TrapezoidProfile extenderProfile;
-  private TrapezoidProfile.Constraints extenderConstraints = new TrapezoidProfile.Constraints(maxVelocityExtender,
-      maxAccelerationExtender);
+  private TrapezoidProfile.Constraints extenderConstraints =
+      new TrapezoidProfile.Constraints(maxVelocityExtender, maxAccelerationExtender);
   private TrapezoidProfile.State extenderGoal = new TrapezoidProfile.State();
   private TrapezoidProfile.State extenderCurrent = new TrapezoidProfile.State();
 
@@ -122,14 +122,15 @@ public class Elevator extends SubsystemBase {
 
     elevator.setBrakeMode(brake);
   }
-  
+
   public boolean atGoal() {
-    return (Math.abs(extenderCurrent.position - goal) <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
+    return (Math.abs(extenderCurrent.position - goal)
+        <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
   }
 
   public boolean hasReachedGoal(double goalInches) {
-    return (Math
-        .abs(eInputs.carriagePositionInch - goalInches) <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
+    return (Math.abs(eInputs.carriagePositionInch - goalInches)
+        <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
   }
 
   public double getElevatorPosition() {
@@ -178,8 +179,9 @@ public class Elevator extends SubsystemBase {
 
   public void setConstraints(
       double maxVelocityMetersPerSec, double maxAccelerationMetersPerSecSquared) {
-    extenderConstraints = new TrapezoidProfile.Constraints(
-        maxVelocityMetersPerSec, maxAccelerationMetersPerSecSquared);
+    extenderConstraints =
+        new TrapezoidProfile.Constraints(
+            maxVelocityMetersPerSec, maxAccelerationMetersPerSecSquared);
     extenderProfile = new TrapezoidProfile(extenderConstraints);
   }
 
@@ -293,8 +295,9 @@ public class Elevator extends SubsystemBase {
     measured.update(extenderCurrent.position);
     ScoralArm.measuredVisualizer.updateVertical(extenderCurrent.position);
 
-    extenderCurrent = extenderProfile.calculate(
-        SubsystemConstants.LOOP_PERIOD_SECONDS, extenderCurrent, extenderGoal);
+    extenderCurrent =
+        extenderProfile.calculate(
+            SubsystemConstants.LOOP_PERIOD_SECONDS, extenderCurrent, extenderGoal);
 
     setPositionExtend(extenderCurrent.position, extenderCurrent.velocity);
 
