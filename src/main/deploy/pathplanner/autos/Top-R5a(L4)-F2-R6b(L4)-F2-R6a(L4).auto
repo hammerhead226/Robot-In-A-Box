@@ -13,13 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": "ReleaseClawL4"
+            "name": "L4"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 2.0
+            "name": "SCORE CORAL"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "named",
           "data": {
-            "name": "IntakeFromSource"
+            "name": "SOURCE"
           }
         },
         {
