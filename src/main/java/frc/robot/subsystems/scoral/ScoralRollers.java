@@ -137,14 +137,14 @@ public class ScoralRollers extends SubsystemBase {
   }
 
   public AlgaeState seesAlgae() {
-    Logger.recordOutput("see note val", "default");
+    Logger.recordOutput("see algae val", "default");
     if (inputs.currentAmps > 13) {
-      Logger.recordOutput("see note val", "current");
+      Logger.recordOutput("see algae val", "current");
       lastAlgaeState = AlgaeState.CURRENT;
       return AlgaeState.CURRENT;
 
     } else {
-      Logger.recordOutput("see note val", "no note");
+      Logger.recordOutput("see algae val", "no note");
       lastAlgaeState = AlgaeState.NO_ALGAE;
       return AlgaeState.NO_ALGAE;
     }
@@ -162,20 +162,20 @@ public class ScoralRollers extends SubsystemBase {
   }
 
   public CoralState seesCoral() {
-    Logger.recordOutput("see note val", "default");
+    Logger.recordOutput("see coral val", "default");
 
     if ((sInputs.distanceInches < SubsystemConstants.CORAL_DIST)) {
-      Logger.recordOutput("see note val", "sensor");
+      Logger.recordOutput("see coral val", "sensor");
       lastCoralState = CoralState.SENSOR;
       return CoralState.SENSOR;
 
     } else if (inputs.currentAmps > 30) {
-      Logger.recordOutput("see note val", "current");
+      Logger.recordOutput("see coral val", "current");
       lastCoralState = CoralState.CURRENT;
       return CoralState.CURRENT;
 
     } else {
-      Logger.recordOutput("see note val", "no note");
+      Logger.recordOutput("see coral val", "no note");
       lastCoralState = CoralState.NO_CORAL;
       return CoralState.NO_CORAL;
     }

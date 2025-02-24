@@ -217,11 +217,11 @@ public class Elevator extends SubsystemBase {
 
     Logger.processInputs("Elevator", eInputs);
 
-    measuredVisualizer.update(0.55 + extenderCurrent.position);
-    setpointVisualizer.update(0.55 + extenderGoal.position);
+    measuredVisualizer.update(4 + extenderCurrent.position * 2);
+    setpointVisualizer.update(4 + extenderGoal.position * 2);
 
-    ScoralArm.measuredVisualizer.updateVertical(extenderCurrent.position + 0.1);
-    ScoralArm.setpointVisualizer.updateVertical(extenderGoal.position + 0.1);
+    ScoralArm.measuredVisualizer.updateVertical(2 * extenderCurrent.position + 2);
+    ScoralArm.setpointVisualizer.updateVertical(2 * extenderGoal.position + 2);
 
     updateTunableNumbers();
   }

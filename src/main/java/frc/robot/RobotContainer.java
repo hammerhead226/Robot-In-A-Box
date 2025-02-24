@@ -166,7 +166,7 @@ public class RobotContainer {
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(RobotMap.ledIDs.CANdleID, "CAN Bus 2"));
         superStructure =
-            new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm);
+            new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm, winch);
 
         break;
       case SIM:
@@ -204,7 +204,7 @@ public class RobotContainer {
         climberArm = new ClimberArm(new ClimberArmIOSim());
 
         superStructure =
-            new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm);
+            new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm, winch);
         break;
 
       default:
@@ -238,7 +238,7 @@ public class RobotContainer {
         winch = new Winch(new WinchIO() {});
 
         superStructure =
-            new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm);
+            new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm, winch);
         break;
     }
 
@@ -548,9 +548,7 @@ public class RobotContainer {
 
     driveController
         .a()
-        .onTrue(
-            new InstantCommand(
-                () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
     driveController
         .x()
@@ -558,12 +556,12 @@ public class RobotContainer {
     driveController
         .y()
         .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
-    driveController
-        .povUp()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+    // driveController
+    //     .povUp()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
     driveController
         .b()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
 
     driveController
         .povUp()

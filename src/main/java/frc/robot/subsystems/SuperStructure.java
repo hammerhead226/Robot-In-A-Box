@@ -14,6 +14,7 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.climber.ClimberArm;
+import frc.robot.subsystems.climber.Winch;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
@@ -28,6 +29,7 @@ public class SuperStructure {
   private final ScoralRollers scoralRollers;
   private final LED led;
   private final ClimberArm climberArm;
+  private final Winch winch;
   private SuperStructureState currentState;
   private SuperStructureState wantedState;
   private SuperStructureState lastReefState;
@@ -40,13 +42,14 @@ public class SuperStructure {
       ScoralArm scoralArm,
       ScoralRollers scoralRollers,
       LED led,
-      ClimberArm climberArm) {
+      ClimberArm climberArm, Winch winch) {
     this.drive = drive;
     this.elevator = elevator;
     this.scoralArm = scoralArm;
     this.scoralRollers = scoralRollers;
     this.led = led;
     this.climberArm = climberArm;
+    this.winch = winch;
     wantedState = SuperStructureState.STOW;
     currentState = SuperStructureState.STOW;
     lastReefState = SuperStructureState.L4;
@@ -218,11 +221,11 @@ public class SuperStructure {
             climberArm.setArmTarget(SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2));
       case CLIMB_STAGE_TWO:
         currentState = SuperStructureState.CLIMB_STAGE_TWO;
-        return new SequentialCommandGroup();
+        return new SequentialCommandGroup(new InstantCommand(()-> climberArm.setBrakeMode(true), climberArm), new ParallelCommandGroup(climberArm.runVoltsCommand(5), winch.runVoltsCommmand(12)));
       case HANG:
         currentState = SuperStructureState.HANG;
         led.setState(LED_STATE.BLUE);
-        return new SequentialCommandGroup();
+        return new SequentialCommandGroup(new ParallelCommandGroup(new InstantCommand(()-> climberArm.armStop(), climberArm), winch.stopWinch()),new InstantCommand(()-> climberArm.setBrakeMode(true), climberArm));
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
