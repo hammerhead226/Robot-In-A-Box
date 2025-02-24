@@ -182,7 +182,6 @@ public class DriveCommands {
               targetPose = drive.getNearestCenterRight();
               targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
             }
-
             Logger.recordOutput("drive targetPose name", "reef");
 
           } else if (angleAssistSupplier.getAsBoolean()) {
@@ -347,16 +346,23 @@ public class DriveCommands {
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
 
+          double totalInputSpeed =
+              Math.hypot(
+                  finalInputForwardVelocityMetersPerSec, finalInputSidewaysVelocityMetersPerSec);
+          double scale =
+              totalInputSpeed > drive.getMaxLinearSpeedMetersPerSec()
+                  ? drive.getMaxLinearSpeedMetersPerSec() / totalInputSpeed
+                  : 1;
 
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   new ChassisSpeeds(
                       MathUtil.clamp(
-                          finalInputForwardVelocityMetersPerSec,
+                          finalInputForwardVelocityMetersPerSec * scale,
                           -drive.getMaxLinearSpeedMetersPerSec(),
                           drive.getMaxLinearSpeedMetersPerSec()),
                       MathUtil.clamp(
-                          finalInputSidewaysVelocityMetersPerSec, //
+                          finalInputSidewaysVelocityMetersPerSec * scale, //
                           -drive.getMaxLinearSpeedMetersPerSec(),
                           drive.getMaxLinearSpeedMetersPerSec()),
                       MathUtil.clamp(
