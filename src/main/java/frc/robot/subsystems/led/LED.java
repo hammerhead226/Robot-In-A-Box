@@ -25,7 +25,7 @@ public class LED extends SubsystemBase {
 
     setState(lInputs.ledState);
 
-    Logger.processInputs("LED Inputs", lInputs);
+    Logger.processInputs("LEDs", lInputs);
   }
 
   public void noBumpersPressed() {

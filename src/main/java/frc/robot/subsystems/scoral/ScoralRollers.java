@@ -78,7 +78,7 @@ public class ScoralRollers extends SubsystemBase {
     rollers.updateInputs(inputs);
     sensor.updateInputs(sInputs);
     Logger.processInputs("Scoral Rollers", inputs);
-    Logger.processInputs("scoral flywheel canrange", sInputs);
+    Logger.processInputs("Scoral Rollers/CANrange", sInputs);
 
     updateTunableNumbers();
   }

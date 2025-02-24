@@ -11,7 +11,7 @@ public interface ArmIO {
     public double appliedVolts = 0;
     public double positionSetpointDegs;
 
-    public boolean gyroConnected = false;
+    public boolean cancoderConnected = false;
     public double pitch = 0;
   }
 
