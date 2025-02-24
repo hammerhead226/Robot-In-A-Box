@@ -569,41 +569,42 @@ public class RobotContainer {
             new InstantCommand(
                 () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
 
-    driveController
-        .x()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
-    driveController
-        .y()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
-    driveController
-        .povUp()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
-    driveController
-        .b()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
+    // driveController
+    //     .x()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+    // driveController
+    //     .y()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    // driveController
+    //     .povUp()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+    // driveController
+    //     .b()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
-    driveController
-        .povUp()
-        .onTrue(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
+    // driveController
+    //     .povUp()
+    //     .onTrue(
+    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
 
-    driveController
-        .povLeft()
-        .onTrue(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
+    // driveController
+    //     .povLeft()
+    //     .onTrue(
+    //         new InstantCommand(() ->
+    // superStructure.setWantedState(SuperStructureState.PROCESSOR)));
 
-    driveController
-        .povDown()
-        .onTrue(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
-                .andThen(
-                    new ReinitializingCommand(
-                        () -> superStructure.getSuperStructureCommand(),
-                        elevator,
-                        scoralArm,
-                        scoralRollers,
-                        drive,
-                        led)));
+    // driveController
+    //     .povDown()
+    //     .onTrue(
+    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+    //             .andThen(
+    //                 new ReinitializingCommand(
+    //                     () -> superStructure.getSuperStructureCommand(),
+    //                     elevator,
+    //                     scoralArm,
+    //                     scoralRollers,
+    //                     drive,
+    //                     led)));
 
     // elevatorBrakeTrigger.onTrue(
     // new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
@@ -637,6 +638,16 @@ public class RobotContainer {
                         scoralRollers,
                         drive,
                         led)));
+
+    manipController
+        .povUp()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
+
+    manipController
+        .povLeft()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
 
     manipController
         .start()
