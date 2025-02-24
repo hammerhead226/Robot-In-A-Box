@@ -315,16 +315,16 @@ public class RobotContainer {
             .andThen(superStructure.getSuperStructureCommand()));
 
     NamedCommands.registerCommand(
-        "SOURCE INTAKE",
+        "SOURCE_INTAKE",
         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)).andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
             .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
-        "ALGAE INTAKE",
+        "ALGAE_INTAKE",
         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE)).andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
             .andThen(superStructure.getSuperStructureCommand()));
-    NamedCommands.registerCommand("STOW ", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)).andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
+    NamedCommands.registerCommand("STOW", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)).andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
     .andThen(superStructure.getSuperStructureCommand()));
-    NamedCommands.registerCommand("SCORE CORAL", new SequentialCommandGroup(
+    NamedCommands.registerCommand("SCORE_CORAL", new SequentialCommandGroup(
         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
         new WaitUntilCommand(() -> superStructure.atGoals()),
         superStructure.getSuperStructureCommand()));

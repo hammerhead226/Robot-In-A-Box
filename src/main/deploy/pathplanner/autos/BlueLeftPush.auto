@@ -25,7 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SCORE"
+            "name": "SCORE_CORAL"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "named",
           "data": {
-            "name": "INTAKE"
+            "name": "SOURCE_INTAKE"
           }
         },
         {
@@ -67,7 +67,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SCORE"
+            "name": "SCORE_CORAL"
           }
         },
         {
@@ -85,7 +85,7 @@
         {
           "type": "named",
           "data": {
-            "name": "INTAKE"
+            "name": "SOURCE_INTAKE"
           }
         },
         {
@@ -109,7 +109,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SCORE"
+            "name": "SCORE_CORAL"
           }
         },
         {
