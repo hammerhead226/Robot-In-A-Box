@@ -184,6 +184,7 @@ public final class SubsystemConstants {
     L4,
     CLIMB_STAGE_ONE,
     CLIMB_STAGE_TWO,
+    CLIMB_STAGE_THREE,
     HANG,
     // DEFAULT,
     SCORING_CORAL,

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.GoToStow;
 import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakingCoral;
@@ -223,8 +224,11 @@ public class SuperStructure {
       case CLIMB_STAGE_TWO:
         currentState = SuperStructureState.CLIMB_STAGE_TWO;
         return new SequentialCommandGroup(
-            new InstantCommand(() -> climberArm.setBrakeMode(true), climberArm),
-            new ParallelCommandGroup(climberArm.runVoltsCommand(5), winch.runVoltsCommmand(12)));
+            new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
+            climberArm.runVoltsCommand(5));
+      case CLIMB_STAGE_THREE:
+        currentState = SuperStructureState.CLIMB_STAGE_THREE;
+        return new SequentialCommandGroup(winch.runVoltsCommmand(12));
       case HANG:
         currentState = SuperStructureState.HANG;
         led.setState(LED_STATE.BLUE);
@@ -255,10 +259,12 @@ public class SuperStructure {
         setWantedState(SuperStructureState.CLIMB_STAGE_TWO);
         break;
       case CLIMB_STAGE_TWO:
+        setWantedState(SuperStructureState.CLIMB_STAGE_THREE);
+        break;
+      case CLIMB_STAGE_THREE:
         setWantedState(SuperStructureState.HANG);
         break;
       case HANG:
-        setWantedState(SuperStructureState.CLIMB_STAGE_ONE);
         break;
 
       default:

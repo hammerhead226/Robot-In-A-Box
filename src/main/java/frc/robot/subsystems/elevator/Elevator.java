@@ -123,9 +123,9 @@ public class Elevator extends SubsystemBase {
     elevator.setBrakeMode(brake);
   }
 
-  public boolean atGoal() {
+  public boolean atGoal(double threshold) {
     return (Math.abs(extenderCurrent.position - goal)
-        <= SubsystemConstants.ElevatorConstants.DEFAULT_THRESHOLD);
+        <= threshold);
   }
 
   public boolean hasReachedGoal(double goalInches) {
