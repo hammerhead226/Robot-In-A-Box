@@ -135,6 +135,10 @@ public class ClimberArm extends SubsystemBase {
     return new InstantCommand(() -> arm.zeroPosition(), this);
   }
 
+  public Command runVoltsCommand(double volts){
+    return new InstantCommand(()-> arm.setVoltage(volts));
+  }
+
   @Override
   public void periodic() {
     arm.updateInputs(pInputs);

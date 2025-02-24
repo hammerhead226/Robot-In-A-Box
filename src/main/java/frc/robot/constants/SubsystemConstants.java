@@ -49,6 +49,7 @@ public final class SubsystemConstants {
     public static final double L2_SETPOINT_INCHES = 7;
     public static final double L3_SETPOINT_INCHES = 14;
     public static final double L4_SETPOINT_INCHES = 27.3;
+    public static final double BARGE_SETPOINT = 0;
   }
 
   public static final class ClimberConstants {
@@ -72,6 +73,7 @@ public final class SubsystemConstants {
     public static final double STOW_SETPOINT_DEG = 96;
     public static final double LOW_CORAL_SCORING_SETPOINT_DEG = 74;
     public static final double L4_CORAL_SCORING_SETPOINT_DEG = 63;
+    public static final double BARGE_SETPOINT = 0;
   }
 
   public static class AlgaeScorerFlywheelConstants {
