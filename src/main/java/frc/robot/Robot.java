@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.TunerConstants;
 import frc.robot.util.LimelightHelpers;
@@ -190,7 +191,7 @@ public class Robot extends LoggedRobot {
         .setElevatorGoal(robotContainer.getElevator().getElevatorPosition());
 
     robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
-    robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
+    robotContainer.getClimber().setArmGoal(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG);
     // robotContainer.getSuperStructure().;
   }
 

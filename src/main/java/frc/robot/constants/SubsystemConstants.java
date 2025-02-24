@@ -44,6 +44,8 @@ public final class SubsystemConstants {
 
     public static final double PROCESSOR_SETPOINT_INCHES = 0;
 
+    public static final double CANRAGE_ZERO_SETPOINT_INCHES = 2;
+
     // TODO:: NEED TO FIND
     public static final double L1_SETPOINT_INCHES = 0;
     public static final double L2_SETPOINT_INCHES = 7;

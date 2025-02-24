@@ -112,6 +112,10 @@ public class ClimberArm extends SubsystemBase {
         positionDegs, armFFModel.calculate(positionDegs, velocityDegsPerSec));
   }
 
+  public boolean isAt(double positionDegs, double threshold) {
+    return Math.abs(pInputs.positionDegs - positionDegs) <= threshold;
+  }
+
   public void armStop() {
     arm.stop();
   }

@@ -90,6 +90,12 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   }
   // weird how we give the setpoint in meters and it sets it to meters in sim?
   // we'll have to see what the exact bug is but for now work with meters
+
+  @Override
+  public void setVoltage(double volts) {
+    leader.setVoltage(volts);
+  }
+
   @Override
   public void setPositionSetpoint(double position, double ffVolts) {
     this.positionSetpoint = position;
@@ -99,6 +105,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
                 Conversions.inchesToMotorRot(
                     position, 5.5, SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO))
             .withFeedForward(ffVolts));
+  }
+
+  @Override
+  public void zeroElevator() {
+    leader.setPosition(0);
   }
 
   @Override

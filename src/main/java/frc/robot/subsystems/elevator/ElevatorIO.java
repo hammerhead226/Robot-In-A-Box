@@ -23,6 +23,8 @@ public interface ElevatorIO {
 
   public default void setVoltage(double volts) {}
 
+  public default void zeroElevator() {}
+
   public default void configurePIDF(
       double kP, double kI, double kD, double kS, double kG, double kV, double kA) {}
 

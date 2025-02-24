@@ -21,7 +21,6 @@ public class Winch extends SubsystemBase {
   private final WinchIOInputsAutoLogged inputs = new WinchIOInputsAutoLogged();
   private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
-
   private static final LoggedTunableNumber kV = new LoggedTunableNumber("Winch/kV", 1);
   private static final LoggedTunableNumber kS = new LoggedTunableNumber("Winch/kS", 1);
   private static final LoggedTunableNumber kA = new LoggedTunableNumber("Winch/kA", 1);

@@ -149,9 +149,12 @@ public class Elevator extends SubsystemBase {
     return eInputs.CANrangeDistanceInches;
   }
 
-  public Command zeroCommand(double volts) {
-    return new InstantCommand(() -> elevator.runCharacterization(volts), this)
-        .until(() -> getCanRangeDistanceInches() == 0 + 0.5);
+  public void setVoltage(double volts) {
+    elevator.setVoltage(volts);
+  }
+
+  public void zeroElevator() {
+    elevator.zeroElevator();
   }
 
   public void setElevatorCurrent(double currentInches) {

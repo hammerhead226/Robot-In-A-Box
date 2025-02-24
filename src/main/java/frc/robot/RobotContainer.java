@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -20,8 +21,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ReinitializingCommand;
+import frc.robot.commands.ZeroElevatorCANRange;
 import frc.robot.constants.RobotMap;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
@@ -618,6 +621,8 @@ public class RobotContainer {
                         scoralRollers,
                         drive,
                         led)));
+
+    manipController.start().onTrue(new ConditionalCommand(new SequentialCommandGroup(scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2), new WaitUntilCommand(() -> scoralArm.atGoal(2)), new ZeroElevatorCANRange(elevator)), new InstantCommand(), () -> climberArm.isAt(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 3)));
   }
 
   // private void testControls() {
