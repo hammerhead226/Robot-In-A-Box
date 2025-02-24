@@ -14,9 +14,6 @@ import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIOInputsAutoLogged;
-import frc.robot.util.Elastic;
-import frc.robot.util.Elastic.Notification;
-import frc.robot.util.Elastic.Notification.NotificationLevel;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -80,7 +77,7 @@ public class ScoralRollers extends SubsystemBase {
   public void periodic() {
     rollers.updateInputs(inputs);
     sensor.updateInputs(sInputs);
-    Logger.processInputs(" scoral Flywheel", inputs);
+    Logger.processInputs("Scoral Rollers", inputs);
     Logger.processInputs("scoral flywheel canrange", sInputs);
 
     updateTunableNumbers();
@@ -97,13 +94,13 @@ public class ScoralRollers extends SubsystemBase {
     rollers.setVelocity(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
 
     // Log flywheel setpoint
-    Logger.recordOutput("Flywheel/SetpointRPM", velocityRPM);
+    Logger.recordOutput("Debug Rollers/SetpointRPM", velocityRPM);
   }
 
   public Command runVoltsCommmand(double volts) {
-    Elastic.sendNotification(
-        new Notification(
-            NotificationLevel.INFO, "Notice", "Flywheel is being run at " + volts + " volts."));
+    // Elastic.sendNotification(
+    //     new Notification(
+    //         NotificationLevel.INFO, "Notice", "Flywheel is being run at " + volts + " volts."));
     return new InstantCommand(() -> runVolts(volts), this);
   }
 
@@ -137,21 +134,21 @@ public class ScoralRollers extends SubsystemBase {
   }
 
   public AlgaeState seesAlgae() {
-    Logger.recordOutput("see algae val", "default");
+    Logger.recordOutput("Debug Rollers/see algae val", "default");
     if (inputs.currentAmps > 13) {
-      Logger.recordOutput("see algae val", "current");
+      Logger.recordOutput("Debug Rollers/see algae val", "current");
       lastAlgaeState = AlgaeState.CURRENT;
       return AlgaeState.CURRENT;
 
     } else {
-      Logger.recordOutput("see algae val", "no note");
+      Logger.recordOutput("Debug Rollers/see algae val", "no algae");
       lastAlgaeState = AlgaeState.NO_ALGAE;
       return AlgaeState.NO_ALGAE;
     }
   }
 
   /** Returns the current velocity in RPM. */
-  @AutoLogOutput
+  @AutoLogOutput(key = "Debug Rollers/Velocity RPM")
   public double getVelocityRPM() {
     return Units.radiansPerSecondToRotationsPerMinute(inputs.velocityRadPerSec);
   }
@@ -162,20 +159,20 @@ public class ScoralRollers extends SubsystemBase {
   }
 
   public CoralState seesCoral() {
-    Logger.recordOutput("see coral val", "default");
+    Logger.recordOutput("Debug Rollers/see coral val", "default");
 
     if ((sInputs.distanceInches < SubsystemConstants.CORAL_DIST)) {
-      Logger.recordOutput("see coral val", "sensor");
+      Logger.recordOutput("Debug Rollers/see coral val", "sensor");
       lastCoralState = CoralState.SENSOR;
       return CoralState.SENSOR;
 
     } else if (inputs.currentAmps > 30) {
-      Logger.recordOutput("see coral val", "current");
+      Logger.recordOutput("Debug Rollers/see coral val", "current");
       lastCoralState = CoralState.CURRENT;
       return CoralState.CURRENT;
 
     } else {
-      Logger.recordOutput("see coral val", "no note");
+      Logger.recordOutput("Debug Rollers/see coral val", "no coral");
       lastCoralState = CoralState.NO_CORAL;
       return CoralState.NO_CORAL;
     }

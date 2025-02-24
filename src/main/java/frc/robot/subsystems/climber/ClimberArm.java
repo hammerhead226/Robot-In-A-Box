@@ -135,8 +135,8 @@ public class ClimberArm extends SubsystemBase {
     return new InstantCommand(() -> arm.zeroPosition(), this);
   }
 
-  public Command runVoltsCommand(double volts){
-    return new InstantCommand(()-> arm.setVoltage(volts));
+  public Command runVoltsCommand(double volts) {
+    return new InstantCommand(() -> arm.setVoltage(volts));
   }
 
   @Override
@@ -150,9 +150,9 @@ public class ClimberArm extends SubsystemBase {
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
     Logger.processInputs("Climber Arm", pInputs);
-    Logger.recordOutput("arm error", getArmError());
+    Logger.recordOutput("Debug Climb Arm/arm error", getArmError());
 
-    Logger.recordOutput("arm goal", goalDegrees);
+    Logger.recordOutput("Debug Climb Arm/arm goal", goalDegrees);
     // This method will be called once per scheduler run
     measuredVisualizer.update(armCurrentStateDegrees.position);
     climberMeasuredVisualizer.update(armCurrentStateDegrees.position);

@@ -1,10 +1,7 @@
 package frc.robot;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -63,8 +60,8 @@ import frc.robot.subsystems.scoral.ScoralSensorCANRangeIO;
 import frc.robot.subsystems.scoral.ScoralSensorIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -125,14 +122,16 @@ public class RobotContainer {
                     RobotMap.ElevatorIDs.rightElevatorID,
                     RobotMap.ElevatorIDs.elevatorCANrangeID));
         // winch = new Winch(new WinchIOTalonFX(12, 13));
-        winch = new Winch(new WinchIOTalonFX(RobotMap.WinchIDs.leftWinchID, RobotMap.WinchIDs.rightWinchID));
+        winch =
+            new Winch(
+                new WinchIOTalonFX(RobotMap.WinchIDs.leftWinchID, RobotMap.WinchIDs.rightWinchID));
         drive =
-        new Drive(
-            new GyroIOPigeon2() {},
-            new ModuleIOTalonFX(TunerConstants.FrontLeft),
-            new ModuleIOTalonFX(TunerConstants.FrontRight),
-            new ModuleIOTalonFX(TunerConstants.BackLeft),
-            new ModuleIOTalonFX(TunerConstants.BackRight));
+            new Drive(
+                new GyroIOPigeon2() {},
+                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                new ModuleIOTalonFX(TunerConstants.BackRight));
 
         scoralArm =
             new ScoralArm(
@@ -143,13 +142,16 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight("limelight-reef", drive.getRawGyroRotationSupplier())
+                new VisionIOLimelight("limelight-reef", () -> drive.getPose().getRotation())
                 // new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
                 // new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 // new VisionIOPhotonVision("photon", new Transform3d())
                 );
 
-        climberArm = new ClimberArm(new ClimberArmIOTalonFX(RobotMap.ClimbIDs.deployClimbID, RobotMap.ClimbIDs.deployClimbCANcoderID));
+        climberArm =
+            new ClimberArm(
+                new ClimberArmIOTalonFX(
+                    RobotMap.ClimbIDs.deployClimbID, RobotMap.ClimbIDs.deployClimbCANcoderID));
         // climberArm = new ClimberArm(new ClimberArmIO() {});
 
         // scoralRollers =
@@ -188,10 +190,11 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(
-                    "camera 1 sim", new Transform3d(0, 0, 0, bruh), drive::getPose),
-                new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-                new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-                new VisionIOPhotonVision("photon", new Transform3d()));
+                    "camera 1 sim", new Transform3d(0, 0, 0, bruh), drive::getPose)
+                // new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                // new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                // new VisionIOPhotonVision("photon", new Transform3d())
+                );
         elevator = new Elevator(new ElevatorIOSim());
         scoralRollers =
             new ScoralRollers(

@@ -135,7 +135,7 @@ public class ScoralArm extends SubsystemBase {
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
     Logger.recordOutput(
-        "scoral ffvolts",
+        "Debug Scoral Arm/scoral ffvolts",
         armFFModel.calculate(
             Units.degreesToRadians(positionDegs), Units.degreesToRadians(velocityDegsPerSec)));
     coralScorerArm.setPositionSetpointDegs(
@@ -167,7 +167,7 @@ public class ScoralArm extends SubsystemBase {
         .until(() -> atGoal(thresholdDegrees));
   }
 
-  @AutoLogOutput(key = "arm")
+  @AutoLogOutput(key = "Debug Scoral Arm/arm")
   public Pose3d getElevatorPose() {
     return new Pose3d(
         0, 0.3, 1, new Rotation3d(new Rotation2d(Math.toRadians(armCurrentStateDegrees.position))));
@@ -219,9 +219,9 @@ public class ScoralArm extends SubsystemBase {
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
     Logger.processInputs("Scoral Arm", csaInputs);
-    Logger.recordOutput("arm error", getArmError());
+    Logger.recordOutput("Debug Scoral Arm/arm error", getArmError());
 
-    Logger.recordOutput("arm goal", goalDegrees);
+    Logger.recordOutput("Debug Scoral Arm/arm goal", goalDegrees);
     // This method will be called once per scheduler run
     measuredVisualizer.update(armCurrentStateDegrees.position);
     setpointVisualizer.update(armGoalStateDegrees.position);

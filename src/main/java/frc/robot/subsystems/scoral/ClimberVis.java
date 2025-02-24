@@ -25,13 +25,13 @@ public class ClimberVis {
         root.append(
             new LoggedMechanismLigament2d("climberArms", 0.55, 0, 10, new Color8Bit(color)));
 
-    Logger.recordOutput("ClimberVis/mechanism2d/" + key, this.panel);
+    Logger.recordOutput("Visualization/ClimberVis/mechanism2d/" + key, this.panel);
   }
 
   public void update(double angle) {
     // mecha.setLength(position);
     // root.setPosition(50, position);
     mecha.setAngle(angle);
-    Logger.recordOutput("ClimberVis/mechanism2d/" + key, this.panel);
+    Logger.recordOutput("Visualization/ClimberVis/mechanism2d/" + key, this.panel);
   }
 }

@@ -34,7 +34,7 @@ public class LED extends SubsystemBase {
 
   public void setState(LED_STATE state) {
     led.setLEDState(state);
-    Logger.recordOutput("Set State", state);
+    Logger.recordOutput("Debug LED /Set State", state);
   }
 
   public Command setStateCommand(LED_STATE state) {

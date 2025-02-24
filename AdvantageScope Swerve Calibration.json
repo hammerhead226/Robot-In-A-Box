@@ -11,8 +11,8 @@
           "expanded": [
             "/Drive",
             "/RealOutputs",
-            "/RealOutputs/SwerveStates",
-            "/RealOutputs/SwerveChassisSpeeds",
+            "/RealOutputs/Swerve/SwerveStates",
+            "/RealOutputs/Swerve/SwerveChassisSpeeds",
             "/RealOutputs/Odometry"
           ]
         },
@@ -34,7 +34,7 @@
                 "sources": [
                   {
                     "type": "states",
-                    "logKey": "/RealOutputs/SwerveStates/Measured",
+                    "logKey": "/RealOutputs/Swerve/SwerveStates/Measured",
                     "logType": "SwerveModuleState[]",
                     "visible": true,
                     "options": {
@@ -44,7 +44,7 @@
                   },
                   {
                     "type": "states",
-                    "logKey": "/RealOutputs/SwerveStates/SetpointsOptimized",
+                    "logKey": "/RealOutputs/Swerve/SwerveStates/SetpointsOptimized",
                     "logType": "SwerveModuleState[]",
                     "visible": true,
                     "options": {
@@ -54,7 +54,7 @@
                   },
                   {
                     "type": "chassisSpeeds",
-                    "logKey": "/RealOutputs/SwerveChassisSpeeds/Measured",
+                    "logKey": "/RealOutputs/Swerve/SwerveChassisSpeeds/Measured",
                     "logType": "ChassisSpeeds",
                     "visible": true,
                     "options": {
@@ -63,7 +63,7 @@
                   },
                   {
                     "type": "chassisSpeeds",
-                    "logKey": "/RealOutputs/SwerveChassisSpeeds/Setpoints",
+                    "logKey": "/RealOutputs/Swerve/SwerveChassisSpeeds/Setpoints",
                     "logType": "ChassisSpeeds",
                     "visible": true,
                     "options": {
@@ -279,7 +279,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/SwerveStates/Measured/0/angle/value",
+                    "logKey": "/RealOutputs/Swerve/SwerveStates/Measured/0/angle/value",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -289,7 +289,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/SwerveStates/SetpointsOptimized/0/angle/value",
+                    "logKey": "/RealOutputs/Swerve/SwerveStates/SetpointsOptimized/0/angle/value",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -324,7 +324,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/SwerveStates/Measured/0/speed",
+                    "logKey": "/RealOutputs/Swerve/SwerveStates/Measured/0/speed",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -334,7 +334,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/SwerveStates/SetpointsOptimized/0/speed",
+                    "logKey": "/RealOutputs/Swerve/SwerveStates/SetpointsOptimized/0/speed",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -369,7 +369,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/SwerveChassisSpeeds/Measured/vx",
+                    "logKey": "/RealOutputs/Swerve/SwerveChassisSpeeds/Measured/vx",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -379,7 +379,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/SwerveChassisSpeeds/Measured/vy",
+                    "logKey": "/RealOutputs/Swerve/SwerveChassisSpeeds/Measured/vy",
                     "logType": "Number",
                     "visible": true,
                     "options": {

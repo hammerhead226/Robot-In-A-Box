@@ -27,7 +27,7 @@ public class ArmVis {
 
     this.mecha2 =
         root2.append(new LoggedMechanismLigament2d("arms2", 0.5, 0, 10, new Color8Bit(color)));
-    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+    Logger.recordOutput("Visualization/ArmVis/mechanism2d/" + key, this.panel);
   }
 
   public void update(double angle) {
@@ -35,17 +35,17 @@ public class ArmVis {
     // root.setPosition(50, position);
     mecha.setAngle(angle);
     mecha2.setAngle(-angle);
-    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+    Logger.recordOutput("Visualization/ArmVis/mechanism2d/" + key, this.panel);
   }
 
   public void updateVertical(double position) {
     root.setPosition(50.1, position);
-    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+    Logger.recordOutput("Visualization/ArmVis/mechanism2d/" + key, this.panel);
   }
 
   public void updateLength(double length) {
     mecha.setLength(length);
     mecha2.setLength(length);
-    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+    Logger.recordOutput("Visualization/ArmVis/mechanism2d/" + key, this.panel);
   }
 }

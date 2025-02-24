@@ -57,12 +57,10 @@ import frc.robot.constants.SimConstants.Mode;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.vision.ObjectDetection;
-import frc.robot.subsystems.vision.Vision.VisionConsumer;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -82,9 +80,9 @@ public class Drive extends SubsystemBase {
   // PathPlanner config constants
   // CHANGE THESE WHEN SEASON STARTS
   private static final double OBJECT_BUFFER_SIZE_SECONDS = 1.0;
-  private static final double ROBOT_MASS_KG = 1;
-  private static final double ROBOT_MOI = 1;
-  private static final double WHEEL_COF = 1;
+  private static final double ROBOT_MASS_KG = 62;
+  private static final double ROBOT_MOI = 4.4;
+  private static final double WHEEL_COF = 1.2;
   private final SwerveSetpointGenerator setpointGenerator;
   private SwerveSetpoint previouSetpoint;
   private static final RobotConfig PP_CONFIG =
@@ -226,8 +224,8 @@ public class Drive extends SubsystemBase {
 
     // Log empty setpoint states when disabled
     if (DriverStation.isDisabled()) {
-      Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
-      Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
+      Logger.recordOutput("Swerve/SwerveStates/Setpoints", new SwerveModuleState[] {});
+      Logger.recordOutput("Swerve/SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
     }
 
     // Update odometry
@@ -270,7 +268,7 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && SimConstants.currentMode != Mode.SIM);
     // setNearestReefSide();
-    Logger.recordOutput("chassisSpeed", chassisSpeedMetersPerSec);
+    Logger.recordOutput("Swerve/overallChassisSpeed", chassisSpeedMetersPerSec);
   }
 
   /**
@@ -291,8 +289,8 @@ public class Drive extends SubsystemBase {
     // TunerConstants.kSpeedAt12Volts);
 
     // Log unoptimized setpoints and setpoint speeds
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", speeds);
+    Logger.recordOutput("Swerve/SwerveStates/Setpoints", setpointStates);
+    Logger.recordOutput("Swerve/SwerveChassisSpeeds/Setpoints", speeds);
 
     // Send setpoints to modules
     for (int i = 0; i < 4; i++) {
@@ -302,7 +300,7 @@ public class Drive extends SubsystemBase {
     // this.speedX = speeds.vxMetersPerSecond;
     // this.speedY = speeds.vyMetersPerSecond;
     // Log optimized setpoints (runSetpoint mutates each state)
-    Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+    Logger.recordOutput("Swerve/SwerveStates/SetpointsOptimized", setpointStates);
   }
 
   /** Runs the drive in a straight line with the specified drive output. */
@@ -343,7 +341,7 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
-  @AutoLogOutput(key = "SwerveStates/Measured")
+  @AutoLogOutput(key = "Swerve/SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
@@ -362,7 +360,7 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the measured chassis speeds of the robot. */
-  @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
+  @AutoLogOutput(key = "Swerve/SwerveChassisSpeeds/Measured")
   public ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
@@ -414,10 +412,10 @@ public class Drive extends SubsystemBase {
     // Rotation2d.fromDegrees(-60));
     // poseEstimator.addVisionMeasurement(
     // test, timestampSeconds, visionMeasurementStdDevs);
-    // Logger.recordOutput("visionRobotPoseMetersTWO", test); // TWO
     poseEstimator.addVisionMeasurement(
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
-    Logger.recordOutput("visionRobotPoseMetersTWO", visionRobotPoseMeters); // TWO
+    Logger.recordOutput(
+        "Debug Vision/recieved pose in addVisionMeasurement", visionRobotPoseMeters);
   }
 
   public void addObjectMeasurement(
@@ -460,35 +458,35 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  private class toPoseEstimatorConsumer implements VisionConsumer {
-    @Override
-    public void accept(
-        Pose2d visionRobotPoseMeters,
-        double timestampSeconds,
-        Matrix<N3, N1> visionMeasurementStdDevs) {
-      Logger.recordOutput("visionRobotPoseMetersTHREE", visionRobotPoseMeters); // THREE
+  // private class toPoseEstimatorConsumer implements VisionConsumer {
+  //   @Override
+  //   public void accept(
+  //       Pose2d visionRobotPoseMeters,
+  //       double timestampSeconds,
+  //       Matrix<N3, N1> visionMeasurementStdDevs) {
+  //     Logger.recordOutput("visionRobotPoseMetersTHREE", visionRobotPoseMeters); // THREE
 
-      poseEstimator.addVisionMeasurement(
-          visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
-      // Logger.recordOutput("visionRobotPoseMetersTHREE", visionRobotPoseMeters); //
-      // THREE
-    }
-  }
+  //     poseEstimator.addVisionMeasurement(
+  //         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+  //     // Logger.recordOutput("visionRobotPoseMetersTHREE", visionRobotPoseMeters); //
+  //     // THREE
+  //   }
+  // }
 
-  public VisionConsumer getToPoseEstimatorConsumer() {
-    return new toPoseEstimatorConsumer();
-  }
+  // public VisionConsumer getToPoseEstimatorConsumer() {
+  //   return new toPoseEstimatorConsumer();
+  // }
 
-  private class rawGyroRotationSupplier implements Supplier<Rotation2d> {
-    @Override
-    public Rotation2d get() {
-      return rawGyroRotation;
-    }
-  }
+  // private class rawGyroRotationSupplier implements Supplier<Rotation2d> {
+  //   @Override
+  //   public Rotation2d get() {
+  //     return rawGyroRotation;
+  //   }
+  // }
 
-  public rawGyroRotationSupplier getRawGyroRotationSupplier() {
-    return new rawGyroRotationSupplier();
-  }
+  // public rawGyroRotationSupplier getRawGyroRotationSupplier() {
+  //   return new rawGyroRotationSupplier();
+  // }
 
   // public Pose2d getNearestSide() {
   // return nearestSide;
@@ -496,7 +494,7 @@ public class Drive extends SubsystemBase {
 
   public Pose2d getNearestCenter() {
     int index = getNearestParition(6);
-    Logger.recordOutput("align to reef center target index", index);
+    Logger.recordOutput("Debug Driver Alignment/align to reef center target index", index);
     lastReefFieldPose = transformPerAlliance(FieldConstants.Reef.centerFaces[index]);
     return lastReefFieldPose;
   }
@@ -507,7 +505,7 @@ public class Drive extends SubsystemBase {
         && DriverStation.getAlliance().get() == Alliance.Blue) {
       index += 1;
     }
-    Logger.recordOutput("align to reef center left target index", index);
+    Logger.recordOutput("Debug Driver Alignment/align to reef center left target index", index);
     return passBranchFieldPose(index);
   }
 
@@ -517,13 +515,13 @@ public class Drive extends SubsystemBase {
         && DriverStation.getAlliance().get() == Alliance.Red) {
       index += 1;
     }
-    Logger.recordOutput("align to reef center left target index", index);
+    Logger.recordOutput("Debug Driver Alignment/align to reef center left target index", index);
     return passBranchFieldPose(index);
   }
 
   public Pose2d getNearestSide() {
     int index = getNearestParition(12);
-    Logger.recordOutput("align to reef target index", index);
+    Logger.recordOutput("Debug Driver Alignment/align to reef target index", index);
     return passBranchFieldPose(index);
   }
 

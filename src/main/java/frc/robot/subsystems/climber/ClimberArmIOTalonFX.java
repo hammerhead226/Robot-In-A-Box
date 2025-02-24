@@ -76,7 +76,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
 
     positionSetpointDegs = SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG;
 
-    Logger.recordOutput("start angle", startAngleDegs);
+    Logger.recordOutput("Debug Climb Arm/start angle", startAngleDegs);
 
     leader.optimizeBusUtilization();
 
@@ -90,7 +90,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
   public void updateInputs(ClimberArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps);
     Logger.recordOutput(
-        "can coder climber",
+        "Debug Climb Arm/can coder climber",
         Units.rotationsToDegrees(climbCoder.getAbsolutePosition().getValueAsDouble()));
     inputs.positionDegs =
         Units.rotationsToDegrees(leaderPositionDegs.getValueAsDouble()) / CLIMBER_ARM_GEAR_RATIO;
@@ -114,7 +114,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
   }
 
   @Override
-  public void setVoltage(double volts){
+  public void setVoltage(double volts) {
 
     leader.setControl(new VoltageOut(volts));
   }
