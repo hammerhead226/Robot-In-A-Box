@@ -342,8 +342,7 @@ public class DriveCommands {
                   && DriverStation.getAlliance().get() == Alliance.Red;
 
           double totalInputSpeed =
-              Math.hypot(
-                  rateLimitedForwardInputMetersPerSec, rateLimitedSidewaysInputMetersPerSec);
+              Math.hypot(rateLimitedForwardInputMetersPerSec, rateLimitedSidewaysInputMetersPerSec);
           double scale =
               totalInputSpeed > drive.getMaxLinearSpeedMetersPerSec()
                   ? drive.getMaxLinearSpeedMetersPerSec() / totalInputSpeed
@@ -377,7 +376,8 @@ public class DriveCommands {
           //                 rateLimitedRotationInputRadsPerSec,
           //                 -drive.getMaxAngularSpeedRadPerSec(),
           //                 drive.getMaxAngularSpeedRadPerSec())),
-          //                 isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation()));
+          //                 isFlipped ? drive.getRotation().plus(Rotation2d.kPi) :
+          // drive.getRotation()));
         },
         drive);
   }
