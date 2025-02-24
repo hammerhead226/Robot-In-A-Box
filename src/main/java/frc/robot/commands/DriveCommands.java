@@ -160,11 +160,8 @@ public class DriveCommands {
           double rotationSpeed = speeds.omegaRadiansPerSecond;
 
           double speedDebuff = 0.75;
-
+          targetPose = null;
           if ((reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())) {
-
-            counter++;
-
             led.setState(LED_STATE.FLASHING_RED);
             Translation2d reefTranslation =
                 drive.isNearReef()
@@ -181,11 +178,13 @@ public class DriveCommands {
             } else if (reefRightSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterRight();
               targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
+            } else {
+              targetPose = drive.getNearestCenter();
+              targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
             }
             Logger.recordOutput("drive targetPose name", "reef");
 
           } else if (angleAssistSupplier.getAsBoolean()) {
-            counter = 0;
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
               targetPose = drive.getNearestSource();
               targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
@@ -195,7 +194,7 @@ public class DriveCommands {
               targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
               targetPose =
                   rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
-              speedDebuff *= 0.5;
+
               Logger.recordOutput("drive targetPose name", "processor");
             } else if (superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
               targetPose =
@@ -216,12 +215,8 @@ public class DriveCommands {
               Logger.recordOutput("drive targetPose name", "anchor");
             }
           } else {
-            // isRunningApproachToReef = false;
-            counter = 0;
             Logger.recordOutput("drive targetPose name", "none");
           }
-
-          Logger.recordOutput("counter", counter);
 
           if (targetPose != null && !targetPose.equals(previousTargetPose)) {
             previousTargetPose = targetPose;
@@ -330,17 +325,17 @@ public class DriveCommands {
             sidewaysSlewRateLimiter.changeRateLimit(4);
             rotationSlewRateLimiter.changeRateLimit(5);
           }
-        
-          double finalInputForwardVelocityMetersPerSec =
-              forwardSlewRateLimiter.calculate(forwardSpeed + forwardsAssistEffort);
-          double finalInputSidewaysVelocityMetersPerSec =
-              sidewaysSlewRateLimiter.calculate(sidewaysSpeed + sidewaysAssistEffort);
-          double finalInputRotationVelocityRadsPerSec =
-              rotationSlewRateLimiter.calculate(rotationSpeed + rotationAssistEffort);
 
-          Logger.recordOutput("slew forward", finalInputForwardVelocityMetersPerSec);
-          Logger.recordOutput("slew side", finalInputSidewaysVelocityMetersPerSec);
-          Logger.recordOutput("slew rotate", finalInputRotationVelocityRadsPerSec);
+          double rateLimitedForwardInputMetersPerSec =
+              forwardSlewRateLimiter.calculate(forwardSpeed);
+          double rateLimitedSidewaysInputMetersPerSec =
+              sidewaysSlewRateLimiter.calculate(sidewaysSpeed);
+          double rateLimitedRotationInputRadsPerSec =
+              rotationSlewRateLimiter.calculate(rotationSpeed);
+
+          Logger.recordOutput("slew forward", rateLimitedForwardInputMetersPerSec);
+          Logger.recordOutput("slew side", rateLimitedSidewaysInputMetersPerSec);
+          Logger.recordOutput("slew rotate", rateLimitedRotationInputRadsPerSec);
 
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
@@ -348,28 +343,41 @@ public class DriveCommands {
 
           double totalInputSpeed =
               Math.hypot(
-                  finalInputForwardVelocityMetersPerSec, finalInputSidewaysVelocityMetersPerSec);
+                  rateLimitedForwardInputMetersPerSec, rateLimitedSidewaysInputMetersPerSec);
           double scale =
               totalInputSpeed > drive.getMaxLinearSpeedMetersPerSec()
                   ? drive.getMaxLinearSpeedMetersPerSec() / totalInputSpeed
                   : 1;
 
-          drive.runVelocity(
+          ChassisSpeeds inputSpeeds =
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  rateLimitedForwardInputMetersPerSec,
+                  rateLimitedSidewaysInputMetersPerSec,
+                  rateLimitedRotationInputRadsPerSec,
+                  isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation());
+
+          ChassisSpeeds assistSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   new ChassisSpeeds(
-                      MathUtil.clamp(
-                          finalInputForwardVelocityMetersPerSec * scale,
-                          -drive.getMaxLinearSpeedMetersPerSec(),
-                          drive.getMaxLinearSpeedMetersPerSec()),
-                      MathUtil.clamp(
-                          finalInputSidewaysVelocityMetersPerSec * scale, //
-                          -drive.getMaxLinearSpeedMetersPerSec(),
-                          drive.getMaxLinearSpeedMetersPerSec()),
-                      MathUtil.clamp(
-                          finalInputRotationVelocityRadsPerSec,
-                          -drive.getMaxAngularSpeedRadPerSec(),
-                          drive.getMaxAngularSpeedRadPerSec())),
-                  isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation()));
+                      forwardsAssistEffort, sidewaysAssistEffort, rotationAssistEffort),
+                  drive.getRotation());
+          drive.runVelocity(inputSpeeds.plus(assistSpeeds).times(scale));
+          // drive.runVelocity(
+          //     ChassisSpeeds.fromFieldRelativeSpeeds(
+          //         new ChassisSpeeds(
+          //             MathUtil.clamp(
+          //                 rateLimitedForwardInputMetersPerSec * scale,
+          //                 -drive.getMaxLinearSpeedMetersPerSec(),
+          //                 drive.getMaxLinearSpeedMetersPerSec()),
+          //             MathUtil.clamp(
+          //                 rateLimitedSidewaysInputMetersPerSec * scale, //
+          //                 -drive.getMaxLinearSpeedMetersPerSec(),
+          //                 drive.getMaxLinearSpeedMetersPerSec()),
+          //             MathUtil.clamp(
+          //                 rateLimitedRotationInputRadsPerSec,
+          //                 -drive.getMaxAngularSpeedRadPerSec(),
+          //                 drive.getMaxAngularSpeedRadPerSec())),
+          //                 isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation()));
         },
         drive);
   }

@@ -25,7 +25,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
   private final TalonFX leader;
   private final CANcoder climbCoder;
 
-  private double CLIMBER_ARM_GEAR_RATIO = 20 * 34 / 18;
+  private double CLIMBER_ARM_GEAR_RATIO = 20. * 34. / 18.;
 
   private double positionSetpointDegs;
 
