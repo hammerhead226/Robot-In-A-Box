@@ -58,6 +58,7 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.vision.ObjectDetection;
 import frc.robot.subsystems.vision.Vision.VisionConsumer;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -597,7 +598,11 @@ public class Drive extends SubsystemBase {
 
   public boolean isNearReef() {
     // for reference from reef wall to reef wall is about 65 inches or 1.65 meters
-    return getPose().getTranslation().getDistance(FieldConstants.Reef.center) <= 1.7;
+    // return getPose().getTranslation().getDistance(FieldConstants.Reef.center) <= 1.7;
+    return getPose()
+            .getTranslation()
+            .getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center))
+        <= 1.7;
   }
 
   public boolean isAtReefRotation() {

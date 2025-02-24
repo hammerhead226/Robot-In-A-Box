@@ -136,6 +136,10 @@ public class DriveCommands {
           sidewaysPID.setTolerance(0.1);
           forwardsPID.setTolerance(0.1);
 
+          boolean isFlipped =
+          DriverStation.getAlliance().isPresent()
+              && DriverStation.getAlliance().get() == Alliance.Red;
+              
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
@@ -175,12 +179,15 @@ public class DriveCommands {
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
               targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
+              // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d());
             } else if (reefRightSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterRight();
               targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
+              // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
             } else {
               targetPose = drive.getNearestCenter();
               targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
+              // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
             }
             Logger.recordOutput("drive targetPose name", "reef");
 
@@ -317,32 +324,27 @@ public class DriveCommands {
           Logger.recordOutput("Driver Alignment/Rotation Assist Effort", rotationAssistEffort);
 
           if (!drive.isSlowMode()) {
-            forwardSlewRateLimiter.changeRateLimit(8);
-            sidewaysSlewRateLimiter.changeRateLimit(8);
-            rotationSlewRateLimiter.changeRateLimit(30);
+            forwardSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
+            sidewaysSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
+            rotationSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
           } else {
             forwardSlewRateLimiter.changeRateLimit(4);
             sidewaysSlewRateLimiter.changeRateLimit(4);
             rotationSlewRateLimiter.changeRateLimit(5);
           }
 
-          double rateLimitedForwardInputMetersPerSec =
-              forwardSlewRateLimiter.calculate(forwardSpeed);
-          double rateLimitedSidewaysInputMetersPerSec =
-              sidewaysSlewRateLimiter.calculate(sidewaysSpeed);
-          double rateLimitedRotationInputRadsPerSec =
-              rotationSlewRateLimiter.calculate(rotationSpeed);
+          // double rateLimitedForwardInputMetersPerSec =
+          //     forwardSlewRateLimiter.calculate(forwardSpeed);
+          // double rateLimitedSidewaysInputMetersPerSec =
+          //     sidewaysSlewRateLimiter.calculate(sidewaysSpeed);
+          // double rateLimitedRotationInputRadsPerSec =
+          //     rotationSlewRateLimiter.calculate(rotationSpeed);
 
-          Logger.recordOutput("slew forward", rateLimitedForwardInputMetersPerSec);
-          Logger.recordOutput("slew side", rateLimitedSidewaysInputMetersPerSec);
-          Logger.recordOutput("slew rotate", rateLimitedRotationInputRadsPerSec);
 
-          boolean isFlipped =
-              DriverStation.getAlliance().isPresent()
-                  && DriverStation.getAlliance().get() == Alliance.Red;
+          
 
           double totalInputSpeed =
-              Math.hypot(rateLimitedForwardInputMetersPerSec, rateLimitedSidewaysInputMetersPerSec);
+              Math.hypot(forwardSpeed, sidewaysSpeed);
           double scale =
               totalInputSpeed > drive.getMaxLinearSpeedMetersPerSec()
                   ? drive.getMaxLinearSpeedMetersPerSec() / totalInputSpeed
@@ -350,9 +352,9 @@ public class DriveCommands {
 
           ChassisSpeeds inputSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(
-                  rateLimitedForwardInputMetersPerSec,
-                  rateLimitedSidewaysInputMetersPerSec,
-                  rateLimitedRotationInputRadsPerSec,
+                  forwardSpeed,
+                  sidewaysSpeed,
+                  rotationSpeed,
                   isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation());
 
           ChassisSpeeds assistSpeeds =
@@ -360,7 +362,9 @@ public class DriveCommands {
                   new ChassisSpeeds(
                       forwardsAssistEffort, sidewaysAssistEffort, rotationAssistEffort),
                   drive.getRotation());
-          drive.runVelocity(inputSpeeds.plus(assistSpeeds).times(scale));
+
+                  ChassisSpeeds finalInputSpeed = inputSpeeds.plus(assistSpeeds).times(scale);
+          drive.runVelocity(new ChassisSpeeds(forwardSlewRateLimiter.calculate(finalInputSpeed.vxMetersPerSecond), sidewaysSlewRateLimiter.calculate(finalInputSpeed.vyMetersPerSecond), rotationSlewRateLimiter.calculate(finalInputSpeed.omegaRadiansPerSecond)));
           // drive.runVelocity(
           //     ChassisSpeeds.fromFieldRelativeSpeeds(
           //         new ChassisSpeeds(
