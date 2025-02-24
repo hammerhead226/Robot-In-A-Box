@@ -145,6 +145,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 1);
     autonomousCommand = robotContainer.getAutonomousCommand();
     // robotContainer.Super.getSuperStructureCommand().schedule();
     // robotContainer.Super.checkSpeed();
@@ -174,7 +175,7 @@ public class Robot extends LoggedRobot {
     // if(robotContainer.elevator.getCanRangeDistanceInches() != 0){
     //   robotContainer.elevator.zeroCommand(1);
     // }
-
+    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 1);
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
