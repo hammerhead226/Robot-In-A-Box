@@ -1,9 +1,10 @@
 package frc.robot;
 
-import static frc.robot.constants.RobotMap.*;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -35,11 +36,15 @@ import frc.robot.subsystems.climber.ClimberArmIOTalonFX;
 import frc.robot.subsystems.climber.Winch;
 import frc.robot.subsystems.climber.WinchIO;
 import frc.robot.subsystems.climber.WinchIOSim;
+import frc.robot.subsystems.climber.WinchIOTalonFX;
+import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
@@ -60,7 +65,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -110,7 +114,7 @@ public class RobotContainer {
   public RobotContainer() {
     switch (SimConstants.currentMode) {
       case REAL:
-        brakeSwitch = new DigitalInput(2);
+        brakeSwitch = new DigitalInput(RobotMap.BrakeSwitchIDs.brakeSwitchChannel);
         elevatorBrakeTrigger = new Trigger(() -> brakeSwitch.get());
         // // Real robot, instantiate hardware IO implementations
 
@@ -121,14 +125,14 @@ public class RobotContainer {
                     RobotMap.ElevatorIDs.rightElevatorID,
                     RobotMap.ElevatorIDs.elevatorCANrangeID));
         // winch = new Winch(new WinchIOTalonFX(12, 13));
-        winch = new Winch(new WinchIO() {});
+        winch = new Winch(new WinchIOTalonFX(RobotMap.WinchIDs.leftWinchID, RobotMap.WinchIDs.rightWinchID));
         drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
+        new Drive(
+            new GyroIOPigeon2() {},
+            new ModuleIOTalonFX(TunerConstants.FrontLeft),
+            new ModuleIOTalonFX(TunerConstants.FrontRight),
+            new ModuleIOTalonFX(TunerConstants.BackLeft),
+            new ModuleIOTalonFX(TunerConstants.BackRight));
 
         scoralArm =
             new ScoralArm(
@@ -145,7 +149,7 @@ public class RobotContainer {
                 // new VisionIOPhotonVision("photon", new Transform3d())
                 );
 
-        climberArm = new ClimberArm(new ClimberArmIOTalonFX(14, 16));
+        climberArm = new ClimberArm(new ClimberArmIOTalonFX(RobotMap.ClimbIDs.deployClimbID, RobotMap.ClimbIDs.deployClimbCANcoderID));
         // climberArm = new ClimberArm(new ClimberArmIO() {});
 
         // scoralRollers =
@@ -160,7 +164,7 @@ public class RobotContainer {
                 new ScoralSensorCANRangeIO(RobotMap.CoralScorerArmIDs.coralScorerCANrangeID),
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
-        led = new LED(new LED_IOCANdle(0, "CAN Bus 2"));
+        led = new LED(new LED_IOCANdle(RobotMap.ledIDs.CANdleID, "CAN Bus 2"));
         superStructure =
             new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm);
 
@@ -214,7 +218,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        scoralArm = new ScoralArm(new ScoralArmIOSim());
+        scoralArm = new ScoralArm(new ArmIO() {});
         // vision =
         // new Vision(
         // drive.getToPoseEstimatorConsumer(),
