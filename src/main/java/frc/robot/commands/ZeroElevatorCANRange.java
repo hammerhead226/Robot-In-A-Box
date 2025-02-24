@@ -12,6 +12,7 @@ import frc.robot.subsystems.elevator.Elevator;
 public class ZeroElevatorCANRange extends Command {
   /** Creates a new ZeroElevatorCANRange. */
   private Elevator elevator;
+
   public ZeroElevatorCANRange(Elevator elevator) {
     this.elevator = elevator;
     addRequirements(elevator);
@@ -38,6 +39,7 @@ public class ZeroElevatorCANRange extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevator.getCanRangeDistanceInches() <= SubsystemConstants.ElevatorConstants.CANRAGE_ZERO_SETPOINT_INCHES;
+    return elevator.getCanRangeDistanceInches()
+        <= SubsystemConstants.ElevatorConstants.CANRAGE_ZERO_SETPOINT_INCHES;
   }
 }

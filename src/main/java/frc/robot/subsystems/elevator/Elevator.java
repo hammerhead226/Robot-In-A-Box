@@ -124,8 +124,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean atGoal(double threshold) {
-    return (Math.abs(extenderCurrent.position - goal)
-        <= threshold);
+    return (Math.abs(extenderCurrent.position - goal) <= threshold);
   }
 
   public boolean hasReachedGoal(double goalInches) {

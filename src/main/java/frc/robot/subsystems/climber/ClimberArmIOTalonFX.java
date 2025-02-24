@@ -65,12 +65,11 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
 
     if (climbCoder.isConnected()) {
       leader.setPosition(
-        (climbCoder.getAbsolutePosition().getValueAsDouble() + Units.degreesToRotations(50))
-            * CLIMBER_ARM_GEAR_RATIO);
+          (climbCoder.getAbsolutePosition().getValueAsDouble() + Units.degreesToRotations(50))
+              * CLIMBER_ARM_GEAR_RATIO);
     } else {
       leader.setPosition(Units.degreesToRotations(90) * CLIMBER_ARM_GEAR_RATIO);
     }
-    
 
     leaderPositionDegs = leader.getPosition();
     velocityDegsPerSec = leader.getVelocity();

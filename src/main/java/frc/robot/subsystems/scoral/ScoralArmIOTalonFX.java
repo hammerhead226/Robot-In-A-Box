@@ -56,12 +56,13 @@ public class ScoralArmIOTalonFX implements ArmIO {
 
     if (scoralCoder.isConnected()) {
       leader.setPosition(
-        (scoralCoder.getAbsolutePosition().getValueAsDouble() - Units.degreesToRotations(57 - 12))
-            * SubsystemConstants.ScoralArmConstants.ARM_GEAR_RATIO);
+          (scoralCoder.getAbsolutePosition().getValueAsDouble() - Units.degreesToRotations(57 - 12))
+              * SubsystemConstants.ScoralArmConstants.ARM_GEAR_RATIO);
     } else {
-      leader.setPosition(Units.degreesToRotations(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG) * SubsystemConstants.ScoralArmConstants.ARM_GEAR_RATIO);
+      leader.setPosition(
+          Units.degreesToRotations(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG)
+              * SubsystemConstants.ScoralArmConstants.ARM_GEAR_RATIO);
     }
-    
 
     leaderPositionRotations = leader.getPosition();
     velocityDegsPerSec = leader.getVelocity();
