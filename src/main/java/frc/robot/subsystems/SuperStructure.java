@@ -3,11 +3,11 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.GoToReefHeight;
+import frc.robot.commands.ToReefHeight;
 import frc.robot.commands.GoToStow;
 import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakingCoral;
-import frc.robot.commands.ScoringCoral;
+import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.ScoringProccessorSequential;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SubsystemConstants;
@@ -146,7 +146,7 @@ public class SuperStructure {
       case L1:
         currentState = SuperStructureState.L1;
         lastReefState = SuperStructureState.L1;
-        return new GoToReefHeight(
+        return new ToReefHeight(
             elevator,
             scoralArm,
             SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES,
@@ -155,7 +155,7 @@ public class SuperStructure {
       case L2:
         currentState = SuperStructureState.L2;
         lastReefState = SuperStructureState.L2;
-        return new GoToReefHeight(
+        return new ToReefHeight(
             elevator,
             scoralArm,
             SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES,
@@ -164,7 +164,7 @@ public class SuperStructure {
       case L3:
         currentState = SuperStructureState.L3;
         lastReefState = SuperStructureState.L3;
-        return new GoToReefHeight(
+        return new ToReefHeight(
             elevator,
             scoralArm,
             SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES,
@@ -173,7 +173,7 @@ public class SuperStructure {
       case L4:
         currentState = SuperStructureState.L4;
         lastReefState = SuperStructureState.L4;
-        return new GoToReefHeight(
+        return new ToReefHeight(
             elevator,
             scoralArm,
             SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES,
@@ -198,7 +198,7 @@ public class SuperStructure {
         currentState = SuperStructureState.SCORING_CORAL;
         led.setState(LED_STATE.FLASHING_GREEN);
         return new SequentialCommandGroup(
-            new ScoringCoral(elevator, scoralArm, scoralRollers),
+            new ScoreCoral(elevator, scoralArm, scoralRollers),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
             new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
             new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));

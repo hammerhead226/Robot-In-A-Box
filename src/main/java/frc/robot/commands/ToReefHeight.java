@@ -12,13 +12,13 @@ import frc.robot.subsystems.scoral.ScoralArm;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class GoToReefHeight extends SequentialCommandGroup {
+public class ToReefHeight extends SequentialCommandGroup {
   /** Creates a new goToReefHeight. */
   private final ScoralArm scoralArm;
 
   private final Elevator elevator;
 
-  public GoToReefHeight(
+  public ToReefHeight(
       Elevator m_elevator, ScoralArm m_scoralArm, double heightInch, double pitchDegs) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
