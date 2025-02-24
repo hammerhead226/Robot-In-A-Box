@@ -605,7 +605,7 @@ public class Drive extends SubsystemBase {
 
   public boolean isAtReefRotation() {
     return DriveCommands.getTargetPose() != null
-        && DriveCommands.getTargetPose().getRotation().minus(rawGyroRotation).getDegrees() < 10;
+        && DriveCommands.getTargetPose().getRotation().minus(getRotation()).getDegrees() < 10;
   }
 
   // takes in a Pose2d from blue alliance's perspective and flips it if we are on
