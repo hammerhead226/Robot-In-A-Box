@@ -592,7 +592,7 @@ public class Drive extends SubsystemBase {
   public boolean isAtReefSide() {
     return DriveCommands.getTargetPose() != null
         && getPose().getTranslation().getDistance(DriveCommands.getTargetPose().getTranslation())
-            <= 0.2;
+            <= 1;
   }
 
   public boolean isNearReef() {

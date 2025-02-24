@@ -66,6 +66,7 @@ public class DriveCommands {
   private static double wantedForwardsVelocityMetersPerSec = 0;
 
   private static int counter = 0;
+  private static boolean isRunningApproachToReef = false;
 
   private static double forwardsAssistEffort = 0;
   private static double sidewaysAssistEffort = 0;
@@ -129,6 +130,7 @@ public class DriveCommands {
     // BooleanSupplier anchorAlignSupplier) {
     return Commands.run(
         () -> {
+          Logger.recordOutput("runningApproachToReef", isRunningApproachToReef);
           rotationPID.setTolerance(1);
           rotationPID.enableContinuousInput(-180, 180);
           sidewaysPID.setTolerance(0.1);
@@ -159,7 +161,8 @@ public class DriveCommands {
 
           double speedDebuff = 0.75;
 
-          if (reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()) {
+          if ((reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())) {
+
             counter++;
 
             led.setState(LED_STATE.FLASHING_RED);
@@ -172,13 +175,14 @@ public class DriveCommands {
                         SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
                         SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
 
-            if (reefLeftSupplier.getAsBoolean() && counter == 1) {
+            if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
               targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
-            } else if (reefRightSupplier.getAsBoolean() && counter == 1) {
+            } else if (reefRightSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterRight();
               targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
-            } 
+            }
+
             Logger.recordOutput("drive targetPose name", "reef");
 
           } else if (angleAssistSupplier.getAsBoolean()) {
@@ -186,7 +190,7 @@ public class DriveCommands {
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
               targetPose = drive.getNearestSource();
               targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
-  
+
               Logger.recordOutput("drive targetPose name", "source");
             } else if (superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
               targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
@@ -195,25 +199,27 @@ public class DriveCommands {
               speedDebuff *= 0.5;
               Logger.recordOutput("drive targetPose name", "processor");
             } else if (superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
-                targetPose =
+              targetPose =
                   drive
                       .getPose()
                       .nearest(
                           new ArrayList<>(
-                              Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage).stream()
+                              Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage)
+                                  .stream()
                                   .map(pose -> Drive.transformPerAlliance(pose))
                                   .collect(Collectors.toList())));
-                targetPose =
-                    rotateAndNudge(
-                        new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
-                        new Translation2d(-0.5, 0),
-                        new Rotation2d(0));
+              targetPose =
+                  rotateAndNudge(
+                      new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
+                      new Translation2d(-0.5, 0),
+                      new Rotation2d(0));
 
-                Logger.recordOutput("drive targetPose name", "anchor");
-            } 
+              Logger.recordOutput("drive targetPose name", "anchor");
+            }
           } else {
+            // isRunningApproachToReef = false;
             counter = 0;
-          Logger.recordOutput("drive targetPose name", "none");
+            Logger.recordOutput("drive targetPose name", "none");
           }
 
           Logger.recordOutput("counter", counter);
@@ -264,7 +270,7 @@ public class DriveCommands {
                     drive.getMaxAngularSpeedRadPerSec());
 
             forwardsAssistEffort =
-                reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()
+                (reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())
                     ? (wantedForwardsVelocityMetersPerSec - forwardSpeed) * speedDebuff
                     : 0;
             sidewaysAssistEffort =
@@ -325,6 +331,7 @@ public class DriveCommands {
             sidewaysSlewRateLimiter.changeRateLimit(4);
             rotationSlewRateLimiter.changeRateLimit(5);
           }
+        
           double finalInputForwardVelocityMetersPerSec =
               forwardSlewRateLimiter.calculate(forwardSpeed + forwardsAssistEffort);
           double finalInputSidewaysVelocityMetersPerSec =
@@ -335,6 +342,12 @@ public class DriveCommands {
           Logger.recordOutput("slew forward", finalInputForwardVelocityMetersPerSec);
           Logger.recordOutput("slew side", finalInputSidewaysVelocityMetersPerSec);
           Logger.recordOutput("slew rotate", finalInputRotationVelocityRadsPerSec);
+
+          boolean isFlipped =
+              DriverStation.getAlliance().isPresent()
+                  && DriverStation.getAlliance().get() == Alliance.Red;
+
+
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   new ChassisSpeeds(
@@ -350,7 +363,7 @@ public class DriveCommands {
                           finalInputRotationVelocityRadsPerSec,
                           -drive.getMaxAngularSpeedRadPerSec(),
                           drive.getMaxAngularSpeedRadPerSec())),
-                  drive.getRotation()));
+                  isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation()));
         },
         drive);
   }

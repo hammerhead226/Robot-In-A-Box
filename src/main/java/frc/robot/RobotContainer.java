@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -100,12 +99,12 @@ public class RobotContainer {
   // private final Trigger stateTrigger;
   private Trigger slowModeTrigger;
   private Trigger reefAlignTrigger;
+  private Trigger approachPerpendicularTrigger;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
   private final SendableChooser<Command> autos;
   private DigitalInput brakeSwitch;
-  
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -244,20 +243,24 @@ public class RobotContainer {
     // led));
 
     // NamedCommands.registerCommand("L1", new SequentialCommandGroup(
-    // new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)), new WaitUntilCommand(() -> superStructure.atGoals())));
+    // new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)), new
+    // WaitUntilCommand(() -> superStructure.atGoals())));
 
     // NamedCommands.registerCommand("L2", new SequentialCommandGroup(
-    // new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)), new WaitUntilCommand(() -> superStructure.atGoals())));
+    // new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)), new
+    // WaitUntilCommand(() -> superStructure.atGoals())));
 
-    // NamedCommands.registerCommand("L3", new SequentialCommandGroup( new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)), new WaitUntilCommand(() -> superStructure.atGoals())));
-   
+    // NamedCommands.registerCommand("L3", new SequentialCommandGroup( new InstantCommand(() ->
+    // superStructure.setWantedState(SuperStructureState.L3)), new WaitUntilCommand(() ->
+    // superStructure.atGoals())));
+
     // NamedCommands.registerCommand(
     // "L4",
     // new SequentialCommandGroup(
     // new InstantCommand(() ->
     // superStructure.setWantedState(SuperStructureState.L4)),
     // new WaitUntilCommand(() -> superStructure.atGoals())));
-   
+
     // NamedCommands.registerCommand(
     // "INTAKE",
     // new SequentialCommandGroup(
@@ -299,59 +302,64 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "L1",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)).andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1))
+            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
             .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "L2",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)). andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2))
+            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
             .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "L3",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)).andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3))
+            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
             .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "L4",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)).andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4))
+            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
             .andThen(superStructure.getSuperStructureCommand()));
 
     NamedCommands.registerCommand(
         "SOURCE INTAKE",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)).andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE))
+            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
             .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "ALGAE INTAKE",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE)).andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE))
+            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
             .andThen(superStructure.getSuperStructureCommand()));
-    NamedCommands.registerCommand("STOW ", new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW)).andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
-    .andThen(superStructure.getSuperStructureCommand()));
-    NamedCommands.registerCommand("SCORE CORAL", new SequentialCommandGroup(
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
-        new WaitUntilCommand(() -> superStructure.atGoals()),
-        superStructure.getSuperStructureCommand()));
+    NamedCommands.registerCommand(
+        "STOW ",
+        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
+            .andThen(superStructure.getSuperStructureCommand()));
+    NamedCommands.registerCommand(
+        "SCORE CORAL",
+        new SequentialCommandGroup(
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
+            new WaitUntilCommand(() -> superStructure.atGoals()),
+            superStructure.getSuperStructureCommand()));
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
     autos = new SendableChooser<>();
 
     // autos.addOption("AutoTest",
     AutoBuilder.buildAuto("Bottom-R5a(L4)-S3c-R6a(L4)-F2-R6b(L4)-S2c");
-    autos.addOption("AutoTestTwo",
-    AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+    autos.addOption("AutoTestTwo", AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
     autos.addOption(
-    "AutoSourceBottom",
-    AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+        "AutoSourceBottom", AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
     autos.addOption(
-    "AutoSourceMiddle",
-    AutoBuilder.buildAuto("Middle-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
-    autos.addOption("AutoSourceTop",
-    AutoBuilder.buildAuto("Top-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
-    autos.addOption("AutoTestTop",
-    AutoBuilder.buildAuto("Top-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
+        "AutoSourceMiddle", AutoBuilder.buildAuto("Middle-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+    autos.addOption("AutoSourceTop", AutoBuilder.buildAuto("Top-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
+    autos.addOption("AutoTestTop", AutoBuilder.buildAuto("Top-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
     autos.addOption(
-    "AutoTestMiddle",
-    AutoBuilder.buildAuto("Middle-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
+        "AutoTestMiddle", AutoBuilder.buildAuto("Middle-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
     autos.addOption(
-    "AutoTestBottom",
-    AutoBuilder.buildAuto("Bottom-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
+        "AutoTestBottom", AutoBuilder.buildAuto("Bottom-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
 
     // autoChooser.addOption(
     // "Drive Wheel Radius Characterization",
@@ -380,11 +388,15 @@ public class RobotContainer {
     // stateTrigger = new Trigger(() -> superStructure.changedStated());
 
     slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+
     reefAlignTrigger =
         new Trigger(
             () ->
                 driveController.leftTrigger().getAsBoolean()
                     || driveController.rightTrigger().getAsBoolean());
+    approachPerpendicularTrigger =
+        new Trigger(
+            () -> reefAlignTrigger.getAsBoolean() && (!drive.isNearReef() && drive.isAtReefSide()));
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     configureButtonBindings();
     // test();
@@ -507,11 +519,14 @@ public class RobotContainer {
             () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.rightTrigger().getAsBoolean()));
 
-    reefAlignTrigger.onFalse(
-        new ConditionalCommand(
-            new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
-            new InstantCommand(),
-            () -> (!drive.isNearReef() && drive.isAtReefSide())));
+    approachPerpendicularTrigger.onTrue(
+        new ApproachReefPerpendicular(
+            drive, superStructure, () -> reefAlignTrigger.getAsBoolean()));
+    // reefAlignTrigger.onFalse(
+    //     new ConditionalCommand(
+    //         new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
+    //         new InstantCommand(),
+    //         () -> (!drive.isNearReef() && drive.isAtReefSide())));
 
     driveController
         .rightBumper()

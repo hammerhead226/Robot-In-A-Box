@@ -6,11 +6,7 @@
     "BlueLeft",
     "BlueMiddleLeft",
     "BlueMiddleRight",
-    "BlueRight",
-    "RedLeft",
-    "RedMiddleRight",
-    "RedMiddleLeft",
-    "RedRight"
+    "BlueRight"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

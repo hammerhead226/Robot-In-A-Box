@@ -19,6 +19,7 @@ import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ApproachReefPerpendicular extends Command {
@@ -26,10 +27,13 @@ public class ApproachReefPerpendicular extends Command {
   private final SuperStructure superStructure;
   Command pathCommand;
   Pose2d targetPose = new Pose2d();
+  BooleanSupplier continuePath;
   /** Creates a new ApproachReefPerpendicular. */
-  public ApproachReefPerpendicular(Drive drive, SuperStructure superStructure) {
+  public ApproachReefPerpendicular(
+      Drive drive, SuperStructure superStructure, BooleanSupplier continuePath) {
     this.drive = drive;
     this.superStructure = superStructure;
+    this.continuePath = continuePath;
     addRequirements(drive);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -86,6 +90,6 @@ public class ApproachReefPerpendicular extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return pathCommand.isFinished();
+    return pathCommand.isFinished() || !continuePath.getAsBoolean();
   }
 }
