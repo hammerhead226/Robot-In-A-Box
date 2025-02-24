@@ -59,7 +59,7 @@ public class Winch extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("Winch/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput("Winch Debug/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
 
     updateTunableNumbers();
@@ -83,7 +83,7 @@ public class Winch extends SubsystemBase {
     io.setVelocityRPM(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
 
     // Log flywheel setpoint
-    Logger.recordOutput("Flywheel/SetpointRPM", velocityRPM);
+    Logger.recordOutput("Winch Debug/SetpointRPM", velocityRPM);
   }
 
   public Command runVoltsCommmand(double volts) {

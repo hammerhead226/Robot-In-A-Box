@@ -70,7 +70,7 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
-      Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
+      Logger.processInputs("Debug Vision/Camera" + Integer.toString(i), inputs[i]);
       //  poseBuffer.addSample(inputs[i].poseTimeStamp,
       // RobotContainer.drive.getPoseAtTimeStamp(inputs[i].poseTimeStamp));
     }
@@ -116,18 +116,22 @@ public class Vision extends SubsystemBase {
                 || observation.pose().getY() < 0.0
                 || observation.pose().getY() > aprilTagLayout.getFieldWidth();
 
-        Logger.recordOutput("blah/blahX", observation.pose().getX());
+        Logger.recordOutput("Debug Vision/tagCount", observation.tagCount());
+        Logger.recordOutput("Debug Vision/ambiguity", observation.ambiguity());
         Logger.recordOutput(
-            "blah/blahXBOOL", observation.pose().getX() > aprilTagLayout.getFieldLength());
-        Logger.recordOutput("blah/blahY", observation.pose().getY());
+            "Debug Vision/ambiguity above maxAmbiguity", observation.ambiguity() > maxAmbiguity);
+        Logger.recordOutput("Debug Vision/poseZ", observation.pose().getZ());
         Logger.recordOutput(
-            "blah/blahYBOOL", observation.pose().getY() > aprilTagLayout.getFieldWidth());
-        Logger.recordOutput("blah/blahZ", observation.pose().getZ());
-        Logger.recordOutput("blah/blahZError", maxZError);
-        Logger.recordOutput("blah/blahZBOOL", observation.pose().getZ() > maxZError);
-
-        Logger.recordOutput("blah/rejectPose", rejectPose);
-        Logger.recordOutput("blah/tagCount", observation.tagCount());
+            "Debug Vision/poseZ above maxZError", observation.pose().getZ() > maxZError);
+        Logger.recordOutput("Debug Vision/poseX", observation.pose().getX());
+        Logger.recordOutput(
+            "Debug Vision/poseXWithinField",
+            observation.pose().getX() > aprilTagLayout.getFieldLength());
+        Logger.recordOutput("Debug Vision/poseY", observation.pose().getY());
+        Logger.recordOutput(
+            "Debug Vision/poseYWithinField",
+            observation.pose().getY() > aprilTagLayout.getFieldWidth());
+        Logger.recordOutput("Debug Vision/rejectPose", rejectPose);
 
         // Add pose to log
         robotPoses.add(observation.pose());
@@ -158,12 +162,13 @@ public class Vision extends SubsystemBase {
           angularStdDev *= cameraStdDevFactors[cameraIndex];
         }
 
-        Logger.recordOutput("blah/AVGTGDIST", observation.averageTagDistance());
-        Logger.recordOutput("blah/STDFACTOR", stdDevFactor);
-        Logger.recordOutput("blah/LINNYYY", linearStdDev);
-        Logger.recordOutput("blah/ANGEEYY", angularStdDev);
-        Logger.recordOutput("blah/BASEEYYYY", angularStdDevBaseline);
-        Logger.recordOutput("blah/BASEEYYYYFACYY", angularStdDevMegatag2Factor);
+        Logger.recordOutput("Debug Vision/averageTagDistance", observation.averageTagDistance());
+        Logger.recordOutput("Debug Vision/stdDevFactor", stdDevFactor);
+        Logger.recordOutput("Debug Vision/linearStdDev", linearStdDev);
+        Logger.recordOutput("Debug Vision/angularStdDev", angularStdDev);
+        Logger.recordOutput("Debug Vision/angularStdDevBaseline", angularStdDevBaseline);
+        Logger.recordOutput(
+            "Debug Vision/angularStdDevMegatag2Factor", angularStdDevMegatag2Factor);
 
         // Send vision observation
         consumer.accept(
@@ -174,16 +179,16 @@ public class Vision extends SubsystemBase {
 
       // Log camera datadata
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
+          "Vision Summary/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
           tagPoses.toArray(new Pose3d[tagPoses.size()]));
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
+          "Vision Summary/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
           robotPoses.toArray(new Pose3d[robotPoses.size()]));
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
+          "Vision Summary/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
           robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
+          "Vision Summary/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
           robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
@@ -193,20 +198,18 @@ public class Vision extends SubsystemBase {
 
     // Log summary data
     Logger.recordOutput(
-        "Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
+        "Vision Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
     Logger.recordOutput(
-        "Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
+        "Vision Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
     Logger.recordOutput(
-        "Vision/Summary/RobotPosesAccepted",
+        "Vision Summary/RobotPosesAccepted",
         allRobotPosesAccepted.toArray(new Pose3d[allRobotPosesAccepted.size()]));
     Logger.recordOutput(
-        "Vision/Summary/RobotPosesRejected",
+        "Vision Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
   }
 
-  // ----
-
-  // rejectyiong old posiutions
+  // rejecting old positions
 
   @FunctionalInterface
   public static interface VisionConsumer {

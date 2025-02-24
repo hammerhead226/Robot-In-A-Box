@@ -42,7 +42,8 @@ public class SuperStructure {
       ScoralArm scoralArm,
       ScoralRollers scoralRollers,
       LED led,
-      ClimberArm climberArm, Winch winch) {
+      ClimberArm climberArm,
+      Winch winch) {
     this.drive = drive;
     this.elevator = elevator;
     this.scoralArm = scoralArm;
@@ -128,7 +129,7 @@ public class SuperStructure {
 
   public SequentialCommandGroup getSuperStructureCommand() {
     counter++;
-    Logger.recordOutput("bruhufe", counter);
+    Logger.recordOutput("Debug Super Structure/counter", counter);
     switch (wantedState) {
       case STOW:
         led.setState(LED_STATE.BLUE);
@@ -221,11 +222,16 @@ public class SuperStructure {
             climberArm.setArmTarget(SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2));
       case CLIMB_STAGE_TWO:
         currentState = SuperStructureState.CLIMB_STAGE_TWO;
-        return new SequentialCommandGroup(new InstantCommand(()-> climberArm.setBrakeMode(true), climberArm), new ParallelCommandGroup(climberArm.runVoltsCommand(5), winch.runVoltsCommmand(12)));
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> climberArm.setBrakeMode(true), climberArm),
+            new ParallelCommandGroup(climberArm.runVoltsCommand(5), winch.runVoltsCommmand(12)));
       case HANG:
         currentState = SuperStructureState.HANG;
         led.setState(LED_STATE.BLUE);
-        return new SequentialCommandGroup(new ParallelCommandGroup(new InstantCommand(()-> climberArm.armStop(), climberArm), winch.stopWinch()),new InstantCommand(()-> climberArm.setBrakeMode(true), climberArm));
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> climberArm.armStop(), climberArm), winch.stopWinch()),
+            new InstantCommand(() -> climberArm.setBrakeMode(true), climberArm));
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(

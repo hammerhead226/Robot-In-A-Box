@@ -25,23 +25,23 @@ public class PivotVis {
     this.mecha =
         root.append(new LoggedMechanismLigament2d("arms", 0.5, 0, 10, new Color8Bit(color)));
 
-    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+    Logger.recordOutput("Visualization/PivotVis/mechanism2d/" + key, this.panel);
   }
 
   public void update(double angle) {
     // mecha.setLength(position);
     // root.setPosition(50, position);
     mecha.setAngle(angle);
-    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+    Logger.recordOutput("Visualization/PivotVis/mechanism2d/" + key, this.panel);
   }
 
   public void updateVertical(double position) {
     root.setPosition(50.1, Units.inchesToMeters(position));
-    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+    Logger.recordOutput("Visualization/PivotVis/mechanism2d/" + key, this.panel);
   }
 
   public void updateLength(double length) {
     mecha.setLength(length);
-    Logger.recordOutput("PivotVis/mechanism2d/" + key, this.panel);
+    Logger.recordOutput("Visualization/PivotVis/mechanism2d/" + key, this.panel);
   }
 }

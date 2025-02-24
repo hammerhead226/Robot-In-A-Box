@@ -16,19 +16,22 @@ import frc.robot.subsystems.scoral.ScoralRollers;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreAlgaeIntoBarge extends SequentialCommandGroup {
   /** Creates a new ScoreAlgaeIntoBarge. */
-   private final ScoralArm scoralArm;
+  private final ScoralArm scoralArm;
 
   private final ScoralRollers scoralRollers;
   private final Elevator elevator;
-  public ScoreAlgaeIntoBarge(Elevator m_elevator, ScoralArm m_scoralArm, ScoralRollers m_scoralRollers) {
+
+  public ScoreAlgaeIntoBarge(
+      Elevator m_elevator, ScoralArm m_scoralArm, ScoralRollers m_scoralRollers) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     this.elevator = m_elevator;
     this.scoralArm = m_scoralArm;
     this.scoralRollers = m_scoralRollers;
 
-
-    addCommands(new ParallelCommandGroup(
-            elevator.setElevatorTarget(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 1), scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT, 2)));
+    addCommands(
+        new ParallelCommandGroup(
+            elevator.setElevatorTarget(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 1),
+            scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT, 2)));
   }
 }
