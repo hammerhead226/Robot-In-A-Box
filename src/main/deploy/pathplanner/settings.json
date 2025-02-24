@@ -7,11 +7,7 @@
     "BlueMiddleLeft",
     "BlueMiddleRight",
     "BlueRight",
-    "BlueLeftPush",
-    "RedLeft",
-    "RedMiddleLeft",
-    "RedMiddleRight",
-    "RedRight"
+    "BlueLeftPush"
   ],
   "autoFolders": [
     "L2 Variants"
