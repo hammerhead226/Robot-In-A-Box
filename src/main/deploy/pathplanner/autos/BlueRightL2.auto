@@ -7,7 +7,49 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftStart"
+            "pathName": "BlueRightStart"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueRightSecond "
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SOURCE_INTAKE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueRightThird"
           }
         },
         {
@@ -31,7 +73,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftSecond"
+            "pathName": "BlueRightFourth"
           }
         },
         {
@@ -49,49 +91,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftThird"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SCORE_CORAL"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BlueLeftFourth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SOURCE_INTAKE"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BlueLeftFifth"
+            "pathName": "BlueRightFifth"
           }
         },
         {
@@ -116,6 +116,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "L2 Variants",
   "choreoAuto": false
 }

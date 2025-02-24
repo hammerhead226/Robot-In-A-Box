@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L4"
+            "name": "L2"
           }
         },
         {
@@ -116,6 +116,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "L2 Variants",
   "choreoAuto": false
 }
