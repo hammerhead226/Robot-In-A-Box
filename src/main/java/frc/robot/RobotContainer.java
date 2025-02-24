@@ -538,9 +538,9 @@ public class RobotContainer {
                     new ReinitializingCommand(
                         () -> superStructure.getSuperStructureCommand(),
                         elevator,
+                        climberArm,
                         scoralArm,
                         scoralRollers,
-                        drive,
                         led))
                 .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
 
