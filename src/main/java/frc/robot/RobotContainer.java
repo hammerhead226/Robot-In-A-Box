@@ -283,7 +283,6 @@ public class RobotContainer {
     // superStructure.setWantedState(SuperStructureState.SOURCE)),
     // new WaitUntilCommand(() -> superStructure.atGoals())));
 
-    
     // autoChooser.addOption(
     // "Top R3a",
     // AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c-R1b(L3)-S3c-R6a(L3)"));
