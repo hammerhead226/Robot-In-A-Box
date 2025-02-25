@@ -511,21 +511,21 @@ public class Drive extends SubsystemBase {
   }
 
   public Pose2d getNearestCenterLeft() {
-    int index = getNearestParition(6) * 2;
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == Alliance.Blue) {
-      index += 1;
-    }
+    int index = getNearestParition(6) * 2 + 1;
+    // if (DriverStation.getAlliance().isPresent()
+    //   && DriverStation.getAlliance().get() == Alliance.Red) {
+    //   index += 1;
+    // }
     Logger.recordOutput("Debug Driver Alignment/align to reef center left target index", index);
     return passBranchFieldPose(index);
   }
 
   public Pose2d getNearestCenterRight() {
     int index = getNearestParition(6) * 2;
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == Alliance.Red) {
-      index += 1;
-    }
+    // if (!(DriverStation.getAlliance().isPresent()
+    //   && DriverStation.getAlliance().get() == Alliance.Red)) {
+    //   index += 1;
+    // }
     Logger.recordOutput("Debug Driver Alignment/align to reef center left target index", index);
     return passBranchFieldPose(index);
   }
