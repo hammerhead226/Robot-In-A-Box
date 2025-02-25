@@ -188,7 +188,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean isExtended() {
-    return extenderGoal.position >= 0.4;
+    return extenderGoal.position >= 2;
   }
 
   public Command setElevatorTarget(double elevatorGoalInches, double thresholdInches) {

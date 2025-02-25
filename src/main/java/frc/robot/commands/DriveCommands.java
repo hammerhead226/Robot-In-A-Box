@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
-  private static final double DEADBAND = 0.1;
+  private static final double DEADBAND = 0.05;
   private static final double ANGLE_KP = 5.0;
   private static final double ANGLE_KD = 0.4;
   private static final double ANGLE_MAX_VELOCITY = 8.0;
@@ -333,7 +333,7 @@ public class DriveCommands {
               "Debug Driver Alignment/Sideways Assist Effort", sidewaysAssistEffort);
           Logger.recordOutput(
               "Debug Driver Alignment/Rotation Assist Effort", rotationAssistEffort);
-
+          Logger.recordOutput("Debug Driver Alignment/Is Slow Mode?", drive.isSlowMode());
           if (!drive.isSlowMode()) {
             forwardSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
             sidewaysSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);

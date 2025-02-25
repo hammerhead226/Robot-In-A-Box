@@ -36,10 +36,10 @@ public class WinchIOTalonFX implements WinchIO {
     var config = new TalonFXConfiguration();
     config.CurrentLimits.SupplyCurrentLimit = 30.0;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     leader.getConfigurator().apply(config);
     follower.getConfigurator().apply(config);
-    follower.setControl(new Follower(leadID, true));
+    follower.setControl(new Follower(leadID, false));
 
     leaderPosition = leader.getPosition();
     leaderVelocity = leader.getVelocity();

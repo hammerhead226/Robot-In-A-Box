@@ -62,6 +62,7 @@ public class SuperStructure {
         || wantedState == SuperStructureState.L3
         || wantedState == SuperStructureState.L4) {
       led.setState(LED_STATE.RED);
+      lastReefState = wantedState;
     } else if (wantedState == SuperStructureState.SOURCE) {
       led.setState(LED_STATE.GREY);
     } else if (wantedState == SuperStructureState.PROCESSOR) {
@@ -116,9 +117,15 @@ public class SuperStructure {
     //         && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
     //   case SCORING_CORAL:
     //     // TODO:: UNCOMMENT
-    //     // return csFlywheel.seesCoral() == CoralState.CURRENT
-    //     // || csFlywheel.seesCoral() == CoralState.SENSOR;
-    //     return true;
+    //     return scoralRollers.seesCoral() == CoralState.CURRENT
+    //         || scoralRollers.seesCoral() == CoralState.SENSOR;
+    //     // return true;
+    //   case CLIMB_STAGE_ONE:
+    //     return climberArm.atGoal(0) && scoralArm.hasReachedGoal(0);
+    //   case CLIMB_STAGE_TWO:
+    //     return climberArm.atGoal(60);
+    //   case HANG:
+    //     return false;
     //   default:
     //     return false;
     // }
@@ -219,15 +226,17 @@ public class SuperStructure {
       case CLIMB_STAGE_ONE:
         currentState = SuperStructureState.CLIMB_STAGE_ONE;
         return new SequentialCommandGroup(
+            scoralArm.setArmTarget(29, 2),
             climberArm.setArmTarget(SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2));
       case CLIMB_STAGE_TWO:
         currentState = SuperStructureState.CLIMB_STAGE_TWO;
         return new SequentialCommandGroup(
             new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
-            climberArm.runVoltsCommand(5));
+            new InstantCommand(() -> climberArm.setVoltage(-3)));
       case CLIMB_STAGE_THREE:
         currentState = SuperStructureState.CLIMB_STAGE_THREE;
-        return new SequentialCommandGroup(winch.runVoltsCommmand(12));
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> climberArm.armStop()), winch.runVoltsCommmand(12));
       case HANG:
         currentState = SuperStructureState.HANG;
         led.setState(LED_STATE.BLUE);

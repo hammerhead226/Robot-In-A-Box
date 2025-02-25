@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ReinitializingCommand;
@@ -31,6 +32,7 @@ import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.climber.ClimberArm;
+import frc.robot.subsystems.climber.ClimberArmIO;
 import frc.robot.subsystems.climber.ClimberArmIOSim;
 import frc.robot.subsystems.climber.ClimberArmIOTalonFX;
 import frc.robot.subsystems.climber.Winch;
@@ -74,8 +76,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  private Drive drive;
-  private LED led;
+  private final Drive drive;
+  private final LED led;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -84,14 +86,14 @@ public class RobotContainer {
   // private final JoystickButton btn = new JoystickButton(joystikc, 4);
   // private final KeyboardInputs keyboard = new KeyboardInputs(0);
 
-  private ScoralArm scoralArm;
+  private final ScoralArm scoralArm;
   // private final CoralScorerFlywheel coralIntake;
 
-  public static Elevator elevator;
-  public ClimberArm climberArm;
-  private Vision vision;
-  SuperStructure superStructure;
-  private Winch winch;
+  public final Elevator elevator;
+  public final ClimberArm climberArm;
+  private final Vision vision;
+  private final SuperStructure superStructure;
+  private final Winch winch;
 
   // public final Trigger elevatorBrakeTrigger;
   // private final Trigger stateTrigger;
@@ -225,13 +227,15 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         scoralArm = new ScoralArm(new ArmIO() {});
-        // vision =
-        // new Vision(
-        // drive.getToPoseEstimatorConsumer(),
-        // new VisionIOLimelight("limelight 1", drive.getRawGyroRotationSupplier()),
-        // new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
-        // new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
-        // new VisionIOPhotonVision("photon", new Transform3d()));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    "camera 1 sim", new Transform3d(0, 0, 0, new Rotation3d()), drive::getPose)
+                // new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                // new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
+                // new VisionIOPhotonVision("photon", new Transform3d())
+                );
         elevator = new Elevator(new ElevatorIO() {});
         scoralRollers =
             new ScoralRollers(
@@ -241,13 +245,14 @@ public class RobotContainer {
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
 
+        climberArm = new ClimberArm(new ClimberArmIO() {});
+
         winch = new Winch(new WinchIO() {});
 
         superStructure =
             new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm, winch);
         break;
     }
-
     // Set up auto routines
     // NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive,
     // led));
@@ -278,28 +283,23 @@ public class RobotContainer {
     // superStructure.setWantedState(SuperStructureState.SOURCE)),
     // new WaitUntilCommand(() -> superStructure.atGoals())));
 
-    // autoChooser = new LoggedDashboardChooser<>("Auto Choices",
-    // AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    // autoChooser.addOption(
-    // "Drive Wheel Radius Characterization",
-    // DriveCommands.wheelRadiusCharacterization(drive));
-    // autoChooser.addOption(
-    // "Drive Simple FF Characterization",
-    // DriveCommands.feedforwardCharacterization(drive));
-    // autoChooser.addOption(
-    // "Drive SysId (Quasistatic Forward)",
-    // drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption(
-    // "Drive SysId (Quasistatic Reverse)",
-    // drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // autoChooser.addOption(
-    // "Drive SysId (Dynamic Forward)",
-    // drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption(
-    // "Drive SysId (Dynamic Reverse)",
-    // drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // autoChooser.addOption(
     // "Top R3a",
     // AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c-R1b(L3)-S3c-R6a(L3)"));
@@ -392,7 +392,7 @@ public class RobotContainer {
     // autoChooser.addDefaultOption("square", AutoBuilder.buildAuto("Square"));
     // autoChooser.addOption("toReefTest", AutoBuilder.buildAuto("toReefTest"));
 
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
+    // autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
     // Configure the button bindings
     // configureButtonBindings();
     // stateTrigger = new Trigger(() -> superStructure.changedStated());
@@ -514,6 +514,11 @@ public class RobotContainer {
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
+    elevatorBrakeTrigger.onTrue(
+        new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
+    elevatorBrakeTrigger.onFalse(
+        new InstantCommand(() -> elevator.setBrake(true)).ignoringDisable(true));
+
     driverControls();
     manipControls();
   }
@@ -563,11 +568,30 @@ public class RobotContainer {
                         led))
                 .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
 
+    // driveController
+    //     .a()
+    //     .onTrue(
+    //         new InstantCommand(
+    //             () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
+
     driveController
         .a()
         .onTrue(
-            new InstantCommand(
-                () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
+            new SequentialCommandGroup(
+                scoralArm.setArmTarget(56, 2),
+                climberArm.setArmTarget(
+                    SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2)));
+    driveController
+        .b()
+        .onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
+                new InstantCommand(() -> climberArm.setVoltage(-3))));
+    driveController
+        .x()
+        .onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> climberArm.armStop()), winch.runVoltsCommmand(-4)));
 
     // driveController
     //     .x()
@@ -593,23 +617,17 @@ public class RobotContainer {
     //         new InstantCommand(() ->
     // superStructure.setWantedState(SuperStructureState.PROCESSOR)));
 
-    // driveController
-    //     .povDown()
-    //     .onTrue(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
-    //             .andThen(
-    //                 new ReinitializingCommand(
-    //                     () -> superStructure.getSuperStructureCommand(),
-    //                     elevator,
-    //                     scoralArm,
-    //                     scoralRollers,
-    //                     drive,
-    //                     led)));
-
-    // elevatorBrakeTrigger.onTrue(
-    // new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
-    // elevatorBrakeTrigger.onFalse(
-    // new InstantCommand(() -> elevator.setBrake(true)).ignoringDisable(true));
+    driveController
+        .povDown()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+                .andThen(
+                    new ReinitializingCommand(
+                        () -> superStructure.getSuperStructureCommand(),
+                        elevator,
+                        scoralArm,
+                        scoralRollers,
+                        led)));
   }
 
   private void manipControls() {
@@ -636,7 +654,6 @@ public class RobotContainer {
                         elevator,
                         scoralArm,
                         scoralRollers,
-                        drive,
                         led)));
 
     manipController

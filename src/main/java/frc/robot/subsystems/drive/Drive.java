@@ -67,7 +67,7 @@ import org.littletonrobotics.junction.Logger;
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY =
-      new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
+      new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 100 : 100.0;
   public static final double DRIVE_BASE_RADIUS =
       Math.max(
           Math.max(
@@ -281,12 +281,10 @@ public class Drive extends SubsystemBase {
         setpointGenerator.generateSetpoint(
             previouSetpoint, speeds, SubsystemConstants.LOOP_PERIOD_SECONDS);
     SwerveModuleState[] setpointStates = previouSetpoint.moduleStates();
-    // // Calculate module setpoints
-    // speeds = ChassisSpeeds.discretize(speeds,
-    // SubsystemConstants.LOOP_PERIOD_SECONDS);
+    // Calculate module setpoints
+    // speeds = ChassisSpeeds.discretize(speeds, SubsystemConstants.LOOP_PERIOD_SECONDS);
     // SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(speeds);
-    // SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates,
-    // TunerConstants.kSpeedAt12Volts);
+    // SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
 
     // Log unoptimized setpoints and setpoint speeds
     Logger.recordOutput("Swerve/SwerveStates/Setpoints", setpointStates);
@@ -430,12 +428,12 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
-    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 1;
+    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.6;
   }
 
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
-    return (getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS) * 1;
+    return (getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS) * 0.6;
   }
 
   public void enableSlowMode(boolean enabled) {

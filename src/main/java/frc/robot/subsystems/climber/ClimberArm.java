@@ -49,7 +49,7 @@ public class ClimberArm extends SubsystemBase {
       case REAL:
         kG.initDefault(0.0);
         kV.initDefault(0.6);
-        kP.initDefault(0.4);
+        kP.initDefault(0.8);
         break;
       case REPLAY:
         kG.initDefault(0.29);
@@ -106,6 +106,10 @@ public class ClimberArm extends SubsystemBase {
     return pInputs.positionSetpointDegs - pInputs.positionDegs;
   }
 
+  public boolean hasReachedGoal(double goalDegs) {
+    return (Math.abs(pInputs.positionDegs - goalDegs) <= 2);
+  }
+
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
     arm.setPositionSetpointDegs(
@@ -137,6 +141,10 @@ public class ClimberArm extends SubsystemBase {
 
   public Command zero() {
     return new InstantCommand(() -> arm.zeroPosition(), this);
+  }
+
+  public void setVoltage(double volts) {
+    arm.setVoltage(volts);
   }
 
   public Command runVoltsCommand(double volts) {
