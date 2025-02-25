@@ -135,6 +135,7 @@ public class Robot extends LoggedRobot {
     robotContainer.getScoralRollers().stop();
     robotContainer.getLED().setState(LED_STATE.FIRE);
     LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50);
+    LimelightHelpers.SetIMUMode("limelight-reef", 3);
   }
 
   /** This function is called periodically when disabled. */
@@ -148,6 +149,7 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 1);
     autonomousCommand = robotContainer.getAutonomousCommand();
+    LimelightHelpers.SetIMUMode("limelight-reef", 3);
     // robotContainer.Super.getSuperStructureCommand().schedule();
     // robotContainer.Super.checkSpeed();
 
@@ -182,6 +184,8 @@ public class Robot extends LoggedRobot {
     }
     robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
     robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
+
+    LimelightHelpers.SetIMUMode("limelight-reef", 3);
 
     robotContainer
         .getElevator()

@@ -87,7 +87,7 @@ public class VisionIOLimelight implements VisionIO {
     //   LimelightHelpers.setIMUMode(2); // Use internal IMU for MT2 localization
     // }
 
-    LimelightHelpers.SetIMUMode("limelight-reef", 3);
+    // LimelightHelpers.SetIMUMode("limelight-reef", 3);
 
     // Update orientation for MegaTag 2
     orientationPublisher.accept(
