@@ -56,6 +56,8 @@ import frc.robot.constants.SimConstants;
 import frc.robot.constants.SimConstants.Mode;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.vision.ObjectDetection;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
@@ -431,6 +433,15 @@ public class Drive extends SubsystemBase {
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
     return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 1;
+  }
+
+  public double getMaxLinearSpeedMetersPerSec(Elevator elevator) {
+    double baseSpeed = getMaxLinearSpeedMetersPerSec();
+    if (elevator.getElevatorPosition() >= FieldConstants.ReefHeight.L3.height) {
+      return baseSpeed * 0.5;
+    } else {
+      return baseSpeed;
+    }
   }
 
   /** Returns the maximum angular speed in radians per sec. */
