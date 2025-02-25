@@ -22,7 +22,6 @@ import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
-import frc.robot.util.LimelightHelpers;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -87,7 +86,7 @@ public class VisionIOLimelight implements VisionIO {
     //   LimelightHelpers.setIMUMode(2); // Use internal IMU for MT2 localization
     // }
 
-    LimelightHelpers.SetIMUMode("limelight-reef", 3);
+    // LimelightHelpers.SetIMUMode("limelight-reef", 3);
 
     // Update orientation for MegaTag 2
     orientationPublisher.accept(

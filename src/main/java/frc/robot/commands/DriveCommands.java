@@ -132,10 +132,10 @@ public class DriveCommands {
         () -> {
           Logger.recordOutput(
               "Debug Driver Alignment/runningApproachToReef", isRunningApproachToReef);
-          rotationPID.setTolerance(1);
+          rotationPID.setTolerance(0.1);
           rotationPID.enableContinuousInput(-180, 180);
-          sidewaysPID.setTolerance(0.1);
-          forwardsPID.setTolerance(0.1);
+          sidewaysPID.setTolerance(0.01);
+          forwardsPID.setTolerance(0.01);
 
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
