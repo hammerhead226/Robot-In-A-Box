@@ -283,23 +283,7 @@ public class RobotContainer {
     // superStructure.setWantedState(SuperStructureState.SOURCE)),
     // new WaitUntilCommand(() -> superStructure.atGoals())));
 
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    
     // autoChooser.addOption(
     // "Top R3a",
     // AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c-R1b(L3)-S3c-R6a(L3)"));
@@ -358,19 +342,36 @@ public class RobotContainer {
     autos = new SendableChooser<>();
 
     // autos.addOption("AutoTest",
-    AutoBuilder.buildAuto("Bottom-R5a(L4)-S3c-R6a(L4)-F2-R6b(L4)-S2c");
-    autos.addOption("AutoTestTwo", AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
-    autos.addOption(
-        "AutoSourceBottom", AutoBuilder.buildAuto("Bottom-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
-    autos.addOption(
-        "AutoSourceMiddle", AutoBuilder.buildAuto("Middle-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
-    autos.addOption("AutoSourceTop", AutoBuilder.buildAuto("Top-R5a(L4)-F2-R6b(L4)-F2-R6a(L4)"));
-    autos.addOption("AutoTestTop", AutoBuilder.buildAuto("Top-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
-    autos.addOption(
-        "AutoTestMiddle", AutoBuilder.buildAuto("Middle-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
-    autos.addOption(
-        "AutoTestBottom", AutoBuilder.buildAuto("Bottom-R3b(L4)-F1-R2a(L4)-F1-R2b(L4)"));
+    // AutoBuilder.buildAuto("Bottom-R5a(L4)-S3c-R6a(L4)-F2-R6b(L4)-S2c");
+    autos.addOption("BlueLeft", AutoBuilder.buildAuto("BlueLeft"));
+    autos.addOption("BlueLeftPush", AutoBuilder.buildAuto("BlueLeftPush"));
+    autos.addOption("BlueMiddleLeft", AutoBuilder.buildAuto("BlueMiddleLeft"));
+    autos.addOption("BlueMiddleRight", AutoBuilder.buildAuto("BlueMiddleRight"));
+    autos.addOption("BlueRight", AutoBuilder.buildAuto("BlueRight"));
 
+    autos.addOption("BlueLeft", AutoBuilder.buildAuto("BlueLeftL2"));
+    autos.addOption("BlueLeftPush", AutoBuilder.buildAuto("BlueLeftPushL2"));
+    autos.addOption("BlueMiddleLeft", AutoBuilder.buildAuto("BlueMiddleLeftL2"));
+    autos.addOption("BlueMiddleRight", AutoBuilder.buildAuto("BlueMiddleRightL@"));
+    autos.addOption("BlueRight", AutoBuilder.buildAuto("BlueRightL2"));
+
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
+
+    // Set up SysId routines
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // autoChooser.addOption(
     // "Drive Wheel Radius Characterization",
     // DriveCommands.wheelRadiusCharacterization(drive));
