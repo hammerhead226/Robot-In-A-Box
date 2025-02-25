@@ -436,7 +436,7 @@ public class Drive extends SubsystemBase {
   }
 
   public double getMaxLinearSpeedMetersPerSec(Elevator elevator) {
-    double baseSpeed = getMaxLinearSpeedMetersPerSec();
+    double baseSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 1;
     if (elevator.getElevatorPosition() >= FieldConstants.ReefHeight.L3.height) {
       return baseSpeed * 0.5;
     } else {
