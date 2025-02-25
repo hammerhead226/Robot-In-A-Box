@@ -66,7 +66,7 @@ public class ApproachReefPerpendicular extends Command {
             new PathConstraints(1.5, 2.7, 100, 180), // these numbers from last year's code
             null, // The ideal starting state, this is only relevant for pre-planned paths, so can
             // be null for on-the-fly paths.
-            new GoalEndState(0.5, targetPose.getRotation()),
+            new GoalEndState(0.05, targetPose.getRotation()),
             false);
     path.preventFlipping = true;
 

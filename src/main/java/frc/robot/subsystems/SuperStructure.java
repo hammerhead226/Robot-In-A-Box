@@ -154,7 +154,7 @@ public class SuperStructure {
             elevator,
             scoralArm,
             SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES,
-            FieldConstants.ReefHeight.L1.pitch);
+            SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
 
       case L2:
         currentState = SuperStructureState.L2;

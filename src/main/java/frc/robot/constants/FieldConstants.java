@@ -160,7 +160,7 @@ public class FieldConstants {
     L4((72), -30),
     L3(47.625, -35),
     L2(31.875, -35),
-    L1(18, 0);
+    L1(18, 96);
 
     public double height;
     public double pitch;
