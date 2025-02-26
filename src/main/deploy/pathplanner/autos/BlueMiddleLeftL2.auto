@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueMiddleLeftStart"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L2"
+            "pathName": "BlueMiddleLeftL2Start"
           }
         },
         {
@@ -23,15 +17,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "BlueMiddleLeftSecond"
+            "pathName": "BlueMiddleLeftL2Second"
           }
         },
         {
@@ -49,13 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueMiddleLeftThird"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4"
+            "pathName": "BlueMiddleLeftL2Third"
           }
         },
         {
@@ -65,15 +47,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "BlueMiddleLeftFourth"
+            "pathName": "BlueMiddleLeftL2Fourth"
           }
         },
         {
@@ -91,13 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueMiddleLeftFifth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4"
+            "pathName": "BlueMiddleLeftL2Fifth"
           }
         },
         {

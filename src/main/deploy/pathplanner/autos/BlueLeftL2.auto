@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftStart"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L2"
+            "pathName": "BlueLeftL2Start"
           }
         },
         {
@@ -23,15 +17,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftSecond"
+            "pathName": "BlueLeftL2Second"
           }
         },
         {
@@ -49,13 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftThird"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4"
+            "pathName": "BlueLeftL2Third"
           }
         },
         {
@@ -65,15 +47,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftFourth"
+            "pathName": "BlueLeftL2Fourth"
           }
         },
         {
@@ -91,25 +67,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftFifth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4"
+            "pathName": "BlueLeftL2Fifth"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "SCORE_CORAL"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
           }
         }
       ]

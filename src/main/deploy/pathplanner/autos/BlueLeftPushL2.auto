@@ -13,13 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftAfterPush"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L2"
+            "pathName": "BlueLeftAfterPushL2"
           }
         },
         {
@@ -29,21 +23,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftSecond"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SOURCE_INTAKE"
+            "pathName": "BlueLeftL2Second"
           }
         },
         {
@@ -55,13 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftThird"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4"
+            "pathName": "BlueLeftL2Third"
           }
         },
         {
@@ -71,21 +47,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftFourth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SOURCE_INTAKE"
+            "pathName": "BlueLeftL2Fourth"
           }
         },
         {
@@ -97,25 +61,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftFifth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4"
+            "pathName": "BlueLeftL2Fifth"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "SCORE_CORAL"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
           }
         }
       ]

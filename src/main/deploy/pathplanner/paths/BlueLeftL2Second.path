@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.704097123443908,
-        "y": 2.9614095613890004
+        "x": 5.299559075342464,
+        "y": 2.989646246125651
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.4751235036617016,
-        "y": 2.7467022986787395
+        "x": 3.7707472784576628,
+        "y": 1.7727532237858825
       },
       "isLocked": false,
-      "linkedName": "BlueLeft34"
+      "linkedName": "BlueLeft12"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 0.6667594178056276
       },
       "prevControl": {
-        "x": 1.4294843210759913,
-        "y": 0.49148261324725284
+        "x": 3.5667053001565048,
+        "y": 1.7275316508739342
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "SOURCE_INTAKE",
-      "waypointRelativePos": 0.5496183206106869,
+      "waypointRelativePos": 0.55470737913486,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -57,10 +57,10 @@
     "rotation": -38.5
   },
   "reversed": false,
-  "folder": "BlueLeft",
+  "folder": "BlueLeftL2",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": 29.999999999999996
   },
   "useDefaultConstraints": false
 }

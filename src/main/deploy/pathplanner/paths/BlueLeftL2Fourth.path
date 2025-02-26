@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "SOURCE_INTAKE",
-      "waypointRelativePos": 0.5496183206106869,
+      "waypointRelativePos": 0.5470737913486005,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -57,7 +57,7 @@
     "rotation": -38.5
   },
   "reversed": false,
-  "folder": "BlueLeft",
+  "folder": "BlueLeftL2",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -29.999999999999996
