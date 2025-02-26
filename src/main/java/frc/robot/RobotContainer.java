@@ -361,7 +361,7 @@ public class RobotContainer {
             climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 2)));
     NamedCommands.registerCommand(
         "SCORE_CORAL",
-        new SequentialCommandGroup(
+        new SequentialCommandGroup(new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(3)),
             new ScoreCoral(elevator, scoralArm, scoralRollers), new WaitCommand(0.25)));
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
