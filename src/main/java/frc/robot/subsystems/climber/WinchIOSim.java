@@ -35,6 +35,12 @@ public class WinchIOSim implements WinchIO {
   }
 
   @Override
+  public void setVoltage(double volts) {
+    appliedVolts = volts;
+    sim.setInputVoltage(volts);
+  }
+
+  @Override
   public void setVelocityRPM(double velocityRPS, double ffVolts) {
     this.ffVolts = ffVolts;
     this.velocitySetpointRPS = velocityRPS;

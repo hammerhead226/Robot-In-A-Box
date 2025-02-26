@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.GoToStow;
 import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakingCoral;
@@ -93,46 +94,48 @@ public class SuperStructure {
   }
 
   public boolean atGoals() {
-    switch (currentState) {
-      case STOW:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
-            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-      case L1:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
-            && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-      case L2:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
-            && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-      case L3:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES)
-            && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-      case L4:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES)
-            && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG);
-      case SOURCE:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
-            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-      case SCORING_CORAL:
-        // TODO:: UNCOMMENT
-        // return scoralRollers.seesCoral() == CoralState.CURRENT
-        // || scoralRollers.seesCoral() == CoralState.SENSOR;
-        return true;
-      case CLIMB_STAGE_ONE:
-        return climberArm.atGoal(0) && scoralArm.hasReachedGoal(0);
-      case CLIMB_STAGE_TWO:
-        return climberArm.atGoal(60);
-      case HANG:
-        return false;
-      default:
-        return false;
-    }
+    // switch (currentState) {
+    //   case STOW:
+    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
+    //         && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+    //   case L1:
+    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
+    //         && scoralArm.hasReachedGoal(
+    //             SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+    //   case L2:
+    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
+    //         && scoralArm.hasReachedGoal(
+    //             SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+    //   case L3:
+    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES)
+    //         && scoralArm.hasReachedGoal(
+    //             SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+    //   case L4:
+    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES)
+    //         && scoralArm.hasReachedGoal(
+    //             SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG);
+    //   case SOURCE:
+    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
+    //         && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+    //   case SCORING_CORAL:
+    //     // TODO:: UNCOMMENT
+    //     // return scoralRollers.seesCoral() == CoralState.CURRENT
+    //     // || scoralRollers.seesCoral() == CoralState.SENSOR;
+    //     return true;
+    //   case CLIMB_STAGE_ONE:
+    //     // return climberArm.atGoal(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG) && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+    //     return true;
+    //   case CLIMB_STAGE_TWO:
+    //     // return climberArm.atGoal(60);
+    //     return true;
+    //   case HANG:
+    //     return false;
+    //   default:
+    //     return false;
+    // }
 
     // TODO:: COMMENT
-    // return true;
+    return true;
   }
 
   public SequentialCommandGroup getSuperStructureCommand() {
@@ -233,11 +236,11 @@ public class SuperStructure {
         currentState = SuperStructureState.CLIMB_STAGE_TWO;
         return new SequentialCommandGroup(
             new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
-            new InstantCommand(() -> climberArm.setVoltage(-3)));
+            new InstantCommand(() -> climberArm.setVoltage(-3)), new WaitUntilCommand(() -> climberArm.hasReachedGoal(60)), new InstantCommand(() -> climberArm.armStop()));
       case CLIMB_STAGE_THREE:
         currentState = SuperStructureState.CLIMB_STAGE_THREE;
         return new SequentialCommandGroup(
-            new InstantCommand(() -> climberArm.armStop()), winch.runVoltsCommmand(12));
+            new InstantCommand(() -> climberArm.armStop()), winch.runVoltsCommmand(12), new WaitUntilCommand(() -> climberArm.hasReachedGoal(100)), winch.stopWinch());
       case HANG:
         currentState = SuperStructureState.HANG;
         led.setState(LED_STATE.BLUE);

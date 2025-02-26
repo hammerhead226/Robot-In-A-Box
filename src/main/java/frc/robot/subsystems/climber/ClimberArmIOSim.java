@@ -70,6 +70,11 @@ public class ClimberArmIOSim implements ClimberArmIO {
 
     sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
   }
+  @Override
+  public void setVoltage(double volts) {
+    appliedVolts = volts;
+    sim.setInputVoltage(volts);
+  }
 
   @Override
   public void setPositionSetpointDegs(double positionDegs, double ffVolts) {
