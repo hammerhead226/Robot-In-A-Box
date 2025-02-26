@@ -93,46 +93,46 @@ public class SuperStructure {
   }
 
   public boolean atGoals() {
-    // switch (currentState) {
-    //   case STOW:
-    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
-    //         && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-    //   case L1:
-    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
-    //         && scoralArm.hasReachedGoal(
-    //             SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-    //   case L2:
-    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
-    //         && scoralArm.hasReachedGoal(
-    //             SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-    //   case L3:
-    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES)
-    //         && scoralArm.hasReachedGoal(
-    //             SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-    //   case L4:
-    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES)
-    //         && scoralArm.hasReachedGoal(
-    //             SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG);
-    //   case SOURCE:
-    //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
-    //         && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-    //   case SCORING_CORAL:
-    //     // TODO:: UNCOMMENT
-    //     // return scoralRollers.seesCoral() == CoralState.CURRENT
-    //     // || scoralRollers.seesCoral() == CoralState.SENSOR;
-    //     return true;
-    //   case CLIMB_STAGE_ONE:
-    //     return climberArm.atGoal(0) && scoralArm.hasReachedGoal(0);
-    //   case CLIMB_STAGE_TWO:
-    //     return climberArm.atGoal(60);
-    //   case HANG:
-    //     return false;
-    //   default:
-    //     return false;
-    // }
+    switch (currentState) {
+      case STOW:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
+            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+      case L1:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
+            && scoralArm.hasReachedGoal(
+                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+      case L2:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
+            && scoralArm.hasReachedGoal(
+                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+      case L3:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES)
+            && scoralArm.hasReachedGoal(
+                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+      case L4:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES)
+            && scoralArm.hasReachedGoal(
+                SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG);
+      case SOURCE:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
+            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+      case SCORING_CORAL:
+        // TODO:: UNCOMMENT
+        // return scoralRollers.seesCoral() == CoralState.CURRENT
+        // || scoralRollers.seesCoral() == CoralState.SENSOR;
+        return true;
+      case CLIMB_STAGE_ONE:
+        return climberArm.atGoal(0) && scoralArm.hasReachedGoal(0);
+      case CLIMB_STAGE_TWO:
+        return climberArm.atGoal(60);
+      case HANG:
+        return false;
+      default:
+        return false;
+    }
 
     // TODO:: COMMENT
-    return true;
+    // return true;
   }
 
   public SequentialCommandGroup getSuperStructureCommand() {

@@ -178,15 +178,15 @@ public class DriveCommands {
 
             if (reefLeftSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterLeft();
-              targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
+              targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
               // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d());
             } else if (reefRightSupplier.getAsBoolean()) {
               targetPose = drive.getNearestCenterRight();
-              targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
+              targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
               // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
             } else {
               targetPose = drive.getNearestCenter();
-              targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(Math.PI));
+              targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
               // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
             }
             Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef");

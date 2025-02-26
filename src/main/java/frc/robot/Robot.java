@@ -156,7 +156,6 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
-
     LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 1);
     LimelightHelpers.SetIMUMode("limelight-reef", 1);
 
@@ -177,6 +176,13 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    Logger.recordOutput(
+        "Debug Super Structure/Wanted State", robotContainer.getSuperStructure().getWantedState());
+    Logger.recordOutput(
+        "Debug Super Structure/Current State",
+        robotContainer.getSuperStructure().getCurrentState());
+    Logger.recordOutput(
+        "Debug Super Structure/At State Goals", robotContainer.getSuperStructure().atGoals());
     // robotContainer.Super.getSuperStructureCommand().schedule();
     // robotContainer.Super.checkSpeed();
 

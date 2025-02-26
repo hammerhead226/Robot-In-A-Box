@@ -21,7 +21,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.ReinitializingCommand;
+import frc.robot.commands.ScoreCoral;
+import frc.robot.commands.ToReefHeight;
 import frc.robot.commands.ZeroElevatorCANRange;
 import frc.robot.constants.RobotMap;
 import frc.robot.constants.SimConstants;
@@ -300,9 +303,10 @@ public class RobotContainer {
             .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "L2",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2))
-            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
-            .andThen(superStructure.getSuperStructureCommand()));
+        new SequentialCommandGroup(
+            new WaitUntilCommand(() -> superStructure.atGoals()),
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)),
+            superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "L3",
         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3))
@@ -310,9 +314,15 @@ public class RobotContainer {
             .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "L4",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4))
-            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
-            .andThen(superStructure.getSuperStructureCommand()));
+        new ToReefHeight(
+            elevator,
+            scoralArm,
+            SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES,
+            SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG));
+    // new SequentialCommandGroup(
+    //     new WaitUntilCommand(() -> superStructure.atGoals()),
+    //     new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)),
+    //     superStructure.getSuperStructureCommand()));
 
     NamedCommands.registerCommand(
         "SOURCE_INTAKE",
@@ -330,12 +340,7 @@ public class RobotContainer {
             .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
             .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
-        "SCORE_CORAL",
-        new SequentialCommandGroup(
-            new InstantCommand(
-                () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL)),
-            new WaitUntilCommand(() -> superStructure.atGoals()),
-            superStructure.getSuperStructureCommand()));
+        "SCORE_CORAL", new ScoreCoral(elevator, scoralArm, scoralRollers));
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
     autos = new SendableChooser<>();
@@ -348,11 +353,11 @@ public class RobotContainer {
     autos.addOption("BlueMiddleRight", AutoBuilder.buildAuto("BlueMiddleRight"));
     autos.addOption("BlueRight", AutoBuilder.buildAuto("BlueRight"));
 
-    autos.addOption("BlueLeft", AutoBuilder.buildAuto("BlueLeftL2"));
-    autos.addOption("BlueLeftPush", AutoBuilder.buildAuto("BlueLeftPushL2"));
-    autos.addOption("BlueMiddleLeft", AutoBuilder.buildAuto("BlueMiddleLeftL2"));
-    autos.addOption("BlueMiddleRight", AutoBuilder.buildAuto("BlueMiddleRightL@"));
-    autos.addOption("BlueRight", AutoBuilder.buildAuto("BlueRightL2"));
+    autos.addOption("BlueLeftL2", AutoBuilder.buildAuto("BlueLeftL2"));
+    autos.addOption("BlueLeftPushL2", AutoBuilder.buildAuto("BlueLeftPushL2"));
+    autos.addOption("BlueMiddleLeftL2", AutoBuilder.buildAuto("BlueMiddleLeftL2"));
+    autos.addOption("BlueMiddleRightL2", AutoBuilder.buildAuto("BlueMiddleRightL2"));
+    autos.addOption("BlueRightL2", AutoBuilder.buildAuto("BlueRightL2"));
 
     autos.addOption("test auto", AutoBuilder.buildAuto("test auto"));
     autos.addOption("commands auton", AutoBuilder.buildAuto("commands auton"));
@@ -664,10 +669,11 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
 
-    manipController
-        .povLeft()
-        .onTrue(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
+    // manipController
+    //     .povLeft()
+    //     .onTrue(
+    //         new InstantCommand(() ->
+    // superStructure.setWantedState(SuperStructureState.PROCESSOR)));
 
     manipController
         .start()
@@ -680,6 +686,9 @@ public class RobotContainer {
                     new ZeroElevatorCANRange(elevator)),
                 new InstantCommand(),
                 () -> climberArm.isAt(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 3)));
+
+    manipController.povLeft().onTrue(new IntakeAlgae(elevator, scoralArm, scoralRollers, 9));
+    manipController.povRight().onTrue(new IntakeAlgae(elevator, scoralArm, scoralRollers, 17));
   }
 
   // private void testControls() {

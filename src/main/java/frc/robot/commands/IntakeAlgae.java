@@ -33,6 +33,6 @@ public class IntakeAlgae extends SequentialCommandGroup {
 
     addCommands(
         new ParallelCommandGroup(
-            elevator.setElevatorTarget(height - 1, 0.1), scoralArm.setArmTarget(30, 2)));
+            elevator.setElevatorTarget(height, 3), scoralArm.setArmTarget(30, 2)));
   }
 }
