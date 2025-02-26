@@ -4,10 +4,11 @@
   "holonomicMode": true,
   "pathFolders": [
     "BlueLeft",
+    "BlueLeftPush",
     "BlueMiddleLeft",
     "BlueMiddleRight",
     "BlueRight",
-    "BlueLeftPush"
+    "Tests"
   ],
   "autoFolders": [
     "L2 Variants"

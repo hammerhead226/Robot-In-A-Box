@@ -99,7 +99,8 @@ public class SuperStructure {
     //         && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
     //   case L1:
     //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
-    //         && scoralArm.hasReachedGoal(FieldConstants.ReefHeight.L1.pitch);
+    //         && scoralArm.hasReachedGoal(
+    //             SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
     //   case L2:
     //     return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
     //         && scoralArm.hasReachedGoal(
@@ -117,9 +118,9 @@ public class SuperStructure {
     //         && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
     //   case SCORING_CORAL:
     //     // TODO:: UNCOMMENT
-    //     return scoralRollers.seesCoral() == CoralState.CURRENT
-    //         || scoralRollers.seesCoral() == CoralState.SENSOR;
-    //     // return true;
+    //     // return scoralRollers.seesCoral() == CoralState.CURRENT
+    //     // || scoralRollers.seesCoral() == CoralState.SENSOR;
+    //     return true;
     //   case CLIMB_STAGE_ONE:
     //     return climberArm.atGoal(0) && scoralArm.hasReachedGoal(0);
     //   case CLIMB_STAGE_TWO:

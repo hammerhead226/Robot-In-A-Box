@@ -146,9 +146,9 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 1);
+
     autonomousCommand = robotContainer.getAutonomousCommand();
-    LimelightHelpers.SetIMUMode("limelight-reef", 1);
+
     // robotContainer.Super.getSuperStructureCommand().schedule();
     // robotContainer.Super.checkSpeed();
 
@@ -156,6 +156,22 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
+
+    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 1);
+    LimelightHelpers.SetIMUMode("limelight-reef", 1);
+
+    robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
+    robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
+
+    robotContainer
+        .getElevator()
+        .setElevatorCurrent(robotContainer.getElevator().getElevatorPosition());
+    robotContainer
+        .getElevator()
+        .setElevatorGoal(robotContainer.getElevator().getElevatorPosition());
+
+    robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
+    robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
   }
 
   /** This function is called periodically during autonomous. */

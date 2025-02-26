@@ -283,7 +283,6 @@ public class RobotContainer {
     // superStructure.setWantedState(SuperStructureState.SOURCE)),
     // new WaitUntilCommand(() -> superStructure.atGoals())));
 
-    
     // autoChooser.addOption(
     // "Top R3a",
     // AutoBuilder.buildAuto("R3a(L3)-S1c-R2a(L3)-S2c-R1b(L3)-S3c-R6a(L3)"));
@@ -354,6 +353,9 @@ public class RobotContainer {
     autos.addOption("BlueMiddleLeft", AutoBuilder.buildAuto("BlueMiddleLeftL2"));
     autos.addOption("BlueMiddleRight", AutoBuilder.buildAuto("BlueMiddleRightL@"));
     autos.addOption("BlueRight", AutoBuilder.buildAuto("BlueRightL2"));
+
+    autos.addOption("test auto", AutoBuilder.buildAuto("test auto"));
+    autos.addOption("commands auton", AutoBuilder.buildAuto("commands auton"));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
 
@@ -569,30 +571,30 @@ public class RobotContainer {
                         led))
                 .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
 
-    // driveController
-    //     .a()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
-
     driveController
         .a()
         .onTrue(
-            new SequentialCommandGroup(
-                scoralArm.setArmTarget(56, 2),
-                climberArm.setArmTarget(
-                    SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2)));
-    driveController
-        .b()
-        .onTrue(
-            new SequentialCommandGroup(
-                new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
-                new InstantCommand(() -> climberArm.setVoltage(-3))));
-    driveController
-        .x()
-        .onTrue(
-            new SequentialCommandGroup(
-                new InstantCommand(() -> climberArm.armStop()), winch.runVoltsCommmand(-4)));
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
+
+    // driveController
+    //     .a()
+    //     .onTrue(
+    //         new SequentialCommandGroup(
+    //             scoralArm.setArmTarget(56, 2),
+    //             climberArm.setArmTarget(
+    //                 SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2)));
+    // driveController
+    //     .b()
+    //     .onTrue(
+    //         new SequentialCommandGroup(
+    //             new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
+    //             new InstantCommand(() -> climberArm.setVoltage(-3))));
+    // driveController
+    //     .x()
+    //     .onTrue(
+    //         new SequentialCommandGroup(
+    //             new InstantCommand(() -> climberArm.armStop()), winch.runVoltsCommmand(-4)));
 
     // driveController
     //     .x()
