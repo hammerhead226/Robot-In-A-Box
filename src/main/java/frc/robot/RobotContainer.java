@@ -15,13 +15,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.GoToStow;
 import frc.robot.commands.IntakeAlgae;
+import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.ToReefHeight;
@@ -31,6 +34,7 @@ import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.SuperStructure;
@@ -298,27 +302,40 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "L1",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1))
-            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
-            .andThen(superStructure.getSuperStructureCommand()));
+        new SequentialCommandGroup(
+            new InstantCommand(() -> led.setState(LED_STATE.RED)),
+            new ToReefHeight(
+                elevator,
+                scoralArm,
+                SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES,
+                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG)));
     NamedCommands.registerCommand(
         "L2",
         new SequentialCommandGroup(
-            new WaitUntilCommand(() -> superStructure.atGoals()),
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)),
-            superStructure.getSuperStructureCommand()));
+            new InstantCommand(() -> led.setState(LED_STATE.RED)),
+            new ToReefHeight(
+                elevator,
+                scoralArm,
+                SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES,
+                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG)));
     NamedCommands.registerCommand(
         "L3",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3))
-            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
-            .andThen(superStructure.getSuperStructureCommand()));
+        new SequentialCommandGroup(
+            new InstantCommand(() -> led.setState(LED_STATE.RED)),
+            new ToReefHeight(
+                elevator,
+                scoralArm,
+                SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES,
+                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG)));
     NamedCommands.registerCommand(
         "L4",
-        new ToReefHeight(
-            elevator,
-            scoralArm,
-            SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES,
-            SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG));
+        new SequentialCommandGroup(
+            new InstantCommand(() -> led.setState(LED_STATE.RED)),
+            new ToReefHeight(
+                elevator,
+                scoralArm,
+                SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES,
+                SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG)));
     // new SequentialCommandGroup(
     //     new WaitUntilCommand(() -> superStructure.atGoals()),
     //     new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)),
@@ -326,9 +343,11 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "SOURCE_INTAKE",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE))
-            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
-            .andThen(superStructure.getSuperStructureCommand()));
+        new SequentialCommandGroup(
+            new InstantCommand(() -> led.setState(LED_STATE.GREY)),
+            new IntakingCoral(scoralRollers),
+            new InstantCommand(() -> led.setState(LED_STATE.BLUE))));
+
     NamedCommands.registerCommand(
         "ALGAE_INTAKE",
         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE))
@@ -336,11 +355,14 @@ public class RobotContainer {
             .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "STOW",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
-            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
-            .andThen(superStructure.getSuperStructureCommand()));
+        new SequentialCommandGroup(
+            new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
+            new GoToStow(elevator, scoralArm, scoralRollers),
+            climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 2)));
     NamedCommands.registerCommand(
-        "SCORE_CORAL", new ScoreCoral(elevator, scoralArm, scoralRollers));
+        "SCORE_CORAL",
+        new SequentialCommandGroup(
+            new ScoreCoral(elevator, scoralArm, scoralRollers), new WaitCommand(0.25)));
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
     autos = new SendableChooser<>();

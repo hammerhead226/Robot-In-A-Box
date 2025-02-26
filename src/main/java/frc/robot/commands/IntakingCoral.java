@@ -24,6 +24,7 @@ public class IntakingCoral extends SequentialCommandGroup {
     this.scoralRollers = m_scoralRollers;
     addCommands(
         scoralRollers.runVoltsCommmand(1),
+        // new WaitCommand(2),
         new WaitUntilCommand(
             () ->
                 scoralRollers.seesCoral() == CoralState.CURRENT

@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.453,
-        "y": 0.802
+        "x": 1.62825,
+        "y": 0.6807499999999993
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2048553117380114,
-        "y": 0.7715991169970271
+        "x": 1.3801053117380113,
+        "y": 0.6503491169970264
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "BlueMiddleLeftSource"
     },
     {
       "anchor": {
@@ -25,13 +25,25 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "BlueMiddleLeft34"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "L4",
+      "waypointRelativePos": 0.6183206106870232,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "L4"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
