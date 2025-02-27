@@ -9,19 +9,19 @@
       "prevControl": null,
       "nextControl": {
         "x": 3.5894802949604454,
-        "y": 2.24605532084586
+        "y": 2.2460553208458593
       },
       "isLocked": false,
       "linkedName": "BlueLeftSource"
     },
     {
       "anchor": {
-        "x": 3.9990798417393876,
-        "y": 2.7856265561565805
+        "x": 3.99,
+        "y": 2.83
       },
       "prevControl": {
-        "x": 3.0791340373788656,
-        "y": 2.0870220060363818
+        "x": 3.0701657530277497,
+        "y": 2.1314801662823073
       },
       "nextControl": null,
       "isLocked": false,
