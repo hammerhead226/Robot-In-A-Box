@@ -644,31 +644,6 @@ public class RobotContainer {
 
     driveController.x().onFalse(winch.stopWinch());
 
-    driveController.povUp().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE)));
-    // driveController
-    //     .x()
-    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
-    // driveController
-    //     .y()
-    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
-    // driveController
-    //     .povUp()
-    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
-    // driveController
-    //     .b()
-    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
-
-    // driveController
-    //     .povUp()
-    //     .onTrue(
-    //         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
-
-    // driveController
-    //     .povLeft()
-    //     .onTrue(
-    //         new InstantCommand(() ->
-    // superStructure.setWantedState(SuperStructureState.PROCESSOR)));
-
     driveController
         .povDown()
         .onTrue(
@@ -719,6 +694,10 @@ public class RobotContainer {
             new InstantCommand(
                 () -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE)));
 
+    manipController.povRight().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.BARGE_EXTEND)));
+
+    manipController.leftBumper().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
+
     manipController
         .start()
         .onTrue(
@@ -730,9 +709,6 @@ public class RobotContainer {
                     new ZeroElevatorCANRange(elevator)),
                 new InstantCommand(),
                 () -> climberArm.isAt(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 3)));
-
-    // manipController.povLeft().onTrue(new IntakeAlgae(elevator, scoralArm, scoralRollers, 9));
-    // manipController.povRight().onTrue(new IntakeAlgae(elevator, scoralArm, scoralRollers, 17));
   }
 
   // private void testControls() {
