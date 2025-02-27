@@ -89,7 +89,7 @@ public class ApproachReefPerpendicular extends Command {
   @Override
   public void end(boolean interrupted) {
     pathCommand.cancel();
-    superStructure.advanceWantedState();
+    superStructure.nextState();
   }
 
   // Returns true when the command should end.

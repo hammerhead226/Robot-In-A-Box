@@ -442,11 +442,11 @@ public class RobotContainer {
                 reefAlignTrigger.getAsBoolean()
                     && (!drive.isNearReef() && drive.isAtReefSide() && drive.isAtReefRotation()));
 
-    keepClimbingTrigger =
-        new Trigger(
-            () ->
-                superStructure.getCurrentState() == SuperStructureState.CLIMB_STAGE_ONE
-                    && !driveController.leftBumper().getAsBoolean());
+    // keepClimbingTrigger =
+    //     new Trigger(
+    //         () ->
+    //             superStructure.getCurrentState() == SuperStructureState.CLIMB_STAGE_ONE
+    //                 && !driveController.leftBumper().getAsBoolean());
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     configureButtonBindings();
     // test();
@@ -606,7 +606,7 @@ public class RobotContainer {
                         scoralArm,
                         scoralRollers,
                         led))
-                .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
+                .andThen(new InstantCommand(() -> superStructure.nextState())));
 
     // driveController
     //     .a()
@@ -644,6 +644,7 @@ public class RobotContainer {
 
     driveController.x().onFalse(winch.stopWinch());
 
+    driveController.povUp().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE)));
     // driveController
     //     .x()
     //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
