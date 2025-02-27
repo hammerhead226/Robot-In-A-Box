@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -50,9 +51,9 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
 
     coderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     // OFFSETS IN ROTATIONS
-    coderConfig.MagnetSensor.withMagnetOffset(0);
+    // coderConfig.MagnetSensor.withMagnetOffset(0);
 
-    // config.Feedback.FeedbackRemoteSensorID = canCoderID;
+    config.Feedback.FeedbackRemoteSensorID = canCoderID;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     // config.Feedback.SensorToMechanismRatio = 1.0;
     // config.Feedback.RotorToSensorRatio = CLIMBER_ARM_GEAR_RATIO;
@@ -118,8 +119,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
 
   @Override
   public void setVoltage(double volts) {
-
-    leader.setVoltage(volts);
+    leader.setControl(new VoltageOut(volts));
   }
 
   @Override

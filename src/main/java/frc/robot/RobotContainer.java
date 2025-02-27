@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ApproachReefPerpendicular;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.GoToStow;
-import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.ScoreCoral;
@@ -113,6 +112,7 @@ public class RobotContainer {
   private Trigger slowModeTrigger;
   private Trigger reefAlignTrigger;
   private Trigger approachPerpendicularTrigger;
+  private Trigger keepClimbingTrigger;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -361,8 +361,10 @@ public class RobotContainer {
             climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 2)));
     NamedCommands.registerCommand(
         "SCORE_CORAL",
-        new SequentialCommandGroup(new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(3)),
-            new ScoreCoral(elevator, scoralArm, scoralRollers), new WaitCommand(0.25)));
+        new SequentialCommandGroup(
+            new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(3)),
+            new ScoreCoral(elevator, scoralArm, scoralRollers),
+            new WaitCommand(0.25)));
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
     autos = new SendableChooser<>();
@@ -436,7 +438,15 @@ public class RobotContainer {
                     || driveController.rightTrigger().getAsBoolean());
     approachPerpendicularTrigger =
         new Trigger(
-            () -> reefAlignTrigger.getAsBoolean() && (!drive.isNearReef() && drive.isAtReefSide()));
+            () ->
+                reefAlignTrigger.getAsBoolean()
+                    && (!drive.isNearReef() && drive.isAtReefSide() && drive.isAtReefRotation()));
+
+    keepClimbingTrigger =
+        new Trigger(
+            () ->
+                superStructure.getCurrentState() == SuperStructureState.CLIMB_STAGE_ONE
+                    && !driveController.leftBumper().getAsBoolean());
     // speedModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     configureButtonBindings();
     // test();
@@ -583,7 +593,7 @@ public class RobotContainer {
     //         new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
     //         new InstantCommand(),
     //         () -> (!drive.isNearReef() && drive.isAtReefSide())));
-
+    // keepClimbingTrigger.onTrue(new InstantCommand(() -> climberArm.armStop()));
     driveController
         .rightBumper()
         .onTrue(
@@ -598,30 +608,41 @@ public class RobotContainer {
                         led))
                 .andThen(new InstantCommand(() -> superStructure.advanceWantedState())));
 
-    driveController
-        .a()
-        .onTrue(
-            new InstantCommand(
-                () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
-
     // driveController
     //     .a()
     //     .onTrue(
-    //         new SequentialCommandGroup(
-    //             scoralArm.setArmTarget(56, 2),
-    //             climberArm.setArmTarget(
-    //                 SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2)));
-    // driveController
-    //     .b()
-    //     .onTrue(
-    //         new SequentialCommandGroup(
-    //             new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
-    //             new InstantCommand(() -> climberArm.setVoltage(-3))));
-    // driveController
-    //     .x()
-    //     .onTrue(
-    //         new SequentialCommandGroup(
-    //             new InstantCommand(() -> climberArm.armStop()), winch.runVoltsCommmand(-4)));
+    //         new InstantCommand(
+    //             () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
+
+    driveController
+        .a()
+        .whileTrue(
+            new SequentialCommandGroup(
+                scoralArm.setArmTarget(29, 2),
+                climberArm.setArmTarget(
+                    SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2)));
+    // driveController.a().onTrue(new ClimbCommands(scoralArm, climberArm, winch, scoralRollers));
+
+    driveController
+        .b()
+        .onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
+                // climberArm.setArmTarget(60, 2),
+                new InstantCommand(() -> climberArm.setVoltage(-1)),
+                new WaitUntilCommand(() -> climberArm.getArmPositionDegs() >= 60),
+                new InstantCommand(() -> climberArm.armStop())));
+    driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
+    driveController
+        .x()
+        .onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> climberArm.armStop()),
+                winch.runVoltsCommmand(-4),
+                new WaitUntilCommand(() -> climberArm.hasReachedGoal(-100)),
+                winch.stopWinch()));
+
+    driveController.x().onFalse(winch.stopWinch());
 
     // driveController
     //     .x()
@@ -691,11 +712,11 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
 
-    // manipController
-    //     .povLeft()
-    //     .onTrue(
-    //         new InstantCommand(() ->
-    // superStructure.setWantedState(SuperStructureState.PROCESSOR)));
+    manipController
+        .povLeft()
+        .onTrue(
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE)));
 
     manipController
         .start()
@@ -709,8 +730,8 @@ public class RobotContainer {
                 new InstantCommand(),
                 () -> climberArm.isAt(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 3)));
 
-    manipController.povLeft().onTrue(new IntakeAlgae(elevator, scoralArm, scoralRollers, 9));
-    manipController.povRight().onTrue(new IntakeAlgae(elevator, scoralArm, scoralRollers, 17));
+    // manipController.povLeft().onTrue(new IntakeAlgae(elevator, scoralArm, scoralRollers, 9));
+    // manipController.povRight().onTrue(new IntakeAlgae(elevator, scoralArm, scoralRollers, 17));
   }
 
   // private void testControls() {

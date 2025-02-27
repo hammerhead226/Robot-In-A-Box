@@ -189,6 +189,10 @@ public class DriveCommands {
               targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
               // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
             }
+            targetPose =
+                new Pose2d(
+                    targetPose.getTranslation(),
+                    targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
             Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef");
 
           } else if (angleAssistSupplier.getAsBoolean()) {

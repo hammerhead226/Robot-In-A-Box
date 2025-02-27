@@ -48,6 +48,11 @@ public class ApproachReefPerpendicular extends Command {
                 SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
                 SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
             Rotation2d.kZero);
+
+    targetPose =
+        new Pose2d(
+            targetPose.getTranslation(),
+            targetPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90)));
     // new Pose2d(
     //     drive.getNearestSide().getTranslation().minus(drive.getOffset()),
     //     drive.getNearestSide().getRotation());

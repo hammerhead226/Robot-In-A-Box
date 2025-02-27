@@ -22,6 +22,7 @@ public class ScoralArmIOSim implements ArmIO {
   private boolean simulateGravity = true;
   private double startingAngleRads = 0.0;
 
+  private boolean closedLoop = true;
   private final DCMotor armGearbox = DCMotor.getKrakenX60Foc(gearBoxMotorCount);
   private final SingleJointedArmSim sim =
       new SingleJointedArmSim(
@@ -47,12 +48,13 @@ public class ScoralArmIOSim implements ArmIO {
   @Override
   public void updateInputs(ArmIOInputs inputs) {
     positionSetpointRads = pid.getSetpoint();
-
-    appliedVolts =
-        MathUtil.clamp(
-            pid.calculate(sim.getAngleRads(), positionSetpointRads),
-            clampedValueLowVolts,
-            clampedValueHighVolts);
+    if (closedLoop) {
+      appliedVolts =
+          MathUtil.clamp(
+              pid.calculate(sim.getAngleRads(), positionSetpointRads),
+              clampedValueLowVolts,
+              clampedValueHighVolts);
+    }
 
     sim.setInputVoltage(appliedVolts);
 
@@ -70,7 +72,15 @@ public class ScoralArmIOSim implements ArmIO {
   }
 
   @Override
+  public void setVoltage(double volts) {
+    closedLoop = false;
+    appliedVolts = volts;
+    sim.setInputVoltage(volts);
+  }
+
+  @Override
   public void setPositionSetpointDegs(double positionDegs, double ffVolts) {
+    closedLoop = true;
     appliedVolts = ffVolts;
     pid.setSetpoint(Math.toRadians(positionDegs));
   }

@@ -10,7 +10,6 @@ import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.ScoringProccessorSequential;
 import frc.robot.commands.ToReefHeight;
-import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
@@ -122,8 +121,11 @@ public class SuperStructure {
     //     // return scoralRollers.seesCoral() == CoralState.CURRENT
     //     // || scoralRollers.seesCoral() == CoralState.SENSOR;
     //     return true;
+    //   case INTAKE_ALGAE:
+    //     return true;
     //   case CLIMB_STAGE_ONE:
-    //     // return climberArm.atGoal(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG) && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+    //     // return climberArm.atGoal(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG) &&
+    //     //  scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
     //     return true;
     //   case CLIMB_STAGE_TWO:
     //     // return climberArm.atGoal(60);
@@ -150,13 +152,10 @@ public class SuperStructure {
                 climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 2));
 
       case INTAKE_ALGAE:
-        double height =
-            drive.getNearestParition(6) % 2 == 0
-                ? FieldConstants.ReefHeight.L4.height
-                : FieldConstants.ReefHeight.L4.height;
+        // double height = drive.getNearestParition(6) % 2 == 0 ? 9 : 17;
 
         currentState = SuperStructureState.INTAKE_ALGAE;
-        return new IntakeAlgae(elevator, scoralArm, scoralRollers, height);
+        return new IntakeAlgae(elevator, scoralArm, scoralRollers, 1);
 
       case L1:
         currentState = SuperStructureState.L1;
@@ -236,11 +235,17 @@ public class SuperStructure {
         currentState = SuperStructureState.CLIMB_STAGE_TWO;
         return new SequentialCommandGroup(
             new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
-            new InstantCommand(() -> climberArm.setVoltage(-3)), new WaitUntilCommand(() -> climberArm.hasReachedGoal(60)), new InstantCommand(() -> climberArm.armStop()));
+            // climberArm.setArmTarget(60, 2),
+            new InstantCommand(() -> climberArm.setVoltage(-1)),
+            new WaitUntilCommand(() -> climberArm.getArmPositionDegs() >= 60),
+            new InstantCommand(() -> climberArm.armStop()));
       case CLIMB_STAGE_THREE:
         currentState = SuperStructureState.CLIMB_STAGE_THREE;
         return new SequentialCommandGroup(
-            new InstantCommand(() -> climberArm.armStop()), winch.runVoltsCommmand(12), new WaitUntilCommand(() -> climberArm.hasReachedGoal(100)), winch.stopWinch());
+            new InstantCommand(() -> climberArm.armStop()),
+            winch.runVoltsCommmand(-5),
+            new WaitUntilCommand(() -> climberArm.hasReachedGoal(100)),
+            winch.stopWinch());
       case HANG:
         currentState = SuperStructureState.HANG;
         led.setState(LED_STATE.BLUE);
@@ -264,8 +269,11 @@ public class SuperStructure {
       case L1, L2, L3, L4:
         setWantedState(SuperStructureState.SCORING_CORAL);
         break;
-      case SCORING_CORAL, SOURCE, PROCESSOR, INTAKE_ALGAE:
+      case SCORING_CORAL, SOURCE, PROCESSOR:
         setWantedState(SuperStructureState.STOW);
+        break;
+      case INTAKE_ALGAE:
+        setWantedState(SuperStructureState.PROCESSOR);
         break;
       case CLIMB_STAGE_ONE:
         setWantedState(SuperStructureState.CLIMB_STAGE_TWO);

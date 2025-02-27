@@ -24,6 +24,8 @@ public class ClimberArmIOSim implements ClimberArmIO {
   private boolean simulateGravity = true;
   private double startingAngleRads = 0.0;
 
+  private boolean closedLoop = true;
+
   private final DCMotor armGearbox = DCMotor.getFalcon500(gearBoxMotorCount);
   private final SingleJointedArmSim sim =
       new SingleJointedArmSim(
@@ -49,15 +51,15 @@ public class ClimberArmIOSim implements ClimberArmIO {
   @Override
   public void updateInputs(ClimberArmIOInputs inputs) {
     positionSetpointRads = pid.getSetpoint();
+    if (closedLoop) {
+      appliedVolts =
+          MathUtil.clamp(
+              pid.calculate(sim.getAngleRads(), positionSetpointRads),
+              clampedValueLowVolts,
+              clampedValueHighVolts);
 
-    appliedVolts =
-        MathUtil.clamp(
-            pid.calculate(sim.getAngleRads(), positionSetpointRads),
-            clampedValueLowVolts,
-            clampedValueHighVolts);
-
-    sim.setInputVoltage(appliedVolts);
-
+      sim.setInputVoltage(appliedVolts);
+    }
     positionRads = sim.getAngleRads();
     velocityRadsPerSec = sim.getVelocityRadPerSec();
     currentAmps = sim.getCurrentDrawAmps();
@@ -70,14 +72,17 @@ public class ClimberArmIOSim implements ClimberArmIO {
 
     sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
   }
+
   @Override
   public void setVoltage(double volts) {
+    closedLoop = false;
     appliedVolts = volts;
     sim.setInputVoltage(volts);
   }
 
   @Override
   public void setPositionSetpointDegs(double positionDegs, double ffVolts) {
+    closedLoop = true;
     appliedVolts = ffVolts;
     pid.setSetpoint(Math.toRadians(positionDegs));
   }

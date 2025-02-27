@@ -61,8 +61,8 @@ public final class SubsystemConstants {
     public static final double DEFAULT_THRESHOLD = 0.1;
     public static final double ARM_GEAR_RATIO = 1;
 
-    public static final double STOW_SETPOINT_DEG = 90;
-    public static final double DEPLOY_SETPOINT_DEG = 0;
+    public static final double STOW_SETPOINT_DEG = 100;
+    public static final double DEPLOY_SETPOINT_DEG = -20;
   }
 
   public static class ScoralArmConstants {

@@ -4,9 +4,11 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.drive.Drive;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.subsystems.scoral.ScoralRollers;
@@ -20,7 +22,6 @@ public class IntakeAlgae extends SequentialCommandGroup {
 
   private final ScoralRollers scoralRollers;
   private final Elevator elevator;
-  private Drive drive;
 
   public IntakeAlgae(
       Elevator m_elevator, ScoralArm m_scoralArm, ScoralRollers m_scoralRollers, double height) {
@@ -32,7 +33,16 @@ public class IntakeAlgae extends SequentialCommandGroup {
     this.scoralRollers = m_scoralRollers;
 
     addCommands(
-        new ParallelCommandGroup(
-            elevator.setElevatorTarget(height, 3), scoralArm.setArmTarget(30, 2)));
+        new SequentialCommandGroup(
+            elevator.setElevatorTarget(height, 3),
+            scoralArm.setArmTarget(30, 2),
+            new InstantCommand(() -> scoralRollers.runVolts(2)),
+            new WaitUntilCommand(() -> scoralRollers.seesAlgae() == AlgaeState.CURRENT),
+            scoralRollers.stopCommand(),
+            new ToReefHeight(
+                m_elevator,
+                m_scoralArm,
+                SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES,
+                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG)));
   }
 }

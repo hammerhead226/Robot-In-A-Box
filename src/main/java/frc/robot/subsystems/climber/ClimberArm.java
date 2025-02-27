@@ -28,6 +28,8 @@ public class ClimberArm extends SubsystemBase {
   private static double maxVelocityDegPerSec;
   private static double maxAccelerationDegPerSecSquared;
 
+  private boolean closedLoop = true;
+
   private TrapezoidProfile armProfile;
   private TrapezoidProfile.Constraints armConstraints;
 
@@ -111,6 +113,7 @@ public class ClimberArm extends SubsystemBase {
   }
 
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
+    closedLoop = true;
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
     arm.setPositionSetpointDegs(
         positionDegs, armFFModel.calculate(positionDegs, velocityDegsPerSec));
@@ -144,11 +147,12 @@ public class ClimberArm extends SubsystemBase {
   }
 
   public void setVoltage(double volts) {
+    closedLoop = false;
     arm.setVoltage(volts);
   }
 
   public Command runVoltsCommand(double volts) {
-    return new InstantCommand(() -> arm.setVoltage(volts));
+    return new InstantCommand(() -> setVoltage(volts), this);
   }
 
   @Override
@@ -159,7 +163,9 @@ public class ClimberArm extends SubsystemBase {
         armProfile.calculate(
             SubsystemConstants.LOOP_PERIOD_SECONDS, armCurrentStateDegrees, armGoalStateDegrees);
 
-    setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
+    if (closedLoop) {
+      setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
+    }
 
     Logger.processInputs("Climber Arm", pInputs);
     Logger.recordOutput("Debug Climb Arm/arm error", getArmError());
