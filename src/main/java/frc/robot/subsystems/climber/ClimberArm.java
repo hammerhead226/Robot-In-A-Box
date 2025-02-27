@@ -6,6 +6,7 @@ package frc.robot.subsystems.climber;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -49,6 +50,7 @@ public class ClimberArm extends SubsystemBase {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
+      // RETUNE
         kG.initDefault(0.0);
         kV.initDefault(0.6);
         kP.initDefault(0.8);
@@ -116,7 +118,7 @@ public class ClimberArm extends SubsystemBase {
     closedLoop = true;
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
     arm.setPositionSetpointDegs(
-        positionDegs, armFFModel.calculate(positionDegs, velocityDegsPerSec));
+        positionDegs, armFFModel.calculate(Units.degreesToRadians(positionDegs), Units.degreesToRadians(velocityDegsPerSec)));
   }
 
   public boolean isAt(double positionDegs, double threshold) {
