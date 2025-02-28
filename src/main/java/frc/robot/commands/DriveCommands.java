@@ -199,13 +199,19 @@ public class DriveCommands {
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
               targetPose = drive.getNearestSource();
               targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
-
+              targetPose =
+                  new Pose2d(
+                      targetPose.getTranslation(),
+                      targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "source");
             } else if (superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
               targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
               targetPose =
                   rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
-
+                  targetPose =
+                  new Pose2d(
+                      targetPose.getTranslation(),
+                      targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "processor");
             } else if (superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
               targetPose =
@@ -222,7 +228,7 @@ public class DriveCommands {
                       new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
                       new Translation2d(-0.5, 0),
                       new Rotation2d(0));
-
+              
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "anchor");
             }
           } else {
