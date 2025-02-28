@@ -588,12 +588,7 @@ public class RobotContainer {
     approachPerpendicularTrigger.onTrue(
         new ApproachReefPerpendicular(
             drive, superStructure, () -> reefAlignTrigger.getAsBoolean()));
-    // reefAlignTrigger.onFalse(
-    //     new ConditionalCommand(
-    //         new ApproachReefPerpendicular(drive, superStructure).withTimeout(2),
-    //         new InstantCommand(),
-    //         () -> (!drive.isNearReef() && drive.isAtReefSide())));
-    // keepClimbingTrigger.onTrue(new InstantCommand(() -> climberArm.armStop()));
+
     driveController
         .rightBumper()
         .onTrue(
@@ -608,12 +603,6 @@ public class RobotContainer {
                         led))
                 .andThen(new InstantCommand(() -> superStructure.nextState())));
 
-    // driveController
-    //     .a()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
-
     driveController
         .a()
         .whileTrue(
@@ -621,7 +610,6 @@ public class RobotContainer {
                 scoralArm.setArmTarget(29, 2),
                 climberArm.setArmTarget(
                     SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2)));
-    // driveController.a().onTrue(new ClimbCommands(scoralArm, climberArm, winch, scoralRollers));
 
     driveController
         .b()
@@ -711,17 +699,18 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
 
-    manipController
-        .start()
-        .onTrue(
-            new ConditionalCommand(
-                new SequentialCommandGroup(
-                    scoralArm.setArmTarget(
-                        SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2),
-                    new WaitUntilCommand(() -> scoralArm.atGoal(2)),
-                    new ZeroElevatorCANRange(elevator)),
-                new InstantCommand(),
-                () -> climberArm.isAt(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 3)));
+    // not sure if it works
+    // manipController
+    //     .start()
+    //     .onTrue(
+    //         new ConditionalCommand(
+    //             new SequentialCommandGroup(
+    //                 scoralArm.setArmTarget(
+    //                     SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2),
+    //                 new WaitUntilCommand(() -> scoralArm.atGoal(2)),
+    //                 new ZeroElevatorCANRange(elevator)),
+    //             new InstantCommand(),
+    //             () -> climberArm.isAt(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 3)));
   }
 
   // private void testControls() {
