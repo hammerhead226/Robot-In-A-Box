@@ -670,7 +670,7 @@ public class RobotContainer {
                         led)));
 
     manipController
-        .povUp()
+        .rightBumper()
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
 
@@ -681,7 +681,7 @@ public class RobotContainer {
                 () -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE)));
 
     manipController
-        .povRight()
+        .povUp()
         .onTrue(
             new InstantCommand(
                 () -> superStructure.setWantedState(SuperStructureState.BARGE_EXTEND)));
@@ -693,7 +693,7 @@ public class RobotContainer {
                 () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
 
     manipController
-        .rightBumper()
+        .povRight()
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
 
