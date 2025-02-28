@@ -362,7 +362,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SCORE_CORAL",
         new SequentialCommandGroup(
-            new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(3)),
+            new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
             new ScoreCoral(elevator, scoralArm, scoralRollers),
             new WaitCommand(0.25)));
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
@@ -694,9 +694,22 @@ public class RobotContainer {
             new InstantCommand(
                 () -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE)));
 
-    manipController.povRight().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.BARGE_EXTEND)));
+    manipController
+        .povRight()
+        .onTrue(
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.BARGE_EXTEND)));
 
-    manipController.leftBumper().onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
+    manipController
+        .leftBumper()
+        .onTrue(
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
+
+    manipController
+        .rightBumper()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
 
     manipController
         .start()

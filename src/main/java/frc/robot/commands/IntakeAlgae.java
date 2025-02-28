@@ -7,7 +7,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.scoral.ScoralArm;
@@ -35,14 +34,10 @@ public class IntakeAlgae extends SequentialCommandGroup {
     addCommands(
         new SequentialCommandGroup(
             elevator.setElevatorTarget(height, 3),
-            scoralArm.setArmTarget(30, 2),
-            new InstantCommand(() -> scoralRollers.runVolts(2)),
+            scoralArm.setArmTarget(45, 2),
+            // new IntakeUtilAlgae(m_scoralRollers),
+            new InstantCommand(() -> scoralRollers.runVolts(-2)),
             new WaitUntilCommand(() -> scoralRollers.seesAlgae() == AlgaeState.CURRENT),
-            scoralRollers.stopCommand(),
-            new ToReefHeight(
-                m_elevator,
-                m_scoralArm,
-                SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES,
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG)));
+            scoralRollers.stopCommand()));
   }
 }

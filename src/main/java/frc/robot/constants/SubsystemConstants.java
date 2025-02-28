@@ -61,7 +61,7 @@ public final class SubsystemConstants {
     public static final double DEFAULT_THRESHOLD = 0.1;
     public static final double ARM_GEAR_RATIO = 1;
 
-    public static final double STOW_SETPOINT_DEG = 100;
+    public static final double STOW_SETPOINT_DEG = 110;
     public static final double DEPLOY_SETPOINT_DEG = -20;
   }
 
@@ -178,10 +178,11 @@ public final class SubsystemConstants {
   public static enum SuperStructureState {
     // NONE,
     STOW,
+    STOW_ALGAE,
     SOURCE,
     PROCESSOR,
     BARGE_EXTEND,
-    BARGE_SCORE,
+    ALGAE_SCORE,
     L1,
     L2,
     L3,

@@ -124,19 +124,24 @@ public class SuperStructure {
         return true;
       case INTAKE_ALGAE:
         return true;
-      case BARGE_EXTEND:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT) && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT);
-      case BARGE_SCORE:
+      case STOW_ALGAE:
         return true;
-      // case CLIMB_STAGE_ONE:
-      //   // return climberArm.atGoal(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG) &&
-      //   //  scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-      //   return true;
-      // case CLIMB_STAGE_TWO:
-      //   // return climberArm.atGoal(60);
-      //   return true;
-      // case HANG:
-      //   return false;
+      case BARGE_EXTEND:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT)
+            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT);
+      case PROCESSOR:
+        return elevator.hasReachedGoal(4) && scoralArm.hasReachedGoal(20);
+      case ALGAE_SCORE:
+        return true;
+        // case CLIMB_STAGE_ONE:
+        //   // return climberArm.atGoal(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG) &&
+        //   //  scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+        //   return true;
+        // case CLIMB_STAGE_TWO:
+        //   // return climberArm.atGoal(60);
+        //   return true;
+        // case HANG:
+        //   return false;
       default:
         return false;
     }
@@ -157,17 +162,26 @@ public class SuperStructure {
                 climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 2));
 
       case INTAKE_ALGAE:
-        double height = drive.getNearestParition(6) % 2 == 0 ? 9 : 17;
+        double height = drive.getNearestParition(6) % 2 == 0 ? 16.5 : 7.9;
+        // double height = drive.getNearestParition(6) % 2 == 0 ? 7.9 : 16.5;
 
         currentState = SuperStructureState.INTAKE_ALGAE;
         return new IntakeAlgae(elevator, scoralArm, scoralRollers, height);
+
+      case STOW_ALGAE:
+        return new ToReefHeight(
+            elevator,
+            scoralArm,
+            SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES,
+            SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
       case BARGE_EXTEND:
         currentState = SuperStructureState.BARGE_EXTEND;
-        return new SequentialCommandGroup(elevator.setElevatorTarget(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 2),
-        new WaitUntilCommand(() -> elevator.atGoal(2)),
-        scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT, 2));
-      case BARGE_SCORE:
-        currentState = SuperStructureState.BARGE_SCORE;
+        return new SequentialCommandGroup(
+            elevator.setElevatorTarget(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 2),
+            new WaitUntilCommand(() -> elevator.atGoal(2)),
+            scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT, 2));
+      case ALGAE_SCORE:
+        currentState = SuperStructureState.ALGAE_SCORE;
         led.setState(LED_STATE.FLASHING_GREEN);
         return new SequentialCommandGroup(
             scoralRollers.runVoltsCommmand(4),
@@ -225,7 +239,7 @@ public class SuperStructure {
       case PROCESSOR:
         led.setState(LED_STATE.FLASHING_GREEN);
         currentState = SuperStructureState.PROCESSOR;
-        return new ScoringProccessorSequential(scoralRollers, scoralArm, elevator);
+        return new ScoringProccessorSequential(scoralArm, elevator);
 
       case SCORING_CORAL:
         currentState = SuperStructureState.SCORING_CORAL;
@@ -245,33 +259,34 @@ public class SuperStructure {
         //     new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
         //     new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
 
-      // case CLIMB_STAGE_ONE:
-      //   currentState = SuperStructureState.CLIMB_STAGE_ONE;
-      //   return new SequentialCommandGroup(
-      //       scoralArm.setArmTarget(29, 2),
-      //       climberArm.setArmTarget(SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2));
-      // case CLIMB_STAGE_TWO:
-      //   currentState = SuperStructureState.CLIMB_STAGE_TWO;
-      //   return new SequentialCommandGroup(
-      //       new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
-      //       // climberArm.setArmTarget(60, 2),
-      //       new InstantCommand(() -> climberArm.setVoltage(-1)),
-      //       new WaitUntilCommand(() -> climberArm.getArmPositionDegs() >= 60),
-      //       new InstantCommand(() -> climberArm.armStop()));
-      // case CLIMB_STAGE_THREE:
-      //   currentState = SuperStructureState.CLIMB_STAGE_THREE;
-      //   return new SequentialCommandGroup(
-      //       new InstantCommand(() -> climberArm.armStop()),
-      //       winch.runVoltsCommmand(-5),
-      //       new WaitUntilCommand(() -> climberArm.hasReachedGoal(100)),
-      //       winch.stopWinch());
-      // case HANG:
-      //   currentState = SuperStructureState.HANG;
-      //   led.setState(LED_STATE.BLUE);
-      //   return new SequentialCommandGroup(
-      //       new ParallelCommandGroup(
-      //           new InstantCommand(() -> climberArm.armStop(), climberArm), winch.stopWinch()),
-      //       new InstantCommand(() -> climberArm.setBrakeMode(true), climberArm));
+        // case CLIMB_STAGE_ONE:
+        //   currentState = SuperStructureState.CLIMB_STAGE_ONE;
+        //   return new SequentialCommandGroup(
+        //       scoralArm.setArmTarget(29, 2),
+        //       climberArm.setArmTarget(SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG,
+        // 2));
+        // case CLIMB_STAGE_TWO:
+        //   currentState = SuperStructureState.CLIMB_STAGE_TWO;
+        //   return new SequentialCommandGroup(
+        //       new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
+        //       // climberArm.setArmTarget(60, 2),
+        //       new InstantCommand(() -> climberArm.setVoltage(-1)),
+        //       new WaitUntilCommand(() -> climberArm.getArmPositionDegs() >= 60),
+        //       new InstantCommand(() -> climberArm.armStop()));
+        // case CLIMB_STAGE_THREE:
+        //   currentState = SuperStructureState.CLIMB_STAGE_THREE;
+        //   return new SequentialCommandGroup(
+        //       new InstantCommand(() -> climberArm.armStop()),
+        //       winch.runVoltsCommmand(-5),
+        //       new WaitUntilCommand(() -> climberArm.hasReachedGoal(100)),
+        //       winch.stopWinch());
+        // case HANG:
+        //   currentState = SuperStructureState.HANG;
+        //   led.setState(LED_STATE.BLUE);
+        //   return new SequentialCommandGroup(
+        //       new ParallelCommandGroup(
+        //           new InstantCommand(() -> climberArm.armStop(), climberArm), winch.stopWinch()),
+        //       new InstantCommand(() -> climberArm.setBrakeMode(true), climberArm));
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -288,11 +303,14 @@ public class SuperStructure {
       case L1, L2, L3, L4:
         setWantedState(SuperStructureState.SCORING_CORAL);
         break;
-      case SCORING_CORAL, SOURCE, PROCESSOR, BARGE_SCORE:
+      case SCORING_CORAL, SOURCE, ALGAE_SCORE:
         setWantedState(SuperStructureState.STOW);
         break;
       case INTAKE_ALGAE:
-        setWantedState(SuperStructureState.PROCESSOR);
+        setWantedState(SuperStructureState.STOW_ALGAE);
+        break;
+      case PROCESSOR:
+        setWantedState(SuperStructureState.ALGAE_SCORE);
         break;
       case CLIMB_STAGE_ONE:
         setWantedState(SuperStructureState.CLIMB_STAGE_TWO);
@@ -306,7 +324,7 @@ public class SuperStructure {
       case HANG:
         break;
       case BARGE_EXTEND:
-        setWantedState(SuperStructureState.BARGE_SCORE);
+        setWantedState(SuperStructureState.ALGAE_SCORE);
         break;
 
       default:

@@ -50,7 +50,7 @@ public class ClimberArm extends SubsystemBase {
     this.arm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
-      // RETUNE
+        // RETUNE
         kG.initDefault(0.0);
         kV.initDefault(0.6);
         kP.initDefault(0.8);
@@ -118,7 +118,9 @@ public class ClimberArm extends SubsystemBase {
     closedLoop = true;
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
     arm.setPositionSetpointDegs(
-        positionDegs, armFFModel.calculate(Units.degreesToRadians(positionDegs), Units.degreesToRadians(velocityDegsPerSec)));
+        positionDegs,
+        armFFModel.calculate(
+            Units.degreesToRadians(positionDegs), Units.degreesToRadians(velocityDegsPerSec)));
   }
 
   public boolean isAt(double positionDegs, double threshold) {
