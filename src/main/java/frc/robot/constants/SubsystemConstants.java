@@ -21,9 +21,9 @@ public final class SubsystemConstants {
   public static final double LOOP_PERIOD_SECONDS = 0.02;
   public static final boolean tuningMode = true;
 
-  public static final double NEAR_FAR_AT_REEF_OFFSET = -0.5;
+  public static final double NEAR_FAR_AT_REEF_OFFSET = -0.47;
   public static final double NEAR_FAR_AWAY_REEF_OFFSET = -0.9;
-  public static final double LEFT_RIGHT_BRANCH_OFFSET = 0;
+  public static final double LEFT_RIGHT_BRANCH_OFFSET = -0.05;
 
   public static class IntakeConstants {
     public static final double CURRENT_LIMIT = 40.0;
@@ -48,10 +48,10 @@ public final class SubsystemConstants {
 
     // TODO:: NEED TO FIND
     public static final double L1_SETPOINT_INCHES = 0;
-    public static final double L2_SETPOINT_INCHES = 7;
-    public static final double L3_SETPOINT_INCHES = 14;
-    public static final double L4_SETPOINT_INCHES = 27.3;
-    public static final double BARGE_SETPOINT = 25;
+    public static final double L2_SETPOINT_INCHES = 7.5;
+    public static final double L3_SETPOINT_INCHES = 14.5;
+    public static final double L4_SETPOINT_INCHES = 27.4;
+    public static final double BARGE_SETPOINT = 27.5;
   }
 
   public static final class ClimberConstants {
@@ -61,7 +61,7 @@ public final class SubsystemConstants {
     public static final double DEFAULT_THRESHOLD = 0.1;
     public static final double ARM_GEAR_RATIO = 1;
 
-    public static final double STOW_SETPOINT_DEG = 110;
+    public static final double STOW_SETPOINT_DEG = 108;
     public static final double DEPLOY_SETPOINT_DEG = -20;
   }
 
@@ -72,10 +72,10 @@ public final class SubsystemConstants {
     public static final double DEFAULT_THRESHOLD = 1;
     public static final double ARM_GEAR_RATIO = (25.0 / 1) / (14.0 / 32);
 
-    public static final double STOW_SETPOINT_DEG = 96;
-    public static final double LOW_CORAL_SCORING_SETPOINT_DEG = 74;
-    public static final double L4_CORAL_SCORING_SETPOINT_DEG = 63;
-    public static final double BARGE_SETPOINT = 80;
+    public static final double STOW_SETPOINT_DEG = 98;
+    public static final double LOW_CORAL_SCORING_SETPOINT_DEG = 76.5;
+    public static final double L4_CORAL_SCORING_SETPOINT_DEG = 66;
+    public static final double BARGE_SETPOINT = 85;
   }
 
   public static class AlgaeScorerFlywheelConstants {

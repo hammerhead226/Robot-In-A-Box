@@ -375,10 +375,14 @@ public class RobotContainer {
     autos.addOption("BlueMiddleRight", AutoBuilder.buildAuto("BlueMiddleRight"));
     autos.addOption("BlueRight", AutoBuilder.buildAuto("BlueRight"));
 
+    autos.addOption("Wait6BlueLeftL2", AutoBuilder.buildAuto("Wait6BlueLeftL2"));
+    autos.addOption("Wait2BlueLeftL2", AutoBuilder.buildAuto("Wait2BlueLeftL2"));
+    autos.addOption("Wait6BlueRightL2", AutoBuilder.buildAuto("Wait6BlueRightL2"));
+    autos.addOption("Wait2BlueRightL2", AutoBuilder.buildAuto("Wait2BlueRightL2"));
     autos.addOption("BlueLeftL2", AutoBuilder.buildAuto("BlueLeftL2"));
     autos.addOption("BlueLeftPushL2", AutoBuilder.buildAuto("BlueLeftPushL2"));
-    autos.addOption("BlueMiddleLeftL2", AutoBuilder.buildAuto("BlueMiddleLeftL2"));
-    autos.addOption("BlueMiddleRightL2", AutoBuilder.buildAuto("BlueMiddleRightL2"));
+    // autos.addOption("BlueMiddleLeftL2", AutoBuilder.buildAuto("BlueMiddleLeftL2"));
+    // autos.addOption("BlueMiddleRightL2", AutoBuilder.buildAuto("BlueMiddleRightL2"));
     autos.addOption("BlueRightL2", AutoBuilder.buildAuto("BlueRightL2"));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
@@ -600,11 +604,12 @@ public class RobotContainer {
 
     driveController
         .a()
-        .whileTrue(
+        .onTrue(
             new SequentialCommandGroup(
                 scoralArm.setArmTarget(29, 2),
-                climberArm.setArmTarget(
-                    SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG, 2)));
+                new InstantCommand(() -> climberArm.setVoltage(-1.5))));
+    // driveController.a().onTrue(new InstantCommand(() -> climberArm.setVoltage(-1)));
+    driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
 
     driveController
         .b()
@@ -612,9 +617,9 @@ public class RobotContainer {
             new SequentialCommandGroup(
                 new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
                 // climberArm.setArmTarget(60, 2),
-                new InstantCommand(() -> climberArm.setVoltage(-1)),
-                new WaitUntilCommand(() -> climberArm.getArmPositionDegs() >= 60),
-                new InstantCommand(() -> climberArm.armStop())));
+                new InstantCommand(() -> climberArm.setVoltage(1))));
+    // new WaitUntilCommand(() -> climberArm.getArmPositionDegs() >= 60),
+    // new InstantCommand(() -> climberArm.armStop())));
     driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
     driveController
         .x()

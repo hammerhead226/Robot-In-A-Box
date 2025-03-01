@@ -30,8 +30,8 @@ public class Elevator extends SubsystemBase {
   // CHANGE THESE VALUES TO MATCH THE ELEVATOR
 
   // cut velocity and acceleration in half
-  private static final int maxVelocityExtender = 120;
-  private static final int maxAccelerationExtender = 80;
+  private static final int maxVelocityExtender = 170;
+  private static final int maxAccelerationExtender = 140;
 
   private TrapezoidProfile extenderProfile;
   private TrapezoidProfile.Constraints extenderConstraints =

@@ -29,7 +29,7 @@ public class ScoreCoral extends SequentialCommandGroup {
     this.scoralArm = scoralArm;
     addCommands(
         // new InstantCommand(() -> led.setState(LED_STATE.FLASHING_GREEN)),
-        scoralRollers.runVoltsCommmand(4),
+        scoralRollers.runVoltsCommmand(2.6),
         new WaitCommand(0.5),
         new GoToStow(elevator, scoralArm, scoralRollers));
     // new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.NO_CORAL));

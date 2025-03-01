@@ -22,7 +22,7 @@ import frc.robot.constants.SubsystemConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class ClimberArmIOTalonFX implements ClimberArmIO {
-
+  TalonFXConfiguration config = new TalonFXConfiguration();
   private final TalonFX leader;
   private final CANcoder climbCoder;
 
@@ -38,7 +38,6 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
   private final StatusSignal<Current> currentAmps;
 
   public ClimberArmIOTalonFX(int leadID, int canCoderID) {
-    TalonFXConfiguration config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ScoralArmConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
         SubsystemConstants.ScoralArmConstants.CURRENT_LIMIT_ENABLED;
@@ -107,7 +106,6 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
 
   @Override
   public void setBrakeMode(boolean bool) {
-    TalonFXConfiguration config = new TalonFXConfiguration();
     if (bool) {
       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     } else {
