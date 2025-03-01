@@ -381,9 +381,6 @@ public class RobotContainer {
     autos.addOption("BlueMiddleRightL2", AutoBuilder.buildAuto("BlueMiddleRightL2"));
     autos.addOption("BlueRightL2", AutoBuilder.buildAuto("BlueRightL2"));
 
-    autos.addOption("test auto", AutoBuilder.buildAuto("test auto"));
-    autos.addOption("commands auton", AutoBuilder.buildAuto("commands auton"));
-
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
 
     // Set up SysId routines
@@ -643,10 +640,6 @@ public class RobotContainer {
                         scoralArm,
                         scoralRollers,
                         led)));
-
-                        driveController
-        .povLeft()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
   }
 
   private void manipControls() {
