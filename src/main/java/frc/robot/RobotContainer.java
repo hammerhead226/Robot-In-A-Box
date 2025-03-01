@@ -643,6 +643,10 @@ public class RobotContainer {
                         scoralArm,
                         scoralRollers,
                         led)));
+
+                        driveController
+        .povLeft()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
   }
 
   private void manipControls() {

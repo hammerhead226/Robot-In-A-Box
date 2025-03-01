@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.TunerConstants;
 import frc.robot.util.LimelightHelpers;
@@ -231,6 +232,8 @@ public class Robot extends LoggedRobot {
         robotContainer.getSuperStructure().getCurrentState());
     Logger.recordOutput(
         "Debug Super Structure/At State Goals", robotContainer.getSuperStructure().atGoals());
+
+    Logger.recordOutput("coral stuck mode", SubsystemConstants.coralStuckMode);
   }
 
   /** This function is called once when test mode is enabled. */

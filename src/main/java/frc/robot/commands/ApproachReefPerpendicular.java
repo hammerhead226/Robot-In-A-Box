@@ -57,7 +57,9 @@ public class ApproachReefPerpendicular extends Command {
     //     drive.getNearestSide().getTranslation().minus(drive.getOffset()),
     //     drive.getNearestSide().getRotation());
     // new Pose2d(nearestSide.getTranslation().minus(offset), nearestSide.getRotation())
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), targetPose);
+    List<Waypoint> waypoints =
+        PathPlannerPath.waypointsFromPoses(
+            new Pose2d(drive.getPose().getTranslation(), targetPose.getRotation()), targetPose);
     List<EventMarker> eventMarkers = new ArrayList<>();
     eventMarkers.add(
         new EventMarker("test trigger", 0.1, superStructure.getSuperStructureCommand()));
