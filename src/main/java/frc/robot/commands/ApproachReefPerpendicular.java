@@ -49,10 +49,10 @@ public class ApproachReefPerpendicular extends Command {
                 SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
             Rotation2d.kZero);
 
-    targetPose =
-        new Pose2d(
-            targetPose.getTranslation(),
-            targetPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90)));
+    // targetPose =
+    //     new Pose2d(
+    //         targetPose.getTranslation(),
+    //         targetPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90)));
     // new Pose2d(
     //     drive.getNearestSide().getTranslation().minus(drive.getOffset()),
     //     drive.getNearestSide().getRotation());
@@ -71,7 +71,7 @@ public class ApproachReefPerpendicular extends Command {
             new PathConstraints(1.5, 1, 100, 180), // these numbers from last year's code
             null, // The ideal starting state, this is only relevant for pre-planned paths, so can
             // be null for on-the-fly paths.
-            new GoalEndState(0, targetPose.getRotation()),
+            new GoalEndState(0, targetPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90))),
             false);
     path.preventFlipping = true;
 

@@ -208,7 +208,7 @@ public class DriveCommands {
               targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
               targetPose =
                   rotateAndNudge(targetPose, new Translation2d(-0.5, 0), new Rotation2d(Math.PI));
-                  targetPose =
+              targetPose =
                   new Pose2d(
                       targetPose.getTranslation(),
                       targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
@@ -228,7 +228,7 @@ public class DriveCommands {
                       new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
                       new Translation2d(-0.5, 0),
                       new Rotation2d(0));
-              
+
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "anchor");
             }
           } else {

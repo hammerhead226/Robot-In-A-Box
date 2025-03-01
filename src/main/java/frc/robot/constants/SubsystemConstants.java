@@ -16,7 +16,7 @@
 package frc.robot.constants;
 
 public final class SubsystemConstants {
-
+  public static boolean coralStuckMode = false;
   public static final String CANIVORE_ID_STRING = "CAN Bus 2";
   public static final double LOOP_PERIOD_SECONDS = 0.02;
   public static final boolean tuningMode = true;

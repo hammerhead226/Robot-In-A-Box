@@ -94,60 +94,73 @@ public class SuperStructure {
   }
 
   public boolean atGoals() {
-    switch (currentState) {
-      case STOW:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
-            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-      case L1:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
-            && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-      case L2:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
-            && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-      case L3:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES)
-            && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-      case L4:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES)
-            && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG);
-      case SOURCE:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
-            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-      case SCORING_CORAL:
-        // TODO:: UNCOMMENT
-        // return scoralRollers.seesCoral() == CoralState.CURRENT
-        // || scoralRollers.seesCoral() == CoralState.SENSOR;
-        return true;
-      case INTAKE_ALGAE:
-        return true;
-      case STOW_ALGAE:
-        return true;
-      case BARGE_EXTEND:
-        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT)
-            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT);
-      case PROCESSOR:
-        return elevator.hasReachedGoal(4) && scoralArm.hasReachedGoal(20);
-      case ALGAE_SCORE:
-        return true;
-        // case CLIMB_STAGE_ONE:
-        //   // return climberArm.atGoal(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG) &&
-        //   //  scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-        //   return true;
-        // case CLIMB_STAGE_TWO:
-        //   // return climberArm.atGoal(60);
-        //   return true;
-        // case HANG:
-        //   return false;
-      default:
-        return false;
+    if (SubsystemConstants.coralStuckMode) {
+      return true;
+    } else {
+      switch (currentState) {
+        case STOW:
+          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
+              && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+        case L1:
+          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
+              && scoralArm.hasReachedGoal(
+                  SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+        case L2:
+          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
+              && scoralArm.hasReachedGoal(
+                  SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+        case L3:
+          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES)
+              && scoralArm.hasReachedGoal(
+                  SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+        case L4:
+          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES)
+              && scoralArm.hasReachedGoal(
+                  SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG);
+        case SOURCE:
+          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
+              && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+        case SCORING_CORAL:
+          // TODO:: UNCOMMENT
+          // return scoralRollers.seesCoral() == CoralState.CURRENT
+          // || scoralRollers.seesCoral() == CoralState.SENSOR;
+          return true;
+        case INTAKE_ALGAE:
+          return true;
+        case STOW_ALGAE:
+          return true;
+        case BARGE_EXTEND:
+          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT)
+              && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT);
+        case PROCESSOR:
+          return elevator.hasReachedGoal(4) && scoralArm.hasReachedGoal(20);
+        case ALGAE_SCORE:
+          return true;
+          // case CLIMB_STAGE_ONE:
+          //   // return climberArm.atGoal(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG) &&
+          //   //
+          // scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+          //   return true;
+          // case CLIMB_STAGE_TWO:
+          //   // return climberArm.atGoal(60);
+          //   return true;
+          // case HANG:
+          //   return false;
+        default:
+          return false;
+      }
     }
 
     // TODO:: COMMENT
     // return true;
+  }
+
+  public void toggleCoralStuckMode() {
+    if (!SubsystemConstants.coralStuckMode) {
+      SubsystemConstants.coralStuckMode = true;
+    } else {
+      SubsystemConstants.coralStuckMode = false;
+    }
   }
 
   public SequentialCommandGroup getSuperStructureCommand() {

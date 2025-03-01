@@ -630,6 +630,8 @@ public class RobotContainer {
 
     driveController.x().onFalse(winch.stopWinch());
 
+    driveController.povUp().onTrue(new InstantCommand(() -> superStructure.toggleCoralStuckMode()));
+
     driveController
         .povDown()
         .onTrue(
