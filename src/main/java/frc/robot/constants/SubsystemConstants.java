@@ -66,7 +66,7 @@ public final class SubsystemConstants {
   }
 
   public static class ScoralArmConstants {
-    public static final double CURRENT_LIMIT = 35.0;
+    public static final double CURRENT_LIMIT = 50.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
 
     public static final double DEFAULT_THRESHOLD = 1;
