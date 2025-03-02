@@ -351,7 +351,7 @@ public class DriveCommands {
           } else {
             forwardSlewRateLimiter.changeRateLimit(2);
             sidewaysSlewRateLimiter.changeRateLimit(2);
-            rotationSlewRateLimiter.changeRateLimit(5);
+            rotationSlewRateLimiter.changeRateLimit(8);
           }
 
           // double rateLimitedForwardInputMetersPerSec =

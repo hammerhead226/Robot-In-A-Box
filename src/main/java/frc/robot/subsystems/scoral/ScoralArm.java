@@ -125,7 +125,7 @@ public class ScoralArm extends SubsystemBase {
   }
 
   public boolean hasReachedGoal(double goalDegs) {
-    return (Math.abs(armCurrentStateDegrees.position - goalDegs) <= 2);
+    return (Math.abs(armCurrentStateDegrees.position - goalDegs) <= 8);
   }
 
   private double getArmError() {

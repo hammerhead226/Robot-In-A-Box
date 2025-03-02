@@ -197,7 +197,7 @@ public class SuperStructure {
         currentState = SuperStructureState.ALGAE_SCORE;
         led.setState(LED_STATE.FLASHING_GREEN);
         return new SequentialCommandGroup(
-            scoralRollers.runVoltsCommmand(7),
+            scoralRollers.runVoltsCommmand(4),
             new WaitCommand(0.5),
             new GoToStow(elevator, scoralArm, scoralRollers),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
