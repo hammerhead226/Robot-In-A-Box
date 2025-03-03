@@ -170,9 +170,9 @@ public class SuperStructure {
       case STOW:
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW;
-        return new GoToStow(elevator, scoralArm, scoralRollers)
-            .andThen(
-                climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 2));
+        return new GoToStow(elevator, scoralArm, scoralRollers);
+        // .andThen(
+        //     climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 2));
 
       case INTAKE_ALGAE:
         double height = drive.getNearestParition(6) % 2 == 0 ? 16.5 : 7.9;

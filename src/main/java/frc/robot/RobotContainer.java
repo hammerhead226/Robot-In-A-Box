@@ -355,8 +355,7 @@ public class RobotContainer {
         "STOW",
         new SequentialCommandGroup(
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
-            new GoToStow(elevator, scoralArm, scoralRollers),
-            climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG, 2)));
+            new GoToStow(elevator, scoralArm, scoralRollers)));
     NamedCommands.registerCommand(
         "SCORE_CORAL",
         new SequentialCommandGroup(
