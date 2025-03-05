@@ -13,6 +13,7 @@ import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.SuperStructure;
@@ -63,6 +64,7 @@ public class ApproachReefPerpendicular extends Command {
     List<EventMarker> eventMarkers = new ArrayList<>();
     eventMarkers.add(
         new EventMarker("test trigger", 0.1, superStructure.getSuperStructureCommand()));
+
     PathPlannerPath path =
         new PathPlannerPath(
             waypoints,
