@@ -10,9 +10,10 @@
     "BlueMiddleLeftL2",
     "BlueMiddleRight",
     "BlueMiddleRightL2",
+    "BlueMiddleWaits",
     "BlueRight",
     "BlueRightL2",
-    "BlueMiddleWaits"
+    "BlueLeft3"
   ],
   "autoFolders": [
     "L2 Variants"
