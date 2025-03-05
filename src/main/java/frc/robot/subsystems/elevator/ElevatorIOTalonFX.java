@@ -1,5 +1,7 @@
 package frc.robot.subsystems.elevator;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -67,6 +69,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     BaseStatusSignal.refreshAll(elevatorPosition, elevatorVelocity, appliedVolts, currentAmps);
+
+    Logger.recordOutput("Elevator CANRage Distance Inch", distanceSensor.getDistance().getValueAsDouble());
+
     inputs.positionInch =
         Conversions.motorRotToInches(
             elevatorPosition.getValueAsDouble(),
