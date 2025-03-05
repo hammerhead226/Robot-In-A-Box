@@ -247,7 +247,7 @@ public class SuperStructure {
                     .andThen(
                         new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW))
                             .andThen(
-                                new InstantCommand(() -> this.setWantedState(lastReefState)))));
+                                new InstantCommand(() -> this.nextState()))));
 
       case PROCESSOR:
         led.setState(LED_STATE.FLASHING_GREEN);
@@ -263,43 +263,6 @@ public class SuperStructure {
             new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
             new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
 
-        // return new SequentialCommandGroup(
-        //     new InstantCommand(() -> led.setState(LED_STATE.FLASHING_GREEN)),
-        //     new ScoringCoral(scoralRollers),
-        //     new WaitCommand(1),
-        //     new GoToStowL4(elevator, scoralArm, scoralRollers),
-        //     new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
-        //     new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
-        //     new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
-
-        // case CLIMB_STAGE_ONE:
-        //   currentState = SuperStructureState.CLIMB_STAGE_ONE;
-        //   return new SequentialCommandGroup(
-        //       scoralArm.setArmTarget(29, 2),
-        //       climberArm.setArmTarget(SubsystemConstants.ClimberConstants.DEPLOY_SETPOINT_DEG,
-        // 2));
-        // case CLIMB_STAGE_TWO:
-        //   currentState = SuperStructureState.CLIMB_STAGE_TWO;
-        //   return new SequentialCommandGroup(
-        //       new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
-        //       // climberArm.setArmTarget(60, 2),
-        //       new InstantCommand(() -> climberArm.setVoltage(-1)),
-        //       new WaitUntilCommand(() -> climberArm.getArmPositionDegs() >= 60),
-        //       new InstantCommand(() -> climberArm.armStop()));
-        // case CLIMB_STAGE_THREE:
-        //   currentState = SuperStructureState.CLIMB_STAGE_THREE;
-        //   return new SequentialCommandGroup(
-        //       new InstantCommand(() -> climberArm.armStop()),
-        //       winch.runVoltsCommmand(-5),
-        //       new WaitUntilCommand(() -> climberArm.hasReachedGoal(100)),
-        //       winch.stopWinch());
-        // case HANG:
-        //   currentState = SuperStructureState.HANG;
-        //   led.setState(LED_STATE.BLUE);
-        //   return new SequentialCommandGroup(
-        //       new ParallelCommandGroup(
-        //           new InstantCommand(() -> climberArm.armStop(), climberArm), winch.stopWinch()),
-        //       new InstantCommand(() -> climberArm.setBrakeMode(true), climberArm));
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -312,11 +275,19 @@ public class SuperStructure {
         // case NONE:
         //   break;
       case STOW:
+        if (scoralRollers.getDistance() <= SubsystemConstants.CORAL_DIST) {
+          setWantedState(lastReefState);
+        } else {
+          setWantedState(SuperStructureState.SOURCE);
+        }
+        break;
+      case SOURCE:
+        setWantedState(lastReefState);
         break;
       case L1, L2, L3, L4:
         setWantedState(SuperStructureState.SCORING_CORAL);
         break;
-      case SCORING_CORAL, SOURCE, ALGAE_SCORE:
+      case SCORING_CORAL, ALGAE_SCORE:
         setWantedState(SuperStructureState.STOW);
         break;
       case INTAKE_ALGAE:

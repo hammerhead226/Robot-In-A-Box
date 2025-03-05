@@ -182,6 +182,10 @@ public class ScoralRollers extends SubsystemBase {
     return lastCoralState;
   }
 
+  public double getDistance() {
+    return sInputs.distanceInches;
+  }
+
   public void zero() {
     rollers.stop();
   }
