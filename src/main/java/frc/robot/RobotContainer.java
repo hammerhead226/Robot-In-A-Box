@@ -643,7 +643,7 @@ public class RobotContainer {
                         elevator,
                         scoralArm,
                         scoralRollers,
-                        led)));
+                        led).andThen(new InstantCommand(() -> superStructure.nextState()))));
   }
 
   private void manipControls() {
@@ -670,7 +670,7 @@ public class RobotContainer {
                         elevator,
                         scoralArm,
                         scoralRollers,
-                        led)));
+                        led)).andThen(new InstantCommand(() -> superStructure.nextState())));
 
     manipController
         .rightBumper()
