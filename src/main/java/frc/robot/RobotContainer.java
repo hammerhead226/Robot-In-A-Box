@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.ApproachReefPerpendicular;
+import frc.robot.commands.ApproachReef;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.GoToStow;
 import frc.robot.commands.IntakingCoral;
@@ -583,9 +583,22 @@ public class RobotContainer {
             () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.rightTrigger().getAsBoolean()));
 
-    approachPerpendicularTrigger.onTrue(
-        new ApproachReefPerpendicular(
-            drive, superStructure, () -> reefAlignTrigger.getAsBoolean()));
+    driveController
+        .leftTrigger()
+        .and(() -> !driveController.rightTrigger().getAsBoolean() && !drive.isNearReef())
+        .onTrue(
+            new ApproachReef(
+                drive, superStructure, false, () -> driveController.rightTrigger().getAsBoolean()));
+    driveController
+        .rightTrigger()
+        .and(() -> !driveController.leftTrigger().getAsBoolean() && !drive.isNearReef())
+        .onTrue(
+            new ApproachReef(
+                drive, superStructure, true, () -> driveController.rightTrigger().getAsBoolean()));
+
+    // approachPerpendicularTrigger.onTrue(
+    //     new ApproachReefPerpendicular(
+    //         drive, superStructure, () -> reefAlignTrigger.getAsBoolean()));
 
     driveController
         .rightBumper()
@@ -639,11 +652,12 @@ public class RobotContainer {
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
                 .andThen(
                     new ReinitializingCommand(
-                        () -> superStructure.getSuperStructureCommand(),
-                        elevator,
-                        scoralArm,
-                        scoralRollers,
-                        led).andThen(new InstantCommand(() -> superStructure.nextState()))));
+                            () -> superStructure.getSuperStructureCommand(),
+                            elevator,
+                            scoralArm,
+                            scoralRollers,
+                            led)
+                        .andThen(new InstantCommand(() -> superStructure.nextState()))));
   }
 
   private void manipControls() {
@@ -670,7 +684,8 @@ public class RobotContainer {
                         elevator,
                         scoralArm,
                         scoralRollers,
-                        led)).andThen(new InstantCommand(() -> superStructure.nextState())));
+                        led))
+                .andThen(new InstantCommand(() -> superStructure.nextState())));
 
     manipController
         .rightBumper()
