@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.scoral.ScoralArm;
@@ -124,7 +125,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean atGoal(double threshold) {
-    return (Math.abs(extenderCurrent.position - goal) <= threshold);
+    return (Math.abs(eInputs.positionInch - goal) <= threshold);
   }
 
   public boolean hasReachedGoal(double goalInches) {
@@ -193,8 +194,9 @@ public class Elevator extends SubsystemBase {
   public Command setElevatorTarget(double elevatorGoalInches, double thresholdInches) {
     // TODO: Change the wait time to an accurate value
     return new InstantCommand(() -> setElevatorGoal(elevatorGoalInches), this)
-        .until(() -> elevatorAtSetpoint(thresholdInches))
-        .withTimeout(5);
+        .andThen(new WaitUntilCommand(() -> atGoal(thresholdInches)));
+    // .until(() -> elevatorAtSetpoint(thresholdInches))
+    // .withTimeout(5);
   }
 
   public void breakMode(boolean brake) {

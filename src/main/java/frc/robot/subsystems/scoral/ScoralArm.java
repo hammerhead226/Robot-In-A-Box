@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.ArmIO;
@@ -125,7 +126,7 @@ public class ScoralArm extends SubsystemBase {
   }
 
   public boolean hasReachedGoal(double goalDegs) {
-    return (Math.abs(armCurrentStateDegrees.position - goalDegs) <= 8);
+    return (Math.abs(csaInputs.positionDegs - goalDegs) <= 8);
   }
 
   private double getArmError() {
@@ -164,7 +165,7 @@ public class ScoralArm extends SubsystemBase {
   public Command setArmTarget(double goalDegrees, double thresholdDegrees) {
 
     return new InstantCommand(() -> setArmGoal(goalDegrees), this)
-        .until(() -> atGoal(thresholdDegrees));
+        .andThen(new WaitUntilCommand(() -> atGoal(thresholdDegrees)));
   }
 
   @AutoLogOutput(key = "Debug Scoral Arm/arm")

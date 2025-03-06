@@ -246,8 +246,7 @@ public class SuperStructure {
                 new InstantCommand(() -> led.setState(LED_STATE.BLUE))
                     .andThen(
                         new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW))
-                            .andThen(
-                                new InstantCommand(() -> this.nextState()))));
+                            .andThen(new InstantCommand(() -> setWantedState(lastReefState)))));
 
       case PROCESSOR:
         led.setState(LED_STATE.FLASHING_GREEN);
@@ -274,13 +273,13 @@ public class SuperStructure {
     switch (currentState) {
         // case NONE:
         //   break;
-      case STOW:
-        if (scoralRollers.getDistance() <= SubsystemConstants.CORAL_DIST) {
-          setWantedState(lastReefState);
-        } else {
-          setWantedState(SuperStructureState.SOURCE);
-        }
-        break;
+        // case STOW:
+        //   if (scoralRollers.getDistance() <= SubsystemConstants.CORAL_DIST) {
+        //     setWantedState(lastReefState);
+        //   } else {
+        //     setWantedState(SuperStructureState.SOURCE);
+        //   }
+        //   break;
       case SOURCE:
         setWantedState(lastReefState);
         break;

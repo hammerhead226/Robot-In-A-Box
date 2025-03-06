@@ -608,28 +608,28 @@ public class RobotContainer {
                 scoralArm.setArmTarget(29, 2),
                 new InstantCommand(() -> climberArm.setVoltage(-1.5))));
     // driveController.a().onTrue(new InstantCommand(() -> climberArm.setVoltage(-1)));
-    driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
+    // driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
 
-    driveController
-        .b()
-        .onTrue(
-            new SequentialCommandGroup(
-                new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
-                // climberArm.setArmTarget(60, 2),
-                new InstantCommand(() -> climberArm.setVoltage(1))));
-    // new WaitUntilCommand(() -> climberArm.getArmPositionDegs() >= 60),
-    // new InstantCommand(() -> climberArm.armStop())));
-    driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
-    driveController
-        .x()
-        .onTrue(
-            new SequentialCommandGroup(
-                new InstantCommand(() -> climberArm.armStop()),
-                winch.runVoltsCommmand(-4),
-                new WaitUntilCommand(() -> climberArm.hasReachedGoal(-100)),
-                winch.stopWinch()));
+    // driveController
+    //     .b()
+    //     .onTrue(
+    //         new SequentialCommandGroup(
+    //             new InstantCommand(() -> climberArm.setBrakeMode(false), climberArm),
+    //             // climberArm.setArmTarget(60, 2),
+    //             new InstantCommand(() -> climberArm.setVoltage(1))));
+    // // new WaitUntilCommand(() -> climberArm.getArmPositionDegs() >= 60),
+    // // new InstantCommand(() -> climberArm.armStop())));
+    // driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
+    // driveController
+    //     .x()
+    //     .onTrue(
+    //         new SequentialCommandGroup(
+    //             new InstantCommand(() -> climberArm.armStop()),
+    //             winch.runVoltsCommmand(-4),
+    //             new WaitUntilCommand(() -> climberArm.hasReachedGoal(-100)),
+    //             winch.stopWinch()));
 
-    driveController.x().onFalse(winch.stopWinch());
+    // driveController.x().onFalse(winch.stopWinch());
 
     driveController.povUp().onTrue(new InstantCommand(() -> superStructure.toggleCoralStuckMode()));
 
@@ -643,7 +643,7 @@ public class RobotContainer {
                         elevator,
                         scoralArm,
                         scoralRollers,
-                        led).andThen(new InstantCommand(() -> superStructure.nextState()))));
+                        led)));
   }
 
   private void manipControls() {
@@ -670,7 +670,7 @@ public class RobotContainer {
                         elevator,
                         scoralArm,
                         scoralRollers,
-                        led)).andThen(new InstantCommand(() -> superStructure.nextState())));
+                        led)));
 
     manipController
         .rightBumper()

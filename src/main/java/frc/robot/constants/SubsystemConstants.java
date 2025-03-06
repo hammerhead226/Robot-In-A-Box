@@ -72,7 +72,7 @@ public final class SubsystemConstants {
     public static final double DEFAULT_THRESHOLD = 1;
     public static final double ARM_GEAR_RATIO = (25.0 / 1) / (14.0 / 32);
 
-    public static final double STOW_SETPOINT_DEG = 99;
+    public static final double STOW_SETPOINT_DEG = 96;
     public static final double LOW_CORAL_SCORING_SETPOINT_DEG = 76.5;
     public static final double L4_CORAL_SCORING_SETPOINT_DEG = 66;
     public static final double BARGE_SETPOINT = 85;

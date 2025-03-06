@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.elevator.Elevator;
@@ -34,12 +33,12 @@ public class GoToStow extends SequentialCommandGroup {
         new WaitUntilCommand(() -> scoralArm.atGoal(10)),
         elevator.setElevatorTarget(
             SubsystemConstants.coralStuckMode
-                ? 4
+                ? 6
                 : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH,
-            2),
-        new WaitCommand(0.3),
-        scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG - 8, 2),
-        new WaitUntilCommand(() -> scoralArm.atGoal(2)),
+            1),
+        // new WaitCommand(0.3),
+        // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG - 10, 2),
+        // new WaitUntilCommand(() -> scoralArm.atGoal(2)),
         scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2));
   }
 }
