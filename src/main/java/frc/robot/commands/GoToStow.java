@@ -7,6 +7,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.ElevatorConstants;
+import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.subsystems.scoral.ScoralRollers;
@@ -28,18 +30,22 @@ public class GoToStow extends SequentialCommandGroup {
     this.scoralRollers = m_scoralRollers;
 
     addCommands(
-        scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG + 4, 10),
+        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG + 4, 10),
+        // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG + 4, 10),
         scoralRollers.stopCommand(),
         new WaitUntilCommand(() -> scoralArm.atGoal(10)),
-        elevator.setElevatorTarget(
-            SubsystemConstants.coralStuckMode
-                ? 6
-                : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH,
-            6),
+        new SetElevatorTarget(elevator, ElevatorConstants.STOW_SETPOINT_INCH, 6),
+        // elevator.setElevatorTarget(
+        //     SubsystemConstants.coralStuckMode
+        //         ? 6
+        //         : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH,
+        //     6),
         // new WaitCommand(0.3),
         // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG - 10, 2),
         // new WaitUntilCommand(() -> scoralArm.atGoal(2)),
-        scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG - 4, 2),
-        scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 0.9));
+        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 4, 2),
+        // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG - 4, 2),
+        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG, 0.9));
+        // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 0.9));
   }
 }
