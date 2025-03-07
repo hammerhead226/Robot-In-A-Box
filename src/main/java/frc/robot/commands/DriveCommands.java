@@ -271,12 +271,18 @@ public class DriveCommands {
             wantedSidewaysVelocityMetersPerSec =
                 MathUtil.clamp(
                     sidewaysPID.calculate(drive.getPose().getY(), targetPose.getY()), -3, 3);
+            Logger.recordOutput("drive commands drive rotation", drive.getRotation().getDegrees());
+            Logger.recordOutput(
+                "drive commands target rotation", targetPose.getRotation().getDegrees());
+
+            double rotationPIDResult =
+                Math.toRadians(
+                    rotationPID.calculate(
+                        drive.getRotation().getDegrees(), targetPose.getRotation().getDegrees()));
+            Logger.recordOutput("rotationPIDResult", rotationPIDResult);
             wantedRotationVelocityRadsPerSec =
                 MathUtil.clamp(
-                    Math.toRadians(
-                        rotationPID.calculate(
-                            drive.getRotation().getDegrees(),
-                            targetPose.getRotation().getDegrees())),
+                    rotationPIDResult,
                     -drive.getMaxAngularSpeedRadPerSec(),
                     drive.getMaxAngularSpeedRadPerSec());
 
