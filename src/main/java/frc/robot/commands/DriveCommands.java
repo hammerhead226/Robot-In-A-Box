@@ -165,6 +165,7 @@ public class DriveCommands {
 
           double speedDebuff = 0.75;
           targetPose = null;
+
           if ((reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())) {
             led.setState(LED_STATE.FLASHING_RED);
             Translation2d reefTranslation =
@@ -231,6 +232,8 @@ public class DriveCommands {
 
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "anchor");
             }
+
+
           } else {
             Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "none");
           }
