@@ -438,7 +438,9 @@ public class RobotContainer {
         new Trigger(
             () ->
                 reefAlignTrigger.getAsBoolean()
-                    && (!drive.isNearReef() && drive.isAtReefSide() && drive.isAtReefRotation()));
+                    && (!drive.isNearReef() && drive.isAtReefSide() &&
+    drive.isAtReefRotation()));
+    // approachPerpendicularTrigger = new Trigger(() -> true);
 
     // keepClimbingTrigger =
     //     new Trigger(
@@ -599,6 +601,7 @@ public class RobotContainer {
                         scoralArm,
                         scoralRollers,
                         led))
+                .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
                 .andThen(new InstantCommand(() -> superStructure.nextState())));
 
     driveController

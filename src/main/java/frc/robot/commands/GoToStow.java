@@ -35,10 +35,11 @@ public class GoToStow extends SequentialCommandGroup {
             SubsystemConstants.coralStuckMode
                 ? 6
                 : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH,
-            1),
+            6),
         // new WaitCommand(0.3),
         // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG - 10, 2),
         // new WaitUntilCommand(() -> scoralArm.atGoal(2)),
-        scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2));
+        scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG - 4, 2),
+        scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 0.9));
   }
 }

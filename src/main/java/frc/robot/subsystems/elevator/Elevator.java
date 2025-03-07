@@ -125,6 +125,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean atGoal(double threshold) {
+    // return true;
     return (Math.abs(eInputs.positionInch - goal) <= threshold);
   }
 
@@ -194,9 +195,10 @@ public class Elevator extends SubsystemBase {
   public Command setElevatorTarget(double elevatorGoalInches, double thresholdInches) {
     // TODO: Change the wait time to an accurate value
     return new InstantCommand(() -> setElevatorGoal(elevatorGoalInches), this)
-        .andThen(new WaitUntilCommand(() -> atGoal(thresholdInches)));
+        .andThen(new WaitUntilCommand(() -> atGoal(thresholdInches)))
+        .withTimeout(2.5);
     // .until(() -> elevatorAtSetpoint(thresholdInches))
-    // .withTimeout(5);
+
   }
 
   public void breakMode(boolean brake) {
@@ -219,6 +221,8 @@ public class Elevator extends SubsystemBase {
     setPositionExtend(extenderCurrent.position, extenderCurrent.velocity);
 
     Logger.processInputs("Elevator", eInputs);
+
+    Logger.recordOutput("Debug Elevator/at Goal", atGoal(2));
 
     measuredVisualizer.update(4 + extenderCurrent.position * 2);
     setpointVisualizer.update(4 + extenderGoal.position * 2);

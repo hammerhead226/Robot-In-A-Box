@@ -165,7 +165,9 @@ public class ScoralArm extends SubsystemBase {
   public Command setArmTarget(double goalDegrees, double thresholdDegrees) {
 
     return new InstantCommand(() -> setArmGoal(goalDegrees), this)
-        .andThen(new WaitUntilCommand(() -> atGoal(thresholdDegrees)));
+        .andThen(new WaitUntilCommand(() -> atGoal(thresholdDegrees)))
+        // .andThen(new WaitUntilCommand(() -> false))
+        .withTimeout(2.5);
   }
 
   @AutoLogOutput(key = "Debug Scoral Arm/arm")
@@ -223,6 +225,8 @@ public class ScoralArm extends SubsystemBase {
     Logger.recordOutput("Debug Scoral Arm/arm error", getArmError());
 
     Logger.recordOutput("Debug Scoral Arm/arm goal", goalDegrees);
+
+    Logger.recordOutput("Debug Scoral Arm/atGoal", atGoal(2));
     // This method will be called once per scheduler run
     measuredVisualizer.update(armCurrentStateDegrees.position);
     setpointVisualizer.update(armGoalStateDegrees.position);
