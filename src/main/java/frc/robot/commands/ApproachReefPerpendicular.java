@@ -63,6 +63,7 @@ public class ApproachReefPerpendicular extends Command {
     List<EventMarker> eventMarkers = new ArrayList<>();
     eventMarkers.add(
         new EventMarker("test trigger", 0.1, superStructure.getSuperStructureCommand()));
+
     PathPlannerPath path =
         new PathPlannerPath(
             waypoints,
