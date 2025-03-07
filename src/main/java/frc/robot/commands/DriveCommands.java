@@ -166,19 +166,6 @@ public class DriveCommands {
           double speedDebuff = 0.75;
           targetPose = null;
 
-          // CONSTANT REEF ROTATION TEST
-          if (superStructure.isTargetAReefState()) {
-            targetPose =
-            DriveCommands.rotateAndNudge(
-                drive.getLastReefFieldPose(),
-                new Translation2d(
-                    SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-                    SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-                Rotation2d.kZero);
-            drive.getPose().getRotation().plus(drive.getRotation().minus(targetPose.getRotation()));
-            Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef side");
-          }
-
           if ((reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())) {
             led.setState(LED_STATE.FLASHING_RED);
             Translation2d reefTranslation =
