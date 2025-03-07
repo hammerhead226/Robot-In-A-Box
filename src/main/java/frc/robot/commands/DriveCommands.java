@@ -350,6 +350,7 @@ public class DriveCommands {
           Logger.recordOutput(
               "Debug Driver Alignment/Rotation Assist Effort", rotationAssistEffort);
           Logger.recordOutput("Debug Driver Alignment/Is Slow Mode?", drive.isSlowMode());
+          
           if (!drive.isSlowMode()) {
             forwardSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
             sidewaysSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
@@ -359,13 +360,6 @@ public class DriveCommands {
             sidewaysSlewRateLimiter.changeRateLimit(2);
             rotationSlewRateLimiter.changeRateLimit(8);
           }
-
-          // double rateLimitedForwardInputMetersPerSec =
-          //     forwardSlewRateLimiter.calculate(forwardSpeed);
-          // double rateLimitedSidewaysInputMetersPerSec =
-          //     sidewaysSlewRateLimiter.calculate(sidewaysSpeed);
-          // double rateLimitedRotationInputRadsPerSec =
-          //     rotationSlewRateLimiter.calculate(rotationSpeed);
 
           double totalInputSpeed = Math.hypot(forwardSpeed, sidewaysSpeed);
           double scale =
@@ -392,23 +386,6 @@ public class DriveCommands {
                   forwardSlewRateLimiter.calculate(finalInputSpeed.vxMetersPerSecond),
                   sidewaysSlewRateLimiter.calculate(finalInputSpeed.vyMetersPerSecond),
                   rotationSlewRateLimiter.calculate(finalInputSpeed.omegaRadiansPerSecond)));
-          // drive.runVelocity(
-          //     ChassisSpeeds.fromFieldRelativeSpeeds(
-          //         new ChassisSpeeds(
-          //             MathUtil.clamp(
-          //                 rateLimitedForwardInputMetersPerSec * scale,
-          //                 -drive.getMaxLinearSpeedMetersPerSec(),
-          //                 drive.getMaxLinearSpeedMetersPerSec()),
-          //             MathUtil.clamp(
-          //                 rateLimitedSidewaysInputMetersPerSec * scale, //
-          //                 -drive.getMaxLinearSpeedMetersPerSec(),
-          //                 drive.getMaxLinearSpeedMetersPerSec()),
-          //             MathUtil.clamp(
-          //                 rateLimitedRotationInputRadsPerSec,
-          //                 -drive.getMaxAngularSpeedRadPerSec(),
-          //                 drive.getMaxAngularSpeedRadPerSec())),
-          //                 isFlipped ? drive.getRotation().plus(Rotation2d.kPi) :
-          // drive.getRotation()));
         },
         drive);
   }

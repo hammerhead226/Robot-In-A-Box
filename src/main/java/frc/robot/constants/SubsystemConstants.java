@@ -197,5 +197,10 @@ public final class SubsystemConstants {
     // READY_FOR_SCORE_REEF
   }
 
+  public static enum REEF_SCORING_ELEMENT {
+    ALGAE,
+    CORAL
+  }
+
   public static final double CORAL_DIST = 4.0; // 1300; // CHANGE THIS
 }

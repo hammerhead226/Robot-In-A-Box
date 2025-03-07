@@ -136,17 +136,17 @@ public class SuperStructure {
           return elevator.hasReachedGoal(4) && scoralArm.hasReachedGoal(20);
         case ALGAE_SCORE:
           return true;
-        // case CLIMB_STAGE_ONE:
-        // // return
-        // climberArm.atGoal(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG) &&
-        // //
-        // scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-        // return true;
-        // case CLIMB_STAGE_TWO:
-        // // return climberArm.atGoal(60);
-        // return true;
-        // case HANG:
-        // return false;
+          // case CLIMB_STAGE_ONE:
+          // // return
+          // climberArm.atGoal(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG) &&
+          // //
+          // scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+          // return true;
+          // case CLIMB_STAGE_TWO:
+          // // return climberArm.atGoal(60);
+          // return true;
+          // case HANG:
+          // return false;
         default:
           return false;
       }
@@ -172,9 +172,9 @@ public class SuperStructure {
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW;
         return new GoToStow(elevator, scoralArm, scoralRollers);
-      // .andThen(
-      // climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG,
-      // 2));
+        // .andThen(
+        // climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG,
+        // 2));
 
       case INTAKE_ALGAE:
         double height = drive.getNearestParition(6) % 2 == 0 ? 16.5 : 7.9;
@@ -273,15 +273,15 @@ public class SuperStructure {
 
   public void nextState() {
     switch (currentState) {
-      // case NONE:
-      // break;
-      // case STOW:
-      // if (scoralRollers.getDistance() <= SubsystemConstants.CORAL_DIST) {
-      // setWantedState(lastReefState);
-      // } else {
-      // setWantedState(SuperStructureState.SOURCE);
-      // }
-      // break;
+        // case NONE:
+        // break;
+        case STOW:
+        if (scoralRollers.getDistance() <= SubsystemConstants.CORAL_DIST) {
+          setWantedState(lastReefState);
+        } else {
+          setWantedState(SuperStructureState.SOURCE);
+        }
+        break;
       case SOURCE:
         setWantedState(lastReefState);
         break;
