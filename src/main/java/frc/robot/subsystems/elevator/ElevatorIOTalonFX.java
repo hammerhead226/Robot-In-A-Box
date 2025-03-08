@@ -70,8 +70,13 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     BaseStatusSignal.refreshAll(elevatorPosition, elevatorVelocity, appliedVolts, currentAmps);
 
     Logger.recordOutput(
-        "Elevator CANRage Distance Inch", distanceSensor.getDistance().getValueAsDouble());
+        "Debug Elevator/Elevator CANRage Distance Inch", distanceSensor.getDistance().getValueAsDouble());
 
+    Logger.recordOutput("Debug Elevator/Left Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Debug Elevator/Right Motor Stator Current", follower.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Debug Elevator/Left Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
+    Logger.recordOutput("Debug Elevator/Right Motor Supply Current", follower.getSupplyCurrent().getValueAsDouble());
+    
     inputs.positionInch =
         Conversions.motorRotToInches(
             elevatorPosition.getValueAsDouble(),

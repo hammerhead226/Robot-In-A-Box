@@ -1,5 +1,7 @@
 package frc.robot.subsystems.scoral;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -53,6 +55,9 @@ public class ScoralRollersIOTalonFX implements FlywheelIO {
         Units.rotationsToRadians(leaderVelocity.getValueAsDouble()) / GEAR_RATIO;
     inputs.appliedVolts = leaderAppliedVolts.getValueAsDouble();
     inputs.currentAmps = leaderCurrent.getValueAsDouble();
+
+    Logger.recordOutput("Debug Scoral Rollers/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Debug Scoral Rollers/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
   }
 
   @Override

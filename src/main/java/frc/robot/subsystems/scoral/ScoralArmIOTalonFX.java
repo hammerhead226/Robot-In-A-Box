@@ -100,6 +100,10 @@ public class ScoralArmIOTalonFX implements ArmIO {
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
     inputs.positionSetpointDegs = positionSetpointDegs;
+
+    Logger.recordOutput("Debug Scoral Arm/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Debug Scoral Arm/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
+
     Logger.recordOutput(
         "cancoder arm position degs",
         Units.rotationsToDegrees(
