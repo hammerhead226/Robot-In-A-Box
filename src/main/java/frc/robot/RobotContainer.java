@@ -355,13 +355,21 @@ public class RobotContainer {
         "STOW",
         new SequentialCommandGroup(
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
-            new GoToStow(elevator, scoralArm, scoralRollers)));
+            new GoToStow(elevator, scoralArm, scoralRollers),
+            new WaitCommand(0.1)));
     NamedCommands.registerCommand(
         "SCORE_CORAL",
         new SequentialCommandGroup(
             new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
             new ScoreCoral(elevator, scoralArm, scoralRollers),
             new WaitCommand(0.25)));
+    NamedCommands.registerCommand(
+        "SCORE_CORAL_NEW",
+        new SequentialCommandGroup(
+            new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
+            new InstantCommand(() -> scoralRollers.runVoltsCommmand(2.6)),
+            new WaitCommand(0.35)));
+
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
     autos = new SendableChooser<>();
