@@ -92,7 +92,7 @@ public class DriveCommands {
   static ProfiledPIDController forwardsPID =
       new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
   static ProfiledPIDController rotationPID =
-      new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
+      new ProfiledPIDController(9.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
   // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70,
   // 120));
 
@@ -197,12 +197,30 @@ public class DriveCommands {
             Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef");
 
           } else if (angleAssistSupplier.getAsBoolean()) {
+
+            // if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
+            //   targetPose = drive.getNearestSource();
+            //   targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new
+            // Rotation2d(0));
+            //   targetPose =
+            //       new Pose2d(
+            //           targetPose.getTranslation(),
+            //           targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
+
+            //   // removed the translational aspect of align to soure (only rotation now)
+            //   // targetPose =
+            //   //     new Pose2d(
+            //   //         new Translation2d(0, 0),
+            //   //         targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
+
+            //   Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "source");
+            // }
+
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
               targetPose = drive.getNearestSource();
-              targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
               targetPose =
                   new Pose2d(
-                      targetPose.getTranslation(),
+                      new Translation2d(0, 0),
                       targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "source");
             } else if (superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
@@ -232,7 +250,6 @@ public class DriveCommands {
 
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "anchor");
             }
-
 
           } else {
             Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "none");
@@ -298,7 +315,10 @@ public class DriveCommands {
                     ? (wantedSidewaysVelocityMetersPerSec - sidewaysSpeed) * speedDebuff
                     : 0;
 
-            rotationAssistEffort = (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff;
+            rotationAssistEffort =
+                (superStructure.getWantedState() == SuperStructureState.SOURCE)
+                    ? (wantedRotationVelocityRadsPerSec - rotationSpeed)
+                    : (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff;
 
           } else {
             wantedForwardsVelocityMetersPerSec = forwardSpeed;
