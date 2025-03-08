@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5897320072961243,
-        "y": 2.246295903040232
+        "x": 4.420442163037125,
+        "y": 3.170292842317475
       },
       "isLocked": false,
       "linkedName": "BlueLeftSource"
@@ -20,8 +20,8 @@
         "y": 2.786
       },
       "prevControl": {
-        "x": 3.0700541956394782,
-        "y": 2.0873954498798013
+        "x": 3.464766390780261,
+        "y": 2.316895037507198
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.30161290322580614,
+      "maxWaypointRelativePos": 0.25,
       "constraints": {
         "maxVelocity": 3.0,
         "maxAcceleration": 3.0,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "L4",
-      "waypointRelativePos": 0.3,
+      "waypointRelativePos": 0.24568345323740448,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
