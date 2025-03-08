@@ -23,7 +23,7 @@ public final class SubsystemConstants {
 
   public static final double NEAR_FAR_AT_REEF_OFFSET = -0.47;
   public static final double NEAR_FAR_AWAY_REEF_OFFSET = -0.9;
-  public static final double LEFT_RIGHT_BRANCH_OFFSET = -0.05;
+  public static final double LEFT_RIGHT_BRANCH_OFFSET = -0.024;
 
   public static class IntakeConstants {
     public static final double CURRENT_LIMIT = 40.0;

@@ -36,6 +36,7 @@ public class SuperStructure {
   private SuperStructureState lastReefState;
   public boolean override = false;
   int counter = 0;
+  private boolean algaeMode = false;
 
   public SuperStructure(
       Drive drive,
@@ -164,6 +165,14 @@ public class SuperStructure {
     }
   }
 
+  public void toggleAlgaeMode() {
+    if (!algaeMode) {
+      algaeMode = true;
+    } else {
+      algaeMode = false;
+    }
+  } 
+
   public SequentialCommandGroup getSuperStructureCommand() {
     counter++;
     Logger.recordOutput("Debug Super Structure/counter", counter);
@@ -171,8 +180,14 @@ public class SuperStructure {
       case STOW:
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW;
+        // if (SubsystemConstants.coralStuckMode) {
+        // return new EmergencyGoToStow(elevator, scoralArm, scoralRollers)
+        // .andThen(new InstantCommand(() -> nextState()));
+        // } else {
         return new GoToStow(elevator, scoralArm, scoralRollers)
             .andThen(new InstantCommand(() -> nextState()));
+        // }
+
         // .andThen(
         // climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG,
         // 2));

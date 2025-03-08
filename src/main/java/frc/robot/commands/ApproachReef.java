@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ApproachReef extends Command {
@@ -80,12 +81,18 @@ public class ApproachReef extends Command {
     } else {
       atPose =
           DriveCommands.rotateAndNudge(
-              reefPose,
-              new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, 0),
+              new Pose2d(
+                  (drive.getNearestCenterLeft().getX() + drive.getNearestCenterRight().getX()) / 2.,
+                  (drive.getNearestCenterLeft().getY() + drive.getNearestCenterRight().getY()) / 2.,
+                  drive.getNearestCenterLeft().getRotation()),
+              new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET - 0.2, 0),
               Rotation2d.kZero);
       awayPose =
           DriveCommands.rotateAndNudge(
-              reefPose,
+              new Pose2d(
+                  (drive.getNearestCenterLeft().getX() + drive.getNearestCenterRight().getX()) / 2.,
+                  (drive.getNearestCenterLeft().getY() + drive.getNearestCenterRight().getY()) / 2.,
+                  drive.getNearestCenterLeft().getRotation()),
               new Translation2d(SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET, 0),
               Rotation2d.kZero);
     }
@@ -121,15 +128,22 @@ public class ApproachReef extends Command {
 
     List<Waypoint> waypoints =
         PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, awayPose, atPose);
-
+    Logger.recordOutput("Debug OTF Paths/Reef Align", atPose);
     List<RotationTarget> holomorphicRotations =
         Arrays.asList(
             new RotationTarget(1.0, awayPose.getRotation().plus(Rotation2d.kCW_90deg)),
             new RotationTarget(1.9, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
 
     List<EventMarker> eventMarkers = new ArrayList<>();
-    eventMarkers.add(
-        new EventMarker("move subsystems command", 0.1, superStructure.getSuperStructureCommand()));
+    if (scoringElement == REEF_SCORING_ELEMENT.CORAL) {
+      eventMarkers.add(
+          new EventMarker("score coral command", 0.6, superStructure.getSuperStructureCommand()));
+    } else {
+      eventMarkers.add(
+          new EventMarker(
+              "pick up algae command", 0.01, superStructure.getSuperStructureCommand()));
+    }
+
     PathPlannerPath path =
         new PathPlannerPath(
             waypoints,

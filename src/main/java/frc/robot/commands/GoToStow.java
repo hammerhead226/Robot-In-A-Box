@@ -33,7 +33,7 @@ public class GoToStow extends SequentialCommandGroup {
         // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG + 4, 10),
         scoralRollers.stopCommand(),
         new WaitUntilCommand(() -> scoralArm.atGoal(10)),
-        new SetElevatorTarget(elevator, ElevatorConstants.STOW_SETPOINT_INCH, 10),
+        new SetElevatorTarget(elevator, ElevatorConstants.STOW_SETPOINT_INCH, 15),
         // elevator.setElevatorTarget(
         //     SubsystemConstants.coralStuckMode
         //         ? 6
@@ -42,7 +42,7 @@ public class GoToStow extends SequentialCommandGroup {
         // new WaitCommand(0.3),
         // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG - 10, 2),
         // new WaitUntilCommand(() -> scoralArm.atGoal(2)),
-        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 4, 2),
+        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 2),
         // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG - 4, 2),
         new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG, 2));
     // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 0.9));

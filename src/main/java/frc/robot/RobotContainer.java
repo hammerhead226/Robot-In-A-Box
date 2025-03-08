@@ -25,6 +25,7 @@ import frc.robot.commands.GoToStow;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.ScoreCoral;
+import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
 import frc.robot.constants.RobotMap;
 import frc.robot.constants.SimConstants;
@@ -601,7 +602,7 @@ public class RobotContainer {
                 led,
                 superStructure,
                 false,
-                () -> driveController.rightTrigger().getAsBoolean()));
+                () -> driveController.leftTrigger().getAsBoolean()));
     driveController
         .rightTrigger()
         .and(() -> !driveController.leftTrigger().getAsBoolean() && !drive.isNearReef())
@@ -632,25 +633,33 @@ public class RobotContainer {
                 .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
                 .andThen(new InstantCommand(() -> superStructure.nextState())));
 
-    // driveController
-    //     .a()
-    //     .onTrue(
-    //         new SequentialCommandGroup(
-    //             scoralArm.setArmTarget(29, 2),
-    //             new InstantCommand(() -> climberArm.setVoltage(-1.5))));
-
-    driveController
-        .x()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
-    driveController
-        .y()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
     driveController
         .a()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
-    driveController
-        .b()
-        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
+        .onTrue(
+            new SequentialCommandGroup(
+                new SetScoralArmTarget(scoralArm, 29, 2),
+                // scoralArm.setArmTarget(29, 2),
+                new InstantCommand(() -> climberArm.setVoltage(-1.5))));
+    driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
+
+    driveController.b().onTrue(new InstantCommand(() -> climberArm.setVoltage(2)));
+    driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
+
+    driveController.x().onTrue(new InstantCommand(() -> winch.runVolts(-6)));
+    driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
+
+    // driveController
+    //     .x()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+    // driveController
+    //     .y()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    // driveController
+    //     .a()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+    // driveController
+    //     .b()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
     driveController.povUp().onTrue(new InstantCommand(() -> superStructure.toggleCoralStuckMode()));
 
