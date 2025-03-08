@@ -27,8 +27,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.constants.*;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.Barge;
+import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.SuperStructure;
@@ -222,6 +223,8 @@ public class DriveCommands {
                   new Pose2d(
                       new Translation2d(0, 0),
                       targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
+              // Reset allows for faster rotation even on first button press
+              rotationPID.reset(targetPose.getRotation().getDegrees());
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "source");
             } else if (superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
               targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
