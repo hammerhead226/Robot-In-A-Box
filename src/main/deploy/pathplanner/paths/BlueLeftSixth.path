@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.71,
-        "y": 3.0
+        "x": 3.99,
+        "y": 2.786
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.521340028281529,
-        "y": 2.8359652016455477
+        "x": 3.769740689345472,
+        "y": 2.578775246203064
       },
       "isLocked": false,
-      "linkedName": "BlueLeft34"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 0.667
       },
       "prevControl": {
-        "x": 1.2208208412569672,
-        "y": 0.22910863293190808
+        "x": 1.817440236423335,
+        "y": 0.8035092940679774
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,11 +32,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.5000000000000002,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 0.5048387096774206,
       "constraints": {
         "maxVelocity": 3.5,
-        "maxAcceleration": 3.5,
+        "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -49,7 +49,7 @@
     {
       "name": "STOW",
       "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": 0.49516129032258066,
+      "endWaypointRelativePos": 0.4967741935483869,
       "command": {
         "type": "sequential",
         "data": {
@@ -67,7 +67,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.5,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
