@@ -20,6 +20,7 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.REEF_SCORING_ELEMENT;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.led.LED;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,11 @@ public class ApproachReef extends Command {
   Pose2d awayPose;
   /** Creates a new ApproachReef. */
   public ApproachReef(
-      Drive drive, SuperStructure superStructure, boolean isRight, BooleanSupplier continuePath) {
+      Drive drive,
+      LED led,
+      SuperStructure superStructure,
+      boolean isRight,
+      BooleanSupplier continuePath) {
     this.drive = drive;
     this.superStructure = superStructure;
     this.isRight = isRight;
@@ -51,35 +56,39 @@ public class ApproachReef extends Command {
   @Override
   public void initialize() {
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
-    scoringElement = superStructure.isTargetAReefState() ? REEF_SCORING_ELEMENT.CORAL : REEF_SCORING_ELEMENT.ALGAE;
-    
+    scoringElement =
+        superStructure.isTargetAReefState()
+            ? REEF_SCORING_ELEMENT.CORAL
+            : REEF_SCORING_ELEMENT.ALGAE;
+
     if (scoringElement == REEF_SCORING_ELEMENT.CORAL) {
       awayPose =
-        DriveCommands.rotateAndNudge(
-            reefPose,
-            new Translation2d(
-                SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
-                SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-            Rotation2d.kZero);
+          DriveCommands.rotateAndNudge(
+              reefPose,
+              new Translation2d(
+                  SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
+                  SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+              Rotation2d.kZero);
 
       atPose =
-      DriveCommands.rotateAndNudge(
-          reefPose,
-          new Translation2d(
-              SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-              SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-          Rotation2d.kZero);
+          DriveCommands.rotateAndNudge(
+              reefPose,
+              new Translation2d(
+                  SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                  SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+              Rotation2d.kZero);
     } else {
-      atPose = DriveCommands.rotateAndNudge(reefPose, new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, 0), Rotation2d.kZero);
+      atPose =
+          DriveCommands.rotateAndNudge(
+              reefPose,
+              new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, 0),
+              Rotation2d.kZero);
       awayPose =
-        DriveCommands.rotateAndNudge(
-            reefPose,
-            new Translation2d(
-                SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
-                0),
-            Rotation2d.kZero);
+          DriveCommands.rotateAndNudge(
+              reefPose,
+              new Translation2d(SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET, 0),
+              Rotation2d.kZero);
     }
-    
 
     ChassisSpeeds fieldRelChassisSpeeds =
         ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), drive.getRotation());
@@ -149,10 +158,10 @@ public class ApproachReef extends Command {
   @Override
   public void end(boolean interrupted) {
     pathCommand.cancel();
-    if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.5 && scoringElement == REEF_SCORING_ELEMENT.CORAL) {
+    if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.5
+        && scoringElement == REEF_SCORING_ELEMENT.CORAL) {
       superStructure.nextState();
     }
-    
   }
 
   // Returns true when the command should end.

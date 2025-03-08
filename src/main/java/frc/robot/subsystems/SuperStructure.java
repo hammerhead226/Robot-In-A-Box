@@ -171,7 +171,8 @@ public class SuperStructure {
       case STOW:
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW;
-        return new GoToStow(elevator, scoralArm, scoralRollers);
+        return new GoToStow(elevator, scoralArm, scoralRollers)
+            .andThen(new InstantCommand(() -> nextState()));
         // .andThen(
         // climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG,
         // 2));
@@ -275,7 +276,7 @@ public class SuperStructure {
     switch (currentState) {
         // case NONE:
         // break;
-        case STOW:
+      case STOW:
         if (scoralRollers.getDistance() <= SubsystemConstants.CORAL_DIST) {
           setWantedState(lastReefState);
         } else {

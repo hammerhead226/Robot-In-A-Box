@@ -1,7 +1,5 @@
 package frc.robot.subsystems.scoral;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -16,6 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
+import org.littletonrobotics.junction.Logger;
 
 public class ScoralRollersIOTalonFX implements FlywheelIO {
   private static final double GEAR_RATIO = 1.5;
@@ -56,8 +55,10 @@ public class ScoralRollersIOTalonFX implements FlywheelIO {
     inputs.appliedVolts = leaderAppliedVolts.getValueAsDouble();
     inputs.currentAmps = leaderCurrent.getValueAsDouble();
 
-    Logger.recordOutput("Debug Scoral Rollers/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("Debug Scoral Rollers/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Debug Scoral Rollers/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Debug Scoral Rollers/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
   }
 
   @Override

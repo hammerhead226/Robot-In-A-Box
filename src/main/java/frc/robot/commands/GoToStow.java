@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.ElevatorConstants;
 import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
 import frc.robot.subsystems.elevator.Elevator;
@@ -34,7 +33,7 @@ public class GoToStow extends SequentialCommandGroup {
         // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG + 4, 10),
         scoralRollers.stopCommand(),
         new WaitUntilCommand(() -> scoralArm.atGoal(10)),
-        new SetElevatorTarget(elevator, ElevatorConstants.STOW_SETPOINT_INCH, 6),
+        new SetElevatorTarget(elevator, ElevatorConstants.STOW_SETPOINT_INCH, 10),
         // elevator.setElevatorTarget(
         //     SubsystemConstants.coralStuckMode
         //         ? 6
@@ -45,7 +44,7 @@ public class GoToStow extends SequentialCommandGroup {
         // new WaitUntilCommand(() -> scoralArm.atGoal(2)),
         new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 4, 2),
         // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG - 4, 2),
-        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG, 0.9));
-        // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 0.9));
+        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG, 2));
+    // scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 0.9));
   }
 }

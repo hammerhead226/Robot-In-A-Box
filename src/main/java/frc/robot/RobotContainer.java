@@ -32,7 +32,6 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
-import frc.robot.constants.SubsystemConstants.REEF_SCORING_ELEMENT;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.SuperStructure;
@@ -474,9 +473,7 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
-            () -> driveController.leftBumper().getAsBoolean(),
-            () -> driveController.leftTrigger().getAsBoolean(),
-            () -> driveController.rightTrigger().getAsBoolean()));
+            () -> driveController.leftBumper().getAsBoolean()));
     // driveController.b().onTrue(elevator.setElevatorTarget(20, 1));
     // driveController.b().onFalse(elevator.setElevatorTarget(0, 1));
     // driveController.a().onTrue(led.setStateCommand(LED_STATE.BLUE));
@@ -593,22 +590,28 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
-            () -> driveController.leftBumper().getAsBoolean(),
-            () -> driveController.leftTrigger().getAsBoolean(),
-            () -> driveController.rightTrigger().getAsBoolean()));
+            () -> driveController.leftBumper().getAsBoolean()));
 
     driveController
         .leftTrigger()
         .and(() -> !driveController.rightTrigger().getAsBoolean() && !drive.isNearReef())
         .onTrue(
             new ApproachReef(
-                drive, superStructure, false, () -> driveController.rightTrigger().getAsBoolean()));
+                drive,
+                led,
+                superStructure,
+                false,
+                () -> driveController.rightTrigger().getAsBoolean()));
     driveController
         .rightTrigger()
         .and(() -> !driveController.leftTrigger().getAsBoolean() && !drive.isNearReef())
         .onTrue(
             new ApproachReef(
-                drive, superStructure, true, () -> driveController.rightTrigger().getAsBoolean()));
+                drive,
+                led,
+                superStructure,
+                true,
+                () -> driveController.rightTrigger().getAsBoolean()));
 
     // approachPerpendicularTrigger.onTrue(
     //     new ApproachReefPerpendicular(

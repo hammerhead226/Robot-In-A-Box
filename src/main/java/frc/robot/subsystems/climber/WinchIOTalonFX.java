@@ -1,7 +1,5 @@
 package frc.robot.subsystems.climber;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -17,6 +15,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.SubsystemConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class WinchIOTalonFX implements WinchIO {
   private static final double GEAR_RATIO = 9;
@@ -65,8 +64,10 @@ public class WinchIOTalonFX implements WinchIO {
     inputs.appliedVolts = leaderAppliedVolts.getValueAsDouble();
     inputs.currentAmps = leaderCurrent.getValueAsDouble();
 
-    Logger.recordOutput("Debug Winch/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("Debug Winch/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Debug Winch/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Debug Winch/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
   }
 
   @Override
