@@ -709,11 +709,7 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
 
-    manipController
-        .povLeft()
-        .onTrue(
-            new InstantCommand(
-                () -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE)));
+    manipController.povLeft().onTrue(new InstantCommand(() -> superStructure.toggleAlgaeMode()));
 
     manipController
         .povUp()

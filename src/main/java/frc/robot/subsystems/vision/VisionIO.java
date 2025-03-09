@@ -27,6 +27,7 @@ public interface VisionIO {
     public PoseObservation[] poseObservations = new PoseObservation[0];
     public int[] tagIds = new int[0];
     public double poseTimeStamp = 0;
+    public double tempF = 0.0;
   }
 
   /** Represents the angle to a simple target, not used for pose estimation. */

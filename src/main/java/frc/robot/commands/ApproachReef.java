@@ -117,15 +117,6 @@ public class ApproachReef extends Command {
           new Pose2d(drive.getPose().getTranslation(), new Rotation2d(v.getX(), v.getY()));
     }
 
-    // targetPose =
-    //     new Pose2d(
-    //         targetPose.getTranslation(),
-    //         targetPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90)));
-    // new Pose2d(
-    //     drive.getNearestSide().getTranslation().minus(drive.getOffset()),
-    //     drive.getNearestSide().getRotation());
-    // new Pose2d(nearestSide.getTranslation().minus(offset), nearestSide.getRotation())
-
     List<Waypoint> waypoints =
         PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, awayPose, atPose);
     Logger.recordOutput("Debug OTF Paths/Reef Align", atPose);

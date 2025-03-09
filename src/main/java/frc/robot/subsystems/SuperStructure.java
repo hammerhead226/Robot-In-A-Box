@@ -6,13 +6,16 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.GoToStow;
-import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakingCoral;
+import frc.robot.commands.MoveToReefCenter;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.ScoringProccessorSequential;
+import frc.robot.commands.SetElevatorTarget;
+import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
+import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.climber.ClimberArm;
 import frc.robot.subsystems.climber.Winch;
@@ -171,7 +174,11 @@ public class SuperStructure {
     } else {
       algaeMode = false;
     }
-  } 
+  }
+
+  public boolean getAlgaeMode() {
+    return algaeMode;
+  }
 
   public SequentialCommandGroup getSuperStructureCommand() {
     counter++;
@@ -192,19 +199,21 @@ public class SuperStructure {
         // climberArm.setArmTarget(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG,
         // 2));
 
-      case INTAKE_ALGAE:
-        double height = drive.getNearestParition(6) % 2 == 0 ? 16.5 : 7.9;
-        // double height = drive.getNearestParition(6) % 2 == 0 ? 7.9 : 16.5;
+        // case INTAKE_ALGAE:
+        //   // double height = drive.getNearestParition(6) % 2 == 0 ? 16.5 : 7.9;
+        //   double height = drive.getNearestParition(6) % 2 == 0 ? 8 : 2;
 
-        currentState = SuperStructureState.INTAKE_ALGAE;
-        return new IntakeAlgae(elevator, scoralArm, scoralRollers, height);
+        //   currentState = SuperStructureState.INTAKE_ALGAE;
+        //   return new IntakeAlgae(elevator, scoralArm, scoralRollers, height);
 
       case STOW_ALGAE:
-        return new ToReefHeight(
-            elevator,
-            scoralArm,
-            SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES,
-            SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+        return new SequentialCommandGroup(
+            new GoToStow(elevator, scoralArm, scoralRollers), scoralRollers.runVoltsCommmand(-0.9));
+        // new ToReefHeight(
+        //     elevator,
+        //     scoralArm,
+        //     SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES,
+        //     SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG));
       case BARGE_EXTEND:
         currentState = SuperStructureState.BARGE_EXTEND;
         return new SequentialCommandGroup(
@@ -274,11 +283,39 @@ public class SuperStructure {
       case SCORING_CORAL:
         currentState = SuperStructureState.SCORING_CORAL;
         led.setState(LED_STATE.FLASHING_GREEN);
-        return new SequentialCommandGroup(
-            new ScoreCoral(elevator, scoralArm, scoralRollers),
-            new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
-            new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
-            new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
+        if (!algaeMode) {
+          return new SequentialCommandGroup(
+              new ScoreCoral(elevator, scoralArm, scoralRollers),
+              new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
+              new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
+              new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
+        } else {
+          // double height1 =
+          //     drive.getNearestParition(6) % 2 == 0
+          //         ? 6
+          //         : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
+          // double height2 = drive.getNearestParition(6) % 2 == 0 ? 8 : 2;
+          double height1 = drive.getNearestParition(6) % 2 == 0 ? 6 : 6.5;
+          double height2 = drive.getNearestParition(6) % 2 == 0 ? 8 : 9;
+
+          // currentState = SuperStructureState.INTAKE_ALGAE;
+          // return new IntakeAlgae(elevator, scoralArm, scoralRollers, height);
+          return new SequentialCommandGroup(
+              scoralRollers.runVoltsCommmand(2.6),
+              new WaitCommand(0.5),
+              new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG + 4, 10),
+              scoralRollers.stopCommand(),
+              new InstantCommand(() -> this.setCurrentState(SuperStructureState.INTAKE_ALGAE)),
+              new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)),
+              new InstantCommand(() -> led.setState(LED_STATE.WILLIAMS_BLUE)),
+              new SetElevatorTarget(elevator, height1, 15),
+              new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 2),
+              new MoveToReefCenter(drive),
+              new WaitUntilCommand(() -> elevator.hasReachedGoal(height1)),
+              new SetScoralArmTarget(scoralArm, 78, 2),
+              scoralRollers.runVoltsCommmand(-2),
+              new SetElevatorTarget(elevator, height2, 1.5));
+        }
 
       default:
         return new SequentialCommandGroup(

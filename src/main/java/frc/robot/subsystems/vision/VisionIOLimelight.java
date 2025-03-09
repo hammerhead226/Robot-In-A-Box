@@ -38,6 +38,7 @@ public class VisionIOLimelight implements VisionIO {
   private final DoubleSubscriber txSubscriber;
   private final DoubleSubscriber tySubscriber;
   private final DoubleSubscriber hbSubscriber;
+  private final DoubleArraySubscriber hwSubscriber;
   private final DoubleArraySubscriber megatag1Subscriber;
   private final DoubleArraySubscriber megatag2Subscriber;
 
@@ -58,6 +59,7 @@ public class VisionIOLimelight implements VisionIO {
     txSubscriber = table.getDoubleTopic("tx").subscribe(0.0);
     tySubscriber = table.getDoubleTopic("ty").subscribe(0.0);
     hbSubscriber = table.getDoubleTopic("hb").subscribe(0.0);
+    hwSubscriber = table.getDoubleArrayTopic("hw").subscribe(new double[] {});
     megatag1Subscriber = table.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[] {});
     megatag2Subscriber =
         table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[] {});
@@ -71,6 +73,8 @@ public class VisionIOLimelight implements VisionIO {
 
     // Update heartbeat
     inputs.heartBeat = hbSubscriber.get();
+
+    inputs.tempF = hwSubscriber.get(new double[4])[0] * 9. / 5. + 32;
 
     // Update target observation
     inputs.latestTargetObservation =

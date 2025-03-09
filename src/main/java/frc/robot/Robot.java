@@ -241,6 +241,7 @@ public class Robot extends LoggedRobot {
         "Debug Super Structure/At State Goals", robotContainer.getSuperStructure().atGoals());
 
     Logger.recordOutput("coral stuck mode", SubsystemConstants.coralStuckMode);
+    Logger.recordOutput("algaeMode", robotContainer.getSuperStructure().getAlgaeMode());
   }
 
   /** This function is called once when test mode is enabled. */

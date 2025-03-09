@@ -31,7 +31,7 @@ public class IntakeAlgae extends SequentialCommandGroup {
 
     addCommands(
         new SetElevatorTarget(elevator, height, 3),
-        new SetScoralArmTarget(scoralArm, 45, 2),
+        new SetScoralArmTarget(scoralArm, 78, 2),
         new InstantCommand(() -> scoralRollers.runVolts(-2)));
     // new SequentialCommandGroup(
 
