@@ -7,12 +7,12 @@ public interface ClimberArmIO {
   public static class ClimberArmIOInputs {
     public double velocityDegsPerSec = 0;
     public double positionDegs = 0;
-    public double currentAmps = 0;
+    public double statorCurrentAmps = 0;
+    public double supplyCurrentAmps = 0;
     public double appliedVolts = 0;
     public double positionSetpointDegs;
 
     public boolean gyroConnected = false;
-    public double pitch = 0;
   }
 
   public default void updateInputs(ClimberArmIOInputs inputs) {}

@@ -80,7 +80,8 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final Queue<Double> drivePositionQueue;
   private final StatusSignal<AngularVelocity> driveVelocity;
   private final StatusSignal<Voltage> driveAppliedVolts;
-  private final StatusSignal<Current> driveCurrent;
+  private final StatusSignal<Current> driveStatorCurrent;
+  private final StatusSignal<Current> driveSupplyCurrent;
   private final StatusSignal<Temperature> driveTemperatureCelcius;
 
   // Inputs from turn motor
@@ -165,7 +166,8 @@ public class ModuleIOTalonFX implements ModuleIO {
         PhoenixOdometryThread.getInstance().registerSignal(driveTalon.getPosition());
     driveVelocity = driveTalon.getVelocity();
     driveAppliedVolts = driveTalon.getMotorVoltage();
-    driveCurrent = driveTalon.getStatorCurrent();
+    driveStatorCurrent = driveTalon.getStatorCurrent();
+    driveSupplyCurrent = driveTalon.getSupplyCurrent();
     driveTemperatureCelcius = driveTalon.getDeviceTemp();
 
     // Create turn status signals
@@ -183,7 +185,8 @@ public class ModuleIOTalonFX implements ModuleIO {
         50.0,
         driveVelocity,
         driveAppliedVolts,
-        driveCurrent,
+        driveStatorCurrent,
+        driveSupplyCurrent,
         turnAbsolutePosition,
         turnVelocity,
         turnAppliedVolts,
@@ -195,7 +198,12 @@ public class ModuleIOTalonFX implements ModuleIO {
   public void updateInputs(ModuleIOInputs inputs) {
     // Refresh all signals
     var driveStatus =
-        BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent);
+        BaseStatusSignal.refreshAll(
+            drivePosition,
+            driveVelocity,
+            driveAppliedVolts,
+            driveStatorCurrent,
+            driveSupplyCurrent);
     var turnStatus =
         BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnAppliedVolts, turnCurrent);
     var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
@@ -205,7 +213,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble());
     inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble());
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
-    inputs.driveCurrentAmps = driveCurrent.getValueAsDouble();
+    inputs.driveSupplyCurrentAmps = driveSupplyCurrent.getValueAsDouble();
+    inputs.driveStatorCurrentAmps = driveStatorCurrent.getValueAsDouble();
     inputs.driveTemperatureCelcius = driveTemperatureCelcius.getValueAsDouble();
 
     // Update turn inputs

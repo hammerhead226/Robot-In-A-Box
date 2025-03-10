@@ -47,20 +47,6 @@ public class Elevator extends SubsystemBase {
   private ElevatorVis measuredVisualizer;
   private ElevatorVis setpointVisualizer;
 
-  // public enum ElevatorState {
-  // ZERO,
-  // STOW,
-  // L1,
-  // L2,
-  // L3,
-  // L4,
-  // SOURCE,
-  // PROCESSOR
-  // }
-
-  // private ElevatorState wantedState = ElevatorState.STOW;
-  // private ElevatorState currentState = ElevatorState.STOW;
-
   public Elevator(ElevatorIO elevator) {
     this.elevator = elevator;
 
@@ -106,13 +92,8 @@ public class Elevator extends SubsystemBase {
     }
     measured = new ElevatorVis("measured", Color.kRed);
 
-    // CHANGE THIS VALUE TO MATCH THE ELEVATOR
-    // setExtenderGoal(1.3);
     extenderProfile = new TrapezoidProfile(extenderConstraints);
     extenderCurrent = extenderProfile.calculate(0, extenderCurrent, extenderGoal);
-
-    // extenderProfile2 = new TrapezoidProfile(extenderConstraints2);
-
     measuredVisualizer = new ElevatorVis("measured", Color.kRed);
     setpointVisualizer = new ElevatorVis("setpoint", Color.kGreen);
 
@@ -120,12 +101,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setBrake(boolean brake) {
-
     elevator.setBrakeMode(brake);
   }
 
   public boolean atGoal(double threshold) {
-    // return true;
     return (Math.abs(eInputs.positionInch - goal) <= threshold);
   }
 
@@ -163,8 +142,6 @@ public class Elevator extends SubsystemBase {
 
   public void setElevatorGoal(double goal) {
     this.goal = goal;
-    extenderGoal = new TrapezoidProfile.State(goal, 0);
-    // extenderGoal2 = new TrapezoidProfile.State(setpoint, 0);
   }
 
   public void setPositionExtend(double position, double velocity) {
@@ -173,11 +150,6 @@ public class Elevator extends SubsystemBase {
 
   public void elevatorStop() {
     elevator.stop();
-  }
-
-  public double calculateAngle() {
-    double angle = 0.0;
-    return angle;
   }
 
   public void setConstraints(
@@ -197,11 +169,9 @@ public class Elevator extends SubsystemBase {
     return new InstantCommand(() -> setElevatorGoal(elevatorGoalInches), this)
         .andThen(new WaitUntilCommand(() -> atGoal(thresholdInches)))
         .withTimeout(2.5);
-    // .until(() -> elevatorAtSetpoint(thresholdInches))
-
   }
 
-  public void breakMode(boolean brake) {
+  public void brakeMode(boolean brake) {
     elevator.setBrakeMode(brake);
   }
 
@@ -236,12 +206,6 @@ public class Elevator extends SubsystemBase {
   private void updateTunableNumbers() {
     if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode())) {
       elevator.configurePIDF(kP.get(), kI.get(), 0, kS.get(), kG.get(), kV.get(), kA.get());
-    }
-    if (kS.hasChanged(hashCode())
-        || kG.hasChanged(hashCode())
-        || kV.hasChanged(hashCode())
-        || kA.hasChanged(hashCode())) {
-      elevatorFFModel = new ElevatorFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
     }
   }
 }

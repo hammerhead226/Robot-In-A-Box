@@ -31,7 +31,7 @@ public class WinchIOSim implements WinchIO {
     inputs.velocitySetpointRPM = velocitySetpointRPS * 60.;
     inputs.winchVelocityRPM = sim.getAngularVelocityRPM();
     inputs.appliedVolts = appliedVolts;
-    inputs.currentAmps = sim.getCurrentDrawAmps();
+    inputs.statorCurrentAmps = sim.getCurrentDrawAmps();
   }
 
   @Override

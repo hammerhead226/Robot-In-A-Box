@@ -35,7 +35,8 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
   private final StatusSignal<Angle> leaderPositionDegs;
   private final StatusSignal<AngularVelocity> velocityDegsPerSec;
   private final StatusSignal<Voltage> appliedVolts;
-  private final StatusSignal<Current> currentAmps;
+  private final StatusSignal<Current> statorCurrentAmps;
+  private final StatusSignal<Current> supplyCurrentAmps;
 
   public ClimberArmIOTalonFX(int leadID, int canCoderID) {
     config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ScoralArmConstants.CURRENT_LIMIT;
@@ -73,9 +74,8 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
     leaderPositionDegs = leader.getPosition();
     velocityDegsPerSec = leader.getVelocity();
     appliedVolts = leader.getMotorVoltage();
-    currentAmps = leader.getStatorCurrent();
-
-    // leader.get
+    statorCurrentAmps = leader.getStatorCurrent();
+    supplyCurrentAmps = leader.getSupplyCurrent();
 
     positionSetpointDegs = SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG;
 
@@ -84,14 +84,15 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
     leader.optimizeBusUtilization();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100, leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps);
+        100, leaderPositionDegs, velocityDegsPerSec, appliedVolts, statorCurrentAmps);
 
     // setBrakeMode(false);
   }
 
   @Override
   public void updateInputs(ClimberArmIOInputs inputs) {
-    BaseStatusSignal.refreshAll(leaderPositionDegs, velocityDegsPerSec, appliedVolts, currentAmps);
+    BaseStatusSignal.refreshAll(
+        leaderPositionDegs, velocityDegsPerSec, appliedVolts, statorCurrentAmps);
     Logger.recordOutput(
         "Debug Climb Arm/can coder climber",
         Units.rotationsToDegrees(climbCoder.getAbsolutePosition().getValueAsDouble()));
@@ -100,7 +101,8 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
 
     inputs.velocityDegsPerSec = velocityDegsPerSec.getValueAsDouble();
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
-    inputs.currentAmps = currentAmps.getValueAsDouble();
+    inputs.statorCurrentAmps = statorCurrentAmps.getValueAsDouble();
+    inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.positionSetpointDegs = positionSetpointDegs;
   }
 

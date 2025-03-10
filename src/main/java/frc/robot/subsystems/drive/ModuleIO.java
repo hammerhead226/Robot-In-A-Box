@@ -23,7 +23,8 @@ public interface ModuleIO {
     public double drivePositionRad = 0.0;
     public double driveVelocityRadPerSec = 0.0;
     public double driveAppliedVolts = 0.0;
-    public double driveCurrentAmps = 0.0;
+    public double driveStatorCurrentAmps = 0.0;
+    public double driveSupplyCurrentAmps = 0.0;
     public double driveTemperatureCelcius = 0.0;
 
     public boolean turnConnected = false;

@@ -176,12 +176,4 @@ public class Conversions {
       double accelerationInchPerSecSec, double circumference, double gearRatio) {
     return accelerationInchPerSecSec / (circumference / (gearRatio)) * 60.0;
   }
-
-  public static double carriageToFirstStageInches(double carriageHeightInch) {
-    return (carriageHeightInch / 2.) - 5;
-  }
-
-  public static double firstStageToCarriageInches(double firstStageHeightInches) {
-    return (firstStageHeightInches * 2.) + 5;
-  }
 }

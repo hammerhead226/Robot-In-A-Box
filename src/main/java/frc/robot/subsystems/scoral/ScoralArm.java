@@ -20,8 +20,8 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class ScoralArm extends SubsystemBase {
-  private final ArmIO coralScorerArm;
-  private final ArmIOInputsAutoLogged csaInputs = new ArmIOInputsAutoLogged();
+  private final ArmIO scoralArm;
+  private final ArmIOInputsAutoLogged saInputs = new ArmIOInputsAutoLogged();
 
   private static LoggedTunableNumber kP = new LoggedTunableNumber("CoralScoringArm/kP");
   ;
@@ -53,7 +53,7 @@ public class ScoralArm extends SubsystemBase {
 
   /** Creates a new Arm. */
   public ScoralArm(ArmIO arm) {
-    this.coralScorerArm = arm;
+    this.scoralArm = arm;
     switch (SimConstants.currentMode) {
       case REAL:
         // kG.initDefault(0.32);
@@ -114,23 +114,23 @@ public class ScoralArm extends SubsystemBase {
   }
 
   public void setBrakeMode(boolean bool) {
-    coralScorerArm.setBrakeMode(bool);
+    scoralArm.setBrakeMode(bool);
   }
 
   public double getArmPositionDegs() {
-    return csaInputs.positionDegs;
+    return saInputs.positionDegs;
   }
 
   public boolean atGoal(double threshold) {
-    return (Math.abs(csaInputs.positionDegs - goalDegrees) <= threshold);
+    return (Math.abs(saInputs.positionDegs - goalDegrees) <= threshold);
   }
 
   public boolean hasReachedGoal(double goalDegs) {
-    return (Math.abs(csaInputs.positionDegs - goalDegs) <= 8);
+    return (Math.abs(saInputs.positionDegs - goalDegs) <= 8);
   }
 
   private double getArmError() {
-    return csaInputs.positionSetpointDegs - csaInputs.positionDegs;
+    return saInputs.positionSetpointDegs - saInputs.positionDegs;
   }
 
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
@@ -139,18 +139,18 @@ public class ScoralArm extends SubsystemBase {
         "Debug Scoral Arm/scoral ffvolts",
         armFFModel.calculate(
             Units.degreesToRadians(positionDegs), Units.degreesToRadians(velocityDegsPerSec)));
-    coralScorerArm.setPositionSetpointDegs(
+    scoralArm.setPositionSetpointDegs(
         positionDegs,
         armFFModel.calculate(
             Units.degreesToRadians(positionDegs), Units.degreesToRadians(velocityDegsPerSec)));
   }
 
   public void setVolts(double volts) {
-    coralScorerArm.setVoltage(volts);
+    scoralArm.setVoltage(volts);
   }
 
   public void armStop() {
-    coralScorerArm.stop();
+    scoralArm.stop();
   }
 
   public void setArmGoal(double goalDegrees) {
@@ -176,43 +176,9 @@ public class ScoralArm extends SubsystemBase {
         0, 0.3, 1, new Rotation3d(new Rotation2d(Math.toRadians(armCurrentStateDegrees.position))));
   }
 
-  // // state machine stuff
-
-  // public void setWantedState(ScoralArmState state) {
-  //   wantedState = state;
-  // }
-
-  // public void Stow() {
-  //   setArmGoal(0);
-  // }
-
-  // public void goToSource() {
-  //   setArmGoal(40);
-  // }
-
-  // public void gotoFirstLevel() {
-  //   setArmGoal(FieldConstants.ReefHeight.L1.pitch);
-  // }
-
-  // public void gotoSecondLevel() {
-  //   setArmGoal(FieldConstants.ReefHeight.L2.pitch);
-  // }
-
-  // public void gotoThirdLevel() {
-  //   setArmGoal(FieldConstants.ReefHeight.L3.pitch);
-  // }
-
-  // public void gotoFourthLevel() {
-  //   setArmGoal(FieldConstants.ReefHeight.L4.pitch);
-  // }
-
-  // public void gotoProcessorLevel() {
-  //   setArmGoal(90);
-  // }
-
   @Override
   public void periodic() {
-    coralScorerArm.updateInputs(csaInputs);
+    scoralArm.updateInputs(saInputs);
 
     measuredVisualizer.update(armCurrentStateDegrees.position);
     armCurrentStateDegrees =
@@ -221,7 +187,7 @@ public class ScoralArm extends SubsystemBase {
 
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
-    Logger.processInputs("Scoral Arm", csaInputs);
+    Logger.processInputs("Scoral Arm", saInputs);
     Logger.recordOutput("Debug Scoral Arm/arm error", getArmError());
 
     Logger.recordOutput("Debug Scoral Arm/arm goal", goalDegrees);
@@ -232,43 +198,11 @@ public class ScoralArm extends SubsystemBase {
     setpointVisualizer.update(armGoalStateDegrees.position);
 
     updateTunableNumbers();
-    // state machine stuff
-
-    //   switch (currentState) {
-    //     case ZERO:
-    //       Stow();
-    //       break;
-    //     case SOURCE:
-    //       goToSource();
-    //       break;
-    //     case L1:
-    //       gotoFirstLevel();
-    //       break;
-    //     case L2:
-    //       gotoSecondLevel();
-    //       break;
-    //     case L3:
-    //       gotoThirdLevel();
-    //       break;
-    //     case L4:
-    //       gotoFourthLevel();
-    //       break;
-    //     case PROCESSOR:
-    //       gotoProcessorLevel();
-    //     default:
-    //       Stow();
-    //   }
   }
 
   private void updateTunableNumbers() {
     if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode())) {
-      coralScorerArm.configurePID(kP.get(), kI.get(), 0);
+      scoralArm.configurePID(kP.get(), kI.get(), 0);
     }
-    // if (kG.hasChanged(hashCode())
-    //     || kV.hasChanged(hashCode())
-    //     || kA.hasChanged(hashCode())
-    //     || kS.hasChanged(hashCode())) {
-    //   armFFModel = new ArmFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
-    // }
   }
 }

@@ -7,7 +7,8 @@ public interface WinchIO {
   public static class WinchIOInputs {
     public double winchVelocityRPM = 0;
     public double winchPositionRads;
-    public double currentAmps = 0;
+    public double statorCurrentAmps = 0;
+    public double supplyCurrentAmps = 0;
     public double appliedVolts = 0;
     public double velocitySetpointRPM = 0;
     public double velocityRadPerSec = 0;

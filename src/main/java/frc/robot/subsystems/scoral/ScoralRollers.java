@@ -190,22 +190,6 @@ public class ScoralRollers extends SubsystemBase {
     rollers.stop();
   }
 
-  public void intakeCoral() {
-    rollers.setVoltage(-2);
-  }
-
-  public void intakeAlgae() {
-    rollers.setVoltage(-1);
-  }
-
-  public void scoreCoral() {
-    rollers.setVoltage(2);
-  }
-
-  public void scoreAlgae() {
-    rollers.setVoltage(2);
-  }
-
   private void updateTunableNumbers() {
     if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
       ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());

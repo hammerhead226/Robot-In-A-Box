@@ -68,7 +68,7 @@ public class ClimberArmIOSim implements ClimberArmIO {
     inputs.appliedVolts = appliedVolts;
     inputs.positionDegs = Math.toDegrees(positionRads);
     inputs.velocityDegsPerSec = Math.toDegrees(velocityRadsPerSec);
-    inputs.currentAmps = currentAmps;
+    inputs.statorCurrentAmps = currentAmps;
 
     sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
   }

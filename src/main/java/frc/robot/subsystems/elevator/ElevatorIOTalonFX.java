@@ -105,8 +105,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   public void runCharacterization(double volts) {
     leader.setVoltage(volts);
   }
-  // weird how we give the setpoint in meters and it sets it to meters in sim?
-  // we'll have to see what the exact bug is but for now work with meters
 
   @Override
   public void setVoltage(double volts) {
