@@ -5,20 +5,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.constants.SubsystemConstants.ElevatorConstants;
+import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.scoral.ScoralArm;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ScoringProccessorSequential extends SequentialCommandGroup {
-  private final ScoralArm csArm;
+public class MoveToProcessorSetpoints extends SequentialCommandGroup {
+  private final ScoralArm scoralArm;
   private final Elevator elevator;
 
-  public ScoringProccessorSequential(ScoralArm csArm, Elevator elevator) {
+  public MoveToProcessorSetpoints(ScoralArm scoralArm, Elevator elevator) {
     this.elevator = elevator;
-    this.csArm = csArm;
+    this.scoralArm = scoralArm;
 
-    addCommands(elevator.setElevatorTarget(4, 2), csArm.setArmTarget(20, 2));
+    addCommands(elevator.setElevatorTarget(ElevatorConstants.PROCESSOR_SETPOINT_INCHES, 2), scoralArm.setArmTarget(ScoralArmConstants.PROCESSOR_SETPOINT_DEG, 2));
   }
 }

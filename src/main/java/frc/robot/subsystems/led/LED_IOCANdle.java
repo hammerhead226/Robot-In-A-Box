@@ -107,12 +107,7 @@ public class LED_IOCANdle implements LED_IO {
       case YELLOW:
         // TODO:: PROCESSOR
         candle.clearAnimation(0);
-        // led.set(Constants.LEDConstants.COLOR_YELLOW);
-        // candle.setLEDs(255, 255, 0, 0, 32, 25);
         candle.setLEDs(255, 255, 0, 0, 0, SubsystemConstants.LEDConstants.NUMBER_LEDS);
-        break;
-      case VIOLET:
-        // led.set(Constants.LEDConstants.COLOR_VIOLET);
         break;
       case GREY:
         // TODO:: SOURCE
@@ -124,6 +119,7 @@ public class LED_IOCANdle implements LED_IO {
         candle.setLEDs(0, 255, 0, 0, 0, SubsystemConstants.LEDConstants.NUMBER_LEDS);
         break;
       case PURPLE:
+        // TODO:: INTAKE ALGAE FROM REEF
         candle.clearAnimation(0);
         candle.setLEDs(255, 0, 255);
         break;

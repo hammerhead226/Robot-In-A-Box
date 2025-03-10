@@ -211,25 +211,7 @@ public class DriveCommands {
                       targetPose.getTranslation(),
                       targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "processor");
-            } else if (superStructure.getWantedState() == SuperStructureState.CLIMB_STAGE_ONE) {
-              targetPose =
-                  drive
-                      .getPose()
-                      .nearest(
-                          new ArrayList<>(
-                              Arrays.asList(Barge.closeCage, Barge.middleCage, Barge.farCage)
-                                  .stream()
-                                  .map(pose -> Drive.transformPerAlliance(pose))
-                                  .collect(Collectors.toList())));
-              targetPose =
-                  rotateAndNudge(
-                      new Pose2d(targetPose.getTranslation(), targetPose.getRotation()),
-                      new Translation2d(-0.5, 0),
-                      new Rotation2d(0));
-
-              Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "anchor");
             }
-
           } else {
             Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "none");
           }

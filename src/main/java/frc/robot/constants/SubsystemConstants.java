@@ -42,7 +42,7 @@ public final class SubsystemConstants {
 
     public static final double ELEVATOR_GEAR_RATIO = 12.;
 
-    public static final double PROCESSOR_SETPOINT_INCHES = 0;
+    public static final double PROCESSOR_SETPOINT_INCHES = 4;
 
     public static final double CANRAGE_ZERO_SETPOINT_INCHES = 2;
 
@@ -75,19 +75,8 @@ public final class SubsystemConstants {
     public static final double STOW_SETPOINT_DEG = 94.5;
     public static final double LOW_CORAL_SCORING_SETPOINT_DEG = 76.5;
     public static final double L4_CORAL_SCORING_SETPOINT_DEG = 66;
-    public static final double BARGE_SETPOINT = 85;
-  }
-
-  public static class AlgaeScorerFlywheelConstants {
-    public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 10;
-    public static final double THRESHOLD = 0;
-    public static final boolean CURRENT_LIMIT_ENABLED = false;
-    public static final double CURRENT_LIMIT = 0;
-  }
-
-  public static class ScoralRollersConstants {
-    public static final String CoralScorerFlywheelConstants = null;
-    public static final double FLYWHEEL_VELOCITY_DEGPERSEC = 10;
+    public static final double BARGE_SETPOINT_DEG = 85;
+    public static final double PROCESSOR_SETPOINT_DEG = 20;
   }
 
   public static class LEDConstants {
@@ -98,24 +87,13 @@ public final class SubsystemConstants {
     BLUE,
     RED,
     YELLOW,
-    VIOLET,
     GREEN,
     GREY,
     PURPLE,
     PAPAYA_ORANGE,
-    WILLIAMS_BLUE,
-    HALF_FLASH_RED_HALF_FLASH_WHITE,
-    FLASHING_WHITE,
     FLASHING_GREEN,
     FLASHING_RED,
-    FLASHING_PURPLE,
-    FLASHING_ORANGE,
     FLASHING_BLUE,
-    FLASHING_GREY,
-    FLASHING_PINK,
-    FLASHING_YELLOW,
-    FLASHING_BLACK,
-    FLASHING_CYAN,
     FIRE,
     OFF
   }
@@ -187,14 +165,8 @@ public final class SubsystemConstants {
     L2,
     L3,
     L4,
-    CLIMB_STAGE_ONE,
-    CLIMB_STAGE_TWO,
-    CLIMB_STAGE_THREE,
-    HANG,
-    // DEFAULT,
     SCORING_CORAL,
     INTAKE_ALGAE
-    // READY_FOR_SCORE_REEF
   }
 
   public static enum REEF_SCORING_ELEMENT {

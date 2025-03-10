@@ -718,12 +718,6 @@ public class RobotContainer {
                 () -> superStructure.setWantedState(SuperStructureState.BARGE_EXTEND)));
 
     manipController
-        .leftBumper()
-        .onTrue(
-            new InstantCommand(
-                () -> superStructure.setWantedState(SuperStructureState.CLIMB_STAGE_ONE)));
-
-    manipController
         .povRight()
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));

@@ -9,7 +9,7 @@ import frc.robot.commands.GoToStow;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ScoreCoral;
-import frc.robot.commands.ScoringProccessorSequential;
+import frc.robot.commands.MoveToProcessorSetpoints;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
 import frc.robot.constants.SubsystemConstants;
@@ -71,9 +71,7 @@ public class SuperStructure {
       led.setState(LED_STATE.GREY);
     } else if (wantedState == SuperStructureState.PROCESSOR) {
       led.setState(LED_STATE.YELLOW);
-    } else if (wantedState == SuperStructureState.CLIMB_STAGE_ONE) {
-      led.setState(LED_STATE.PAPAYA_ORANGE);
-    }
+    } 
     this.wantedState = wantedState;
   }
 
@@ -131,7 +129,7 @@ public class SuperStructure {
           return true;
         case BARGE_EXTEND:
           return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT)
-              && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT);
+              && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG);
         case PROCESSOR:
           return elevator.hasReachedGoal(4) && scoralArm.hasReachedGoal(20);
         case ALGAE_SCORE:
@@ -175,6 +173,8 @@ public class SuperStructure {
         return new GoToStow(elevator, scoralArm, scoralRollers)
             .andThen(new InstantCommand(() -> nextState()));
       case STOW_ALGAE:
+        led.setState(LED_STATE.BLUE);
+        currentState = SuperStructureState.STOW_ALGAE;
         return new SequentialCommandGroup(
             new GoToStow(elevator, scoralArm, scoralRollers), scoralRollers.runVoltsCommmand(-0.9));
       case BARGE_EXTEND:
@@ -182,12 +182,12 @@ public class SuperStructure {
         return new SequentialCommandGroup(
             elevator.setElevatorTarget(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 2),
             new WaitUntilCommand(() -> elevator.atGoal(2)),
-            scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT, 2));
+            scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG, 2));
       case ALGAE_SCORE:
         currentState = SuperStructureState.ALGAE_SCORE;
         led.setState(LED_STATE.FLASHING_GREEN);
         return new SequentialCommandGroup(
-            scoralRollers.runVoltsCommmand(4),
+            scoralRollers.runVoltsCommmand(2),
             new WaitCommand(0.5),
             new GoToStow(elevator, scoralArm, scoralRollers),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
@@ -239,9 +239,9 @@ public class SuperStructure {
                             .andThen(new InstantCommand(() -> this.nextState()))));
 
       case PROCESSOR:
-        led.setState(LED_STATE.FLASHING_GREEN);
+        led.setState(LED_STATE.YELLOW);
         currentState = SuperStructureState.PROCESSOR;
-        return new ScoringProccessorSequential(scoralArm, elevator);
+        return new MoveToProcessorSetpoints(scoralArm, elevator);
 
       case SCORING_CORAL:
         currentState = SuperStructureState.SCORING_CORAL;
@@ -303,17 +303,6 @@ public class SuperStructure {
         break;
       case PROCESSOR:
         setWantedState(SuperStructureState.ALGAE_SCORE);
-        break;
-      case CLIMB_STAGE_ONE:
-        setWantedState(SuperStructureState.CLIMB_STAGE_TWO);
-        break;
-      case CLIMB_STAGE_TWO:
-        setWantedState(SuperStructureState.CLIMB_STAGE_THREE);
-        break;
-      case CLIMB_STAGE_THREE:
-        setWantedState(SuperStructureState.HANG);
-        break;
-      case HANG:
         break;
       case BARGE_EXTEND:
         setWantedState(SuperStructureState.ALGAE_SCORE);
