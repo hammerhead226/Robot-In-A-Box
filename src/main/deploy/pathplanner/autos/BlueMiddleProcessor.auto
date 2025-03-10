@@ -5,27 +5,27 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 6.0
+            "pathName": "BlueMiddleLeftStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "WaitBlueMiddleLeft"
+            "pathName": "BlueMiddleLeftAlage"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "SCORE_CORAL"
+            "pathName": "BlueMiddleAlgaeProcessor"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "L2 Variants",
+  "folder": null,
   "choreoAuto": false
 }

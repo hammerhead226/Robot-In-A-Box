@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.77,
+        "y": 4.19
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.77,
+        "y": 3.891105721950903
+      },
+      "isLocked": false,
+      "linkedName": "BlueMiddleLeft12"
+    },
+    {
+      "anchor": {
+        "x": 5.77,
+        "y": 4.0
+      },
+      "prevControl": {
+        "x": 5.77,
+        "y": 4.25
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "BlueMiddleAlgae"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "INTAKE_ALGAE_FROM_REEF",
+      "waypointRelativePos": 0.8966914247130267,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": "BlueMiddle",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "useDefaultConstraints": false
+}

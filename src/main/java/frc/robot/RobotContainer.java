@@ -71,9 +71,6 @@ import frc.robot.subsystems.scoral.ScoralSensorIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-
-import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -375,18 +372,17 @@ public class RobotContainer {
             new WaitCommand(0.35)));
 
     NamedCommands.registerCommand(
-        "INTAKE_ALGAE_FROM_REEF", 
-        new ReinitializingCommand(() -> {
-            double height1 =
-              drive.getNearestParition(6) % 2 == 0
-                  ? 6.5
-                  : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
-            double height2 = drive.getNearestParition(6) % 2 == 0 ? 9 : 2;
-            return new IntakeAlgaeFromReef(drive, scoralArm, scoralRollers, elevator, led, height1, height2);
-            }
-        )
-    );
-    
+        "INTAKE_ALGAE_FROM_REEF",
+        new ReinitializingCommand(
+            () -> {
+              double height1 =
+                  drive.getNearestParition(6) % 2 == 0
+                      ? 6.5
+                      : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
+              double height2 = drive.getNearestParition(6) % 2 == 0 ? 9 : 2;
+              return new IntakeAlgaeFromReef(
+                  drive, scoralArm, scoralRollers, elevator, led, height1, height2);
+            }));
 
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 

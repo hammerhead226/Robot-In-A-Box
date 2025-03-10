@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "BlueLeftSecond"
@@ -37,7 +43,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SCORE_CORAL_NEW"
+            "name": "SCORE_CORAL"
           }
         },
         {
@@ -67,19 +73,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SCORE_CORAL_NEW"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BlueLeftSixth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SOURCE_INTAKE"
+            "name": "SCORE_CORAL"
           }
         }
       ]

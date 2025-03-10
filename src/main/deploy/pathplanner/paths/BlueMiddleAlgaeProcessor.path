@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.77,
+        "y": 4.0
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.002206964117367,
+        "y": 3.9073721110280752
+      },
+      "isLocked": false,
+      "linkedName": "BlueMiddleAlgae"
+    },
+    {
+      "anchor": {
+        "x": 6.0,
+        "y": 0.5
+      },
+      "prevControl": {
+        "x": 5.92444038037895,
+        "y": 1.315500391910908
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "BlueProcessor"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "SCORE_ALGAE",
+      "waypointRelativePos": 0.8534773801485512,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "BlueMiddle",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "useDefaultConstraints": true
+}
