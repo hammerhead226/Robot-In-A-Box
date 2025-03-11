@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.*;
-import frc.robot.constants.FieldConstants.Barge;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
@@ -36,14 +35,11 @@ import frc.robot.subsystems.led.LED;
 import frc.robot.util.SlewRateLimiter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {

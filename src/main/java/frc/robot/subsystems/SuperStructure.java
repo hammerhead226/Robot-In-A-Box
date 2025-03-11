@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.GoToStow;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
-import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.MoveToProcessorSetpoints;
+import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
 import frc.robot.constants.SubsystemConstants;
@@ -71,7 +71,7 @@ public class SuperStructure {
       led.setState(LED_STATE.GREY);
     } else if (wantedState == SuperStructureState.PROCESSOR) {
       led.setState(LED_STATE.YELLOW);
-    } 
+    }
     this.wantedState = wantedState;
   }
 

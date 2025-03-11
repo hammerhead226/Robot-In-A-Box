@@ -188,6 +188,19 @@
               "data_type": "double",
               "show_submit_button": false
             }
+          },
+          {
+            "title": "Reset: ",
+            "x": 1152.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Button",
+            "properties": {
+              "topic": "/SmartDashboard/Reset: ",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
           }
         ]
       }

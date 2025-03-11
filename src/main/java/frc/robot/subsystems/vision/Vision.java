@@ -24,6 +24,9 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
@@ -38,7 +41,15 @@ public class Vision extends SubsystemBase {
   private final Alert[] disconnectedAlerts;
   private static final double POSE_BUFFER_SIZE_SECONDS = 1.5;
 
+  private final PowerDistribution limelight;
+  private boolean resetState;
+
   public Vision(VisionConsumer consumer, VisionIO... io) {
+    SmartDashboard.putBoolean("Reset: ", false);
+
+    limelight =
+        new PowerDistribution(
+            23, ModuleType.kCTRE); 
     this.consumer = consumer;
     this.io = io;
 
@@ -68,6 +79,15 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
+    resetState = SmartDashboard.getBoolean("Reset: ", false);
+    if (resetState) {
+      limelight.resetTotalEnergy();
+      SmartDashboard.putBoolean("Reset: ", false);
+      System.out.println("Chico");
+      // This has not been tested.
+    }
+    
+
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
