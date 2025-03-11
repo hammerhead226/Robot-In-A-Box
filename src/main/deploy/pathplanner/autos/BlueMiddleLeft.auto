@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SCORE_CORAL"
+            "name": "SCORE_CORAL_NEW"
           }
         },
         {
@@ -43,13 +43,13 @@
         {
           "type": "named",
           "data": {
-            "name": "SCORE_CORAL"
+            "name": "SCORE_CORAL_NEW"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 0.15
           }
         },
         {
@@ -67,7 +67,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 0.15
           }
         },
         {
@@ -79,7 +79,25 @@
         {
           "type": "named",
           "data": {
-            "name": "SCORE_CORAL"
+            "name": "SCORE_CORAL_NEW"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueMiddleLeftSixth"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SOURCE_INTAKE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
           }
         }
       ]
