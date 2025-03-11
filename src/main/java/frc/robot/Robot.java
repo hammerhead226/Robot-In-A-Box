@@ -73,7 +73,7 @@ public class Robot extends LoggedRobot {
         new PowerDistribution(1, ModuleType.kRev);
         CameraServer.startAutomaticCapture();
         // Running on a real robot, log to a USB stick ("/U/logs")
-        // Logger.addDataReceiver(new WPILOGWriter("/logs"));
+        Logger.addDataReceiver(new WPILOGWriter("/logs"));
 
         break;
 
@@ -149,6 +149,11 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50);
+  }
+
+  @Override
+  public void robotInit() {
+    CameraServer.startAutomaticCapture();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

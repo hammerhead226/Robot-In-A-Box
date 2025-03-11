@@ -47,9 +47,7 @@ public class Vision extends SubsystemBase {
   public Vision(VisionConsumer consumer, VisionIO... io) {
     SmartDashboard.putBoolean("Reset: ", false);
 
-    limelight =
-        new PowerDistribution(
-            23, ModuleType.kCTRE); 
+    limelight = new PowerDistribution(23, ModuleType.kCTRE);
     this.consumer = consumer;
     this.io = io;
 
@@ -83,10 +81,8 @@ public class Vision extends SubsystemBase {
     if (resetState) {
       limelight.resetTotalEnergy();
       SmartDashboard.putBoolean("Reset: ", false);
-      System.out.println("Chico");
       // This has not been tested.
     }
-    
 
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
@@ -100,8 +96,8 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allRobotPoses = new LinkedList<>();
     List<Pose3d> allRobotPosesAccepted = new LinkedList<>();
     List<Pose3d> allRobotPosesRejected = new LinkedList<>();
-
     // Loop over cameras
+
     for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
       // Update disconnected alert
       disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);

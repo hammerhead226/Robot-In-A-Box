@@ -153,7 +153,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight("limelight-reef", () -> drive.getPose().getRotation())
+                new VisionIOLimelight("limelight-reef", () -> drive.getPose().getRotation()),
+                new VisionIOLimelight("limelight-climber", () -> drive.getPose().getRotation())
                 // new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
                 // new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 // new VisionIOPhotonVision("photon", new Transform3d())
