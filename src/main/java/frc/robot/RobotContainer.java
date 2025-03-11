@@ -161,7 +161,6 @@ public class RobotContainer {
             new ClimberArm(
                 new ClimberArmIOTalonFX(
                     RobotMap.ClimbIDs.deployClimbID, RobotMap.ClimbIDs.deployClimbCANcoderID));
-
         scoralRollers =
             new ScoralRollers(
                 new ScoralRollersIOTalonFX(RobotMap.CoralScorerArmIDs.coralScorerFlywheelID),
@@ -250,6 +249,9 @@ public class RobotContainer {
             new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm, winch);
         break;
     }
+    // Set up auto routines
+    // NamedCommands.registerCommand("AlignToReefAuto", new AlignToReefAuto(drive,
+    // led));
 
     NamedCommands.registerCommand(
         "L1",
