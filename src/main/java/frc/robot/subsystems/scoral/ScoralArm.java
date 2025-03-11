@@ -57,11 +57,13 @@ public class ScoralArm extends SubsystemBase {
     switch (SimConstants.currentMode) {
       case REAL:
         // kG.initDefault(0.32);
-        kG.initDefault(0.04);
+        kG.initDefault(0.08);
         // kG.initDefault(0);4
         // kV.initDefault(0.8);
-        kV.initDefault(0);
-        kP.initDefault(0.5);
+        kV.initDefault(1);
+        // kP.initDefault(0.5);
+        kP.initDefault(0.7);
+        // kP.initDefault(0);
         kA.initDefault(0);
         kS.initDefault(0);
         // kS.initDefault(0);

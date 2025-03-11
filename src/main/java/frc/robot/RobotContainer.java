@@ -359,15 +359,21 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void test() {
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            superStructure,
-            led,
-            () -> -driveController.getLeftY(),
-            () -> -driveController.getLeftX(),
-            () -> -driveController.getRightX(),
-            () -> driveController.leftBumper().getAsBoolean()));
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         superStructure,
+    //         led,
+    //         () -> -driveController.getLeftY(),
+    //         () -> -driveController.getLeftX(),
+    //         () -> -driveController.getRightX(),
+    //         () -> driveController.leftBumper().getAsBoolean()));
+    driveController
+        .a()
+        .onTrue(
+            new SetScoralArmTarget(
+                scoralArm, SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2));
+    driveController.b().onTrue(new SetScoralArmTarget(scoralArm, 20, 2));
   }
 
   private void configureButtonBindings() {

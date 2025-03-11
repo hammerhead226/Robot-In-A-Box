@@ -207,5 +207,12 @@ public class Elevator extends SubsystemBase {
     if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode())) {
       elevator.configurePIDF(kP.get(), kI.get(), 0, kS.get(), kG.get(), kV.get(), kA.get());
     }
+
+    if (kS.hasChanged(hashCode())
+        || kG.hasChanged(hashCode())
+        || kV.hasChanged(hashCode())
+        || kA.hasChanged(hashCode())) {
+      elevatorFFModel = new ElevatorFeedforward(kS.get(), kG.get(), kV.get(), kA.get());
+    }
   }
 }
