@@ -121,8 +121,6 @@ public class Drive extends SubsystemBase {
   private Pose2d lastReefFieldPose;
   public boolean slowMode = false;
 
-  private boolean isPIDAligning = false;
-
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
@@ -267,6 +265,8 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && SimConstants.currentMode != Mode.SIM);
     // setNearestReefSide();
     Logger.recordOutput("Swerve/overallChassisSpeed", chassisSpeedMetersPerSec);
+
+    Logger.recordOutput("should pid align", shouldPIDAlign());
   }
 
   /**
@@ -612,11 +612,11 @@ public class Drive extends SubsystemBase {
   }
 
   public boolean shouldPIDAlign() {
-    return getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) <= 0.1;
-  }
-
-  public void enablePIDAlign(boolean bool) {
-    this.isPIDAligning = bool;
+    // return false;
+    return getPose()
+            .getTranslation()
+            .getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center))
+        <= 1.3;
   }
 
   public boolean isAtReefRotation() {

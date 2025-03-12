@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.*;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
@@ -86,7 +87,7 @@ public class DriveCommands {
   static ProfiledPIDController forwardsPID =
       new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
   static ProfiledPIDController rotationPID =
-      new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
+      new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(150, 200));
   // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70,
   // 120));
 
@@ -116,6 +117,8 @@ public class DriveCommands {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
+      BooleanSupplier reefRightSupplier,
+      BooleanSupplier reefLeftSupplier,
       BooleanSupplier angleAssistSupplier) {
     // BooleanSupplier sourceAlignSupplier,
     // BooleanSupplier processorAlignSupplier,
@@ -158,37 +161,37 @@ public class DriveCommands {
           double speedDebuff = 0.75;
           targetPose = null;
 
-          // if ((reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())) {
-          //   led.setState(LED_STATE.FLASHING_RED);
-          //   Translation2d reefTranslation =
-          //       drive.isNearReef()
-          //           ? new Translation2d(
-          //               SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-          //               SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET)
-          //           : new Translation2d(
-          //               SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
-          //               SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
+          if ((reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())) {
+            led.setState(LED_STATE.FLASHING_RED);
+            Translation2d reefTranslation =
+                drive.isNearReef()
+                    ? new Translation2d(
+                        SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                        SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET)
+                    : new Translation2d(
+                        SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
+                        SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
 
-          //   if (reefLeftSupplier.getAsBoolean()) {
-          //     targetPose = drive.getNearestCenterLeft();
-          //     targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
-          //     // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d());
-          //   } else if (reefRightSupplier.getAsBoolean()) {
-          //     targetPose = drive.getNearestCenterRight();
-          //     targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
-          //     // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
-          //   } else {
-          //     targetPose = drive.getNearestCenter();
-          //     targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
-          //     // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
-          //   }
-          //   targetPose =
-          //       new Pose2d(
-          //           targetPose.getTranslation(),
-          //           targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
-          //   Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef");
+            if (reefLeftSupplier.getAsBoolean()) {
+              targetPose = drive.getNearestCenterLeft();
+              targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
+              // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d());
+            } else if (reefRightSupplier.getAsBoolean()) {
+              targetPose = drive.getNearestCenterRight();
+              targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
+              // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
+            } else {
+              targetPose = drive.getNearestCenter();
+              targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
+              // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
+            }
+            targetPose =
+                new Pose2d(
+                    targetPose.getTranslation(),
+                    targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
+            Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef");
 
-          if (angleAssistSupplier.getAsBoolean()) {
+          } else if (angleAssistSupplier.getAsBoolean()) {
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
               targetPose = drive.getNearestSource();
               targetPose =
@@ -196,7 +199,7 @@ public class DriveCommands {
                       new Translation2d(0, 0),
                       targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
               // Reset allows for faster rotation even on first button press
-              rotationPID.reset(targetPose.getRotation().getDegrees());
+              // rotationPID.reset(targetPose.getRotation().getDegrees());
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "source");
             } else if (superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
               targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
@@ -263,19 +266,27 @@ public class DriveCommands {
                     -drive.getMaxAngularSpeedRadPerSec(),
                     drive.getMaxAngularSpeedRadPerSec());
 
-            // forwardsAssistEffort =
-            //     (reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())
-            //         ? (wantedForwardsVelocityMetersPerSec - forwardSpeed) * speedDebuff
-            //         : 0;
-            // sidewaysAssistEffort =
-            //     reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean()
-            //         ? (wantedSidewaysVelocityMetersPerSec - sidewaysSpeed) * speedDebuff
-            //         : 0;
+            forwardsAssistEffort =
+                (reefLeftSupplier.getAsBoolean()
+                        || reefRightSupplier.getAsBoolean()
+                        || drive.shouldPIDAlign())
+                    ? (wantedForwardsVelocityMetersPerSec - forwardSpeed) * speedDebuff
+                    : 0;
+            sidewaysAssistEffort =
+                reefLeftSupplier.getAsBoolean()
+                        || reefRightSupplier.getAsBoolean()
+                        || drive.shouldPIDAlign()
+                    ? (wantedSidewaysVelocityMetersPerSec - sidewaysSpeed) * speedDebuff
+                    : 0;
 
             rotationAssistEffort =
-                (superStructure.getWantedState() == SuperStructureState.SOURCE)
-                    ? (wantedRotationVelocityRadsPerSec - rotationSpeed)
-                    : (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff;
+                (superStructure.getWantedState() == SuperStructureState.SOURCE || superStructure.getWantedState() == SuperStructureState.PROCESSOR ||drive.shouldPIDAlign())
+                    ? (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff
+                    : 0;
+            // rotationAssistEffort =
+            //     (superStructure.getWantedState() == SuperStructureState.SOURCE)
+            //         ? (wantedRotationVelocityRadsPerSec - rotationSpeed)
+            //         : (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff;
 
           } else {
             wantedForwardsVelocityMetersPerSec = forwardSpeed;
@@ -307,7 +318,7 @@ public class DriveCommands {
               sidewaysPID.getSetpoint().velocity);
           Logger.recordOutput(
               "Debug Driver Alignment/Rotation Profile Velocity rad/s",
-              rotationPID.getSetpoint().velocity);
+              Math.toRadians(rotationPID.getSetpoint().velocity));
 
           Logger.recordOutput("Debug Driver Alignment/Forwards Error m", forwardsErrorMeters);
           Logger.recordOutput("Debug Driver Alignment/Sideways Error m", sidewaysErrorMeters);
@@ -359,6 +370,11 @@ public class DriveCommands {
                   new ChassisSpeeds(
                       forwardsAssistEffort, sidewaysAssistEffort, rotationAssistEffort),
                   drive.getRotation());
+          // ChassisSpeeds assistSpeeds =
+          //     ChassisSpeeds.fromFieldRelativeSpeeds(
+          //         new ChassisSpeeds(
+          //             0, 0, 0),
+          //         drive.getRotation());
 
           ChassisSpeeds finalInputSpeed = inputSpeeds.plus(assistSpeeds).times(scale);
           drive.runVelocity(

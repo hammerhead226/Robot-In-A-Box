@@ -36,6 +36,8 @@ public class ApproachReef extends Command {
 
   Pose2d atPose;
   Pose2d awayPose;
+
+  boolean shouldPID = false;
   /** Creates a new ApproachReef. */
   public ApproachReef(
       Drive drive,
@@ -64,12 +66,12 @@ public class ApproachReef extends Command {
                 SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
                 SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
             Rotation2d.kZero);
-
+    // offset the path's setpoint a bit to allow pid to do the rest of work while avoiding bug of both current pose and atpose being the same which causes reboot
     atPose =
         DriveCommands.rotateAndNudge(
             reefPose,
             new Translation2d(
-                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET - 0.1,
                 SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
             Rotation2d.kZero);
 
@@ -135,12 +137,14 @@ public class ApproachReef extends Command {
     path.preventFlipping = true;
 
     pathCommand = AutoBuilder.followPath(path);
+    shouldPID = drive.shouldPIDAlign();
     pathCommand.initialize();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    shouldPID = drive.shouldPIDAlign();
     pathCommand.execute();
   }
 
@@ -156,6 +160,6 @@ public class ApproachReef extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return pathCommand.isFinished() || !continuePath.getAsBoolean() || drive.shouldPIDAlign();
+    return shouldPID || pathCommand.isFinished() || !continuePath.getAsBoolean();
   }
 }

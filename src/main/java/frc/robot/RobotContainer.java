@@ -73,40 +73,37 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    // Subsystems
-    private final Drive drive;
-    private final LED led;
-    private final ScoralArm scoralArm;
-    private final ScoralRollers scoralRollers;
-    public final Elevator elevator;
-    public final ClimberArm climberArm;
-    private final Winch winch;
-    private final Vision vision;
-    private final SuperStructure superStructure;
+  // Subsystems
+  private final Drive drive;
+  private final LED led;
+  private final ScoralArm scoralArm;
+  private final ScoralRollers scoralRollers;
+  public final Elevator elevator;
+  public final ClimberArm climberArm;
+  private final Winch winch;
+  private final Vision vision;
+  private final SuperStructure superStructure;
 
-    // Controller
-    private final CommandXboxController driveController = new CommandXboxController(0);
-    private final CommandXboxController manipController = new CommandXboxController(1);
-    // private final Joystick joystikc = new Joystick(0);
-    // private final JoystickButton btn = new JoystickButton(joystikc, 4);
-    // private final KeyboardInputs keyboard = new KeyboardInputs(0);
+  // Controller
+  private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController manipController = new CommandXboxController(1);
+  // private final Joystick joystikc = new Joystick(0);
+  // private final JoystickButton btn = new JoystickButton(joystikc, 4);
+  // private final KeyboardInputs keyboard = new KeyboardInputs(0);
 
-    public final Trigger elevatorBrakeTrigger;
-    private Trigger slowModeTrigger;
+  public final Trigger elevatorBrakeTrigger;
+  private Trigger slowModeTrigger;
 
-    // Dashboard inputs
-    private final LoggedDashboardChooser<Command> autoChooser;
-    private final SendableChooser<Command> autos;
-    private DigitalInput brakeSwitch;
+  // Dashboard inputs
+  private final LoggedDashboardChooser<Command> autoChooser;
+  private final SendableChooser<Command> autos;
+  private DigitalInput brakeSwitch;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -415,6 +412,8 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
+            () -> driveController.rightTrigger().getAsBoolean(),
+            () -> driveController.leftTrigger().getAsBoolean(),
             () -> driveController.leftBumper().getAsBoolean()));
 
     driveController
@@ -469,10 +468,10 @@ public class RobotContainer {
 
     // driveController
     //     .x()
-    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
     // driveController
     //     .y()
-    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
     // driveController
     //     .a()
     //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
