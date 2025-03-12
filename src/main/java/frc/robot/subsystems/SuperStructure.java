@@ -92,63 +92,48 @@ public class SuperStructure {
   }
 
   public boolean atGoals() {
-    if (SubsystemConstants.coralStuckMode) {
-      return true;
-    } else {
-      switch (currentState) {
-        case STOW:
-          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
-              && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-        case L1:
-          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
-              && scoralArm.hasReachedGoal(
-                  SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-        case L2:
-          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
-              && scoralArm.hasReachedGoal(
-                  SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-        case L3:
-          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES)
-              && scoralArm.hasReachedGoal(
-                  SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
-        case L4:
-          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES)
-              && scoralArm.hasReachedGoal(
-                  SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG);
-        case SOURCE:
-          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
-              && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
-        case SCORING_CORAL:
-          // TODO:: UNCOMMENT
-          // return scoralRollers.seesCoral() == CoralState.CURRENT
-          // || scoralRollers.seesCoral() == CoralState.SENSOR;
-          return true;
-        case INTAKE_ALGAE:
-          return true;
-        case STOW_ALGAE:
-          return true;
-        case BARGE_EXTEND:
-          return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT)
-              && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG);
-        case PROCESSOR:
-          return elevator.hasReachedGoal(4) && scoralArm.hasReachedGoal(20);
-        case ALGAE_SCORE:
-          return true;
-        default:
-          return false;
-      }
+    switch (currentState) {
+      case STOW:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
+            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+      case L1:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
+            && scoralArm.hasReachedGoal(
+                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+      case L2:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
+            && scoralArm.hasReachedGoal(
+                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+      case L3:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES)
+            && scoralArm.hasReachedGoal(
+                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+      case L4:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES)
+            && scoralArm.hasReachedGoal(
+                SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG);
+      case SOURCE:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH)
+            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
+      case SCORING_CORAL:
+        return true;
+      case INTAKE_ALGAE:
+        return true;
+      case STOW_ALGAE:
+        return true;
+      case BARGE_EXTEND:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT)
+            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG);
+      case PROCESSOR:
+        return elevator.hasReachedGoal(4) && scoralArm.hasReachedGoal(20);
+      case ALGAE_SCORE:
+        return true;
+      default:
+        return false;
     }
 
     // TODO:: COMMENT
     // return true;
-  }
-
-  public void toggleCoralStuckMode() {
-    if (!SubsystemConstants.coralStuckMode) {
-      SubsystemConstants.coralStuckMode = true;
-    } else {
-      SubsystemConstants.coralStuckMode = false;
-    }
   }
 
   public void toggleAlgaeMode() {
@@ -161,6 +146,10 @@ public class SuperStructure {
 
   public boolean getAlgaeMode() {
     return algaeMode;
+  }
+
+  public SuperStructureState getLastReefState() {
+    return lastReefState;
   }
 
   public SequentialCommandGroup getSuperStructureCommand() {
@@ -239,7 +228,6 @@ public class SuperStructure {
                             .andThen(new InstantCommand(() -> this.nextState()))));
 
       case PROCESSOR:
-        led.setState(LED_STATE.YELLOW);
         currentState = SuperStructureState.PROCESSOR;
         return new MoveToProcessorSetpoints(scoralArm, elevator);
 

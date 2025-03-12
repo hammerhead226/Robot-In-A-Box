@@ -83,6 +83,13 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final LED led;
+  private final ScoralArm scoralArm;
+  private final ScoralRollers scoralRollers;
+  public final Elevator elevator;
+  public final ClimberArm climberArm;
+  private final Winch winch;
+  private final Vision vision;
+  private final SuperStructure superStructure;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -91,27 +98,8 @@ public class RobotContainer {
   // private final JoystickButton btn = new JoystickButton(joystikc, 4);
   // private final KeyboardInputs keyboard = new KeyboardInputs(0);
 
-  private final ScoralArm scoralArm;
-  // private final CoralScorerFlywheel coralIntake;
-
-  public final Elevator elevator;
-  public final ClimberArm climberArm;
-  private final Vision vision;
-  private final SuperStructure superStructure;
-  private final Winch winch;
-
-  // public final Trigger elevatorBrakeTrigger;
-  // private final Trigger stateTrigger;
-  // private final Trigger slowModeTrigger;
-
-  private ScoralRollers scoralRollers;
-
   public final Trigger elevatorBrakeTrigger;
-  // private final Trigger stateTrigger;
   private Trigger slowModeTrigger;
-  //   private Trigger reefAlignTrigger;
-  //   private Trigger approachPerpendicularTrigger;
-  //   private Trigger keepClimbingTrigger;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -186,7 +174,7 @@ public class RobotContainer {
 
         scoralArm = new ScoralArm(new ScoralArmIOSim());
         winch = new Winch(new WinchIOSim());
-        // Transform3d bruh = new Transform3d(new Transform2d());
+
         Rotation3d bruh = new Rotation3d();
         vision =
             new Vision(
@@ -471,8 +459,6 @@ public class RobotContainer {
     // driveController
     //     .b()
     //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
-
-    driveController.povUp().onTrue(new InstantCommand(() -> superStructure.toggleCoralStuckMode()));
 
     driveController
         .povDown()

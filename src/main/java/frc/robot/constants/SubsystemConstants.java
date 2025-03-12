@@ -169,10 +169,5 @@ public final class SubsystemConstants {
     INTAKE_ALGAE
   }
 
-  public static enum REEF_SCORING_ELEMENT {
-    ALGAE,
-    CORAL
-  }
-
   public static final double CORAL_DIST = 4.0; // 1300; // CHANGE THIS
 }

@@ -17,7 +17,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.constants.SubsystemConstants.REEF_SCORING_ELEMENT;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.LED;
@@ -34,7 +33,6 @@ public class ApproachReef extends Command {
   private final boolean isRight;
   Command pathCommand;
   BooleanSupplier continuePath;
-  REEF_SCORING_ELEMENT scoringElement;
 
   Pose2d atPose;
   Pose2d awayPose;
@@ -50,52 +48,30 @@ public class ApproachReef extends Command {
     this.isRight = isRight;
     this.continuePath = continuePath;
     addRequirements(drive);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
-    scoringElement =
-        superStructure.isTargetAReefState()
-            ? REEF_SCORING_ELEMENT.CORAL
-            : REEF_SCORING_ELEMENT.ALGAE;
 
-    if (scoringElement == REEF_SCORING_ELEMENT.CORAL) {
-      awayPose =
-          DriveCommands.rotateAndNudge(
-              reefPose,
-              new Translation2d(
-                  SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
-                  SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-              Rotation2d.kZero);
+    superStructure.setWantedState(superStructure.getLastReefState());
 
-      atPose =
-          DriveCommands.rotateAndNudge(
-              reefPose,
-              new Translation2d(
-                  SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-                  SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-              Rotation2d.kZero);
-    } else {
-      atPose =
-          DriveCommands.rotateAndNudge(
-              new Pose2d(
-                  (drive.getNearestCenterLeft().getX() + drive.getNearestCenterRight().getX()) / 2.,
-                  (drive.getNearestCenterLeft().getY() + drive.getNearestCenterRight().getY()) / 2.,
-                  drive.getNearestCenterLeft().getRotation()),
-              new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET - 0.2, 0),
-              Rotation2d.kZero);
-      awayPose =
-          DriveCommands.rotateAndNudge(
-              new Pose2d(
-                  (drive.getNearestCenterLeft().getX() + drive.getNearestCenterRight().getX()) / 2.,
-                  (drive.getNearestCenterLeft().getY() + drive.getNearestCenterRight().getY()) / 2.,
-                  drive.getNearestCenterLeft().getRotation()),
-              new Translation2d(SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET, 0),
-              Rotation2d.kZero);
-    }
+    awayPose =
+        DriveCommands.rotateAndNudge(
+            reefPose,
+            new Translation2d(
+                SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
+                SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+            Rotation2d.kZero);
+
+    atPose =
+        DriveCommands.rotateAndNudge(
+            reefPose,
+            new Translation2d(
+                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+            Rotation2d.kZero);
 
     ChassisSpeeds fieldRelChassisSpeeds =
         ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), drive.getRotation());
@@ -117,23 +93,32 @@ public class ApproachReef extends Command {
           new Pose2d(drive.getPose().getTranslation(), new Rotation2d(v.getX(), v.getY()));
     }
 
-    List<Waypoint> waypoints =
-        PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, awayPose, atPose);
-    Logger.recordOutput("Debug OTF Paths/Reef Align", atPose);
-    List<RotationTarget> holomorphicRotations =
-        Arrays.asList(
-            new RotationTarget(1.0, awayPose.getRotation().plus(Rotation2d.kCW_90deg)),
-            new RotationTarget(1.9, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
-
+    List<Waypoint> waypoints;
+    List<RotationTarget> holomorphicRotations;
     List<EventMarker> eventMarkers = new ArrayList<>();
-    if (scoringElement == REEF_SCORING_ELEMENT.CORAL) {
-      eventMarkers.add(
-          new EventMarker("score coral command", 0.6, superStructure.getSuperStructureCommand()));
+    PathConstraints pathConstraints;
+
+    if (atPose.getRotation().minus(drive.getRotation()).getDegrees() <= 45) {
+      pathConstraints = new PathConstraints(2.5, 2, 150, 226);
     } else {
-      eventMarkers.add(
-          new EventMarker(
-              "pick up algae command", 0.01, superStructure.getSuperStructureCommand()));
+      pathConstraints = new PathConstraints(1.5, 1, 100, 180);
     }
+
+    if (!drive.isNearReef()) {
+      waypoints = PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, awayPose, atPose);
+      holomorphicRotations =
+          Arrays.asList(
+              new RotationTarget(1.0, awayPose.getRotation().plus(Rotation2d.kCW_90deg)),
+              new RotationTarget(1.7, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
+    } else {
+      waypoints = PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, atPose);
+      holomorphicRotations =
+          Arrays.asList(new RotationTarget(0.7, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
+    }
+    Logger.recordOutput("Debug OTF Paths/Reef Align", atPose);
+
+    eventMarkers.add(
+        new EventMarker("score coral command", 0.6, superStructure.getSuperStructureCommand()));
 
     PathPlannerPath path =
         new PathPlannerPath(
@@ -142,7 +127,7 @@ public class ApproachReef extends Command {
             new ArrayList<>(),
             new ArrayList<>(),
             eventMarkers,
-            new PathConstraints(1.5, 1, 100, 180), // these numbers from last year's code
+            pathConstraints, // these numbers from last year's code
             null, // The ideal starting state, this is only relevant for pre-planned paths, so can
             // be null for on-the-fly paths.
             new GoalEndState(0, atPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90))),
@@ -163,8 +148,7 @@ public class ApproachReef extends Command {
   @Override
   public void end(boolean interrupted) {
     pathCommand.cancel();
-    if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.5
-        && scoringElement == REEF_SCORING_ELEMENT.CORAL) {
+    if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.2) {
       superStructure.nextState();
     }
   }

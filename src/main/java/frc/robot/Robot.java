@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.SimConstants;
-import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.TunerConstants;
 import frc.robot.util.LimelightHelpers;
@@ -157,10 +156,6 @@ public class Robot extends LoggedRobot {
 
     autonomousCommand = robotContainer.getAutonomousCommand();
 
-    // robotContainer.Super.getSuperStructureCommand().schedule();
-    // robotContainer.Super.checkSpeed();
-
-    // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
@@ -191,22 +186,11 @@ public class Robot extends LoggedRobot {
         robotContainer.getSuperStructure().getCurrentState());
     Logger.recordOutput(
         "Debug Super Structure/At State Goals", robotContainer.getSuperStructure().atGoals());
-    // robotContainer.Super.getSuperStructureCommand().schedule();
-    // robotContainer.Super.checkSpeed();
-
   }
 
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-
-    // if(robotContainer.elevator.getCanRangeDistanceInches() != 0){
-    //   robotContainer.elevator.zeroCommand(1);
-    // }
     LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 1);
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
@@ -222,10 +206,6 @@ public class Robot extends LoggedRobot {
     robotContainer
         .getElevator()
         .setElevatorGoal(robotContainer.getElevator().getElevatorPosition());
-
-    robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
-    robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
-    // robotContainer.getSuperStructure().;
   }
 
   /** This function is called periodically during operator control. */
@@ -240,7 +220,6 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput(
         "Debug Super Structure/At State Goals", robotContainer.getSuperStructure().atGoals());
 
-    Logger.recordOutput("coral stuck mode", SubsystemConstants.coralStuckMode);
     Logger.recordOutput("algaeMode", robotContainer.getSuperStructure().getAlgaeMode());
   }
 

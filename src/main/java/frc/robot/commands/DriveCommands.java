@@ -60,7 +60,6 @@ public class DriveCommands {
   private static double wantedRotationVelocityRadsPerSec = 0;
   private static double wantedForwardsVelocityMetersPerSec = 0;
 
-  private static int counter = 0;
   private static boolean isRunningApproachToReef = false;
 
   private static double forwardsAssistEffort = 0;
