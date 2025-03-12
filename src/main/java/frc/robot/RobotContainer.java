@@ -7,8 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -368,236 +366,223 @@ public class RobotContainer {
     // test();
   }
 
-  /**
-   
+  private void test() {
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         superStructure,
+    //         led,
+    //         () -> -driveController.getLeftY(),
+    //         () -> -driveController.getLeftX(),
+    //         () -> -driveController.getRightX(),
+    //         () -> driveController.leftBumper().getAsBoolean()));
+    driveController
+        .a()
+        .onTrue(
+            new SetScoralArmTarget(
+                scoralArm, SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2));
+    driveController.b().onTrue(new SetScoralArmTarget(scoralArm, 20, 2));
+  }
 
-     * 
-     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-     * 
-     */
-     rivate void test() {
-     * 
-      // drive.setDefaultCommand(
-      /
-      //         drive,
-        //         superStructure,
-        //     led,
-        // () -> 
-        // () -> -driveCon
-        // () -
-        // () -> driveController.leftBumper()
-        dr ller
-           
-           (
-                new Set
-                    
-                eControl
-                        
-                                
-        ivate void configureButtonBindings() {
-     
+  private void configureButtonBindings() {
+    slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
+    slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
-    
-        elevatorBrakeTrigger.onTrue(
-            new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
+    elevatorBrakeTrigger.onTrue(
+        new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
+    elevatorBrakeTrigger.onFalse(
+        new InstantCommand(() -> elevator.setBrake(true)).ignoringDisable(true));
 
-            new InstantCommand(() ->
-                
-        driverControls();
-                pControls();
+    driverControls();
+    manipControls();
+  }
 
-        
-        ivate void drive
-     
+  private void driverControls() {
+    driveController
+        .start()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            superStructure,
+            led,
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX(),
+            () -> driveController.leftBumper().getAsBoolean()));
 
-          .onTrue(
-                Command
-                        
-                        
-                                        n
-                                drive gDisable(true)
-                                        
-                                s.joys
-                                e,
+    driveController
+        .leftTrigger()
+        .and(() -> !driveController.rightTrigger().getAsBoolean())
+        .onTrue(
+            new ApproachReef(
+                drive,
+                led,
                 superStructure,
-                    led,
-                        () -> 
-                        () -> -driveCon
-                        () -
-                        () -> driveController.leftBumper()
-                        
-                        troller
-                        tTrigger()
+                false,
+                () -> driveController.leftTrigger().getAsBoolean()));
+    driveController
+        .rightTrigger()
+        .and(() -> !driveController.leftTrigger().getAsBoolean())
+        .onTrue(
+            new ApproachReef(
+                drive,
+                led,
+                superStructure,
+                true,
+                () -> driveController.rightTrigger().getAsBoolean()));
 
-            .onTrue(
-                    new Approa
-                        drive,
-                        
-                            superStructur
-                                false,
-                                () -
-                                ler
-                                igger(
-                                -> !driveController.leftTrigger().getAsBoolean())
-            .onTrue(
-                    new Approac
-                        drive,
-                        
-                            superStructur
-                                true,
-                                () -
-                                
-                                ler
-                                mper()
+    driveController
+        .rightBumper()
+        .onTrue(
+            new WaitUntilCommand(() -> superStructure.atGoals())
+                .andThen(
+                    new ReinitializingCommand(
+                        () -> superStructure.getSuperStructureCommand(),
+                        elevator,
+                        climberArm,
+                        scoralArm,
+                        scoralRollers,
+                        led))
+                .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
+                .andThen(new InstantCommand(() -> superStructure.nextState())));
 
-                new Wai
-                        .andTh
-                        
-                                    () -> superStructure.getSuperStructureCo
-                                        e
-                                            climberArm,
-                                                scoralArm,
-                                                scoralRol
-                                                led))
-                                                (new WaitU
-                                                (new InstantCo
-                                                
-                                ler
-                                
+    driveController
+        .a()
+        .onTrue(
+            new SequentialCommandGroup(
+                new SetScoralArmTarget(scoralArm, 29, 2),
+                new InstantCommand(() -> climberArm.setVoltage(-1.5))));
+    driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
 
-                new Seq
-                    
-                        
-                        troller.a().onFalse(new Ins
-                                
-                                ler.b().onTrue(new InstantCommand(() -> climberArm.setVo
-        driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
+    driveController.b().onTrue(new InstantCommand(() -> climberArm.setVoltage(2)));
+    driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
 
-        driveController.x().onTrue(new InstantCommand(() -> winch.runVolts(-6)));
-        driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
+    driveController.x().onTrue(new InstantCommand(() -> winch.runVolts(-6)));
+    driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
 
-        // driveController
-        //     .x()
+    // driveController
+    //     .x()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+    // driveController
+    //     .y()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    // driveController
+    //     .a()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+    // driveController
+    //     .b()
+    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
-        // driveController
-        // .y()
-        // .onTrue(new InstantCommand(() ->
-        // superStructure.setWantedState(SuperStructureState.L4)));
-        // driveController
-        // .a()
-        // .onTrue(new InstantCommand(() ->
-        // superStructure.setWantedState(SuperStructureState.L2)));
-        // driveController
-        // .b()
-        // .onTrue(new InstantCommand(() ->
-        // superStructure.setWantedState(SuperStructureState.L1)));
-        
-        dr ntro
-           vDown()
-        // 
+    driveController
+        .povDown()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+                .andThen(
+                    new ReinitializingCommand(
+                            () -> superStructure.getSuperStructureCommand(),
+                            elevator,
+                            scoralArm,
+                            scoralRollers,
+                            led)
+                        .andThen(new InstantCommand(() -> superStructure.nextState()))));
+  }
 
-                new Ins
-                        .a
-                        
-                                        () -> superStructure.getSuperStructureCommand(),
-                                         
-                                                scoralArm,
-                                                scoralRollers,
-                                                led)
-                                                Then(new I
-                                                
-                                                
-                                                rols() {
-     
+  private void manipControls() {
+    manipController
+        .x()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L3)));
+    manipController
+        .y()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
+    manipController
+        .a()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
+    manipController
+        .b()
+        .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
 
-          .onTrue(new InstantComma
-        manipController
-                .y()
-                .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L4)));
-        manipController
-                .a()
-                .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
-        manipController
-                .b()
-                .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
-        
-                pCon
-                .povDown()
+    manipController
+        .povDown()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+                .andThen(
+                    new ReinitializingCommand(
+                        () -> superStructure.getSuperStructureCommand(),
+                        elevator,
+                        scoralArm,
+                        scoralRollers,
+                        led))
+                .andThen(new InstantCommand(() -> superStructure.nextState())));
 
-                new Ins
-                        .a
-                        
-                                    () -> superStructure.getSuperStructureCommand(),
-                                        e
-                                            scoralArm,
-                                                scoralRollers,
-                                                led))
-                                                (new Insta
-                                                
-                                                
-                                mper()
+    manipController
+        .rightBumper()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
 
-                new Ins
-                
-                pControl
-                        
+    manipController.povLeft().onTrue(new InstantCommand(() -> superStructure.toggleAlgaeMode()));
 
-            .povUp()
+    manipController
+        .povUp()
+        .onTrue(
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.BARGE_EXTEND)));
 
-                new Ins
-                        
-                
-                        troller
-                                t()
+    manipController
+        .povRight()
+        .onTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
 
-                new Ins
-                
-                ot sure 
-                        Controller
+    // not sure if it works
+    // manipController
+    //     .start()
+    //     .onTrue(
+    //         new ConditionalCommand(
+    //             new SequentialCommandGroup(
+    //                 scoralArm.setArmTarget(
+    //                     SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2),
+    //                 new WaitUntilCommand(() -> scoralArm.atGoal(2)),
+    //                 new ZeroElevatorCANRange(elevator)),
+    //             new InstantCommand(),
+    //             () -> climberArm.isAt(SubsystemConstants.ClimberConstants.STOW_SETPOINT_DEG,
+    // 3)));
+  }
 
-        //     .onTrue(
-        //         new Con
-        //         
-        //         
-        //             SubsystemCo
-        //     new WaitUntilCommand(()
-        // new ZeroElevatorCANRang
-        // antCommand(),
-        // > climberArm.isAt(SubsystemConstants.ClimberCons
-        // 
-         
-         
-        blic Com
-     
+  public Command getAutonomousCommand() {
+    return autoChooser.get();
+  }
 
-    
-        blic ScoralArm getScoralA
-     
+  public ScoralArm getScoralArm() {
+    return scoralArm;
+  }
 
-    
-        blic Drive getDri
-     
+  public Drive getDrive() {
+    return drive;
+  }
 
-    
-        blic Elevator
-     
+  public Elevator getElevator() {
+    return elevator;
+  }
 
-    
-        blic SuperStruct
-     
+  public SuperStructure getSuperStructure() {
+    return superStructure;
+  }
 
-    
-        blic LED getLED() {
-     
+  public LED getLED() {
+    return led;
+  }
 
-    
-        blic Scoral
-     
+  public ScoralRollers getScoralRollers() {
+    return scoralRollers;
+  }
 
-    
-        blic ClimberArm getCl
-     
-
-    
-        
-    
+  public ClimberArm getClimber() {
+    return climberArm;
+  }
+}
