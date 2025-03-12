@@ -142,6 +142,7 @@ public class Elevator extends SubsystemBase {
 
   public void setElevatorGoal(double goal) {
     this.goal = goal;
+    extenderGoal = new TrapezoidProfile.State(goal, 0);
   }
 
   public void setPositionExtend(double position, double velocity) {
