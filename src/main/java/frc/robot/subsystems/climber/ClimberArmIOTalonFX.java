@@ -84,7 +84,12 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
     leader.optimizeBusUtilization();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100, leaderPositionDegs, velocityDegsPerSec, appliedVolts, statorCurrentAmps);
+        100,
+        leaderPositionDegs,
+        velocityDegsPerSec,
+        appliedVolts,
+        statorCurrentAmps,
+        supplyCurrentAmps);
 
     // setBrakeMode(false);
   }
@@ -92,7 +97,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
   @Override
   public void updateInputs(ClimberArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        leaderPositionDegs, velocityDegsPerSec, appliedVolts, statorCurrentAmps);
+        leaderPositionDegs, velocityDegsPerSec, appliedVolts, statorCurrentAmps, supplyCurrentAmps);
     Logger.recordOutput(
         "Debug Climb Arm/can coder climber",
         Units.rotationsToDegrees(climbCoder.getAbsolutePosition().getValueAsDouble()));

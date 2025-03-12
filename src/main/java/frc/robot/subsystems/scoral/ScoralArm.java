@@ -98,7 +98,7 @@ public class ScoralArm extends SubsystemBase {
     measuredVisualizer = new PivotVis("measured", Color.kRed);
     // CHANGE PER ARM
     maxVelocityDegPerSec = 150; // was at 90
-    maxAccelerationDegPerSecSquared = 690; // was at 190
+    maxAccelerationDegPerSecSquared = 600; // was at 190
     // maxAccelerationDegPerSecSquared = 180;
 
     armConstraints =
@@ -190,11 +190,11 @@ public class ScoralArm extends SubsystemBase {
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
     Logger.processInputs("Scoral Arm", saInputs);
-    Logger.recordOutput("Debug Scoral Arm/arm error", getArmError());
+    // Logger.recordOutput("Debug Scoral Arm/arm error", getArmError());
 
     Logger.recordOutput("Debug Scoral Arm/arm goal", goalDegrees);
 
-    Logger.recordOutput("Debug Scoral Arm/atGoal", atGoal(2));
+    // Logger.recordOutput("Debug Scoral Arm/atGoal", atGoal(2));
     // This method will be called once per scheduler run
     measuredVisualizer.update(armCurrentStateDegrees.position);
     setpointVisualizer.update(armGoalStateDegrees.position);

@@ -172,7 +172,7 @@ public class ClimberArm extends SubsystemBase {
     // }
 
     Logger.processInputs("Climber Arm", pInputs);
-    Logger.recordOutput("Debug Climb Arm/arm error", getArmError());
+    // Logger.recordOutput("Debug Climb Arm/arm error", getArmError());
 
     Logger.recordOutput("Debug Climb Arm/arm goal", goalDegrees);
     // This method will be called once per scheduler run

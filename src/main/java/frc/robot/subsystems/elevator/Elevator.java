@@ -52,7 +52,8 @@ public class Elevator extends SubsystemBase {
 
     switch (SimConstants.currentMode) {
       case REAL:
-        kS.initDefault(0.17);
+        // kS.initDefault(0.17);
+        kS.initDefault(0.12);
         kG.initDefault(0.2);
         kV.initDefault(0.1706);
         kA.initDefault(0);
@@ -193,7 +194,7 @@ public class Elevator extends SubsystemBase {
 
     Logger.processInputs("Elevator", eInputs);
 
-    Logger.recordOutput("Debug Elevator/at Goal", atGoal(2));
+    // Logger.recordOutput("Debug Elevator/at Goal", atGoal(2));
 
     measuredVisualizer.update(4 + extenderCurrent.position * 2);
     setpointVisualizer.update(4 + extenderGoal.position * 2);

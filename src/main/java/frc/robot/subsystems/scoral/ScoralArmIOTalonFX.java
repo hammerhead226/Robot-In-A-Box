@@ -87,11 +87,12 @@ public class ScoralArmIOTalonFX implements ArmIO {
   public void updateInputs(ArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         leaderPositionRotations, velocityDegsPerSec, appliedVolts, currentAmps);
-    Logger.recordOutput("scoral arm motor rotations", leaderPositionRotations.getValueAsDouble());
-    Logger.recordOutput(
-        "scoral arm motor setpoint",
-        Units.degreesToRotations(this.positionSetpointDegs)
-            * SubsystemConstants.ScoralArmConstants.ARM_GEAR_RATIO);
+    // Logger.recordOutput("scoral arm motor rotations",
+    // leaderPositionRotations.getValueAsDouble());
+    // Logger.recordOutput(
+    //     "scoral arm motor setpoint",
+    //     Units.degreesToRotations(this.positionSetpointDegs)
+    //         * SubsystemConstants.ScoralArmConstants.ARM_GEAR_RATIO);
     inputs.positionDegs =
         Units.rotationsToDegrees(leaderPositionRotations.getValueAsDouble())
             / SubsystemConstants.ScoralArmConstants.ARM_GEAR_RATIO;
