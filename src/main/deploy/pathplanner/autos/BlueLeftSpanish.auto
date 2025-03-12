@@ -7,19 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftStart"
+            "pathName": "BlueLeftUno"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "SCORE_CORAL_NEW"
+            "name": "SCORE_CORAL"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftSecond"
+            "pathName": "BlueLeftUnoish"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueLeftDos"
           }
         },
         {
@@ -29,57 +35,27 @@
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.15
+            "pathName": "BlueLeftTres"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftThird"
+            "pathName": "BlueLeftTresish"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "SCORE_CORAL_NEW"
+            "name": "SCORE_CORAL"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BlueLeftFourth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SOURCE_INTAKE"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BlueLeftFifth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SCORE_CORAL_NEW"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BlueLeftSixth"
+            "pathName": "BlueLeftCuatro"
           }
         },
         {
@@ -89,15 +65,27 @@
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.15
+            "pathName": "BlueLeftCuatroish"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueLeftCinco"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "L2 Variants",
   "choreoAuto": false
 }
