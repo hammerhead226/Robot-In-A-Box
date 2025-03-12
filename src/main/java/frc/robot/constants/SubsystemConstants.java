@@ -36,7 +36,7 @@ public final class SubsystemConstants {
     public static final double CURRENT_LIMIT = 40.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
 
-    public static final double STOW_SETPOINT_INCH = 0.01;
+    public static final double STOW_SETPOINT_INCH = -0.02;
 
     public static final double DEFAULT_THRESHOLD = 0.1;
 

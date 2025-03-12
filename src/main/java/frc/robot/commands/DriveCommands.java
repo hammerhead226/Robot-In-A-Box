@@ -83,11 +83,11 @@ public class DriveCommands {
   static SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.8);
 
   static ProfiledPIDController sidewaysPID =
-      new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
+      new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
   static ProfiledPIDController forwardsPID =
-      new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
+      new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
   static ProfiledPIDController rotationPID =
-      new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(150, 200));
+      new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(200, 300));
   // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70,
   // 120));
 
@@ -189,7 +189,7 @@ public class DriveCommands {
                 new Pose2d(
                     targetPose.getTranslation(),
                     targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
-            Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef");
+            // Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef");
 
           } else if (angleAssistSupplier.getAsBoolean()) {
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
@@ -200,7 +200,7 @@ public class DriveCommands {
                       targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
               // Reset allows for faster rotation even on first button press
               // rotationPID.reset(targetPose.getRotation().getDegrees());
-              Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "source");
+              // Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "source");
             } else if (superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
               targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
               targetPose =
@@ -209,10 +209,10 @@ public class DriveCommands {
                   new Pose2d(
                       targetPose.getTranslation(),
                       targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
-              Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "processor");
+              // Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "processor");
             }
           } else {
-            Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "none");
+            // Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "none");
           }
 
           if (targetPose != null && !targetPose.equals(previousTargetPose)) {
@@ -280,7 +280,9 @@ public class DriveCommands {
                     : 0;
 
             rotationAssistEffort =
-                (superStructure.getWantedState() == SuperStructureState.SOURCE || superStructure.getWantedState() == SuperStructureState.PROCESSOR ||drive.shouldPIDAlign())
+                (superStructure.getWantedState() == SuperStructureState.SOURCE
+                        || superStructure.getWantedState() == SuperStructureState.PROCESSOR
+                        || drive.shouldPIDAlign())
                     ? (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff
                     : 0;
             // rotationAssistEffort =
@@ -320,9 +322,9 @@ public class DriveCommands {
               "Debug Driver Alignment/Rotation Profile Velocity rad/s",
               Math.toRadians(rotationPID.getSetpoint().velocity));
 
-          Logger.recordOutput("Debug Driver Alignment/Forwards Error m", forwardsErrorMeters);
-          Logger.recordOutput("Debug Driver Alignment/Sideways Error m", sidewaysErrorMeters);
-          Logger.recordOutput("Debug Driver Alignment/Rotation Error deg", rotationErrorDegrees);
+          // Logger.recordOutput("Debug Driver Alignment/Forwards Error m", forwardsErrorMeters);
+          // Logger.recordOutput("Debug Driver Alignment/Sideways Error m", sidewaysErrorMeters);
+          // Logger.recordOutput("Debug Driver Alignment/Rotation Error deg", rotationErrorDegrees);
 
           Logger.recordOutput(
               "Debug Driver Alignment/Wanted Sideways Velocity m/s",

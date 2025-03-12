@@ -136,12 +136,8 @@ public class SuperStructure {
     // return true;
   }
 
-  public void toggleAlgaeMode() {
-    if (!algaeMode) {
-      algaeMode = true;
-    } else {
-      algaeMode = false;
-    }
+  public void enableAlgaeMode(boolean bool) {
+    algaeMode = bool;
   }
 
   public boolean getAlgaeMode() {
@@ -256,7 +252,8 @@ public class SuperStructure {
               new InstantCommand(() -> this.setCurrentState(SuperStructureState.INTAKE_ALGAE)),
               new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW_ALGAE)),
               new IntakeAlgaeFromReef(
-                  drive, scoralArm, scoralRollers, elevator, led, height1, height2));
+                  drive, scoralArm, scoralRollers, elevator, led, height1, height2),
+              new InstantCommand(() -> this.enableAlgaeMode(false)));
         }
 
       default:

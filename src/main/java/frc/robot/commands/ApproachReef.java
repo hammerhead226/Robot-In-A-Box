@@ -17,9 +17,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.ElevatorConstants;
+import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
+import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
+import frc.robot.subsystems.scoral.ScoralArm;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +35,8 @@ import org.littletonrobotics.junction.Logger;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ApproachReef extends Command {
   private final Drive drive;
+  private final Elevator elevator;
+  private final ScoralArm scoralArm;
   private final SuperStructure superStructure;
   private final boolean isRight;
   Command pathCommand;
@@ -41,15 +49,19 @@ public class ApproachReef extends Command {
   /** Creates a new ApproachReef. */
   public ApproachReef(
       Drive drive,
+      Elevator elevator,
+      ScoralArm scoralArm,
       LED led,
       SuperStructure superStructure,
       boolean isRight,
       BooleanSupplier continuePath) {
     this.drive = drive;
+    this.elevator = elevator;
+    this.scoralArm = scoralArm;
     this.superStructure = superStructure;
     this.isRight = isRight;
     this.continuePath = continuePath;
-    addRequirements(drive);
+    addRequirements(drive, elevator, scoralArm, led);
   }
 
   // Called when the command is initially scheduled.
@@ -66,7 +78,8 @@ public class ApproachReef extends Command {
                 SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
                 SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
             Rotation2d.kZero);
-    // offset the path's setpoint a bit to allow pid to do the rest of work while avoiding bug of both current pose and atpose being the same which causes reboot
+    // offset the path's setpoint a bit to allow pid to do the rest of work while avoiding bug of
+    // both current pose and atpose being the same which causes reboot
     atPose =
         DriveCommands.rotateAndNudge(
             reefPose,

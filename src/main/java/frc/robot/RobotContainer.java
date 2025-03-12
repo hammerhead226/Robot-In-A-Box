@@ -422,6 +422,8 @@ public class RobotContainer {
         .onTrue(
             new ApproachReef(
                 drive,
+                elevator,
+                scoralArm,
                 led,
                 superStructure,
                 false,
@@ -432,6 +434,8 @@ public class RobotContainer {
         .onTrue(
             new ApproachReef(
                 drive,
+                elevator,
+                scoralArm,
                 led,
                 superStructure,
                 true,
@@ -468,10 +472,12 @@ public class RobotContainer {
 
     // driveController
     //     .x()
-    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
+    //     .onTrue(new InstantCommand(() ->
+    // superStructure.setWantedState(SuperStructureState.SOURCE)));
     // driveController
     //     .y()
-    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
+    //     .onTrue(new InstantCommand(() ->
+    // superStructure.setWantedState(SuperStructureState.PROCESSOR)));
     // driveController
     //     .a()
     //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
@@ -525,7 +531,9 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.SOURCE)));
 
-    manipController.povLeft().onTrue(new InstantCommand(() -> superStructure.toggleAlgaeMode()));
+    manipController
+        .povLeft()
+        .onTrue(new InstantCommand(() -> superStructure.enableAlgaeMode(true)));
 
     manipController
         .povUp()
