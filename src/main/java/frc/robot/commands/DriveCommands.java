@@ -86,7 +86,7 @@ public class DriveCommands {
   static ProfiledPIDController forwardsPID =
       new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
   static ProfiledPIDController rotationPID =
-      new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
+      new ProfiledPIDController(9.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
   // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70,
   // 120));
 
@@ -191,11 +191,12 @@ public class DriveCommands {
           if (angleAssistSupplier.getAsBoolean()) {
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
               targetPose = drive.getNearestSource();
-              targetPose = rotateAndNudge(targetPose, new Translation2d(0.5, 0), new Rotation2d(0));
               targetPose =
                   new Pose2d(
-                      targetPose.getTranslation(),
+                      new Translation2d(0, 0),
                       targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
+              // Reset allows for faster rotation even on first button press
+              rotationPID.reset(targetPose.getRotation().getDegrees());
               Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "source");
             } else if (superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
               targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
@@ -271,7 +272,10 @@ public class DriveCommands {
             //         ? (wantedSidewaysVelocityMetersPerSec - sidewaysSpeed) * speedDebuff
             //         : 0;
 
-            rotationAssistEffort = (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff;
+            rotationAssistEffort =
+                (superStructure.getWantedState() == SuperStructureState.SOURCE)
+                    ? (wantedRotationVelocityRadsPerSec - rotationSpeed)
+                    : (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff;
 
           } else {
             wantedForwardsVelocityMetersPerSec = forwardSpeed;
@@ -520,7 +524,7 @@ public class DriveCommands {
         // Measurement sequence
         Commands.sequence(
             // Wait for modules to fully orient before starting measurement
-            Commands.waitSeconds(1.0),
+            Commands.waitSeconds(0.5),
 
             // Record starting measurement
             Commands.runOnce(
