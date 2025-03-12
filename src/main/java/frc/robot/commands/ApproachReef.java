@@ -156,6 +156,6 @@ public class ApproachReef extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return pathCommand.isFinished() || !continuePath.getAsBoolean();
+    return pathCommand.isFinished() || !continuePath.getAsBoolean() || drive.shouldPIDAlign();
   }
 }

@@ -116,7 +116,9 @@ public class DriveCommands {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
-      BooleanSupplier angleAssistSupplier) {
+      BooleanSupplier angleAssistSupplier,
+      BooleanSupplier reefLeftSupplier,
+      BooleanSupplier reefRightSupplier) {
     // BooleanSupplier sourceAlignSupplier,
     // BooleanSupplier processorAlignSupplier,
     // BooleanSupplier anchorAlignSupplier) {
@@ -158,35 +160,35 @@ public class DriveCommands {
           double speedDebuff = 0.75;
           targetPose = null;
 
-          // if ((reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())) {
-          //   led.setState(LED_STATE.FLASHING_RED);
-          //   Translation2d reefTranslation =
-          //       drive.isNearReef()
-          //           ? new Translation2d(
-          //               SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-          //               SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET)
-          //           : new Translation2d(
-          //               SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
-          //               SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
+          if ((reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())) {
+            led.setState(LED_STATE.FLASHING_RED);
+            Translation2d reefTranslation =
+                drive.isNearReef()
+                    ? new Translation2d(
+                        SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                        SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET)
+                    : new Translation2d(
+                        SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
+                        SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
 
-          //   if (reefLeftSupplier.getAsBoolean()) {
-          //     targetPose = drive.getNearestCenterLeft();
-          //     targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
-          //     // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d());
-          //   } else if (reefRightSupplier.getAsBoolean()) {
-          //     targetPose = drive.getNearestCenterRight();
-          //     targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
-          //     // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
-          //   } else {
-          //     targetPose = drive.getNearestCenter();
-          //     targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
-          //     // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
-          //   }
-          //   targetPose =
-          //       new Pose2d(
-          //           targetPose.getTranslation(),
-          //           targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
-          //   Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef");
+            if (reefLeftSupplier.getAsBoolean()) {
+              targetPose = drive.getNearestCenterLeft();
+              targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
+              // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d());
+            } else if (reefRightSupplier.getAsBoolean()) {
+              targetPose = drive.getNearestCenterRight();
+              targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
+              // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
+            } else {
+              targetPose = drive.getNearestCenter();
+              targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
+              // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
+            }
+            targetPose =
+                new Pose2d(
+                    targetPose.getTranslation(),
+                    targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
+            Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef");
 
           if (angleAssistSupplier.getAsBoolean()) {
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
@@ -368,6 +370,7 @@ public class DriveCommands {
                   rotationSlewRateLimiter.calculate(finalInputSpeed.omegaRadiansPerSecond)));
         },
         drive);
+      }
   }
 
   /*

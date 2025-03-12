@@ -121,8 +121,7 @@ public class Drive extends SubsystemBase {
   private Pose2d lastReefFieldPose;
   public boolean slowMode = false;
 
-  private double linearSpeedMultiplier = 1;
-  private double angularSpeedMultiplier = 1;
+  private boolean isPIDAligning = false;
 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
@@ -610,6 +609,14 @@ public class Drive extends SubsystemBase {
             .getTranslation()
             .getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center))
         <= 1.7;
+  }
+
+  public boolean shouldPIDAlign() {
+    return getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) <= 0.1;
+  }
+
+  public void enablePIDAlign(boolean bool) {
+    this.isPIDAligning = bool;
   }
 
   public boolean isAtReefRotation() {
