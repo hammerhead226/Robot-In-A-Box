@@ -86,7 +86,7 @@ public class DriveCommands {
   static ProfiledPIDController forwardsPID =
       new ProfiledPIDController(7, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
   static ProfiledPIDController rotationPID =
-      new ProfiledPIDController(9.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
+      new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(120, 150));
   // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70,
   // 120));
 
@@ -524,7 +524,7 @@ public class DriveCommands {
         // Measurement sequence
         Commands.sequence(
             // Wait for modules to fully orient before starting measurement
-            Commands.waitSeconds(0.5),
+            Commands.waitSeconds(1.0),
 
             // Record starting measurement
             Commands.runOnce(
