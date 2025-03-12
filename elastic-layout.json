@@ -50,8 +50,8 @@
           },
           {
             "title": "Camera",
-            "x": 768.0,
-            "y": 512.0,
+            "x": 384.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -67,8 +67,8 @@
           },
           {
             "title": "HeartBeat",
-            "x": 896.0,
-            "y": 512.0,
+            "x": 512.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -123,7 +123,7 @@
           },
           {
             "title": "Alerts",
-            "x": 768.0,
+            "x": 640.0,
             "y": 0.0,
             "width": 256.0,
             "height": 384.0,
@@ -190,42 +190,16 @@
             }
           },
           {
-            "title": "Reset: ",
-            "x": 1152.0,
-            "y": 384.0,
+            "title": "Reset",
+            "x": 1024.0,
+            "y": 0.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Toggle Button",
             "properties": {
-              "topic": "/SmartDashboard/Reset: ",
+              "topic": "/SmartDashboard/Reset",
               "period": 0.06,
               "data_type": "boolean"
-            }
-          },
-          {
-            "title": "streams",
-            "x": 640.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/CameraPublisher/USB Camera 0/streams",
-              "period": 0.06,
-              "data_type": "string[]",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "USB Camera 0",
-            "x": 1152.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/USB Camera 0",
-              "period": 0.06
             }
           }
         ]

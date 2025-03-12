@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -112,6 +113,7 @@ public class RobotContainer {
   private Trigger reefAlignTrigger;
   private Trigger approachPerpendicularTrigger;
   private Trigger keepClimbingTrigger;
+  private Trigger resetLimelight;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -153,8 +155,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight("limelight-reef", () -> drive.getPose().getRotation()),
-                new VisionIOLimelight("limelight-climber", () -> drive.getPose().getRotation())
+                new VisionIOLimelight("limelight-reef", () -> drive.getPose().getRotation())
                 // new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
                 // new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 // new VisionIOPhotonVision("photon", new Transform3d())
@@ -223,6 +224,8 @@ public class RobotContainer {
         break;
 
       default:
+        // limelight = new PowerDistribution(23, ModuleType.kRev);
+
         elevatorBrakeTrigger = new Trigger(() -> true);
         // Replayed robot, disable IO implementations
         drive =
@@ -437,6 +440,7 @@ public class RobotContainer {
     // stateTrigger = new Trigger(() -> superStructure.changedStated());
 
     slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+    resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
 
     reefAlignTrigger =
         new Trigger(
@@ -562,6 +566,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    resetLimelight.onTrue(vision.resetLimelight().ignoringDisable(true));
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
