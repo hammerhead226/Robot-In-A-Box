@@ -46,7 +46,7 @@ public class ScoralRollersIOSim implements FlywheelIO {
     // Units.radiansPerSecondToRotationsPerMinute(sim.getAngularVelocityRadPerSec());
     inputs.velocityRadPerSec = sim.getAngularVelocityRPM();
     inputs.appliedVolts = appliedVolts;
-    inputs.currentAmps = sim.getCurrentDrawAmps();
+    inputs.leaderStatorCurrentAmps = sim.getCurrentDrawAmps();
   }
 
   @Override

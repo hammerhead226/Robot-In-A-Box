@@ -31,7 +31,7 @@ public class ScoreAlgaeIntoBarge extends SequentialCommandGroup {
 
     addCommands(
         new ParallelCommandGroup(
-            elevator.setElevatorTarget(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 1),
-            scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG, 2)));
+            new SetElevatorTarget(elevator, SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 1),
+            new SetScoralArmTarget(scoralArm, SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG, 2)));
   }
 }

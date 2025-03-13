@@ -66,7 +66,7 @@ public class ScoralArmIOSim implements ArmIO {
     inputs.appliedVolts = appliedVolts;
     inputs.positionDegs = Math.toDegrees(positionRads);
     inputs.velocityDegsPerSec = Math.toDegrees(velocityRadsPerSec);
-    inputs.currentAmps = currentAmps;
+    inputs.statorCurrentAmps = currentAmps;
 
     sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
   }

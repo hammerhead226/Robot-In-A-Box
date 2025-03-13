@@ -8,7 +8,10 @@ public interface ElevatorIO {
     double positionInch = 0;
     double positionSetpointInch = 0;
     double elevatorVelocityInchesPerSecond = 0;
-    double currentAmps = 0;
+    double leaderStatorCurrentAmps = 0;
+    double leaderSupplyCurrentAmps = 0;
+    double followerStatorCurrentAmps = 0;
+    double followerSupplyCurrentAmps = 0;
     double appliedVolts = 0;
     double CANrangeDistanceInches;
   }

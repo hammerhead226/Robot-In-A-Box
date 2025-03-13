@@ -7,10 +7,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.ArmIO;
@@ -164,13 +161,13 @@ public class ScoralArm extends SubsystemBase {
     armCurrentStateDegrees = new TrapezoidProfile.State(currentDegrees, 0);
   }
 
-  public Command setArmTarget(double goalDegrees, double thresholdDegrees) {
+  // public Command setArmTarget(double goalDegrees, double thresholdDegrees) {
 
-    return new InstantCommand(() -> setArmGoal(goalDegrees), this)
-        .andThen(new WaitUntilCommand(() -> atGoal(thresholdDegrees)))
-        // .andThen(new WaitUntilCommand(() -> false))
-        .withTimeout(2.5);
-  }
+  //   return new InstantCommand(() -> setArmGoal(goalDegrees), this)
+  //       .andThen(new WaitUntilCommand(() -> atGoal(thresholdDegrees)))
+  //       // .andThen(new WaitUntilCommand(() -> false))
+  //       .withTimeout(2.5);
+  // }
 
   @AutoLogOutput(key = "Debug Scoral Arm/arm")
   public Pose3d getElevatorPose() {

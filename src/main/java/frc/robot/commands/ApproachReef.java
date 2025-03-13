@@ -178,7 +178,7 @@ public class ApproachReef extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (!pointsTooClose) {
+    if (!pointsTooClose && superStructure.atGoals()) {
       pathCommand.cancel();
       if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.2) {
         superStructure.nextState();
@@ -190,6 +190,6 @@ public class ApproachReef extends Command {
   @Override
   public boolean isFinished() {
     // return true;
-    return pathCommand.isFinished() || !continuePath.getAsBoolean() || pointsTooClose || shouldPID;
+    return !continuePath.getAsBoolean() || pointsTooClose || shouldPID;
   }
 }

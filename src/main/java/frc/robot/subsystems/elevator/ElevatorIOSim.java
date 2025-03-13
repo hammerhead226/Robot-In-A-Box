@@ -64,7 +64,7 @@ public class ElevatorIOSim implements ElevatorIO {
     inputs.appliedVolts = appliedVolts;
     inputs.positionInch = positionInch;
     inputs.elevatorVelocityInchesPerSecond = velocityInchesPerSecond;
-    inputs.currentAmps = currentAmps;
+    inputs.leaderStatorCurrentAmps = currentAmps;
 
     sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
   }

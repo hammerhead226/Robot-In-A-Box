@@ -29,7 +29,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final StatusSignal<Angle> elevatorPosition;
   private final StatusSignal<AngularVelocity> elevatorVelocity;
   private final StatusSignal<Voltage> appliedVolts;
-  private final StatusSignal<Current> currentAmps;
+  private final StatusSignal<Current> leaderStatorCurrentAmps;
+  private final StatusSignal<Current> leaderSupplyCurrentAmps;
+  private final StatusSignal<Current> followerStatorCurrentAmps;
+  private final StatusSignal<Current> followerSupplyCurrentAmps;
   private final StatusSignal<Distance> canRangeDistance;
 
   public ElevatorIOTalonFX(int lead, int follow, int canRangeID) {
@@ -59,30 +62,33 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevatorPosition = leader.getPosition();
     elevatorVelocity = leader.getVelocity();
     appliedVolts = leader.getMotorVoltage();
-    currentAmps = leader.getStatorCurrent();
+    leaderStatorCurrentAmps = leader.getStatorCurrent();
+    leaderSupplyCurrentAmps = leader.getSupplyCurrent();
+    followerStatorCurrentAmps = follower.getStatorCurrent();
+    followerSupplyCurrentAmps = follower.getSupplyCurrent();
     canRangeDistance = distanceSensor.getDistance();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100, elevatorPosition, elevatorVelocity, appliedVolts, currentAmps);
+        100, canRangeDistance, elevatorPosition, elevatorVelocity, appliedVolts, leaderStatorCurrentAmps, leaderSupplyCurrentAmps, followerStatorCurrentAmps, followerSupplyCurrentAmps);
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    BaseStatusSignal.refreshAll(elevatorPosition, elevatorVelocity, appliedVolts, currentAmps);
+    BaseStatusSignal.refreshAll(canRangeDistance, elevatorPosition, elevatorVelocity, appliedVolts, leaderStatorCurrentAmps, leaderSupplyCurrentAmps, followerStatorCurrentAmps, followerSupplyCurrentAmps);
 
-    Logger.recordOutput(
-        "Debug Elevator/Elevator CANRage Distance Inch",
-        distanceSensor.getDistance().getValueAsDouble());
-
-    Logger.recordOutput(
-        "Debug Elevator/Left Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Debug Elevator/Right Motor Stator Current",
-        follower.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Debug Elevator/Left Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Debug Elevator/Right Motor Supply Current",
-        follower.getSupplyCurrent().getValueAsDouble());
+    // Logger.recordOutput(
+    //     "Debug Elevator/Elevator CANRage Distance Inch",
+    //     distanceSensor.getDistance().getValueAsDouble());
+    inputs.CANrangeDistanceInches = canRangeDistance.getValueAsDouble();
+    // Logger.recordOutput(
+    //     "Debug Elevator/Left Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
+    // Logger.recordOutput(
+    //     "Debug Elevator/Right Motor Stator Current",
+    //     follower.getStatorCurrent().getValueAsDouble());
+    // Logger.recordOutput(
+    //     "Debug Elevator/Left Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
+    // Logger.recordOutput(
+    //     "Debug Elevator/Right Motor Supply Current",
+    //     follower.getSupplyCurrent().getValueAsDouble());
 
     inputs.positionInch =
         Conversions.motorRotToInches(
@@ -96,7 +102,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
             5.5,
             SubsystemConstants.ElevatorConstants.ELEVATOR_GEAR_RATIO);
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
-    inputs.currentAmps = currentAmps.getValueAsDouble();
+    inputs.leaderStatorCurrentAmps = leaderStatorCurrentAmps.getValueAsDouble();
+    inputs.leaderSupplyCurrentAmps = leaderSupplyCurrentAmps.getValueAsDouble();
+    inputs.followerStatorCurrentAmps = followerStatorCurrentAmps.getValueAsDouble();
+    inputs.followerSupplyCurrentAmps = followerSupplyCurrentAmps.getValueAsDouble();
 
     inputs.positionSetpointInch = positionSetpoint;
   }

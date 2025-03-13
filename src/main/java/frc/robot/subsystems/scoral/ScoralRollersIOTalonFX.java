@@ -24,7 +24,8 @@ public class ScoralRollersIOTalonFX implements FlywheelIO {
   private final StatusSignal<Angle> leaderPosition;
   private final StatusSignal<AngularVelocity> leaderVelocity;
   private final StatusSignal<Voltage> leaderAppliedVolts;
-  private final StatusSignal<Current> leaderCurrent;
+  private final StatusSignal<Current> leaderStatorCurrentAmps;
+  private final StatusSignal<Current> leaderSupplyCurrentAmps;
 
   public ScoralRollersIOTalonFX(int id) {
 
@@ -39,26 +40,27 @@ public class ScoralRollersIOTalonFX implements FlywheelIO {
     leaderPosition = leader.getPosition();
     leaderVelocity = leader.getVelocity();
     leaderAppliedVolts = leader.getMotorVoltage();
-    leaderCurrent = leader.getSupplyCurrent();
-
+    leaderStatorCurrentAmps = leader.getStatorCurrent();
+    leaderSupplyCurrentAmps = leader.getSupplyCurrent();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, leaderPosition, leaderVelocity, leaderAppliedVolts, leaderCurrent);
+        50.0, leaderPosition, leaderVelocity, leaderAppliedVolts, leaderStatorCurrentAmps, leaderSupplyCurrentAmps);
     leader.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    BaseStatusSignal.refreshAll(leaderPosition, leaderVelocity, leaderAppliedVolts, leaderCurrent);
+    BaseStatusSignal.refreshAll(leaderPosition, leaderVelocity, leaderAppliedVolts, leaderStatorCurrentAmps, leaderSupplyCurrentAmps);
     inputs.positionRad = Units.rotationsToRadians(leaderPosition.getValueAsDouble()) / GEAR_RATIO;
     inputs.velocityRadPerSec =
         Units.rotationsToRadians(leaderVelocity.getValueAsDouble()) / GEAR_RATIO;
     inputs.appliedVolts = leaderAppliedVolts.getValueAsDouble();
-    inputs.currentAmps = leaderCurrent.getValueAsDouble();
+    inputs.leaderStatorCurrentAmps = leaderStatorCurrentAmps.getValueAsDouble();
+    inputs.leaderSupplyCurrentAmps = leaderSupplyCurrentAmps.getValueAsDouble();
 
-    Logger.recordOutput(
-        "Debug Scoral Rollers/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Debug Scoral Rollers/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
+    // Logger.recordOutput(
+    //     "Debug Scoral Rollers/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
+    // Logger.recordOutput(
+    //     "Debug Scoral Rollers/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
   }
 
   @Override

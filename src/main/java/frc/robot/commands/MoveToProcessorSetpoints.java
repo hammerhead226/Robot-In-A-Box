@@ -22,7 +22,7 @@ public class MoveToProcessorSetpoints extends SequentialCommandGroup {
     this.scoralArm = scoralArm;
 
     addCommands(
-        elevator.setElevatorTarget(ElevatorConstants.PROCESSOR_SETPOINT_INCHES, 2),
-        scoralArm.setArmTarget(ScoralArmConstants.PROCESSOR_SETPOINT_DEG, 2));
+        new SetElevatorTarget(elevator, ElevatorConstants.PROCESSOR_SETPOINT_INCHES, 2),
+        new SetScoralArmTarget(scoralArm, ScoralArmConstants.PROCESSOR_SETPOINT_DEG, 2));
   }
 }

@@ -31,7 +31,8 @@ public class ScoralArmIOTalonFX implements ArmIO {
   private StatusSignal<Angle> leaderPositionRotations;
   private final StatusSignal<AngularVelocity> velocityDegsPerSec;
   private final StatusSignal<Voltage> appliedVolts;
-  private final StatusSignal<Current> currentAmps;
+  private final StatusSignal<Current> statorCurrentAmps;
+  private final StatusSignal<Current> supplyCurrentAmps;
 
   public ScoralArmIOTalonFX(int leadID, int canCoderID) {
     CANcoderConfiguration coderConfig = new CANcoderConfiguration();
@@ -67,7 +68,8 @@ public class ScoralArmIOTalonFX implements ArmIO {
     leaderPositionRotations = leader.getPosition();
     velocityDegsPerSec = leader.getVelocity();
     appliedVolts = leader.getMotorVoltage();
-    currentAmps = leader.getStatorCurrent();
+    statorCurrentAmps = leader.getStatorCurrent();
+    supplyCurrentAmps = leader.getSupplyCurrent();
 
     // leader.get
 
@@ -78,7 +80,7 @@ public class ScoralArmIOTalonFX implements ArmIO {
     leader.optimizeBusUtilization();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100, leaderPositionRotations, velocityDegsPerSec, appliedVolts, currentAmps);
+        100, leaderPositionRotations, velocityDegsPerSec, appliedVolts, statorCurrentAmps, supplyCurrentAmps);
 
     // setBrakeMode(false);
   }
@@ -86,7 +88,7 @@ public class ScoralArmIOTalonFX implements ArmIO {
   @Override
   public void updateInputs(ArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        leaderPositionRotations, velocityDegsPerSec, appliedVolts, currentAmps);
+        leaderPositionRotations, velocityDegsPerSec, appliedVolts, statorCurrentAmps, supplyCurrentAmps);
     // Logger.recordOutput("scoral arm motor rotations",
     // leaderPositionRotations.getValueAsDouble());
     // Logger.recordOutput(
@@ -99,13 +101,14 @@ public class ScoralArmIOTalonFX implements ArmIO {
 
     inputs.velocityDegsPerSec = Units.rotationsToDegrees(velocityDegsPerSec.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
-    inputs.currentAmps = currentAmps.getValueAsDouble();
+    inputs.statorCurrentAmps = statorCurrentAmps.getValueAsDouble();
+    inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.positionSetpointDegs = positionSetpointDegs;
 
-    Logger.recordOutput(
-        "Debug Scoral Arm/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Debug Scoral Arm/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
+    // Logger.recordOutput(
+    //     "Debug Scoral Arm/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
+    // Logger.recordOutput(
+    //     "Debug Scoral Arm/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
 
     Logger.recordOutput(
         "cancoder arm position degs",

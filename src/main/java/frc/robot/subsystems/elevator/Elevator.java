@@ -4,10 +4,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.scoral.ScoralArm;
@@ -166,12 +163,12 @@ public class Elevator extends SubsystemBase {
     return extenderGoal.position >= 7;
   }
 
-  public Command setElevatorTarget(double elevatorGoalInches, double thresholdInches) {
-    // TODO: Change the wait time to an accurate value
-    return new InstantCommand(() -> setElevatorGoal(elevatorGoalInches), this)
-        .andThen(new WaitUntilCommand(() -> atGoal(thresholdInches)))
-        .withTimeout(2.5);
-  }
+  // public Command setElevatorTarget(double elevatorGoalInches, double thresholdInches) {
+  //   // TODO: Change the wait time to an accurate value
+  //   return new InstantCommand(() -> setElevatorGoal(elevatorGoalInches), this)
+  //       .andThen(new WaitUntilCommand(() -> atGoal(thresholdInches)))
+  //       .withTimeout(2.5);
+  // }
 
   public void brakeMode(boolean brake) {
     elevator.setBrakeMode(brake);

@@ -135,7 +135,7 @@ public class ScoralRollers extends SubsystemBase {
 
   public AlgaeState seesAlgae() {
     Logger.recordOutput("Debug Rollers/see algae val", "default");
-    if (inputs.currentAmps > 9) {
+    if (inputs.leaderStatorCurrentAmps > 9) {
       Logger.recordOutput("Debug Rollers/see algae val", "current");
       lastAlgaeState = AlgaeState.CURRENT;
       return AlgaeState.CURRENT;
@@ -166,7 +166,7 @@ public class ScoralRollers extends SubsystemBase {
       lastCoralState = CoralState.SENSOR;
       return CoralState.SENSOR;
 
-    } else if (inputs.currentAmps > 30) {
+    } else if (inputs.leaderStatorCurrentAmps > 30) {
       Logger.recordOutput("Debug Rollers/see coral val", "current");
       lastCoralState = CoralState.CURRENT;
       return CoralState.CURRENT;

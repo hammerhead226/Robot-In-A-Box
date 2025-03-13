@@ -10,6 +10,7 @@ import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.MoveToProcessorSetpoints;
 import frc.robot.commands.ScoreCoral;
+import frc.robot.commands.SetElevatorTarget;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
 import frc.robot.constants.SubsystemConstants;
@@ -165,9 +166,9 @@ public class SuperStructure {
       case BARGE_EXTEND:
         currentState = SuperStructureState.BARGE_EXTEND;
         return new SequentialCommandGroup(
-            elevator.setElevatorTarget(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 2),
+            new SetElevatorTarget(elevator, SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 2),
             new WaitUntilCommand(() -> elevator.atGoal(2)),
-            scoralArm.setArmTarget(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG, 2));
+            new SetScoralArmTarget(scoralArm, SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG, 2));
       case ALGAE_SCORE:
         currentState = SuperStructureState.ALGAE_SCORE;
         led.setState(LED_STATE.FLASHING_GREEN);
@@ -259,7 +260,7 @@ public class SuperStructure {
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
-                elevator.setElevatorTarget(0, 0), scoralArm.setArmTarget(40, 0)));
+                new SetElevatorTarget(elevator, 0, 0), new SetScoralArmTarget(scoralArm,40, 0)));
     }
   }
 
