@@ -114,6 +114,7 @@ public class RobotContainer {
   private Trigger approachPerpendicularTrigger;
   private Trigger keepClimbingTrigger;
   private Trigger resetLimelight;
+  private Trigger turnLimelightON;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -441,6 +442,7 @@ public class RobotContainer {
 
     slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
+    turnLimelightON = new Trigger(()-> SmartDashboard.getBoolean("LL-On", false));
 
     reefAlignTrigger =
         new Trigger(

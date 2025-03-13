@@ -45,12 +45,12 @@ public class Vision extends SubsystemBase {
   private final Alert[] disconnectedAlerts;
   private static final double POSE_BUFFER_SIZE_SECONDS = 1.5;
 
-  private final PowerDistribution limelight;
+  private final PowerDistribution PDH;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     SmartDashboard.putBoolean("Reset", false);
 
-    limelight = new PowerDistribution(23, ModuleType.kRev);
+    PDH = new PowerDistribution(1, ModuleType.kRev);
     this.consumer = consumer;
     this.io = io;
 
@@ -80,11 +80,15 @@ public class Vision extends SubsystemBase {
 
   public Command resetLimelight() {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> limelight.setSwitchableChannel(false)),
+        new InstantCommand(() -> PDH.setSwitchableChannel(true)),
         new WaitCommand(2),
-        new InstantCommand(() -> limelight.setSwitchableChannel(true)),
+        new InstantCommand(() -> PDH.setSwitchableChannel(false)),
         new InstantCommand(() -> SmartDashboard.putBoolean("Reset", false)));
   }
+
+  // public Command activateLimelight(){
+
+  // }
 
   @Override
   public void periodic() {
