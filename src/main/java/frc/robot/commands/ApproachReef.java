@@ -17,15 +17,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.constants.SubsystemConstants.ElevatorConstants;
-import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
-import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.scoral.ScoralArm;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -80,11 +76,18 @@ public class ApproachReef extends Command {
             Rotation2d.kZero);
     // offset the path's setpoint a bit to allow pid to do the rest of work while avoiding bug of
     // both current pose and atpose being the same which causes reboot
+    // atPose =
+    //     DriveCommands.rotateAndNudge(
+    //         reefPose,
+    //         new Translation2d(
+    //             SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET - 0.1,
+    //             SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+    //         Rotation2d.kZero);
     atPose =
         DriveCommands.rotateAndNudge(
             reefPose,
             new Translation2d(
-                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET - 0.1,
+                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
                 SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
             Rotation2d.kZero);
 
@@ -173,6 +176,6 @@ public class ApproachReef extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return shouldPID || pathCommand.isFinished() || !continuePath.getAsBoolean();
+    return pathCommand.isFinished() || !continuePath.getAsBoolean();
   }
 }

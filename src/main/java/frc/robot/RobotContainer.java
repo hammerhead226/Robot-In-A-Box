@@ -305,7 +305,7 @@ public class RobotContainer {
         "SCORE_CORAL_NEW",
         new SequentialCommandGroup(
             new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
-            new InstantCommand(() -> scoralRollers.runVoltsCommmand(2.6)),
+            scoralRollers.runVoltsCommmand(2.6),
             new WaitCommand(0.35)));
 
     NamedCommands.registerCommand(

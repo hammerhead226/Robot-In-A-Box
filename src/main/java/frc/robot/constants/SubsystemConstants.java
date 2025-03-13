@@ -74,7 +74,7 @@ public final class SubsystemConstants {
 
     public static final double STOW_SETPOINT_DEG = 96.8;
     public static final double LOW_CORAL_SCORING_SETPOINT_DEG = 76.5;
-    public static final double L4_CORAL_SCORING_SETPOINT_DEG = 66;
+    public static final double L4_CORAL_SCORING_SETPOINT_DEG = 64;
     public static final double BARGE_SETPOINT_DEG = 85;
     public static final double PROCESSOR_SETPOINT_DEG = 20;
   }
