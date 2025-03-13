@@ -162,8 +162,8 @@ public class Elevator extends SubsystemBase {
     extenderProfile = new TrapezoidProfile(extenderConstraints);
   }
 
-  public boolean isExtended() {
-    return extenderGoal.position >= 2;
+  public boolean shouldSlowMode() {
+    return extenderGoal.position >= 7;
   }
 
   public Command setElevatorTarget(double elevatorGoalInches, double thresholdInches) {

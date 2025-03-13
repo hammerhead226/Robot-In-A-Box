@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.SlewRateLimiter;
+
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -30,6 +32,10 @@ public class AdjustToReefPost extends Command {
       new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
   ProfiledPIDController sidePID =
       new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
+
+       SlewRateLimiter forwardSlewRateLimiter = new SlewRateLimiter(0.8);
+  SlewRateLimiter sidewaysSlewRateLimiter = new SlewRateLimiter(0.8);
+
 
   boolean shouldAlign;
   BooleanSupplier triggerPressed;
@@ -62,6 +68,14 @@ public class AdjustToReefPost extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    if (!drive.isSlowMode()) {
+      forwardSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
+      sidewaysSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
+    } else {
+      forwardSlewRateLimiter.changeRateLimit(2);
+      sidewaysSlewRateLimiter.changeRateLimit(2);
+    }
     shouldAlign = drive.shouldPIDAlign();
 
     boolean isFlipped =
@@ -75,7 +89,7 @@ public class AdjustToReefPost extends Command {
             isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation());
 
     drive.runVelocity(
-        new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond, 0));
+        new ChassisSpeeds(forwardSlewRateLimiter.calculate(chassisSpeeds.vxMetersPerSecond), sidewaysSlewRateLimiter.calculate(chassisSpeeds.vyMetersPerSecond), 0));
   }
 
   // Called once the command ends or is interrupted.

@@ -87,8 +87,8 @@ public class SuperStructure {
     return currentState;
   }
 
-  public boolean elevatorExtended() {
-    return elevator.isExtended();
+  public boolean shouldSlowMode() {
+    return elevator.shouldSlowMode();
   }
 
   public boolean atGoals() {

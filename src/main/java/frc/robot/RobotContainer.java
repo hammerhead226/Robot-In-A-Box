@@ -358,7 +358,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+    slowModeTrigger = new Trigger(() -> superStructure.shouldSlowMode());
 
     configureButtonBindings();
     // test();
