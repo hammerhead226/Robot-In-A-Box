@@ -98,7 +98,7 @@ public class ScoralArm extends SubsystemBase {
     measuredVisualizer = new PivotVis("measured", Color.kRed);
     // CHANGE PER ARM
     maxVelocityDegPerSec = 150; // was at 90
-    maxAccelerationDegPerSecSquared = 450; // was at 190
+    maxAccelerationDegPerSecSquared = 300; // was at 190
     // maxAccelerationDegPerSecSquared = 180;
 
     armConstraints =
