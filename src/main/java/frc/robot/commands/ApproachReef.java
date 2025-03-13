@@ -35,6 +35,7 @@ public class ApproachReef extends Command {
   private final ScoralArm scoralArm;
   private final SuperStructure superStructure;
   private final boolean isRight;
+  private boolean pointsTooClose;
   Command pathCommand;
   BooleanSupplier continuePath;
 
@@ -74,15 +75,6 @@ public class ApproachReef extends Command {
                 SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
                 SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
             Rotation2d.kZero);
-    // offset the path's setpoint a bit to allow pid to do the rest of work while avoiding bug of
-    // both current pose and atpose being the same which causes reboot
-    // atPose =
-    //     DriveCommands.rotateAndNudge(
-    //         reefPose,
-    //         new Translation2d(
-    //             SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET - 0.1,
-    //             SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-    //         Rotation2d.kZero);
     atPose =
         DriveCommands.rotateAndNudge(
             reefPose,
@@ -91,6 +83,14 @@ public class ApproachReef extends Command {
                 SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
             Rotation2d.kZero);
 
+    //offsett left right offset to simulate the robot being off after the path and  then transitioning to pid to align
+    // atPose =
+    //     DriveCommands.rotateAndNudge(
+    //         reefPose,
+    //         new Translation2d(
+    //             SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+    //             SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET - 0.2),
+            // Rotation2d.kZero);
     ChassisSpeeds fieldRelChassisSpeeds =
         ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), drive.getRotation());
     double chassisSpeedSingular =
@@ -138,44 +138,58 @@ public class ApproachReef extends Command {
     eventMarkers.add(
         new EventMarker("score coral command", 0.6, superStructure.getSuperStructureCommand()));
 
-    PathPlannerPath path =
-        new PathPlannerPath(
-            waypoints,
-            holomorphicRotations,
-            new ArrayList<>(),
-            new ArrayList<>(),
-            eventMarkers,
-            pathConstraints, // these numbers from last year's code
-            null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-            // be null for on-the-fly paths.
-            new GoalEndState(0, atPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90))),
-            false);
-    path.preventFlipping = true;
-
-    pathCommand = AutoBuilder.followPath(path);
+    pointsTooClose = drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.01;
     shouldPID = drive.shouldPIDAlign();
-    pathCommand.initialize();
+
+    if (!pointsTooClose) {
+
+      PathPlannerPath path =
+          new PathPlannerPath(
+              waypoints,
+              holomorphicRotations,
+              new ArrayList<>(),
+              new ArrayList<>(),
+              eventMarkers,
+              pathConstraints, // these numbers from last year's code
+              null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+              // be null for on-the-fly paths.
+              new GoalEndState(0, atPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90))),
+              false);
+      path.preventFlipping = true;
+
+      pathCommand = AutoBuilder.followPath(path);
+
+      pathCommand.initialize();
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Logger.recordOutput("am i running", pathCommand.isFinished() || !continuePath.getAsBoolean()
+    // || pointsTooClose || shouldPID);
     shouldPID = drive.shouldPIDAlign();
-    pathCommand.execute();
+    if (!pointsTooClose) {
+
+      pathCommand.execute();
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    pathCommand.cancel();
-    if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.2) {
-      superStructure.nextState();
+    if (!pointsTooClose) {
+      pathCommand.cancel();
+      if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.2) {
+        superStructure.nextState();
+      }
     }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return pathCommand.isFinished() || !continuePath.getAsBoolean();
+    // return true;
+    return pathCommand.isFinished() || !continuePath.getAsBoolean() || pointsTooClose || shouldPID;
   }
 }
