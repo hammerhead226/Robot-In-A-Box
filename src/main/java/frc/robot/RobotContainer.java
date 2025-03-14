@@ -442,7 +442,7 @@ public class RobotContainer {
 
     slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
     resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
-    turnLimelightON = new Trigger(()-> SmartDashboard.getBoolean("LL-On", false));
+    turnLimelightON = new Trigger(() -> SmartDashboard.getBoolean("Enable", false));
 
     reefAlignTrigger =
         new Trigger(
@@ -569,6 +569,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     resetLimelight.onTrue(vision.resetLimelight().ignoringDisable(true));
+    turnLimelightON.onTrue(vision.activateLimelight().ignoringDisable(true));
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 

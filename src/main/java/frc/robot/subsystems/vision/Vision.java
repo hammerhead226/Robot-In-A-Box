@@ -49,6 +49,7 @@ public class Vision extends SubsystemBase {
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     SmartDashboard.putBoolean("Reset", false);
+    SmartDashboard.putBoolean("Enable", false);
 
     PDH = new PowerDistribution(1, ModuleType.kRev);
     this.consumer = consumer;
@@ -80,18 +81,22 @@ public class Vision extends SubsystemBase {
 
   public Command resetLimelight() {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> PDH.setSwitchableChannel(true)),
-        new WaitCommand(2),
         new InstantCommand(() -> PDH.setSwitchableChannel(false)),
+        new WaitCommand(2),
+        new InstantCommand(() -> PDH.setSwitchableChannel(true)),
         new InstantCommand(() -> SmartDashboard.putBoolean("Reset", false)));
   }
 
-  // public Command activateLimelight(){
-
-  // }
+  public Command activateLimelight() {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> PDH.setSwitchableChannel(true)),
+        new InstantCommand(() -> SmartDashboard.putBoolean("Enable", false)));
+  }
 
   @Override
   public void periodic() {
+    //  SmartDashboard.putBoolean("Enable", false);
+    Logger.recordOutput("activate Limelight ran", activateLimelight().isScheduled());
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
