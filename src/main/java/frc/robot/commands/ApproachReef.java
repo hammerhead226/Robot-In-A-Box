@@ -16,12 +16,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.LED_STATE;
+import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.led.LED;
-import frc.robot.subsystems.scoral.ScoralArm;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,11 +33,11 @@ import org.littletonrobotics.junction.Logger;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ApproachReef extends Command {
   private final Drive drive;
-  private final Elevator elevator;
-  private final ScoralArm scoralArm;
   private final SuperStructure superStructure;
+  private final LED led;
   private final boolean isRight;
   private boolean pointsTooClose;
+
   Command pathCommand;
   BooleanSupplier continuePath;
 
@@ -46,27 +48,23 @@ public class ApproachReef extends Command {
   /** Creates a new ApproachReef. */
   public ApproachReef(
       Drive drive,
-      Elevator elevator,
-      ScoralArm scoralArm,
       LED led,
       SuperStructure superStructure,
       boolean isRight,
       BooleanSupplier continuePath) {
     this.drive = drive;
-    this.elevator = elevator;
-    this.scoralArm = scoralArm;
+    this.led = led;
     this.superStructure = superStructure;
     this.isRight = isRight;
     this.continuePath = continuePath;
-    addRequirements(drive, elevator, scoralArm, led);
+    addRequirements(drive, led);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    led.setState(LED_STATE.FLASHING_RED);
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
-
-    superStructure.setWantedState(superStructure.getLastReefState());
 
     awayPose =
         DriveCommands.rotateAndNudge(
@@ -83,14 +81,6 @@ public class ApproachReef extends Command {
                 SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
             Rotation2d.kZero);
 
-    //offsett left right offset to simulate the robot being off after the path and  then transitioning to pid to align
-    // atPose =
-    //     DriveCommands.rotateAndNudge(
-    //         reefPose,
-    //         new Translation2d(
-    //             SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-    //             SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET - 0.2),
-            // Rotation2d.kZero);
     ChassisSpeeds fieldRelChassisSpeeds =
         ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), drive.getRotation());
     double chassisSpeedSingular =
@@ -135,9 +125,6 @@ public class ApproachReef extends Command {
     }
     Logger.recordOutput("Debug OTF Paths/Reef Align", atPose);
 
-    eventMarkers.add(
-        new EventMarker("score coral command", 0.6, superStructure.getSuperStructureCommand()));
-
     pointsTooClose = drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.01;
     shouldPID = drive.shouldPIDAlign();
 
@@ -160,17 +147,17 @@ public class ApproachReef extends Command {
       pathCommand = AutoBuilder.followPath(path);
 
       pathCommand.initialize();
+    
     }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Logger.recordOutput("am i running", pathCommand.isFinished() || !continuePath.getAsBoolean()
-    // || pointsTooClose || shouldPID);
+ 
     shouldPID = drive.shouldPIDAlign();
-    if (!pointsTooClose) {
 
+    if (!pointsTooClose) {
       pathCommand.execute();
     }
   }
@@ -179,7 +166,7 @@ public class ApproachReef extends Command {
   @Override
   public void end(boolean interrupted) {
     if (!pointsTooClose && superStructure.atGoals()) {
-      pathCommand.cancel();
+    pathCommand.cancel();
       if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.2) {
         superStructure.nextState();
       }
@@ -189,7 +176,6 @@ public class ApproachReef extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // return true;
     return !continuePath.getAsBoolean() || pointsTooClose || shouldPID;
   }
 }

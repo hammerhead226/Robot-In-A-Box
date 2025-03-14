@@ -18,7 +18,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.util.Conversions;
-import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX leader;
@@ -68,24 +67,42 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     followerSupplyCurrentAmps = follower.getSupplyCurrent();
     canRangeDistance = distanceSensor.getDistance();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100, canRangeDistance, elevatorPosition, elevatorVelocity, appliedVolts, leaderStatorCurrentAmps, leaderSupplyCurrentAmps, followerStatorCurrentAmps, followerSupplyCurrentAmps);
+        100,
+        canRangeDistance,
+        elevatorPosition,
+        elevatorVelocity,
+        appliedVolts,
+        leaderStatorCurrentAmps,
+        leaderSupplyCurrentAmps,
+        followerStatorCurrentAmps,
+        followerSupplyCurrentAmps);
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    BaseStatusSignal.refreshAll(canRangeDistance, elevatorPosition, elevatorVelocity, appliedVolts, leaderStatorCurrentAmps, leaderSupplyCurrentAmps, followerStatorCurrentAmps, followerSupplyCurrentAmps);
+    BaseStatusSignal.refreshAll(
+        canRangeDistance,
+        elevatorPosition,
+        elevatorVelocity,
+        appliedVolts,
+        leaderStatorCurrentAmps,
+        leaderSupplyCurrentAmps,
+        followerStatorCurrentAmps,
+        followerSupplyCurrentAmps);
 
     // Logger.recordOutput(
     //     "Debug Elevator/Elevator CANRage Distance Inch",
     //     distanceSensor.getDistance().getValueAsDouble());
     inputs.CANrangeDistanceInches = canRangeDistance.getValueAsDouble();
     // Logger.recordOutput(
-    //     "Debug Elevator/Left Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
+    //     "Debug Elevator/Left Motor Stator Current",
+    // leader.getStatorCurrent().getValueAsDouble());
     // Logger.recordOutput(
     //     "Debug Elevator/Right Motor Stator Current",
     //     follower.getStatorCurrent().getValueAsDouble());
     // Logger.recordOutput(
-    //     "Debug Elevator/Left Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
+    //     "Debug Elevator/Left Motor Supply Current",
+    // leader.getSupplyCurrent().getValueAsDouble());
     // Logger.recordOutput(
     //     "Debug Elevator/Right Motor Supply Current",
     //     follower.getSupplyCurrent().getValueAsDouble());

@@ -14,7 +14,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.commoniolayers.FlywheelIO;
-import org.littletonrobotics.junction.Logger;
 
 public class ScoralRollersIOTalonFX implements FlywheelIO {
   private static final double GEAR_RATIO = 1.5;
@@ -43,13 +42,23 @@ public class ScoralRollersIOTalonFX implements FlywheelIO {
     leaderStatorCurrentAmps = leader.getStatorCurrent();
     leaderSupplyCurrentAmps = leader.getSupplyCurrent();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, leaderPosition, leaderVelocity, leaderAppliedVolts, leaderStatorCurrentAmps, leaderSupplyCurrentAmps);
+        50.0,
+        leaderPosition,
+        leaderVelocity,
+        leaderAppliedVolts,
+        leaderStatorCurrentAmps,
+        leaderSupplyCurrentAmps);
     leader.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    BaseStatusSignal.refreshAll(leaderPosition, leaderVelocity, leaderAppliedVolts, leaderStatorCurrentAmps, leaderSupplyCurrentAmps);
+    BaseStatusSignal.refreshAll(
+        leaderPosition,
+        leaderVelocity,
+        leaderAppliedVolts,
+        leaderStatorCurrentAmps,
+        leaderSupplyCurrentAmps);
     inputs.positionRad = Units.rotationsToRadians(leaderPosition.getValueAsDouble()) / GEAR_RATIO;
     inputs.velocityRadPerSec =
         Units.rotationsToRadians(leaderVelocity.getValueAsDouble()) / GEAR_RATIO;
@@ -58,9 +67,11 @@ public class ScoralRollersIOTalonFX implements FlywheelIO {
     inputs.leaderSupplyCurrentAmps = leaderSupplyCurrentAmps.getValueAsDouble();
 
     // Logger.recordOutput(
-    //     "Debug Scoral Rollers/Motor Stator Current", leader.getStatorCurrent().getValueAsDouble());
+    //     "Debug Scoral Rollers/Motor Stator Current",
+    // leader.getStatorCurrent().getValueAsDouble());
     // Logger.recordOutput(
-    //     "Debug Scoral Rollers/Motor Supply Current", leader.getSupplyCurrent().getValueAsDouble());
+    //     "Debug Scoral Rollers/Motor Supply Current",
+    // leader.getSupplyCurrent().getValueAsDouble());
   }
 
   @Override

@@ -168,7 +168,8 @@ public class SuperStructure {
         return new SequentialCommandGroup(
             new SetElevatorTarget(elevator, SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 2),
             new WaitUntilCommand(() -> elevator.atGoal(2)),
-            new SetScoralArmTarget(scoralArm, SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG, 2));
+            new SetScoralArmTarget(
+                scoralArm, SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG, 2));
       case ALGAE_SCORE:
         currentState = SuperStructureState.ALGAE_SCORE;
         led.setState(LED_STATE.FLASHING_GREEN);
@@ -260,7 +261,7 @@ public class SuperStructure {
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
-                new SetElevatorTarget(elevator, 0, 0), new SetScoralArmTarget(scoralArm,40, 0)));
+                new SetElevatorTarget(elevator, 0, 0), new SetScoralArmTarget(scoralArm, 40, 0)));
     }
   }
 

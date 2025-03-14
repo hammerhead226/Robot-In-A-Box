@@ -80,7 +80,12 @@ public class ScoralArmIOTalonFX implements ArmIO {
     leader.optimizeBusUtilization();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100, leaderPositionRotations, velocityDegsPerSec, appliedVolts, statorCurrentAmps, supplyCurrentAmps);
+        100,
+        leaderPositionRotations,
+        velocityDegsPerSec,
+        appliedVolts,
+        statorCurrentAmps,
+        supplyCurrentAmps);
 
     // setBrakeMode(false);
   }
@@ -88,7 +93,11 @@ public class ScoralArmIOTalonFX implements ArmIO {
   @Override
   public void updateInputs(ArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        leaderPositionRotations, velocityDegsPerSec, appliedVolts, statorCurrentAmps, supplyCurrentAmps);
+        leaderPositionRotations,
+        velocityDegsPerSec,
+        appliedVolts,
+        statorCurrentAmps,
+        supplyCurrentAmps);
     // Logger.recordOutput("scoral arm motor rotations",
     // leaderPositionRotations.getValueAsDouble());
     // Logger.recordOutput(

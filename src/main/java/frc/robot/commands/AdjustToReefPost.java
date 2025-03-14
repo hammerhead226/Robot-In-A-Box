@@ -10,15 +10,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.SlewRateLimiter;
-
 import java.util.function.BooleanSupplier;
-import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AdjustToReefPost extends Command {
@@ -33,9 +32,8 @@ public class AdjustToReefPost extends Command {
   ProfiledPIDController sidePID =
       new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
 
-       SlewRateLimiter forwardSlewRateLimiter = new SlewRateLimiter(0.8);
+  SlewRateLimiter forwardSlewRateLimiter = new SlewRateLimiter(0.8);
   SlewRateLimiter sidewaysSlewRateLimiter = new SlewRateLimiter(0.8);
-
 
   boolean shouldAlign;
   BooleanSupplier triggerPressed;
@@ -52,6 +50,8 @@ public class AdjustToReefPost extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    forwardPID.setTolerance(Units.inchesToMeters(3));
+    sidePID.setTolerance(Units.inchesToMeters(3));
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
     atPose =
         DriveCommands.rotateAndNudge(
@@ -89,7 +89,10 @@ public class AdjustToReefPost extends Command {
             isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation());
 
     drive.runVelocity(
-        new ChassisSpeeds(forwardSlewRateLimiter.calculate(chassisSpeeds.vxMetersPerSecond), sidewaysSlewRateLimiter.calculate(chassisSpeeds.vyMetersPerSecond), 0));
+        new ChassisSpeeds(
+            forwardSlewRateLimiter.calculate(chassisSpeeds.vxMetersPerSecond),
+            sidewaysSlewRateLimiter.calculate(chassisSpeeds.vyMetersPerSecond),
+            0));
   }
 
   // Called once the command ends or is interrupted.

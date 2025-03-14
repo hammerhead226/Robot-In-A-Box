@@ -101,6 +101,7 @@ public class RobotContainer {
 
   public final Trigger elevatorBrakeTrigger;
   private Trigger slowModeTrigger;
+  private final Trigger autoAlignTrigger;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -361,6 +362,8 @@ public class RobotContainer {
 
     slowModeTrigger = new Trigger(() -> superStructure.shouldSlowMode());
 
+    autoAlignTrigger = new Trigger(() -> drive.isNearReef() && (driveController.rightTrigger().getAsBoolean() || driveController.leftTrigger().getAsBoolean()));
+
     configureButtonBindings();
     // test();
   }
@@ -386,6 +389,13 @@ public class RobotContainer {
   private void configureButtonBindings() {
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
+
+    autoAlignTrigger.onTrue(new ReinitializingCommand(
+        () -> {
+            superStructure.setWantedState(superStructure.getLastReefState());
+
+          return superStructure.getSuperStructureCommand();
+        }));
 
     elevatorBrakeTrigger.onTrue(
         new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
@@ -425,8 +435,6 @@ public class RobotContainer {
             new SequentialCommandGroup(
                 new ApproachReef(
                     drive,
-                    elevator,
-                    scoralArm,
                     led,
                     superStructure,
                     false,
@@ -440,8 +448,6 @@ public class RobotContainer {
             new SequentialCommandGroup(
                 new ApproachReef(
                     drive,
-                    elevator,
-                    scoralArm,
                     led,
                     superStructure,
                     true,
