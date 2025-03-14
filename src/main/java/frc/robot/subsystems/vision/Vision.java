@@ -24,7 +24,14 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +45,13 @@ public class Vision extends SubsystemBase {
   private final Alert[] disconnectedAlerts;
   private static final double POSE_BUFFER_SIZE_SECONDS = 1.5;
 
+  private final PowerDistribution PDH;
+
   public Vision(VisionConsumer consumer, VisionIO... io) {
+    SmartDashboard.putBoolean("Reset", false);
+    SmartDashboard.putBoolean("Enable", false);
+
+    PDH = new PowerDistribution(1, ModuleType.kRev);
     this.consumer = consumer;
     this.io = io;
 
@@ -66,8 +79,24 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
+  public Command resetLimelight() {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> PDH.setSwitchableChannel(false)),
+        new WaitCommand(2),
+        new InstantCommand(() -> PDH.setSwitchableChannel(true)),
+        new InstantCommand(() -> SmartDashboard.putBoolean("Reset", false)));
+  }
+
+  public Command activateLimelight() {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> PDH.setSwitchableChannel(true)),
+        new InstantCommand(() -> SmartDashboard.putBoolean("Enable", false)));
+  }
+
   @Override
   public void periodic() {
+    //  SmartDashboard.putBoolean("Enable", false);
+    Logger.recordOutput("activate Limelight ran", activateLimelight().isScheduled());
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
@@ -80,8 +109,8 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allRobotPoses = new LinkedList<>();
     List<Pose3d> allRobotPosesAccepted = new LinkedList<>();
     List<Pose3d> allRobotPosesRejected = new LinkedList<>();
-
     // Loop over cameras
+
     for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
       // Update disconnected alert
       disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);

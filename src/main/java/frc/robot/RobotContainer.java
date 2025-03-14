@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -102,6 +103,11 @@ public class RobotContainer {
   public final Trigger elevatorBrakeTrigger;
   private Trigger slowModeTrigger;
   private final Trigger autoAlignTrigger;
+  private Trigger reefAlignTrigger;
+  private Trigger approachPerpendicularTrigger;
+  private Trigger keepClimbingTrigger;
+  private Trigger resetLimelight;
+  private Trigger turnLimelightON;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -202,6 +208,8 @@ public class RobotContainer {
         break;
 
       default:
+        // limelight = new PowerDistribution(23, ModuleType.kRev);
+
         elevatorBrakeTrigger = new Trigger(() -> true);
         // Replayed robot, disable IO implementations
         drive =
@@ -363,6 +371,9 @@ public class RobotContainer {
     slowModeTrigger = new Trigger(() -> superStructure.shouldSlowMode());
 
     autoAlignTrigger = new Trigger(() -> drive.isNearReef() && (driveController.rightTrigger().getAsBoolean() || driveController.leftTrigger().getAsBoolean()));
+    // slowModeTrigger = new Trigger(() -> superStructure.elevatorExtended());
+    resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
+    turnLimelightON = new Trigger(() -> SmartDashboard.getBoolean("Enable", false));
 
     configureButtonBindings();
     // test();
@@ -387,6 +398,8 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    resetLimelight.onTrue(vision.resetLimelight().ignoringDisable(true));
+    turnLimelightON.onTrue(vision.activateLimelight().ignoringDisable(true));
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
