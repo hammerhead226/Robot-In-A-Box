@@ -34,7 +34,7 @@ public class GoToStowAfterProcessor extends SequentialCommandGroup {
         new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 10),
         scoralRollers.stopCommand(),
         new WaitUntilCommand(() -> scoralArm.atGoal(10)),
-        new SetElevatorTarget(elevator, ElevatorConstants.STOW_SETPOINT_INCH, 15),
+        new SetElevatorTarget(elevator, ElevatorConstants.STOW_SETPOINT_INCH, 2),
         // new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 2),
         new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG, 2));
   }

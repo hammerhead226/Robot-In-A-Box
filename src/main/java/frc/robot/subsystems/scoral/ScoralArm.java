@@ -132,6 +132,14 @@ public class ScoralArm extends SubsystemBase {
     return saInputs.positionSetpointDegs - saInputs.positionDegs;
   }
 
+  public void setConstraints(
+      double maxVelocityDegreesPerSec, double maxAccelerationDegreesPerSecSquared) {
+    armConstraints =
+        new TrapezoidProfile.Constraints(
+            maxVelocityDegreesPerSec, maxAccelerationDegreesPerSecSquared);
+    armProfile = new TrapezoidProfile(armConstraints);
+  }
+
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
     Logger.recordOutput(

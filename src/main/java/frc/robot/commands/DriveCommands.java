@@ -350,7 +350,7 @@ public class DriveCommands {
           } else {
             forwardSlewRateLimiter.changeRateLimit(2);
             sidewaysSlewRateLimiter.changeRateLimit(2);
-            rotationSlewRateLimiter.changeRateLimit(8);
+            rotationSlewRateLimiter.changeRateLimit(14);
           }
 
           double totalInputSpeed = Math.hypot(forwardSpeed, sidewaysSpeed);

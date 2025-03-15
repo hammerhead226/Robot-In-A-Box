@@ -23,7 +23,8 @@ public final class SubsystemConstants {
 
   public static final double NEAR_FAR_AT_REEF_OFFSET = -0.47;
   public static final double NEAR_FAR_AWAY_REEF_OFFSET = -0.9;
-  public static final double LEFT_RIGHT_BRANCH_OFFSET = -0.024;
+  // more neg moves it to the right
+  public static final double LEFT_RIGHT_BRANCH_OFFSET = 0.018;
 
   public static class IntakeConstants {
     public static final double CURRENT_LIMIT = 40.0;
@@ -75,7 +76,8 @@ public final class SubsystemConstants {
     public static final double STOW_SETPOINT_DEG = 95.8;
     public static final double LOW_CORAL_SCORING_SETPOINT_DEG = 76.5;
     public static final double L4_CORAL_SCORING_SETPOINT_DEG = 64;
-    public static final double BARGE_SETPOINT_DEG = 85;
+    public static final double BARGE_BACK_SETPOINT_DEG = 74;
+    public static final double BARGE_FORWARD_SETPOINT_DEG = 110;
     public static final double PROCESSOR_SETPOINT_DEG = 20;
   }
 
@@ -160,7 +162,8 @@ public final class SubsystemConstants {
     SOURCE,
     PROCESSOR,
     BARGE_EXTEND,
-    ALGAE_SCORE,
+    BARGE_SCORE,
+    PROCESSOR_SCORE,
     L1,
     L2,
     L3,

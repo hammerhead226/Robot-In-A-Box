@@ -126,10 +126,13 @@ public class SuperStructure {
         return true;
       case BARGE_EXTEND:
         return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT)
-            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG);
+            && scoralArm.hasReachedGoal(
+                SubsystemConstants.ScoralArmConstants.BARGE_BACK_SETPOINT_DEG);
       case PROCESSOR:
         return elevator.hasReachedGoal(4) && scoralArm.hasReachedGoal(20);
-      case ALGAE_SCORE:
+      case PROCESSOR_SCORE:
+        return true;
+      case BARGE_SCORE:
         return true;
       default:
         return false;
@@ -173,12 +176,26 @@ public class SuperStructure {
       case BARGE_EXTEND:
         currentState = SuperStructureState.BARGE_EXTEND;
         return new SequentialCommandGroup(
-            new SetElevatorTarget(elevator, SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 2),
-            new WaitUntilCommand(() -> elevator.atGoal(2)),
+            new SetElevatorTarget(
+                elevator, SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 15),
+            new WaitUntilCommand(() -> elevator.atGoal(15)),
             new SetScoralArmTarget(
-                scoralArm, SubsystemConstants.ScoralArmConstants.BARGE_SETPOINT_DEG, 2));
-      case ALGAE_SCORE:
-        currentState = SuperStructureState.ALGAE_SCORE;
+                scoralArm, SubsystemConstants.ScoralArmConstants.BARGE_BACK_SETPOINT_DEG, 2));
+      case BARGE_SCORE:
+        currentState = SuperStructureState.BARGE_SCORE;
+        led.setState(LED_STATE.FLASHING_GREEN);
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> scoralArm.setConstraints(180, 500)),
+            new SetScoralArmTarget(scoralArm, ScoralArmConstants.BARGE_FORWARD_SETPOINT_DEG, 20),
+            scoralRollers.runVoltsCommmand(5),
+            new InstantCommand(() -> scoralArm.setConstraints(150, 300)),
+            new WaitCommand(0.5),
+            new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers),
+            new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
+            new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
+            new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
+      case PROCESSOR_SCORE:
+        currentState = SuperStructureState.PROCESSOR_SCORE;
         led.setState(LED_STATE.FLASHING_GREEN);
         return new SequentialCommandGroup(
             scoralRollers.runVoltsCommmand(2),
@@ -289,17 +306,17 @@ public class SuperStructure {
       case L1, L2, L3, L4:
         setWantedState(SuperStructureState.SCORING_CORAL);
         break;
-      case SCORING_CORAL, ALGAE_SCORE:
+      case SCORING_CORAL, PROCESSOR_SCORE:
         setWantedState(SuperStructureState.STOW);
         break;
       case INTAKE_ALGAE:
         setWantedState(SuperStructureState.STOW_ALGAE);
         break;
       case PROCESSOR:
-        setWantedState(SuperStructureState.ALGAE_SCORE);
+        setWantedState(SuperStructureState.PROCESSOR_SCORE);
         break;
       case BARGE_EXTEND:
-        setWantedState(SuperStructureState.ALGAE_SCORE);
+        setWantedState(SuperStructureState.BARGE_SCORE);
         break;
 
       default:

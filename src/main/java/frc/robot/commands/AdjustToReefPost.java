@@ -27,13 +27,19 @@ public class AdjustToReefPost extends Command {
   boolean isRight;
   Pose2d atPose;
 
+  double angleToGoal;
+  double distanceToGoal;
+
   ProfiledPIDController forwardPID =
       new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
   ProfiledPIDController sidePID =
       new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
+  ProfiledPIDController rotationPID =
+      new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(200, 300));
 
   SlewRateLimiter forwardSlewRateLimiter = new SlewRateLimiter(0.8);
   SlewRateLimiter sidewaysSlewRateLimiter = new SlewRateLimiter(0.8);
+  SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.8);
 
   boolean shouldAlign;
   BooleanSupplier triggerPressed;
@@ -54,6 +60,8 @@ public class AdjustToReefPost extends Command {
 
     forwardPID.setTolerance(Units.inchesToMeters(0.5));
     sidePID.setTolerance(Units.inchesToMeters(0.5));
+    rotationPID.setTolerance(5);
+
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
     atPose =
         DriveCommands.rotateAndNudge(
@@ -65,19 +73,25 @@ public class AdjustToReefPost extends Command {
 
     forwardPID.reset(drive.getPose().getX());
     sidePID.reset(drive.getPose().getY());
+    rotationPID.reset(drive.getRotation().getDegrees());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    distanceToGoal = drive.getPose().getTranslation().getDistance(atPose.getTranslation());
+    angleToGoal = drive.getRotation().getDegrees() - atPose.getRotation().getDegrees();
 
     if (!drive.isSlowMode()) {
       forwardSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
       sidewaysSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
+      rotationSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
     } else {
       forwardSlewRateLimiter.changeRateLimit(2);
       sidewaysSlewRateLimiter.changeRateLimit(2);
+      rotationSlewRateLimiter.changeRateLimit(14);
     }
+
     shouldAlign = drive.shouldPIDAlign();
 
     boolean isFlipped =
@@ -87,7 +101,9 @@ public class AdjustToReefPost extends Command {
         ChassisSpeeds.fromFieldRelativeSpeeds(
             forwardPID.calculate(drive.getPose().getX(), atPose.getX()),
             sidePID.calculate(drive.getPose().getY(), atPose.getY()),
-            0,
+            rotationPID.calculate(
+                Units.degreesToRadians(drive.getPose().getRotation().getDegrees()),
+                atPose.getRotation().getRadians()),
             isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation());
 
     drive.runVelocity(
@@ -100,7 +116,7 @@ public class AdjustToReefPost extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (forwardPID.atGoal() && sidePID.atGoal()) {
+    if (distanceToGoal <= Units.inchesToMeters(0.5)) {
       drive.isAutoAlignDone = true;
     }
   }
@@ -110,6 +126,7 @@ public class AdjustToReefPost extends Command {
   public boolean isFinished() {
     return !triggerPressed.getAsBoolean()
         || !shouldAlign
-        || (forwardPID.atGoal() && sidePID.atGoal());
+        || (distanceToGoal <= Units.inchesToMeters(0.5));
+    //  && angleToGoal <= 5);
   }
 }
