@@ -308,4 +308,11 @@ public class SuperStructure {
         || wantedState == SuperStructureState.L3
         || wantedState == SuperStructureState.L4;
   }
+
+  public boolean isCurrentAReefState() {
+    return currentState == SuperStructureState.L1
+        || currentState == SuperStructureState.L2
+        || currentState == SuperStructureState.L3
+        || currentState == SuperStructureState.L4;
+  }
 }

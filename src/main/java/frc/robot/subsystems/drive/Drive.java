@@ -120,6 +120,7 @@ public class Drive extends SubsystemBase {
   // private Pose2d nearestSide = new Pose2d();
   private Pose2d lastReefFieldPose;
   public boolean slowMode = false;
+  public boolean isAutoAlignDone = false;
 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {

@@ -50,6 +50,8 @@ public class AdjustToReefPost extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    drive.isAutoAlignDone = false;
+
     forwardPID.setTolerance(Units.inchesToMeters(1.5));
     sidePID.setTolerance(Units.inchesToMeters(1.5));
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
@@ -97,7 +99,11 @@ public class AdjustToReefPost extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    if (forwardPID.atGoal() && sidePID.atGoal()) {
+      drive.isAutoAlignDone = true;
+    }
+  }
 
   // Returns true when the command should end.
   @Override

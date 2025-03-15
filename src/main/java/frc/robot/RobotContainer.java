@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -104,6 +105,7 @@ public class RobotContainer {
   public final Trigger elevatorBrakeTrigger;
   private Trigger slowModeTrigger;
   private final Trigger autoAlignTrigger;
+  private final Trigger rumbleTrigger;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -372,6 +374,8 @@ public class RobotContainer {
                     && (driveController.rightTrigger().getAsBoolean()
                         || driveController.leftTrigger().getAsBoolean()));
 
+    rumbleTrigger = new Trigger(() -> drive.isAutoAlignDone && superStructure.atGoals() && superStructure.isCurrentAReefState());
+
     configureButtonBindings();
     // test();
   }
@@ -405,6 +409,8 @@ public class RobotContainer {
 
               return superStructure.getSuperStructureCommand();
             }));
+
+    rumbleTrigger.onTrue(new Rumble(driveController));
 
     elevatorBrakeTrigger.onTrue(
         new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
@@ -450,8 +456,7 @@ public class RobotContainer {
                     false,
                     () -> driveController.leftTrigger().getAsBoolean()),
                 new AdjustToReefPost(
-                    drive, false, () -> driveController.leftTrigger().getAsBoolean()),
-                new Rumble(driveController)));
+                    drive, false, () -> driveController.leftTrigger().getAsBoolean())));
     driveController
         .rightTrigger()
         .and(() -> !driveController.leftTrigger().getAsBoolean())
@@ -464,8 +469,7 @@ public class RobotContainer {
                     true,
                     () -> driveController.rightTrigger().getAsBoolean()),
                 new AdjustToReefPost(
-                    drive, true, () -> driveController.rightTrigger().getAsBoolean()),
-                new Rumble(driveController)));
+                    drive, true, () -> driveController.rightTrigger().getAsBoolean())));
 
     driveController
         .rightBumper()

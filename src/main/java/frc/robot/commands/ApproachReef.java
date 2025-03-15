@@ -103,7 +103,17 @@ public class ApproachReef extends Command {
     List<EventMarker> eventMarkers = new ArrayList<>();
     PathConstraints pathConstraints;
 
-    if (atPose.getRotation().minus(drive.getRotation()).getDegrees() <= 45) {
+    Translation2d rotatedAtPose =
+        atPose.getTranslation().rotateBy(Rotation2d.kZero.minus(atPose.getRotation()));
+    Translation2d rotatedDrivePose =
+        drive.getPose().getTranslation().rotateBy(Rotation2d.kZero.minus(atPose.getRotation()));
+
+    // kachow
+    Translation2d atPoseRobotRelative = rotatedAtPose.minus(rotatedDrivePose);
+
+    if (atPose.getRotation().minus(drive.getRotation().minus(Rotation2d.kCCW_90deg)).getDegrees()
+            <= 45
+        && Math.abs(atPoseRobotRelative.getY()) <= 0.8) {
       pathConstraints = new PathConstraints(2.5, 3.15, 200, 300);
     } else {
       pathConstraints = new PathConstraints(1.75, 2, 150, 250);
@@ -150,7 +160,6 @@ public class ApproachReef extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
     shouldPID = drive.shouldPIDAlign();
 
     if (!pointsTooClose) {
