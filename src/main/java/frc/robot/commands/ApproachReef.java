@@ -16,14 +16,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
-import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.LED;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -107,9 +104,9 @@ public class ApproachReef extends Command {
     PathConstraints pathConstraints;
 
     if (atPose.getRotation().minus(drive.getRotation()).getDegrees() <= 45) {
-      pathConstraints = new PathConstraints(2.5, 2, 150, 226);
+      pathConstraints = new PathConstraints(2.5, 3.15, 200, 300);
     } else {
-      pathConstraints = new PathConstraints(1.5, 1, 100, 180);
+      pathConstraints = new PathConstraints(2, 2.5, 150, 250);
     }
 
     if (!drive.isNearReef()) {
@@ -147,14 +144,13 @@ public class ApproachReef extends Command {
       pathCommand = AutoBuilder.followPath(path);
 
       pathCommand.initialize();
-    
     }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
- 
+
     shouldPID = drive.shouldPIDAlign();
 
     if (!pointsTooClose) {
@@ -166,7 +162,7 @@ public class ApproachReef extends Command {
   @Override
   public void end(boolean interrupted) {
     if (!pointsTooClose && superStructure.atGoals()) {
-    pathCommand.cancel();
+      pathCommand.cancel();
       if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.2) {
         superStructure.nextState();
       }

@@ -12,6 +12,7 @@ import frc.robot.commands.MoveToProcessorSetpoints;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetElevatorTarget;
 import frc.robot.commands.SetScoralArmTarget;
+import frc.robot.commands.StowAlgae;
 import frc.robot.commands.ToReefHeight;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
@@ -162,7 +163,8 @@ public class SuperStructure {
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW_ALGAE;
         return new SequentialCommandGroup(
-            new GoToStow(elevator, scoralArm, scoralRollers), scoralRollers.runVoltsCommmand(-0.9));
+            new StowAlgae(elevator, scoralArm, scoralRollers),
+            scoralRollers.runVoltsCommmand(-0.9));
       case BARGE_EXTEND:
         currentState = SuperStructureState.BARGE_EXTEND;
         return new SequentialCommandGroup(

@@ -50,8 +50,8 @@ public class AdjustToReefPost extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    forwardPID.setTolerance(Units.inchesToMeters(3));
-    sidePID.setTolerance(Units.inchesToMeters(3));
+    forwardPID.setTolerance(Units.inchesToMeters(1.5));
+    sidePID.setTolerance(Units.inchesToMeters(1.5));
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
     atPose =
         DriveCommands.rotateAndNudge(
@@ -102,6 +102,8 @@ public class AdjustToReefPost extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !triggerPressed.getAsBoolean() || !shouldAlign;
+    return !triggerPressed.getAsBoolean()
+        || !shouldAlign
+        || (forwardPID.atGoal() && sidePID.atGoal());
   }
 }

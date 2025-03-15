@@ -611,6 +611,13 @@ public class Drive extends SubsystemBase {
         <= 1.7;
   }
 
+  public boolean shouldRunReefCommand() {
+    return getPose()
+            .getTranslation()
+            .getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center))
+        <= 2.5;
+  }
+
   public boolean shouldPIDAlign() {
     // return false;
     return getPose()

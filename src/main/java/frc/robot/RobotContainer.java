@@ -362,7 +362,12 @@ public class RobotContainer {
 
     slowModeTrigger = new Trigger(() -> superStructure.shouldSlowMode());
 
-    autoAlignTrigger = new Trigger(() -> drive.isNearReef() && (driveController.rightTrigger().getAsBoolean() || driveController.leftTrigger().getAsBoolean()));
+    autoAlignTrigger =
+        new Trigger(
+            () ->
+                drive.shouldRunReefCommand()
+                    && (driveController.rightTrigger().getAsBoolean()
+                        || driveController.leftTrigger().getAsBoolean()));
 
     configureButtonBindings();
     // test();
@@ -390,12 +395,13 @@ public class RobotContainer {
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
-    autoAlignTrigger.onTrue(new ReinitializingCommand(
-        () -> {
-            superStructure.setWantedState(superStructure.getLastReefState());
+    autoAlignTrigger.onTrue(
+        new ReinitializingCommand(
+            () -> {
+              superStructure.setWantedState(superStructure.getLastReefState());
 
-          return superStructure.getSuperStructureCommand();
-        }));
+              return superStructure.getSuperStructureCommand();
+            }));
 
     elevatorBrakeTrigger.onTrue(
         new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
@@ -416,6 +422,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,

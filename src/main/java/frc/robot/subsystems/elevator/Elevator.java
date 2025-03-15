@@ -160,7 +160,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean shouldSlowMode() {
-    return extenderGoal.position >= 7;
+    return extenderGoal.position >= 10;
   }
 
   // public Command setElevatorTarget(double elevatorGoalInches, double thresholdInches) {
