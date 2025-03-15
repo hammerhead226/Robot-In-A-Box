@@ -2,12 +2,12 @@ package frc.robot.subsystems.scoral;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ScoralSensorIO {
+public interface DistanceSensorIO {
   @AutoLog
-  public static class ScoralSensorIOInputs {
+  public static class DistanceSensorIOInputs {
     public double distanceInches = 0; // assuming distance or proximity sensor
     public boolean connected = false;
   }
 
-  public default void updateInputs(ScoralSensorIOInputs inputs) {}
+  public default void updateInputs(DistanceSensorIOInputs inputs) {}
 }

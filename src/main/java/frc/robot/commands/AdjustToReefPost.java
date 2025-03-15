@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,13 +28,13 @@ public class AdjustToReefPost extends Command {
 
   boolean isRight;
   Pose2d atPose;
-
+  double sensorDistance;
   double angleToGoal;
   double distanceToGoal;
-
-  ProfiledPIDController forwardPID =
+  PIDController sensorForwardPID = new PIDController(0.1, 0, 0);
+  ProfiledPIDController odometryForwardPID =
       new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
-  ProfiledPIDController sidePID =
+  ProfiledPIDController odometrySidePID =
       new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
   ProfiledPIDController rotationPID =
       new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(200, 300));
@@ -58,8 +60,9 @@ public class AdjustToReefPost extends Command {
   public void initialize() {
     drive.isAutoAlignDone = false;
 
-    forwardPID.setTolerance(Units.inchesToMeters(0.5));
-    sidePID.setTolerance(Units.inchesToMeters(0.5));
+    sensorForwardPID.setTolerance(0.5);
+    odometryForwardPID.setTolerance(Units.inchesToMeters(0.5));
+    odometrySidePID.setTolerance(Units.inchesToMeters(0.5));
     rotationPID.setTolerance(5);
 
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
@@ -71,8 +74,8 @@ public class AdjustToReefPost extends Command {
                 SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
             Rotation2d.kZero);
 
-    forwardPID.reset(drive.getPose().getX());
-    sidePID.reset(drive.getPose().getY());
+    odometryForwardPID.reset(drive.getPose().getX());
+    odometrySidePID.reset(drive.getPose().getY());
     rotationPID.reset(drive.getRotation().getDegrees());
   }
 
@@ -80,6 +83,7 @@ public class AdjustToReefPost extends Command {
   @Override
   public void execute() {
     distanceToGoal = drive.getPose().getTranslation().getDistance(atPose.getTranslation());
+    sensorDistance = drive.getSensorDistanceInches();
     angleToGoal = drive.getRotation().getDegrees() - atPose.getRotation().getDegrees();
 
     if (!drive.isSlowMode()) {
@@ -97,36 +101,41 @@ public class AdjustToReefPost extends Command {
     boolean isFlipped =
         DriverStation.getAlliance().isPresent()
             && DriverStation.getAlliance().get() == Alliance.Red;
+
     chassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            forwardPID.calculate(drive.getPose().getX(), atPose.getX()),
-            sidePID.calculate(drive.getPose().getY(), atPose.getY()),
-            rotationPID.calculate(
-                Units.degreesToRadians(drive.getPose().getRotation().getDegrees()),
-                atPose.getRotation().getRadians()),
+            odometryForwardPID.calculate(drive.getPose().getX(), atPose.getX()),
+            odometrySidePID.calculate(drive.getPose().getY(), atPose.getY())
+                + (-MathUtil.clamp(
+                    sensorForwardPID.calculate(drive.getSensorDistanceInches(), 13.23), -1, 1)),
+            Units.degreesToRadians(
+                rotationPID.calculate(
+                    drive.getPose().getRotation().getDegrees(), atPose.getRotation().getDegrees())),
             isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation());
 
     drive.runVelocity(
         new ChassisSpeeds(
             forwardSlewRateLimiter.calculate(chassisSpeeds.vxMetersPerSecond),
             sidewaysSlewRateLimiter.calculate(chassisSpeeds.vyMetersPerSecond),
-            0));
+            chassisSpeeds.omegaRadiansPerSecond));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     if (distanceToGoal <= Units.inchesToMeters(0.5)) {
+
       drive.isAutoAlignDone = true;
     }
+    drive.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !triggerPressed.getAsBoolean()
-        || !shouldAlign
-        || (distanceToGoal <= Units.inchesToMeters(0.5));
+    return !triggerPressed.getAsBoolean() || !shouldAlign || (sensorDistance <= 8 && distanceToGoal <= Units.inchesToMeters(0.5) && angleToGoal <= 5);
+    // || !shouldAlign
+    // || (distanceToGoal <= Units.inchesToMeters(0.5));
     //  && angleToGoal <= 5);
   }
 }

@@ -20,9 +20,9 @@ import org.littletonrobotics.junction.Logger;
 
 public class ScoralRollers extends SubsystemBase {
   private final FlywheelIO rollers;
-  private final ScoralSensorIO sensor;
+  private final DistanceSensorIO sensor;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
-  private final ScoralSensorIOInputsAutoLogged sInputs = new ScoralSensorIOInputsAutoLogged();
+  private final DistanceSensorIOInputsAutoLogged sInputs = new DistanceSensorIOInputsAutoLogged();
   private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
   private AlgaeState lastAlgaeState;
@@ -36,7 +36,7 @@ public class ScoralRollers extends SubsystemBase {
   /** Creates a new Flywheel. */
   public ScoralRollers(
       FlywheelIO rollers,
-      ScoralSensorIO sensor,
+      DistanceSensorIO sensor,
       CoralState lastCoralState,
       AlgaeState lastAlgaeState) {
     this.rollers = rollers;

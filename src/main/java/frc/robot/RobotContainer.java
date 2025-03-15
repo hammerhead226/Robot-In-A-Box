@@ -65,14 +65,14 @@ import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LED_IO;
 import frc.robot.subsystems.led.LED_IOCANdle;
 import frc.robot.subsystems.led.LED_IOSim;
+import frc.robot.subsystems.scoral.DistanceSensorCANRangeIO;
+import frc.robot.subsystems.scoral.DistanceSensorIO;
 import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.subsystems.scoral.ScoralArmIOSim;
 import frc.robot.subsystems.scoral.ScoralArmIOTalonFX;
 import frc.robot.subsystems.scoral.ScoralRollers;
 import frc.robot.subsystems.scoral.ScoralRollersIOSim;
 import frc.robot.subsystems.scoral.ScoralRollersIOTalonFX;
-import frc.robot.subsystems.scoral.ScoralSensorCANRangeIO;
-import frc.robot.subsystems.scoral.ScoralSensorIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
@@ -133,7 +133,8 @@ public class RobotContainer {
         winch = new Winch(new WinchIOTalonFX(RobotMap.WinchIDs.leftWinchID));
         drive =
             new Drive(
-                new GyroIOPigeon2() {},
+                new GyroIOPigeon2(),
+                new DistanceSensorCANRangeIO(0, SubsystemConstants.CANIVORE_ID_STRING),
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
@@ -161,7 +162,8 @@ public class RobotContainer {
         scoralRollers =
             new ScoralRollers(
                 new ScoralRollersIOTalonFX(RobotMap.CoralScorerArmIDs.coralScorerFlywheelID),
-                new ScoralSensorCANRangeIO(RobotMap.CoralScorerArmIDs.coralScorerCANrangeID),
+                new DistanceSensorCANRangeIO(
+                    RobotMap.CoralScorerArmIDs.coralScorerCANrangeID, "rio"),
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOCANdle(RobotMap.ledIDs.CANdleID, "CAN Bus 2"));
@@ -175,6 +177,7 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIO() {},
+                new DistanceSensorIO() {},
                 new ModuleIOSim(TunerConstants.FrontLeft),
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
@@ -197,7 +200,7 @@ public class RobotContainer {
         scoralRollers =
             new ScoralRollers(
                 new ScoralRollersIOSim(),
-                new ScoralSensorIO() {},
+                new DistanceSensorIO() {},
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IOSim());
@@ -216,6 +219,7 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIO() {},
+                new DistanceSensorIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
@@ -235,7 +239,7 @@ public class RobotContainer {
         scoralRollers =
             new ScoralRollers(
                 new FlywheelIO() {},
-                new ScoralSensorIO() {},
+                new DistanceSensorIO() {},
                 CoralState.DEFAULT,
                 AlgaeState.DEFAULT);
         led = new LED(new LED_IO() {});
@@ -395,8 +399,8 @@ public class RobotContainer {
     resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
     turnLimelightON = new Trigger(() -> SmartDashboard.getBoolean("Enable", false));
 
-    configureButtonBindings();
-    // test();
+    // configureButtonBindings();
+    test();
   }
 
   private void test() {
@@ -410,11 +414,10 @@ public class RobotContainer {
     //         () -> -driveController.getRightX(),
     //         () -> driveController.leftBumper().getAsBoolean()));
     driveController
-        .a()
+        .leftTrigger()
         .onTrue(
-            new SetScoralArmTarget(
-                scoralArm, SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2));
-    driveController.b().onTrue(new SetScoralArmTarget(scoralArm, 20, 2));
+            new AdjustToReefPost(drive, false, () -> driveController.leftTrigger().getAsBoolean()));
+    // driveController.b().onTrue(new SetScoralArmTarget(scoralArm, 20, 2));
   }
 
   private void configureButtonBindings() {

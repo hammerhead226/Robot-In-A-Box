@@ -55,6 +55,8 @@ import frc.robot.constants.SimConstants.Mode;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.scoral.DistanceSensorIO;
+import frc.robot.subsystems.scoral.DistanceSensorIOInputsAutoLogged;
 import frc.robot.subsystems.vision.ObjectDetection;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
@@ -100,6 +102,11 @@ public class Drive extends SubsystemBase {
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
+
+  private final DistanceSensorIO distanceIO;
+  private final DistanceSensorIOInputsAutoLogged distanceInputs =
+      new DistanceSensorIOInputsAutoLogged();
+
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
@@ -134,11 +141,13 @@ public class Drive extends SubsystemBase {
 
   public Drive(
       GyroIO gyroIO,
+      DistanceSensorIO distanceIO,
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
     this.gyroIO = gyroIO;
+    this.distanceIO = distanceIO;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
@@ -205,6 +214,9 @@ public class Drive extends SubsystemBase {
   public void periodic() {
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
+    distanceIO.updateInputs(distanceInputs);
+
+    Logger.processInputs("Drive/Distance Sensor", distanceInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
 
     for (var module : modules) {
@@ -661,5 +673,9 @@ public class Drive extends SubsystemBase {
       return rotation;
     }
     return rotation.rotateBy(Rotation2d.kPi);
+  }
+
+  public double getSensorDistanceInches() {
+    return distanceInputs.distanceInches;
   }
 }
