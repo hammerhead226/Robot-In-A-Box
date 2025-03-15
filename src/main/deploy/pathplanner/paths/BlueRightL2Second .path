@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.94187064037078,
-        "y": 5.456469928333704
+        "x": 4.941870640370777,
+        "y": 5.456469928333714
       },
       "isLocked": false,
       "linkedName": "BlueRight12"
@@ -31,19 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "SOURCE_INTAKE",
-      "waypointRelativePos": 0.5267175572519087,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "SOURCE_INTAKE"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.5,
     "maxAcceleration": 2.5,
