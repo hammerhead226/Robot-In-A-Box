@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -106,6 +107,8 @@ public class RobotContainer {
   private Trigger slowModeTrigger;
   private final Trigger autoAlignTrigger;
   private final Trigger rumbleTrigger;
+  private Trigger resetLimelight;
+  private Trigger turnLimelightON;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -206,6 +209,8 @@ public class RobotContainer {
         break;
 
       default:
+        // limelight = new PowerDistribution(23, ModuleType.kRev);
+
         elevatorBrakeTrigger = new Trigger(() -> true);
         // Replayed robot, disable IO implementations
         drive =
@@ -373,8 +378,9 @@ public class RobotContainer {
                 drive.shouldRunReefCommand()
                     && (driveController.rightTrigger().getAsBoolean()
                         || driveController.leftTrigger().getAsBoolean()));
-
     rumbleTrigger = new Trigger(() -> drive.isAutoAlignDone && superStructure.atGoals() && superStructure.isCurrentAReefState());
+    resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
+    turnLimelightON = new Trigger(() -> SmartDashboard.getBoolean("Enable", false));
 
     configureButtonBindings();
     // test();
@@ -399,6 +405,8 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    resetLimelight.onTrue(vision.resetLimelight().ignoringDisable(true));
+    turnLimelightON.onTrue(vision.activateLimelight().ignoringDisable(true));
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
