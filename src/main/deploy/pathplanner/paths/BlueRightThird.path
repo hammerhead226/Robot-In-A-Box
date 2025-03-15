@@ -36,7 +36,7 @@
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 3.5,
-        "maxAcceleration": 2.0,
+        "maxAcceleration": 2.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -51,9 +51,16 @@
       "waypointRelativePos": 0.5548387096774189,
       "endWaypointRelativePos": 1.0,
       "command": {
-        "type": "named",
+        "type": "sequential",
         "data": {
-          "name": "L4"
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "L4"
+              }
+            }
+          ]
         }
       }
     }

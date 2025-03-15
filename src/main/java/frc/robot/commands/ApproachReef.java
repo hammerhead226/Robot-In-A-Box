@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.ConstraintsZone;
 import com.pathplanner.lib.path.EventMarker;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -108,16 +109,17 @@ public class ApproachReef extends Command {
     Translation2d rotatedDrivePose =
         drive.getPose().getTranslation().rotateBy(Rotation2d.kZero.minus(atPose.getRotation()));
 
+    Rotation2d rotatedVelocity =
+        currentPoseFacingVelocity
+            .getRotation()
+            .rotateBy(Rotation2d.kZero.minus(atPose.getRotation()));
+
     // kachow
     Translation2d atPoseRobotRelative = rotatedAtPose.minus(rotatedDrivePose);
 
-    if (atPose.getRotation().minus(drive.getRotation().minus(Rotation2d.kCCW_90deg)).getDegrees()
-            <= 45
-        && Math.abs(atPoseRobotRelative.getY()) <= 0.8) {
-      pathConstraints = new PathConstraints(2.5, 3.15, 200, 300);
-    } else {
-      pathConstraints = new PathConstraints(1.75, 2, 150, 250);
-    }
+    Logger.recordOutput("rotated velocity", rotatedVelocity.getDegrees());
+
+    List<ConstraintsZone> constraintsZones = new ArrayList<>();
 
     if (!drive.isNearReef()) {
       waypoints = PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, awayPose, atPose);
@@ -125,7 +127,18 @@ public class ApproachReef extends Command {
           Arrays.asList(
               new RotationTarget(1.0, awayPose.getRotation().plus(Rotation2d.kCW_90deg)),
               new RotationTarget(1.7, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
+      if (atPose.getRotation().minus(drive.getRotation().minus(Rotation2d.kCCW_90deg)).getDegrees()
+              <= 45
+          // && Math.abs(atPoseRobotRelative.getY()) <= 0.8
+          && Math.abs(rotatedVelocity.getDegrees()) < 80) {
+        pathConstraints = new PathConstraints(2.5, 3.15, 200, 300);
+      } else {
+        pathConstraints = new PathConstraints(1.75, 2, 150, 250);
+        // pathConstraints = new PathConstraints(0.1, 2, 150, 250);
+      }
+      constraintsZones.add(new ConstraintsZone(1, 2, new PathConstraints(1.5, 2, 180, 200)));
     } else {
+      pathConstraints = new PathConstraints(1.5, 2, 180, 200);
       waypoints = PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, atPose);
       holomorphicRotations =
           Arrays.asList(new RotationTarget(0.7, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
@@ -142,7 +155,7 @@ public class ApproachReef extends Command {
               waypoints,
               holomorphicRotations,
               new ArrayList<>(),
-              new ArrayList<>(),
+              constraintsZones,
               eventMarkers,
               pathConstraints, // these numbers from last year's code
               null, // The ideal starting state, this is only relevant for pre-planned paths, so can

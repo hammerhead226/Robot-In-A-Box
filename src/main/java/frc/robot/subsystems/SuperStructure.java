@@ -6,15 +6,16 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.GoToStow;
+import frc.robot.commands.GoToStowAfterProcessor;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.MoveToProcessorSetpoints;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetElevatorTarget;
 import frc.robot.commands.SetScoralArmTarget;
-import frc.robot.commands.StowAlgae;
 import frc.robot.commands.ToReefHeight;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.ElevatorConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
@@ -163,7 +164,11 @@ public class SuperStructure {
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW_ALGAE;
         return new SequentialCommandGroup(
-            new StowAlgae(elevator, scoralArm, scoralRollers),
+            new ToReefHeight(
+                elevator,
+                scoralArm,
+                ElevatorConstants.L2_SETPOINT_INCHES,
+                ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG),
             scoralRollers.runVoltsCommmand(-0.9));
       case BARGE_EXTEND:
         currentState = SuperStructureState.BARGE_EXTEND;
@@ -178,7 +183,7 @@ public class SuperStructure {
         return new SequentialCommandGroup(
             scoralRollers.runVoltsCommmand(2),
             new WaitCommand(0.5),
-            new GoToStow(elevator, scoralArm, scoralRollers),
+            new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
             new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
             new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
