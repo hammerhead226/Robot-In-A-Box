@@ -106,7 +106,7 @@ public class ApproachReef extends Command {
     if (atPose.getRotation().minus(drive.getRotation()).getDegrees() <= 45) {
       pathConstraints = new PathConstraints(2.5, 3.15, 200, 300);
     } else {
-      pathConstraints = new PathConstraints(2, 2.5, 150, 250);
+      pathConstraints = new PathConstraints(1.75, 2, 150, 250);
     }
 
     if (!drive.isNearReef()) {

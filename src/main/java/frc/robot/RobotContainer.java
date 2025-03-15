@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -25,6 +26,7 @@ import frc.robot.commands.GoToStow;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ReinitializingCommand;
+import frc.robot.commands.Rumble;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
@@ -284,7 +286,8 @@ public class RobotContainer {
         "SOURCE_INTAKE",
         new SequentialCommandGroup(
             new InstantCommand(() -> led.setState(LED_STATE.GREY)),
-            new IntakingCoral(scoralRollers),
+            new ParallelRaceGroup(new WaitCommand(1.5), new IntakingCoral(scoralRollers)),
+            // new WiggleWiggle(drive, scoralRollers),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE))));
 
     NamedCommands.registerCommand(
@@ -447,7 +450,8 @@ public class RobotContainer {
                     false,
                     () -> driveController.leftTrigger().getAsBoolean()),
                 new AdjustToReefPost(
-                    drive, false, () -> driveController.leftTrigger().getAsBoolean())));
+                    drive, false, () -> driveController.leftTrigger().getAsBoolean()),
+                new Rumble(driveController)));
     driveController
         .rightTrigger()
         .and(() -> !driveController.leftTrigger().getAsBoolean())
@@ -460,7 +464,8 @@ public class RobotContainer {
                     true,
                     () -> driveController.rightTrigger().getAsBoolean()),
                 new AdjustToReefPost(
-                    drive, true, () -> driveController.rightTrigger().getAsBoolean())));
+                    drive, true, () -> driveController.rightTrigger().getAsBoolean()),
+                new Rumble(driveController)));
 
     driveController
         .rightBumper()
@@ -482,7 +487,11 @@ public class RobotContainer {
         .onTrue(
             new ParallelCommandGroup(
                 new SetScoralArmTarget(scoralArm, 29, 2),
-                new InstantCommand(() -> climberArm.setVoltage(-1.5))));
+                new SequentialCommandGroup(
+                    new InstantCommand(() -> climberArm.setVoltage(-1.5)),
+                    new WaitUntilCommand(() -> climberArm.hasReachedGoal(90)),
+                    new InstantCommand(() -> climberArm.armStop()))));
+
     driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
 
     driveController.b().onTrue(new InstantCommand(() -> climberArm.setVoltage(2)));
