@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -32,6 +31,7 @@ import frc.robot.commands.Rumble;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
+import frc.robot.commands.WiggleWiggle;
 import frc.robot.constants.RobotMap;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
@@ -298,6 +298,14 @@ public class RobotContainer {
             new InstantCommand(() -> led.setState(LED_STATE.BLUE))));
 
     NamedCommands.registerCommand(
+        "balls",
+        new SequentialCommandGroup(
+            new InstantCommand(() -> led.setState(LED_STATE.GREY)),
+            new ParallelRaceGroup(new WaitCommand(1.5), new IntakingCoral(scoralRollers)),
+            new WiggleWiggle(drive, scoralRollers),
+            new InstantCommand(() -> led.setState(LED_STATE.BLUE))));
+
+    NamedCommands.registerCommand(
         "ALGAE_INTAKE",
         new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE))
             .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
@@ -378,7 +386,12 @@ public class RobotContainer {
                 drive.shouldRunReefCommand()
                     && (driveController.rightTrigger().getAsBoolean()
                         || driveController.leftTrigger().getAsBoolean()));
-    rumbleTrigger = new Trigger(() -> drive.isAutoAlignDone && superStructure.atGoals() && superStructure.isCurrentAReefState());
+    rumbleTrigger =
+        new Trigger(
+            () ->
+                drive.isAutoAlignDone
+                    && superStructure.atGoals()
+                    && superStructure.isCurrentAReefState());
     resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
     turnLimelightON = new Trigger(() -> SmartDashboard.getBoolean("Enable", false));
 

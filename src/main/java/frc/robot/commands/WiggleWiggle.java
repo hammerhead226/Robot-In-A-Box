@@ -17,7 +17,7 @@ public class WiggleWiggle extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new MoveDriveTrainSide(drive, scoralRollers, true),
-        new MoveDriveTrainSide(drive, scoralRollers, false));
+        new MoveDriveTrainSide(drive, scoralRollers, false),
+        new MoveDriveTrainSide(drive, scoralRollers, true));
   }
 }

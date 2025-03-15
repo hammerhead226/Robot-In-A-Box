@@ -23,6 +23,7 @@ public class MoveDriveTrainSide extends Command {
   public MoveDriveTrainSide(Drive drive, ScoralRollers scoralRollers, boolean isRight) {
     this.drive = drive;
     this.scoralRollers = scoralRollers;
+    this.isRight = isRight;
     timer = new Timer();
     addRequirements(drive);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -33,7 +34,7 @@ public class MoveDriveTrainSide extends Command {
   public void initialize() {
     timer.reset();
     timer.start();
-    drive.runVelocity(new ChassisSpeeds(0, isRight ? 2 : -2, 0));
+    drive.runVelocity(new ChassisSpeeds(isRight ? 2 : -2, 0, 0));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
