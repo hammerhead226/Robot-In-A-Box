@@ -52,8 +52,8 @@ public class AdjustToReefPost extends Command {
   public void initialize() {
     drive.isAutoAlignDone = false;
 
-    forwardPID.setTolerance(Units.inchesToMeters(1.5));
-    sidePID.setTolerance(Units.inchesToMeters(1.5));
+    forwardPID.setTolerance(Units.inchesToMeters(0.5));
+    sidePID.setTolerance(Units.inchesToMeters(0.5));
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
     atPose =
         DriveCommands.rotateAndNudge(
