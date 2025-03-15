@@ -12,7 +12,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.scoral.ScoralRollers;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class MoveDriveTrainSide extends Command {
+public class Wiggle extends Command {
   /** Creates a new MoveDriveTrainSide. */
   Drive drive;
 
@@ -20,7 +20,7 @@ public class MoveDriveTrainSide extends Command {
   Timer timer;
   boolean isRight;
 
-  public MoveDriveTrainSide(Drive drive, ScoralRollers scoralRollers, boolean isRight) {
+  public Wiggle(Drive drive, ScoralRollers scoralRollers, boolean isRight) {
     this.drive = drive;
     this.scoralRollers = scoralRollers;
     this.isRight = isRight;

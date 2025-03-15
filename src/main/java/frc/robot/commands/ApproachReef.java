@@ -108,15 +108,24 @@ public class ApproachReef extends Command {
     Translation2d rotatedDrivePose =
         drive.getPose().getTranslation().rotateBy(Rotation2d.kZero.minus(atPose.getRotation()));
 
+    Rotation2d rotatedVelocity =
+        currentPoseFacingVelocity
+            .getRotation()
+            .rotateBy(Rotation2d.kZero.minus(atPose.getRotation()));
+
     // kachow
     Translation2d atPoseRobotRelative = rotatedAtPose.minus(rotatedDrivePose);
 
+    Logger.recordOutput("rotated velocity", rotatedVelocity.getDegrees());
+
     if (atPose.getRotation().minus(drive.getRotation().minus(Rotation2d.kCCW_90deg)).getDegrees()
             <= 45
-        && Math.abs(atPoseRobotRelative.getY()) <= 0.8) {
+        // && Math.abs(atPoseRobotRelative.getY()) <= 0.8
+        && Math.abs(rotatedVelocity.getDegrees()) < 80) {
       pathConstraints = new PathConstraints(2.5, 3.15, 200, 300);
     } else {
       pathConstraints = new PathConstraints(1.75, 2, 150, 250);
+      // pathConstraints = new PathConstraints(0.1, 2, 150, 250);
     }
 
     if (!drive.isNearReef()) {
