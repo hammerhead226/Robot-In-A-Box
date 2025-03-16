@@ -29,6 +29,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "SOURCE_INTAKE"
+          }
+        },
+        {
           "type": "wait",
           "data": {
             "waitTime": 0.15
@@ -50,6 +56,12 @@
           "type": "path",
           "data": {
             "pathName": "BlueLeftL2Fourth"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SOURCE_INTAKE"
           }
         },
         {

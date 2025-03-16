@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.7987589867578038,
-        "y": 4.802809255851654
+        "x": 3.7618978136024523,
+        "y": 4.810171653576088
       },
       "isLocked": false,
       "linkedName": "BlueRight34"
@@ -20,8 +20,8 @@
         "y": 7.353189212328767
       },
       "prevControl": {
-        "x": 1.838706153219845,
-        "y": 7.137123111293018
+        "x": 1.895277409080104,
+        "y": 7.143531813886678
       },
       "nextControl": null,
       "isLocked": false,
@@ -36,7 +36,7 @@
       "maxWaypointRelativePos": 0.500000000000001,
       "constraints": {
         "maxVelocity": 3.5,
-        "maxAcceleration": 2.0,
+        "maxAcceleration": 2.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,

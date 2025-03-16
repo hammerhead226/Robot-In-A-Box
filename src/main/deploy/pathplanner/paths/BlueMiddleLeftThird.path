@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3801053117380113,
-        "y": 0.6503491169970264
+        "x": 1.3789854143329343,
+        "y": 0.6615884151953433
       },
       "isLocked": false,
       "linkedName": "BlueMiddleLeftSource"
@@ -20,8 +20,8 @@
         "y": 3.0
       },
       "prevControl": {
-        "x": 3.979135462686839,
-        "y": 3.2170020614621895
+        "x": 4.03267752682174,
+        "y": 3.3267307753168063
       },
       "nextControl": null,
       "isLocked": false,
@@ -36,7 +36,7 @@
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 3.5,
-        "maxAcceleration": 2.0,
+        "maxAcceleration": 2.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,

@@ -293,16 +293,16 @@ public class RobotContainer {
                 SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES,
                 SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG)));
 
-    NamedCommands.registerCommand(
-        "SOURCE_INTAKE",
-        new SequentialCommandGroup(
-            new InstantCommand(() -> led.setState(LED_STATE.GREY)),
-            new ParallelRaceGroup(new WaitCommand(1.5), new IntakingCoral(scoralRollers)),
-            // new WiggleWiggle(drive, scoralRollers),
-            new InstantCommand(() -> led.setState(LED_STATE.BLUE))));
+    // NamedCommands.registerCommand(
+    //     "SOURCE_INTAKE",
+    //     new SequentialCommandGroup(
+    //         new InstantCommand(() -> led.setState(LED_STATE.GREY)),
+    //         new ParallelRaceGroup(new WaitCommand(1.5), new IntakingCoral(scoralRollers)),
+    //         // new WiggleWiggle(drive, scoralRollers),
+    //         new InstantCommand(() -> led.setState(LED_STATE.BLUE))));
 
     NamedCommands.registerCommand(
-        "balls",
+        "SOURCE_INTAKE",
         new SequentialCommandGroup(
             new InstantCommand(() -> led.setState(LED_STATE.GREY)),
             new ParallelRaceGroup(new WaitCommand(1.5), new IntakingCoral(scoralRollers)),

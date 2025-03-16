@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5109842904061035,
-        "y": 0.36539591411214123
+        "x": 1.5365176752967202,
+        "y": 0.39643505183999694
       },
       "isLocked": false,
       "linkedName": "BlueLeftSource"
@@ -20,8 +20,8 @@
         "y": 3.0
       },
       "prevControl": {
-        "x": 3.5106973854054644,
-        "y": 2.8490746283231942
+        "x": 3.5057911422725363,
+        "y": 2.855782308901978
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,10 +33,10 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.6048387096774178,
+      "maxWaypointRelativePos": 0.6827195467422082,
       "constraints": {
         "maxVelocity": 3.5,
-        "maxAcceleration": 3.5,
+        "maxAcceleration": 3.75,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -67,7 +67,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.5,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

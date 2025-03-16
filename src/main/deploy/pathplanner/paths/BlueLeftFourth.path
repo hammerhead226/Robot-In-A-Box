@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.521340028281529,
-        "y": 2.8359652016455477
+        "x": 3.5181873507585752,
+        "y": 2.7856150186973694
       },
       "isLocked": false,
       "linkedName": "BlueLeft34"
@@ -20,8 +20,8 @@
         "y": 0.667
       },
       "prevControl": {
-        "x": 1.2208208412569672,
-        "y": 0.22910863293190808
+        "x": 1.4415588823577572,
+        "y": 0.4786016653970422
       },
       "nextControl": null,
       "isLocked": false,
@@ -67,7 +67,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.5,
-    "maxAcceleration": 3.75,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
