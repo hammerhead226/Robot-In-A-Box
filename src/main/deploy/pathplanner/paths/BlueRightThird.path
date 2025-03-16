@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.046963075857446,
-        "y": 6.932957818563669
+        "x": 2.123414870192553,
+        "y": 6.8740712451584525
       },
       "isLocked": false,
       "linkedName": "BlueRightSource"
@@ -20,8 +20,8 @@
         "y": 5.05
       },
       "prevControl": {
-        "x": 3.8744633245283073,
-        "y": 4.861713476623799
+        "x": 4.060942490140846,
+        "y": 4.648857143517008
       },
       "nextControl": null,
       "isLocked": false,

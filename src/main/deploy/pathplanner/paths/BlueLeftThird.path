@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5109842904061035,
-        "y": 0.36539591411214123
+        "x": 1.5365176752967202,
+        "y": 0.39643505183999694
       },
       "isLocked": false,
       "linkedName": "BlueLeftSource"
@@ -20,8 +20,8 @@
         "y": 3.0
       },
       "prevControl": {
-        "x": 3.5106973854054644,
-        "y": 2.8490746283231942
+        "x": 3.5057911422725363,
+        "y": 2.855782308901978
       },
       "nextControl": null,
       "isLocked": false,
