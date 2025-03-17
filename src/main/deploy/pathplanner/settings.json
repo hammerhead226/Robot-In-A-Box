@@ -6,6 +6,7 @@
     "BlueLeft",
     "BlueLeftL2",
     "BlueLeftPush",
+    "BlueMiddle",
     "BlueMiddleLeft",
     "BlueMiddleLeftL2",
     "BlueMiddleRight",
@@ -13,7 +14,7 @@
     "BlueMiddleWaits",
     "BlueRight",
     "BlueRightL2",
-    "BlueMiddle"
+    "Center Barge"
   ],
   "autoFolders": [
     "L2 Variants"

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.608,
-        "y": 0.667
+        "x": 7.336713576158941,
+        "y": 5.034706125827814
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5204274176043067,
-        "y": 0.43283970701130925
+        "x": 7.725572569268327,
+        "y": 4.938015186030075
       },
       "isLocked": false,
-      "linkedName": "BlueLeftSource"
+      "linkedName": "CenterBarge34"
     },
     {
       "anchor": {
-        "x": 3.71,
-        "y": 2.97
+        "x": 5.1284354304635755,
+        "y": 5.1509312913907275
       },
       "prevControl": {
-        "x": 3.4003536374537355,
-        "y": 2.737861829588783
+        "x": 5.365095393127741,
+        "y": 5.231504624893791
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BlueLeft34"
+      "linkedName": "CenterBarge45"
     }
   ],
   "rotationTargets": [],
@@ -33,20 +33,15 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "L2",
-      "waypointRelativePos": 0.3918575063613228,
+      "name": "INTAKE_ALGAE_FROM_REEF",
+      "waypointRelativePos": 0.7957597173144885,
       "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "L2"
-        }
-      }
+      "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.26,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": -28.412661443072505
   },
   "reversed": false,
-  "folder": "BlueLeftL2",
+  "folder": "Center Barge",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -38.5
+    "rotation": 0.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

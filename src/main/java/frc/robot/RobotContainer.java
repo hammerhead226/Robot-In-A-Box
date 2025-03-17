@@ -77,6 +77,8 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import frc.robot.commands.SetElevatorTarget;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -346,6 +348,13 @@ public class RobotContainer {
                   drive, scoralArm, scoralRollers, elevator, led, height1, height2);
             }));
 
+            NamedCommands.registerCommand("BARGE_EXTEND", new SequentialCommandGroup(
+                new SetElevatorTarget(
+                    elevator, SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 15),
+                new WaitUntilCommand(() -> elevator.atGoal(15)),
+                new SetScoralArmTarget(
+                    scoralArm, SubsystemConstants.ScoralArmConstants.BARGE_BACK_SETPOINT_DEG, 2)));
+
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
     autos = new SendableChooser<>();
@@ -363,6 +372,7 @@ public class RobotContainer {
     autos.addOption("BlueLeftL2", AutoBuilder.buildAuto("BlueLeftL2"));
     autos.addOption("BlueLeftPushL2", AutoBuilder.buildAuto("BlueLeftPushL2"));
     autos.addOption("BlueRightL2", AutoBuilder.buildAuto("BlueRightL2"));
+    autos.addOption("CenterBarge", AutoBuilder.buildAuto("CenterBarge"));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
 
@@ -399,8 +409,8 @@ public class RobotContainer {
     resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
     turnLimelightON = new Trigger(() -> SmartDashboard.getBoolean("Enable", false));
 
-    // configureButtonBindings();
-    test();
+     configureButtonBindings();
+    //test();
   }
 
   private void test() {

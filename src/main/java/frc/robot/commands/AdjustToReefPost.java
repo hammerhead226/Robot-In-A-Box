@@ -133,7 +133,9 @@ public class AdjustToReefPost extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !triggerPressed.getAsBoolean() || !shouldAlign || (sensorDistance <= 8 && distanceToGoal <= Units.inchesToMeters(0.5) && angleToGoal <= 5);
+    return !triggerPressed.getAsBoolean()
+        || !shouldAlign
+        || (sensorDistance <= 8 && distanceToGoal <= Units.inchesToMeters(0.5) && angleToGoal <= 5);
     // || !shouldAlign
     // || (distanceToGoal <= Units.inchesToMeters(0.5));
     //  && angleToGoal <= 5);
