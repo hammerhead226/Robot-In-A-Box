@@ -675,7 +675,11 @@ public class Drive extends SubsystemBase {
     return rotation.rotateBy(Rotation2d.kPi);
   }
 
-  public double getSensorDistanceInches() {
+  public double getCANRangeDistanceInches() {
     return distanceInputs.distanceInches;
+  }
+
+  public boolean isCANRangeConnected() {
+    return distanceInputs.connected;
   }
 }

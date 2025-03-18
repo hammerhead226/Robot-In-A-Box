@@ -173,6 +173,10 @@ public class ScoralArm extends SubsystemBase {
     return dInputs.distanceInches;
   }
 
+  public boolean isCANRangeConnected() {
+    return dInputs.connected;
+  }
+
   @Override
   public void periodic() {
     scoralArm.updateInputs(saInputs);
