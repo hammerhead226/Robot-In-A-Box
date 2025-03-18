@@ -76,7 +76,8 @@ public class ApproachReef extends Command {
             reefPose,
             new Translation2d(
                 SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
-                SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+                // SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+                -0.2),
             Rotation2d.kZero);
     atPose =
         DriveCommands.rotateAndNudge(
@@ -90,7 +91,8 @@ public class ApproachReef extends Command {
             reefPose,
             new Translation2d(
                 SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-                SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+                // SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+                -0.2),
             Rotation2d.kZero);
 
     ChassisSpeeds fieldRelChassisSpeeds =
@@ -160,7 +162,7 @@ public class ApproachReef extends Command {
     Logger.recordOutput("Debug OTF Paths/Reef Align", atPose);
 
     pointsTooClose = drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.01;
-    shouldPID = drive.shouldPIDAlign();
+    shouldPID = drive.shouldEndPath();
 
     if (!pointsTooClose && !shouldPID) {
 
@@ -187,7 +189,7 @@ public class ApproachReef extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shouldPID = drive.shouldPIDAlign();
+    shouldPID = drive.shouldEndPath();
 
     if (!pointsTooClose && !shouldPID) {
       pathCommand.execute();

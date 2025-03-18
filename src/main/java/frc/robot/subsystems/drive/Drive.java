@@ -279,7 +279,7 @@ public class Drive extends SubsystemBase {
     // setNearestReefSide();
     Logger.recordOutput("Swerve/overallChassisSpeed", chassisSpeedMetersPerSec);
 
-    Logger.recordOutput("should pid align", shouldPIDAlign());
+    Logger.recordOutput("should pid align", shouldEndPath());
   }
 
   /**
@@ -631,7 +631,7 @@ public class Drive extends SubsystemBase {
         <= 2.5;
   }
 
-  public boolean shouldPIDAlign() {
+  public boolean shouldEndPath() {
     // return false;
     return getPose()
             .getTranslation()

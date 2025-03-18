@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -54,7 +53,9 @@ public class AdjustToReefPost extends Command {
   ChassisSpeeds chassisSpeeds;
 
   Timer timer;
-  double branchSensorSideEffort = 0;
+  double branchSensorForwardEffort = 0;
+  boolean keepPID = true;
+  double pidEndTime;
 
   public AdjustToReefPost(
       Drive drive, ScoralArm scoralArm, boolean isRight, BooleanSupplier triggerPressed) {
@@ -85,7 +86,7 @@ public class AdjustToReefPost extends Command {
             reefPose,
             new Translation2d(
                 SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-                SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+                -0.1),
             Rotation2d.kZero);
 
     odometryForwardPID.reset(drive.getPose().getX());
@@ -112,45 +113,49 @@ public class AdjustToReefPost extends Command {
       rotationSlewRateLimiter.changeRateLimit(14);
     }
 
-    shouldAlign = drive.shouldPIDAlign();
+    shouldAlign = drive.shouldEndPath();
 
     boolean isFlipped =
         DriverStation.getAlliance().isPresent()
             && DriverStation.getAlliance().get() == Alliance.Red;
-    double odometryForwardEffort =
 
-        odometryForwardPID.calculate(drive.getPose().getX(), atPose.getX());
-    double odometrySideEffort = odometrySidePID.calculate(drive.getPose().getY(), atPose.getY());
+    double odometryForwardEffort;
+    double odometrySideEffort;
+    if (drive.getPose().getTranslation().getDistance(atPose.getTranslation())
+            >= Units.inchesToMeters(1)
+        && keepPID) {
+      odometryForwardEffort = odometryForwardPID.calculate(drive.getPose().getX(), atPose.getX());
+      odometrySideEffort = odometrySidePID.calculate(drive.getPose().getY(), atPose.getY());
+    } else {
+      pidEndTime = Timer.getFPGATimestamp();
+      odometryForwardEffort = 0;
+      odometrySideEffort = 0;
+    }
 
-    double reefSensorSideEffort =
-        -MathUtil.clamp(sensorForwardPID.calculate(drive.getSensorDistanceInches(), 12.5), -1, 1);
-
+    double reefSensorSideEffort = 0;
     double rotationEffort =
         Units.degreesToRadians(
             rotationPID.calculate(
                 drive.getPose().getRotation().getDegrees(), atPose.getRotation().getDegrees()));
-
-    if (timer.hasElapsed(1)) {
-      branchSensorSideEffort = 0;
+    if (Math.abs(pidEndTime - Timer.getFPGATimestamp()) > 1.5) {
+      branchSensorForwardEffort = 0;
     } else {
-      branchSensorSideEffort = 0.51;
-      if (!isRight) {
-        branchSensorSideEffort *= -1;
-      }
+      branchSensorForwardEffort = -0.31;
     }
 
     chassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            odometryForwardEffort + branchSensorSideEffort,
-            odometrySideEffort + reefSensorSideEffort,
+            odometryForwardEffort,
+            odometrySideEffort,
             0,
             isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation());
 
     drive.runVelocity(
         new ChassisSpeeds(
-            forwardSlewRateLimiter.calculate(chassisSpeeds.vxMetersPerSecond),
-            sidewaysSlewRateLimiter.calculate(chassisSpeeds.vyMetersPerSecond),
-            chassisSpeeds.omegaRadiansPerSecond));
+                forwardSlewRateLimiter.calculate(chassisSpeeds.vxMetersPerSecond),
+                sidewaysSlewRateLimiter.calculate(chassisSpeeds.vyMetersPerSecond),
+                chassisSpeeds.omegaRadiansPerSecond)
+            .plus(new ChassisSpeeds(branchSensorForwardEffort, reefSensorSideEffort, 0)));
   }
 
   // Called once the command ends or is interrupted.
@@ -166,15 +171,6 @@ public class AdjustToReefPost extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !triggerPressed.getAsBoolean()
-        || !shouldAlign
-        || (reefSensorDistance <= 14 && (branchSensorDistance >= 13 && branchSensorDistance <= 18));
-    // && distanceToGoal <= Units.inchesToMeters(0.5)
-    // && angleToGoal <= 5
-    // && );
-
-    // || !shouldAlign
-    // || (distanceToGoal <= Units.inchesToMeters(0.5));
-    //  && angleToGoal <= 5);
+    return !triggerPressed.getAsBoolean() || (reefSensorDistance <= 14 && (branchSensorDistance >= 13 && branchSensorDistance <= 18));
   }
 }

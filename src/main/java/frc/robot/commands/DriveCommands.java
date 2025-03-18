@@ -268,20 +268,20 @@ public class DriveCommands {
             forwardsAssistEffort =
                 (reefLeftSupplier.getAsBoolean()
                         || reefRightSupplier.getAsBoolean()
-                        || drive.shouldPIDAlign())
+                        || drive.shouldEndPath())
                     ? (wantedForwardsVelocityMetersPerSec - forwardSpeed) * speedDebuff
                     : 0;
             sidewaysAssistEffort =
                 reefLeftSupplier.getAsBoolean()
                         || reefRightSupplier.getAsBoolean()
-                        || drive.shouldPIDAlign()
+                        || drive.shouldEndPath()
                     ? (wantedSidewaysVelocityMetersPerSec - sidewaysSpeed) * speedDebuff
                     : 0;
 
             rotationAssistEffort =
                 (superStructure.getWantedState() == SuperStructureState.SOURCE
                         || superStructure.getWantedState() == SuperStructureState.PROCESSOR
-                        || drive.shouldPIDAlign())
+                        || drive.shouldEndPath())
                     ? (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff
                     : 0;
             // rotationAssistEffort =
