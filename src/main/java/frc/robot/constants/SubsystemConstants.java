@@ -15,6 +15,8 @@
 
 package frc.robot.constants;
 
+import frc.robot.util.LoggedTunableNumber;
+
 public final class SubsystemConstants {
   public static boolean coralStuckMode = false;
   public static final String CANIVORE_ID_STRING = "CAN Bus 2";
@@ -24,7 +26,13 @@ public final class SubsystemConstants {
   public static final double NEAR_FAR_AT_REEF_OFFSET = -0.47;
   public static final double NEAR_FAR_AWAY_REEF_OFFSET = -0.9;
   // more neg moves it to the right
-  public static final double LEFT_RIGHT_BRANCH_OFFSET = -0.015;
+  // public static final double LEFT_RIGHT_BRANCH_OFFSET = -0.015;
+  public static final LoggedTunableNumber CORRECTION_LEFT_BRANCH_OFFSET =
+      new LoggedTunableNumber("Auto Align/LEFT_BRANCH_OFFSET", -0.015);
+  public static final LoggedTunableNumber CORRECTION_RIGHT_BRANCH_OFFSET =
+      new LoggedTunableNumber("Auto Align/RIGHT_BRANCH_OFFSET", -0.015);
+  public static final double APPROACH_OFFSET_LEFT_RIGHT_OFFSET = -0.2;
+  public static final double ADJUST_OFFSET_LEFT_RIGHT_OFFSET = -0.1;
 
   public static class IntakeConstants {
     public static final double CURRENT_LIMIT = 40.0;

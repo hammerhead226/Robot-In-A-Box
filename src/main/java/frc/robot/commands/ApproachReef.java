@@ -66,33 +66,19 @@ public class ApproachReef extends Command {
 
     awayPose =
         DriveCommands.rotateAndNudge(
-            // new Pose2d(
-            //     new Translation2d(
-            //         (drive.getNearestCenterLeft().getX() + drive.getNearestCenterRight().getX())
-            //             * 0.5,
-            //         (drive.getNearestCenterLeft().getY() + drive.getNearestCenterRight().getY())
-            //             * 0.5),
-            //     reefPose.getRotation()),
             reefPose,
             new Translation2d(
                 SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
                 // SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-                -0.2),
+                SubsystemConstants.APPROACH_OFFSET_LEFT_RIGHT_OFFSET),
             Rotation2d.kZero);
     atPose =
         DriveCommands.rotateAndNudge(
-            // new Pose2d(
-            //     new Translation2d(
-            //         (drive.getNearestCenterLeft().getX() + drive.getNearestCenterRight().getX())
-            //             * 0.5,
-            //         (drive.getNearestCenterLeft().getY() + drive.getNearestCenterRight().getY())
-            //             * 0.5),
-            //     reefPose.getRotation()),
             reefPose,
             new Translation2d(
                 SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
                 // SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-                -0.2),
+                SubsystemConstants.APPROACH_OFFSET_LEFT_RIGHT_OFFSET),
             Rotation2d.kZero);
 
     ChassisSpeeds fieldRelChassisSpeeds =

@@ -90,11 +90,12 @@ public class AdjustToReefPost extends Command {
     rotationPID.setTolerance(5);
 
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
+    double sideOffset = isRight ? SubsystemConstants.CORRECTION_RIGHT_BRANCH_OFFSET.get() : SubsystemConstants.CORRECTION_LEFT_BRANCH_OFFSET.get();
 
     offsetPose =
         DriveCommands.rotateAndNudge(
             reefPose,
-            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, -0.1),
+            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, SubsystemConstants.ADJUST_OFFSET_LEFT_RIGHT_OFFSET),
             Rotation2d.kZero);
 
     odometryTargetPose =
@@ -102,7 +103,7 @@ public class AdjustToReefPost extends Command {
             reefPose,
             new Translation2d(
                 SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-                SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
+                sideOffset),
             Rotation2d.kZero);
 
     odometryForwardPID.reset(drive.getPose().getX());
@@ -186,8 +187,8 @@ public class AdjustToReefPost extends Command {
         branchSensorForwardEffort = 0;
         state = AlignState.ODOMETRY;
       } else if (!keepPID
-      && Math.abs(pidEndPose.getTranslation().getDistance(drive.getPose().getTranslation()))
-          <= Units.inchesToMeters(4)) {
+          && Math.abs(pidEndPose.getTranslation().getDistance(drive.getPose().getTranslation()))
+              <= Units.inchesToMeters(4)) {
         odometryForwardEffort = 0;
         odometrySideEffort = 0;
         branchSensorForwardEffort = -0.31;
