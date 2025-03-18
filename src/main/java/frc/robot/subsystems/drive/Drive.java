@@ -636,7 +636,7 @@ public class Drive extends SubsystemBase {
     return getPose()
             .getTranslation()
             .getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center))
-        <= 1.3;
+        <= 1.5;
   }
 
   public boolean isAtReefRotation() {

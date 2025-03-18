@@ -144,7 +144,8 @@ public class RobotContainer {
             new ScoralArm(
                 new ScoralArmIOTalonFX(
                     RobotMap.CoralScorerArmIDs.coralScorerRotationID,
-                    RobotMap.CoralScorerArmIDs.coralScorerRotationCANcoderID));
+                    RobotMap.CoralScorerArmIDs.coralScorerRotationCANcoderID),
+                new DistanceSensorCANRangeIO(0, "rio"));
 
         vision =
             new Vision(
@@ -183,7 +184,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        scoralArm = new ScoralArm(new ScoralArmIOSim());
+        scoralArm = new ScoralArm(new ScoralArmIOSim(), new DistanceSensorIO() {});
         winch = new Winch(new WinchIOSim());
 
         Rotation3d bruh = new Rotation3d();
@@ -225,7 +226,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        scoralArm = new ScoralArm(new ArmIO() {});
+        scoralArm = new ScoralArm(new ArmIO() {}, new DistanceSensorIO() {});
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -399,8 +400,8 @@ public class RobotContainer {
     resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
     turnLimelightON = new Trigger(() -> SmartDashboard.getBoolean("Enable", false));
 
-    // configureButtonBindings();
-    test();
+    configureButtonBindings();
+    // test();
   }
 
   private void test() {
@@ -413,10 +414,24 @@ public class RobotContainer {
     //         () -> -driveController.getLeftX(),
     //         () -> -driveController.getRightX(),
     //         () -> driveController.leftBumper().getAsBoolean()));
+
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            superStructure,
+            led,
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX(),
+            () -> driveController.rightTrigger().getAsBoolean(),
+            () -> driveController.leftTrigger().getAsBoolean(),
+            () -> driveController.leftBumper().getAsBoolean()));
+
     driveController
         .leftTrigger()
         .onTrue(
-            new AdjustToReefPost(drive, false, () -> driveController.leftTrigger().getAsBoolean()));
+            new AdjustToReefPost(
+                drive, scoralArm, false, () -> driveController.leftTrigger().getAsBoolean()));
     // driveController.b().onTrue(new SetScoralArmTarget(scoralArm, 20, 2));
   }
 
@@ -480,7 +495,7 @@ public class RobotContainer {
                     false,
                     () -> driveController.leftTrigger().getAsBoolean()),
                 new AdjustToReefPost(
-                    drive, false, () -> driveController.leftTrigger().getAsBoolean())));
+                    drive, scoralArm, false, () -> driveController.leftTrigger().getAsBoolean())));
     driveController
         .rightTrigger()
         .and(() -> !driveController.leftTrigger().getAsBoolean())
@@ -493,7 +508,7 @@ public class RobotContainer {
                     true,
                     () -> driveController.rightTrigger().getAsBoolean()),
                 new AdjustToReefPost(
-                    drive, true, () -> driveController.rightTrigger().getAsBoolean())));
+                    drive, scoralArm, true, () -> driveController.rightTrigger().getAsBoolean())));
 
     driveController
         .rightBumper()

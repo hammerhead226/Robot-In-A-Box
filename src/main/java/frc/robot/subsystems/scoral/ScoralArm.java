@@ -1,9 +1,6 @@
 package frc.robot.subsystems.scoral;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
@@ -13,12 +10,14 @@ import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.commoniolayers.ArmIO;
 import frc.robot.subsystems.commoniolayers.ArmIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class ScoralArm extends SubsystemBase {
   private final ArmIO scoralArm;
   private final ArmIOInputsAutoLogged saInputs = new ArmIOInputsAutoLogged();
+
+  private final DistanceSensorIO distanceSensor;
+  private final DistanceSensorIOInputsAutoLogged dInputs = new DistanceSensorIOInputsAutoLogged();
 
   private static LoggedTunableNumber kP = new LoggedTunableNumber("CoralScoringArm/kP");
   ;
@@ -49,8 +48,9 @@ public class ScoralArm extends SubsystemBase {
   public static PivotVis setpointVisualizer;
 
   /** Creates a new Arm. */
-  public ScoralArm(ArmIO arm) {
+  public ScoralArm(ArmIO arm, DistanceSensorIO distanceSensor) {
     this.scoralArm = arm;
+    this.distanceSensor = distanceSensor;
     switch (SimConstants.currentMode) {
       case REAL:
         // kG.initDefault(0.32);
@@ -169,23 +169,14 @@ public class ScoralArm extends SubsystemBase {
     armCurrentStateDegrees = new TrapezoidProfile.State(currentDegrees, 0);
   }
 
-  // public Command setArmTarget(double goalDegrees, double thresholdDegrees) {
-
-  //   return new InstantCommand(() -> setArmGoal(goalDegrees), this)
-  //       .andThen(new WaitUntilCommand(() -> atGoal(thresholdDegrees)))
-  //       // .andThen(new WaitUntilCommand(() -> false))
-  //       .withTimeout(2.5);
-  // }
-
-  @AutoLogOutput(key = "Debug Scoral Arm/arm")
-  public Pose3d getElevatorPose() {
-    return new Pose3d(
-        0, 0.3, 1, new Rotation3d(new Rotation2d(Math.toRadians(armCurrentStateDegrees.position))));
+  public double getCANRangeDistance() {
+    return dInputs.distanceInches;
   }
 
   @Override
   public void periodic() {
     scoralArm.updateInputs(saInputs);
+    distanceSensor.updateInputs(dInputs);
 
     measuredVisualizer.update(armCurrentStateDegrees.position);
     armCurrentStateDegrees =
@@ -195,6 +186,7 @@ public class ScoralArm extends SubsystemBase {
     setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
 
     Logger.processInputs("Scoral Arm", saInputs);
+    Logger.processInputs("Scoral Arm/Distance Sensor", dInputs);
     // Logger.recordOutput("Debug Scoral Arm/arm error", getArmError());
 
     Logger.recordOutput("Debug Scoral Arm/arm goal", goalDegrees);

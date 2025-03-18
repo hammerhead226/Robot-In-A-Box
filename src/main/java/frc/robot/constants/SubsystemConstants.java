@@ -24,7 +24,7 @@ public final class SubsystemConstants {
   public static final double NEAR_FAR_AT_REEF_OFFSET = -0.47;
   public static final double NEAR_FAR_AWAY_REEF_OFFSET = -0.9;
   // more neg moves it to the right
-  public static final double LEFT_RIGHT_BRANCH_OFFSET = 0.018;
+  public static final double LEFT_RIGHT_BRANCH_OFFSET = -0.015;
 
   public static class IntakeConstants {
     public static final double CURRENT_LIMIT = 40.0;
@@ -50,8 +50,10 @@ public final class SubsystemConstants {
     // TODO:: NEED TO FIND
     public static final double L1_SETPOINT_INCHES = 0;
     public static final double L2_SETPOINT_INCHES = 7.5;
-    public static final double L3_SETPOINT_INCHES = 14.5;
+    // public static final double L3_SETPOINT_INCHES = 14.5;
+    public static final double L3_SETPOINT_INCHES = 14.2;
     public static final double L4_SETPOINT_INCHES = 27.4;
+    // public static final double L4_SETPOINT_INCHES = 27;
     public static final double BARGE_SETPOINT = 27.5;
   }
 

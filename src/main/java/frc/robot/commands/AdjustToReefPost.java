@@ -15,20 +15,26 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.util.SlewRateLimiter;
 import java.util.function.BooleanSupplier;
+import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AdjustToReefPost extends Command {
   /** Creates a new AdjustToReefPost. */
   Drive drive;
 
+  ScoralArm scoralArm;
+
   boolean isRight;
   Pose2d atPose;
-  double sensorDistance;
+  double reefSensorDistance;
+  double branchSensorDistance;
   double angleToGoal;
   double distanceToGoal;
   PIDController sensorForwardPID = new PIDController(0.1, 0, 0);
@@ -47,10 +53,16 @@ public class AdjustToReefPost extends Command {
   BooleanSupplier triggerPressed;
   ChassisSpeeds chassisSpeeds;
 
-  public AdjustToReefPost(Drive drive, boolean isRight, BooleanSupplier triggerPressed) {
+  Timer timer;
+  double branchSensorSideEffort = 0;
+
+  public AdjustToReefPost(
+      Drive drive, ScoralArm scoralArm, boolean isRight, BooleanSupplier triggerPressed) {
     this.drive = drive;
+    this.scoralArm = scoralArm;
     this.isRight = isRight;
     this.triggerPressed = triggerPressed;
+    this.timer = new Timer();
     addRequirements(drive);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -58,6 +70,8 @@ public class AdjustToReefPost extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    timer.reset();
+    timer.start();
     drive.isAutoAlignDone = false;
 
     sensorForwardPID.setTolerance(0.5);
@@ -82,8 +96,10 @@ public class AdjustToReefPost extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    Logger.recordOutput("ajust to post", atPose);
     distanceToGoal = drive.getPose().getTranslation().getDistance(atPose.getTranslation());
-    sensorDistance = drive.getSensorDistanceInches();
+    reefSensorDistance = drive.getSensorDistanceInches();
+    branchSensorDistance = scoralArm.getCANRangeDistance();
     angleToGoal = drive.getRotation().getDegrees() - atPose.getRotation().getDegrees();
 
     if (!drive.isSlowMode()) {
@@ -101,16 +117,33 @@ public class AdjustToReefPost extends Command {
     boolean isFlipped =
         DriverStation.getAlliance().isPresent()
             && DriverStation.getAlliance().get() == Alliance.Red;
+    double odometryForwardEffort =
+
+        odometryForwardPID.calculate(drive.getPose().getX(), atPose.getX());
+    double odometrySideEffort = odometrySidePID.calculate(drive.getPose().getY(), atPose.getY());
+
+    double reefSensorSideEffort =
+        -MathUtil.clamp(sensorForwardPID.calculate(drive.getSensorDistanceInches(), 12.5), -1, 1);
+
+    double rotationEffort =
+        Units.degreesToRadians(
+            rotationPID.calculate(
+                drive.getPose().getRotation().getDegrees(), atPose.getRotation().getDegrees()));
+
+    if (timer.hasElapsed(1)) {
+      branchSensorSideEffort = 0;
+    } else {
+      branchSensorSideEffort = 0.51;
+      if (!isRight) {
+        branchSensorSideEffort *= -1;
+      }
+    }
 
     chassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            odometryForwardPID.calculate(drive.getPose().getX(), atPose.getX()),
-            odometrySidePID.calculate(drive.getPose().getY(), atPose.getY())
-                + (-MathUtil.clamp(
-                    sensorForwardPID.calculate(drive.getSensorDistanceInches(), 13.23), -1, 1)),
-            Units.degreesToRadians(
-                rotationPID.calculate(
-                    drive.getPose().getRotation().getDegrees(), atPose.getRotation().getDegrees())),
+            odometryForwardEffort + branchSensorSideEffort,
+            odometrySideEffort + reefSensorSideEffort,
+            0,
             isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation());
 
     drive.runVelocity(
@@ -123,7 +156,7 @@ public class AdjustToReefPost extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (distanceToGoal <= Units.inchesToMeters(0.5)) {
+    if (reefSensorDistance <= 14 && (branchSensorDistance >= 13 && branchSensorDistance <= 18)) {
 
       drive.isAutoAlignDone = true;
     }
@@ -133,7 +166,13 @@ public class AdjustToReefPost extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !triggerPressed.getAsBoolean() || !shouldAlign || (sensorDistance <= 8 && distanceToGoal <= Units.inchesToMeters(0.5) && angleToGoal <= 5);
+    return !triggerPressed.getAsBoolean()
+        || !shouldAlign
+        || (reefSensorDistance <= 14 && (branchSensorDistance >= 13 && branchSensorDistance <= 18));
+    // && distanceToGoal <= Units.inchesToMeters(0.5)
+    // && angleToGoal <= 5
+    // && );
+
     // || !shouldAlign
     // || (distanceToGoal <= Units.inchesToMeters(0.5));
     //  && angleToGoal <= 5);

@@ -66,6 +66,13 @@ public class ApproachReef extends Command {
 
     awayPose =
         DriveCommands.rotateAndNudge(
+            // new Pose2d(
+            //     new Translation2d(
+            //         (drive.getNearestCenterLeft().getX() + drive.getNearestCenterRight().getX())
+            //             * 0.5,
+            //         (drive.getNearestCenterLeft().getY() + drive.getNearestCenterRight().getY())
+            //             * 0.5),
+            //     reefPose.getRotation()),
             reefPose,
             new Translation2d(
                 SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
@@ -73,6 +80,13 @@ public class ApproachReef extends Command {
             Rotation2d.kZero);
     atPose =
         DriveCommands.rotateAndNudge(
+            // new Pose2d(
+            //     new Translation2d(
+            //         (drive.getNearestCenterLeft().getX() + drive.getNearestCenterRight().getX())
+            //             * 0.5,
+            //         (drive.getNearestCenterLeft().getY() + drive.getNearestCenterRight().getY())
+            //             * 0.5),
+            //     reefPose.getRotation()),
             reefPose,
             new Translation2d(
                 SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
@@ -148,7 +162,7 @@ public class ApproachReef extends Command {
     pointsTooClose = drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.01;
     shouldPID = drive.shouldPIDAlign();
 
-    if (!pointsTooClose) {
+    if (!pointsTooClose && !shouldPID) {
 
       PathPlannerPath path =
           new PathPlannerPath(
@@ -175,7 +189,7 @@ public class ApproachReef extends Command {
   public void execute() {
     shouldPID = drive.shouldPIDAlign();
 
-    if (!pointsTooClose) {
+    if (!pointsTooClose && !shouldPID) {
       pathCommand.execute();
     }
   }
@@ -184,7 +198,10 @@ public class ApproachReef extends Command {
   @Override
   public void end(boolean interrupted) {
     if (!pointsTooClose && superStructure.atGoals()) {
-      pathCommand.cancel();
+      if (!shouldPID) {
+        pathCommand.cancel();
+      }
+
       if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.2) {
         superStructure.nextState();
       }
