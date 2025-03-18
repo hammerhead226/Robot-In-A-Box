@@ -84,9 +84,7 @@ public class AdjustToReefPost extends Command {
     atPose =
         DriveCommands.rotateAndNudge(
             reefPose,
-            new Translation2d(
-                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-                -0.1),
+            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, -0.1),
             Rotation2d.kZero);
 
     odometryForwardPID.reset(drive.getPose().getX());
@@ -101,7 +99,7 @@ public class AdjustToReefPost extends Command {
     distanceToGoal = drive.getPose().getTranslation().getDistance(atPose.getTranslation());
     reefSensorDistance = drive.getSensorDistanceInches();
     branchSensorDistance = scoralArm.getCANRangeDistance();
-    angleToGoal = drive.getRotation().getDegrees() - atPose.getRotation().getDegrees();
+    angleToGoal = drive.getRotation().getDegrees() - atPose.getRotation().plus(Rotation2d.kCW_90deg).getDegrees();
 
     if (!drive.isSlowMode()) {
       forwardSlewRateLimiter.changeRateLimit(Integer.MAX_VALUE);
@@ -136,7 +134,7 @@ public class AdjustToReefPost extends Command {
     double rotationEffort =
         Units.degreesToRadians(
             rotationPID.calculate(
-                drive.getPose().getRotation().getDegrees(), atPose.getRotation().getDegrees()));
+                drive.getPose().getRotation().getDegrees(), atPose.getRotation().plus(Rotation2d.kCW_90deg).getDegrees()));
     if (Math.abs(pidEndTime - Timer.getFPGATimestamp()) > 1.5) {
       branchSensorForwardEffort = 0;
     } else {
@@ -147,7 +145,7 @@ public class AdjustToReefPost extends Command {
         ChassisSpeeds.fromFieldRelativeSpeeds(
             odometryForwardEffort,
             odometrySideEffort,
-            0,
+            rotationEffort,
             isFlipped ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation());
 
     drive.runVelocity(
@@ -171,6 +169,7 @@ public class AdjustToReefPost extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !triggerPressed.getAsBoolean() || (reefSensorDistance <= 14 && (branchSensorDistance >= 13 && branchSensorDistance <= 18));
+    return !triggerPressed.getAsBoolean()
+        || (reefSensorDistance <= 14 && (branchSensorDistance >= 13 && branchSensorDistance <= 18) && Math.abs(angleToGoal) <= 5);
   }
 }
