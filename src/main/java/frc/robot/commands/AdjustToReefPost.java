@@ -181,7 +181,7 @@ public class AdjustToReefPost extends Command {
       if (superStructure.getCurrentState() == SuperStructureState.L4) {
         isAligned =
             (reefSensorDistance <= 14
-                && (branchSensorDistance >= 11 && branchSensorDistance <= 15)
+                && (branchSensorDistance >= 9.5 && branchSensorDistance <= 15)
                 && Math.abs(angleToGoal) <= 2);
       } else {
         isAligned =
