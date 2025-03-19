@@ -22,12 +22,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AdjustToReefPost;
 import frc.robot.commands.ApproachReef;
+import frc.robot.commands.BargeExtend;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.GoToStow;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.Rumble;
+import frc.robot.commands.ScoreAlgaeIntoBarge;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
@@ -293,6 +295,17 @@ public class RobotContainer {
                 scoralArm,
                 SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES,
                 SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG)));
+
+    NamedCommands.registerCommand("BARGE_EXTEND", new BargeExtend(elevator, scoralArm));
+
+    NamedCommands.registerCommand(
+        "BARGE_SCORE",
+        new SequentialCommandGroup(
+            new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
+            new ScoreAlgaeIntoBarge(elevator, scoralArm, scoralRollers),
+            new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
+            new InstantCommand(() -> superStructure.setCurrentState(SuperStructureState.STOW)),
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))));
 
     // NamedCommands.registerCommand(
     //     "SOURCE_INTAKE",

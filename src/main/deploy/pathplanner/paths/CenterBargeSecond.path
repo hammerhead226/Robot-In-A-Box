@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.77,
-        "y": 3.84
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 5.7361092317932965,
-        "y": 4.087692179590635
-      },
-      "isLocked": false,
-      "linkedName": "CenterBarge12"
-    },
-    {
-      "anchor": {
         "x": 5.76040976821192,
         "y": 4.039528145695364
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.738483825853189,
+        "y": 4.67041074878297
+      },
+      "isLocked": false,
+      "linkedName": "CenterBarge23"
+    },
+    {
+      "anchor": {
+        "x": 7.336713576158941,
+        "y": 5.034706125827814
+      },
       "prevControl": {
-        "x": 5.809067124330061,
-        "y": 3.7859100516737656
+        "x": 7.140230346232378,
+        "y": 4.880128183165786
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterBarge23"
+      "linkedName": "CenterBarge34"
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "INTAKE_ALGAE_FROM_REEF",
-      "waypointRelativePos": 0.20070671378091945,
+      "name": "BARGE_EXTEND",
+      "waypointRelativePos": 0.24657534246575463,
       "endWaypointRelativePos": null,
       "command": null
     }

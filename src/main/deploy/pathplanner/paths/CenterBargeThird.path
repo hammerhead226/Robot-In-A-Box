@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.76040976821192,
-        "y": 4.039528145695364
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 6.738483825853189,
-        "y": 4.67041074878297
-      },
-      "isLocked": false,
-      "linkedName": "CenterBarge23"
-    },
-    {
-      "anchor": {
         "x": 7.336713576158941,
         "y": 5.034706125827814
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.725572569268327,
+        "y": 4.938015186030075
+      },
+      "isLocked": false,
+      "linkedName": "CenterBarge34"
+    },
+    {
+      "anchor": {
+        "x": 5.1284354304635755,
+        "y": 5.1509312913907275
+      },
       "prevControl": {
-        "x": 7.140230346232378,
-        "y": 4.880128183165786
+        "x": 5.365095393127741,
+        "y": 5.231504624893791
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterBarge34"
+      "linkedName": "CenterBarge45"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -28.412661443072505
   },
   "reversed": false,
   "folder": "Center Barge",

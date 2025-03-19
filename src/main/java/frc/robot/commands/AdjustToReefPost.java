@@ -98,8 +98,8 @@ public class AdjustToReefPost extends Command {
         scoralArm.isCANRangeConnected()
                 && superStructure.getCurrentState() != SuperStructureState.L2
             ? AlignState.ODOMETRY_SENSOR_FUSED
-            : AlignState.ODOMETRY;
-            // : AlignState.ODOMETRY_SENSOR_FUSED;
+            // : AlignState.ODOMETRY;
+            : AlignState.ODOMETRY_SENSOR_FUSED;
 
     wiggleState = WiggleState.RIGHT;
 

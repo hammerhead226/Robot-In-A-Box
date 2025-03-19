@@ -4,12 +4,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.BargeExtend;
 import frc.robot.commands.GoToStow;
 import frc.robot.commands.GoToStowAfterProcessor;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.MoveToProcessorSetpoints;
+import frc.robot.commands.ScoreAlgaeIntoBarge;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetElevatorTarget;
 import frc.robot.commands.SetScoralArmTarget;
@@ -175,22 +176,12 @@ public class SuperStructure {
             scoralRollers.runVoltsCommmand(-0.9));
       case BARGE_EXTEND:
         currentState = SuperStructureState.BARGE_EXTEND;
-        return new SequentialCommandGroup(
-            new SetElevatorTarget(
-                elevator, SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 15),
-            new WaitUntilCommand(() -> elevator.atGoal(15)),
-            new SetScoralArmTarget(
-                scoralArm, SubsystemConstants.ScoralArmConstants.BARGE_BACK_SETPOINT_DEG, 2));
+        return new BargeExtend(elevator, scoralArm);
       case BARGE_SCORE:
         currentState = SuperStructureState.BARGE_SCORE;
         led.setState(LED_STATE.FLASHING_GREEN);
         return new SequentialCommandGroup(
-            new InstantCommand(() -> scoralArm.setConstraints(180, 500)),
-            new SetScoralArmTarget(scoralArm, ScoralArmConstants.BARGE_FORWARD_SETPOINT_DEG, 20),
-            scoralRollers.runVoltsCommmand(5),
-            new InstantCommand(() -> scoralArm.setConstraints(150, 300)),
-            new WaitCommand(0.5),
-            new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers),
+            new ScoreAlgaeIntoBarge(elevator, scoralArm, scoralRollers),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
             new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
             new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));

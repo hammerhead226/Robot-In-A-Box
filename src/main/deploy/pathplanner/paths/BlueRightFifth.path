@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0772710961205365,
-        "y": 6.956945696735368
+        "x": 2.2244902174910193,
+        "y": 6.8018355537263275
       },
       "isLocked": false,
       "linkedName": "BlueRightSource"
     },
     {
       "anchor": {
-        "x": 3.99,
-        "y": 5.247
+        "x": 3.9933,
+        "y": 5.1838
       },
       "prevControl": {
-        "x": 4.419690031750329,
-        "y": 4.862683083879826
+        "x": 3.8145222298892403,
+        "y": 5.3585527078881015
       },
       "nextControl": null,
       "isLocked": false,

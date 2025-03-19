@@ -4,9 +4,10 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.constants.SubsystemConstants;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.subsystems.scoral.ScoralRollers;
@@ -30,9 +31,11 @@ public class ScoreAlgaeIntoBarge extends SequentialCommandGroup {
     this.scoralRollers = m_scoralRollers;
 
     addCommands(
-        new ParallelCommandGroup(
-            new SetElevatorTarget(elevator, SubsystemConstants.ElevatorConstants.BARGE_SETPOINT, 1),
-            new SetScoralArmTarget(
-                scoralArm, SubsystemConstants.ScoralArmConstants.BARGE_BACK_SETPOINT_DEG, 2)));
+        new InstantCommand(() -> scoralArm.setConstraints(180, 500)),
+        new SetScoralArmTarget(scoralArm, ScoralArmConstants.BARGE_FORWARD_SETPOINT_DEG, 20),
+        scoralRollers.runVoltsCommmand(5),
+        new InstantCommand(() -> scoralArm.setConstraints(150, 300)),
+        new WaitCommand(0.5),
+        new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers));
   }
 }

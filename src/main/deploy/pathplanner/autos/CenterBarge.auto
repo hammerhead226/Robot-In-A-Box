@@ -17,9 +17,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "CenterBargeSecond"
+            "name": "INTAKE_ALGAE_FROM_REEF"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterBargeThird"
+            "pathName": "CenterBargeSecond"
           }
         },
         {
@@ -49,7 +49,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterBargeFourth"
+            "pathName": "CenterBargeThird"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "INTAKE_ALGAE_FROM_REEF"
           }
         },
         {
@@ -61,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterBargeFifth"
+            "pathName": "CenterBargeFourth"
           }
         },
         {

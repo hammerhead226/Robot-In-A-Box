@@ -63,18 +63,6 @@
           "data": {
             "name": "SCORE_CORAL_NEW"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BlueRightSixth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SOURCE_INTAKE"
-          }
         }
       ]
     }

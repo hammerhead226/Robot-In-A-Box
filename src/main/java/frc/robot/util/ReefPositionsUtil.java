@@ -70,8 +70,8 @@ public class ReefPositionsUtil {
               BLUE_REEF_POSE2DS[i],
               new Translation2d(
                   SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-                  // SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-                  SubsystemConstants.APPROACH_OFFSET_LEFT_RIGHT_OFFSET),
+                  SubsystemConstants.CORRECTION_LEFT_BRANCH_OFFSET.get()),
+              // SubsystemConstants.APPROACH_OFFSET_LEFT_RIGHT_OFFSET),
               Rotation2d.kZero);
 
       System.out.println((char) ('A' + i) + " -");
