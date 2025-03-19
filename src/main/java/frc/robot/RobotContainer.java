@@ -365,19 +365,19 @@ public class RobotContainer {
     autos = new SendableChooser<>();
 
     autos.addOption("BlueLeft", AutoBuilder.buildAuto("BlueLeft"));
-    autos.addOption("BlueLeftPush", AutoBuilder.buildAuto("BlueLeftPush"));
+    // autos.addOption("BlueLeftPush", AutoBuilder.buildAuto("BlueLeftPush"));
     autos.addOption("CenterBarge", AutoBuilder.buildAuto("CenterBarge"));
-    autos.addOption("BlueMiddleLeft", AutoBuilder.buildAuto("BlueMiddleLeft"));
-    autos.addOption("BlueMiddleRight", AutoBuilder.buildAuto("BlueMiddleRight"));
+    // autos.addOption("BlueMiddleLeft", AutoBuilder.buildAuto("BlueMiddleLeft"));
+    // autos.addOption("BlueMiddleRight", AutoBuilder.buildAuto("BlueMiddleRight"));
     autos.addOption("BlueRight", AutoBuilder.buildAuto("BlueRight"));
 
-    autos.addOption("Wait6BlueLeftL2", AutoBuilder.buildAuto("Wait6BlueLeftL2"));
-    autos.addOption("Wait2BlueLeftL2", AutoBuilder.buildAuto("Wait2BlueLeftL2"));
-    autos.addOption("Wait6BlueRightL2", AutoBuilder.buildAuto("Wait6BlueRightL2"));
-    autos.addOption("Wait2BlueRightL2", AutoBuilder.buildAuto("Wait2BlueRightL2"));
+    // autos.addOption("Wait6BlueLeftL2", AutoBuilder.buildAuto("Wait6BlueLeftL2"));
+    // autos.addOption("Wait2BlueLeftL2", AutoBuilder.buildAuto("Wait2BlueLeftL2"));
+    // autos.addOption("Wait6BlueRightL2", AutoBuilder.buildAuto("Wait6BlueRightL2"));
+    // autos.addOption("Wait2BlueRightL2", AutoBuilder.buildAuto("Wait2BlueRightL2"));
     autos.addOption("BlueLeftL2", AutoBuilder.buildAuto("BlueLeftL2"));
-    autos.addOption("BlueLeftPushL2", AutoBuilder.buildAuto("BlueLeftPushL2"));
-    autos.addOption("BlueRightL2", AutoBuilder.buildAuto("BlueRightL2"));
+    // autos.addOption("BlueLeftPushL2", AutoBuilder.buildAuto("BlueLeftPushL2"));
+    // autos.addOption("BlueRightL2", AutoBuilder.buildAuto("BlueRightL2"));
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", autos);
 
