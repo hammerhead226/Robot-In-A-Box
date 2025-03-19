@@ -52,18 +52,11 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
-  private static double sidewaysErrorMeters = 0;
-  private static double forwardsErrorMeters = 0;
+
   private static double rotationErrorDegrees = 0;
 
-  private static double wantedSidewaysVelocityMetersPerSec = 0;
   private static double wantedRotationVelocityRadsPerSec = 0;
-  private static double wantedForwardsVelocityMetersPerSec = 0;
 
-  private static boolean isRunningApproachToReef = false;
-
-  private static double forwardsAssistEffort = 0;
-  private static double sidewaysAssistEffort = 0;
   private static double rotationAssistEffort = 0;
 
   private static Pose2d previousTargetPose;
@@ -81,10 +74,6 @@ public class DriveCommands {
   static SlewRateLimiter sidewaysSlewRateLimiter = new SlewRateLimiter(0.8);
   static SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.8);
 
-  static ProfiledPIDController sidewaysPID =
-      new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
-  static ProfiledPIDController forwardsPID =
-      new ProfiledPIDController(3, 1, 0.5, new TrapezoidProfile.Constraints(3, 4.5));
   static ProfiledPIDController rotationPID =
       new ProfiledPIDController(2.9, 0., 0.2, new TrapezoidProfile.Constraints(200, 300));
   // new ProfiledPIDController(0, 0., 0, new TrapezoidProfile.Constraints(70,
@@ -124,12 +113,8 @@ public class DriveCommands {
     // BooleanSupplier anchorAlignSupplier) {
     return Commands.run(
         () -> {
-          Logger.recordOutput(
-              "Debug Driver Alignment/runningApproachToReef", isRunningApproachToReef);
           rotationPID.setTolerance(0.1);
           rotationPID.enableContinuousInput(-180, 180);
-          sidewaysPID.setTolerance(0.01);
-          forwardsPID.setTolerance(0.01);
 
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
@@ -159,37 +144,7 @@ public class DriveCommands {
 
           double speedDebuff = 0.75;
           targetPose = null;
-          // if ((reefLeftSupplier.getAsBoolean() || reefRightSupplier.getAsBoolean())) {
-          //   led.setState(LED_STATE.FLASHING_RED);
-          //   Translation2d reefTranslation =
-          //       drive.isNearReef()
-          //           ? new Translation2d(
-          //               SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-          //               SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET)
-          //           : new Translation2d(
-          //               SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
-          //               SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET);
 
-          //   if (reefLeftSupplier.getAsBoolean()) {
-          //     targetPose = drive.getNearestCenterLeft();
-          //     targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
-          //     // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d());
-          //   } else if (reefRightSupplier.getAsBoolean()) {
-          //     targetPose = drive.getNearestCenterRight();
-          //     targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
-          //     // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
-          //   } else {
-          //     targetPose = drive.getNearestCenter();
-          //     targetPose = rotateAndNudge(targetPose, reefTranslation, Rotation2d.kZero);
-          //     // targetPose = rotateAndNudge(targetPose, reefTranslation, new Rotation2d(0));
-          //   }
-          //   targetPose =
-          //       new Pose2d(
-          //           targetPose.getTranslation(),
-          //           targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
-          //   // Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "reef");
-
-          // } else
           if (angleAssistSupplier.getAsBoolean()) {
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
               targetPose = drive.getNearestSource();
@@ -197,8 +152,6 @@ public class DriveCommands {
                   new Pose2d(
                       new Translation2d(0, 0),
                       targetPose.getRotation().plus(Rotation2d.fromDegrees(-90)));
-              // Reset allows for faster rotation even on first button press
-              // rotationPID.reset(targetPose.getRotation().getDegrees());
               // Logger.recordOutput("Debug Driver Alignment/drive targetPose name", "source");
             } else if (superStructure.getWantedState() == SuperStructureState.PROCESSOR) {
               targetPose = Drive.transformPerAlliance(FieldConstants.Processor.centerFace);
@@ -216,16 +169,13 @@ public class DriveCommands {
 
           if (targetPose != null && !targetPose.equals(previousTargetPose)) {
             previousTargetPose = targetPose;
-            sidewaysPID.reset(drive.getPose().getY());
-            forwardsPID.reset(drive.getPose().getX());
+
             rotationPID.reset(drive.getRotation().getDegrees());
           }
 
           Logger.recordOutput("Debug Driver Alignment/drive targetPose", targetPose);
 
           if (targetPose != null) {
-            forwardsErrorMeters = drive.getPose().getX() - targetPose.getX();
-            sidewaysErrorMeters = drive.getPose().getY() - targetPose.getY();
 
             // hacky code so that it always rotates the shorter direction
             double driveDegrees = drive.getPose().getRotation().getDegrees() % 360;
@@ -244,12 +194,6 @@ public class DriveCommands {
 
             rotationErrorDegrees = driveDegrees - targetDegrees;
 
-            wantedForwardsVelocityMetersPerSec =
-                MathUtil.clamp(
-                    forwardsPID.calculate(drive.getPose().getX(), targetPose.getX()), -3, 3);
-            wantedSidewaysVelocityMetersPerSec =
-                MathUtil.clamp(
-                    sidewaysPID.calculate(drive.getPose().getY(), targetPose.getY()), -3, 3);
             Logger.recordOutput("drive commands drive rotation", drive.getRotation().getDegrees());
             Logger.recordOutput(
                 "drive commands target rotation", targetPose.getRotation().getDegrees());
@@ -265,36 +209,13 @@ public class DriveCommands {
                     -drive.getMaxAngularSpeedRadPerSec(),
                     drive.getMaxAngularSpeedRadPerSec());
 
-            forwardsAssistEffort =
-                (reefLeftSupplier.getAsBoolean()
-                        || reefRightSupplier.getAsBoolean()
-                        || drive.shouldEndPath())
-                    ? (wantedForwardsVelocityMetersPerSec - forwardSpeed) * speedDebuff
-                    : 0;
-            sidewaysAssistEffort =
-                reefLeftSupplier.getAsBoolean()
-                        || reefRightSupplier.getAsBoolean()
-                        || drive.shouldEndPath()
-                    ? (wantedSidewaysVelocityMetersPerSec - sidewaysSpeed) * speedDebuff
-                    : 0;
-
             rotationAssistEffort =
-                (superStructure.getWantedState() == SuperStructureState.SOURCE
+                superStructure.getWantedState() == SuperStructureState.SOURCE
                         || superStructure.getWantedState() == SuperStructureState.PROCESSOR
-                        || drive.shouldEndPath())
                     ? (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff
                     : 0;
-            // rotationAssistEffort =
-            //     (superStructure.getWantedState() == SuperStructureState.SOURCE)
-            //         ? (wantedRotationVelocityRadsPerSec - rotationSpeed)
-            //         : (wantedRotationVelocityRadsPerSec - rotationSpeed) * speedDebuff;
 
           } else {
-            wantedForwardsVelocityMetersPerSec = forwardSpeed;
-            forwardsAssistEffort = 0;
-
-            wantedSidewaysVelocityMetersPerSec = sidewaysSpeed;
-            sidewaysAssistEffort = 0;
             wantedRotationVelocityRadsPerSec = rotationSpeed;
             rotationAssistEffort = 0;
           }
@@ -302,43 +223,17 @@ public class DriveCommands {
           Logger.recordOutput("Debug Driver Alignment/target pose", targetPose);
 
           Logger.recordOutput(
-              "Debug Driver Alignment/Forwards Profile Position m",
-              forwardsPID.getSetpoint().position);
-          Logger.recordOutput(
-              "Debug Driver Alignment/Sideways Profile Position m",
-              sidewaysPID.getSetpoint().position);
-          Logger.recordOutput(
               "Debug Driver Alignment/Rotation Profile Position deg",
               rotationPID.getSetpoint().position);
 
           Logger.recordOutput(
-              "Debug Driver Alignment/Forwards Profile Velocity m/s",
-              forwardsPID.getSetpoint().velocity);
-          Logger.recordOutput(
-              "Debug Driver Alignment/Sideways Profile Velocity m/s",
-              sidewaysPID.getSetpoint().velocity);
-          Logger.recordOutput(
               "Debug Driver Alignment/Rotation Profile Velocity rad/s",
               Math.toRadians(rotationPID.getSetpoint().velocity));
 
-          // Logger.recordOutput("Debug Driver Alignment/Forwards Error m", forwardsErrorMeters);
-          // Logger.recordOutput("Debug Driver Alignment/Sideways Error m", sidewaysErrorMeters);
-          // Logger.recordOutput("Debug Driver Alignment/Rotation Error deg", rotationErrorDegrees);
-
-          Logger.recordOutput(
-              "Debug Driver Alignment/Wanted Sideways Velocity m/s",
-              wantedSidewaysVelocityMetersPerSec);
-          Logger.recordOutput(
-              "Debug Driver Alignment/Wanted Forwards Velocity m/s",
-              wantedForwardsVelocityMetersPerSec);
           Logger.recordOutput(
               "Debug Driver Alignment/Wanted Rotation Velocity rad/s",
               wantedRotationVelocityRadsPerSec);
 
-          Logger.recordOutput(
-              "Debug Driver Alignment/Forwards Assist Effort", forwardsAssistEffort);
-          Logger.recordOutput(
-              "Debug Driver Alignment/Sideways Assist Effort", sidewaysAssistEffort);
           Logger.recordOutput(
               "Debug Driver Alignment/Rotation Assist Effort", rotationAssistEffort);
           Logger.recordOutput("Debug Driver Alignment/Is Slow Mode?", drive.isSlowMode());
@@ -368,14 +263,7 @@ public class DriveCommands {
 
           ChassisSpeeds assistSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(
-                  new ChassisSpeeds(
-                      forwardsAssistEffort, sidewaysAssistEffort, rotationAssistEffort),
-                  drive.getRotation());
-          // ChassisSpeeds assistSpeeds =
-          //     ChassisSpeeds.fromFieldRelativeSpeeds(
-          //         new ChassisSpeeds(
-          //             0, 0, 0),
-          //         drive.getRotation());
+                  new ChassisSpeeds(0, 0, rotationAssistEffort), drive.getRotation());
 
           ChassisSpeeds finalInputSpeed = inputSpeeds.plus(assistSpeeds).times(scale);
           drive.runVelocity(
