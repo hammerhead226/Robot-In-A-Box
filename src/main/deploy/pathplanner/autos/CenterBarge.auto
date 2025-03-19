@@ -1,0 +1,85 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterBargeFirst"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL_NEW"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterBargeSecond"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterBargeThird"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BARGE_SCORE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterBargeFourth"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterBargeFifth"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BARGE_SCORE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

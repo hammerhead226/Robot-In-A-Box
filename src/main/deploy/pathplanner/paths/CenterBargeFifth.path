@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.71,
-        "y": 2.97
+        "x": 5.1284354304635755,
+        "y": 5.1509312913907275
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.4810263802177936,
-        "y": 2.7552927372897393
+        "x": 6.2267005014001136,
+        "y": 5.576516405324923
       },
       "isLocked": false,
-      "linkedName": "BlueLeft34"
+      "linkedName": "CenterBarge45"
     },
     {
       "anchor": {
-        "x": 1.608,
-        "y": 0.667
+        "x": 7.532843543046358,
+        "y": 6.1025248344370855
       },
       "prevControl": {
-        "x": 1.4297360334116698,
-        "y": 0.4917231954416248
+        "x": 6.4249445586663825,
+        "y": 5.63616060055852
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BlueLeftSource"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.26,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -38.5
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "BlueLeftL2",
+  "folder": "Center Barge",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": -28.412661443072505
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

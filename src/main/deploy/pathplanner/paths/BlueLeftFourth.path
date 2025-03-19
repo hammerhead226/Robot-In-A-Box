@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 3.71,
-        "y": 3.0
+        "y": 2.97
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.5181873507585752,
-        "y": 2.7856150186973694
+        "y": 2.7556150186973696
       },
       "isLocked": false,
       "linkedName": "BlueLeft34"
