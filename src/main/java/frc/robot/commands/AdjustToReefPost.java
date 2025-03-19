@@ -251,6 +251,7 @@ public class AdjustToReefPost extends Command {
   public void end(boolean interrupted) {
     if (isAligned) {
       drive.isAutoAlignDone = true;
+      superStructure.nextState();
     }
     drive.stop();
   }

@@ -31,5 +31,6 @@ public class DistanceSensorCANRangeIO implements DistanceSensorIO {
     BaseStatusSignal.refreshAll(distanceMeters);
     inputs.connected = sensor.isConnected();
     inputs.distanceInches = Units.metersToInches(distanceMeters.getValueAsDouble());
+    inputs.signalStrength = sensor.getSignalStrength().getValueAsDouble();
   }
 }

@@ -177,6 +177,10 @@ public class ScoralArm extends SubsystemBase {
     return dInputs.connected;
   }
 
+  public double getCANRangeSignalStrength() {
+    return dInputs.signalStrength;
+  }
+
   @Override
   public void periodic() {
     scoralArm.updateInputs(saInputs);
