@@ -63,22 +63,21 @@ public class ApproachReef extends Command {
   public void initialize() {
     led.setState(LED_STATE.FLASHING_RED);
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
-
+    double sideOffset =
+        isRight
+            ? SubsystemConstants.CORRECTION_RIGHT_BRANCH_OFFSET.get()
+            : SubsystemConstants.CORRECTION_LEFT_BRANCH_OFFSET.get();
     awayPose =
         DriveCommands.rotateAndNudge(
             reefPose,
-            new Translation2d(
-                SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET,
-                // SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-                SubsystemConstants.APPROACH_OFFSET_LEFT_RIGHT_OFFSET),
+            new Translation2d(SubsystemConstants.NEAR_FAR_AWAY_REEF_OFFSET, sideOffset),
+            // SubsystemConstants.APPROACH_OFFSET_LEFT_RIGHT_OFFSET),
             Rotation2d.kZero);
     atPose =
         DriveCommands.rotateAndNudge(
             reefPose,
-            new Translation2d(
-                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-                // SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
-                SubsystemConstants.APPROACH_OFFSET_LEFT_RIGHT_OFFSET),
+            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, sideOffset),
+            // SubsystemConstants.APPROACH_OFFSET_LEFT_RIGHT_OFFSET),
             Rotation2d.kZero);
 
     ChassisSpeeds fieldRelChassisSpeeds =
@@ -106,18 +105,10 @@ public class ApproachReef extends Command {
     List<EventMarker> eventMarkers = new ArrayList<>();
     PathConstraints pathConstraints;
 
-    Translation2d rotatedAtPose =
-        atPose.getTranslation().rotateBy(Rotation2d.kZero.minus(atPose.getRotation()));
-    Translation2d rotatedDrivePose =
-        drive.getPose().getTranslation().rotateBy(Rotation2d.kZero.minus(atPose.getRotation()));
-
     Rotation2d rotatedVelocity =
         currentPoseFacingVelocity
             .getRotation()
             .rotateBy(Rotation2d.kZero.minus(atPose.getRotation()));
-
-    // kachow
-    Translation2d atPoseRobotRelative = rotatedAtPose.minus(rotatedDrivePose);
 
     Logger.recordOutput("rotated velocity", rotatedVelocity.getDegrees());
 
@@ -151,7 +142,6 @@ public class ApproachReef extends Command {
     shouldPID = drive.shouldEndPath();
 
     if (!pointsTooClose && !shouldPID) {
-
       PathPlannerPath path =
           new PathPlannerPath(
               waypoints,
@@ -190,10 +180,6 @@ public class ApproachReef extends Command {
       if (!shouldPID) {
         pathCommand.cancel();
       }
-
-      // if (drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.5) {
-      //   superStructure.nextState();
-      // }
     }
   }
 
