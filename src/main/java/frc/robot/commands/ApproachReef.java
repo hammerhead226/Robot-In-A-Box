@@ -42,7 +42,8 @@ public class ApproachReef extends Command {
   Pose2d atPose;
   Pose2d awayPose;
 
-  boolean shouldPID = false;
+  boolean isPathFinished;
+  boolean skipPath;
   /** Creates a new ApproachReef. */
   public ApproachReef(
       Drive drive,
@@ -61,6 +62,8 @@ public class ApproachReef extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    isPathFinished = false;
+    skipPath = false;
     led.setState(LED_STATE.FLASHING_RED);
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
     double sideOffset =
@@ -113,61 +116,69 @@ public class ApproachReef extends Command {
     Logger.recordOutput("rotated velocity", rotatedVelocity.getDegrees());
 
     List<ConstraintsZone> constraintsZones = new ArrayList<>();
-
-    if (!drive.isNearReef()) {
-      waypoints = PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, awayPose, atPose);
-      holomorphicRotations =
-          Arrays.asList(
-              new RotationTarget(1.0, awayPose.getRotation().plus(Rotation2d.kCW_90deg)),
-              new RotationTarget(1.7, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
-      if (atPose.getRotation().minus(drive.getRotation().minus(Rotation2d.kCCW_90deg)).getDegrees()
-              <= 45
-          // && Math.abs(atPoseRobotRelative.getY()) <= 0.8
-          && Math.abs(rotatedVelocity.getDegrees()) < 80) {
-        pathConstraints = new PathConstraints(2.5, 3.15, 200, 300);
-      } else {
-        pathConstraints = new PathConstraints(1.75, 2, 150, 250);
-        // pathConstraints = new PathConstraints(0.1, 2, 150, 250);
-      }
-      constraintsZones.add(new ConstraintsZone(1, 2, new PathConstraints(1.5, 2, 180, 200)));
+    if (drive.shouldEndPath()) {
+      skipPath = true;
     } else {
-      pathConstraints = new PathConstraints(1.5, 2, 180, 200);
-      waypoints = PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, atPose);
-      holomorphicRotations =
-          Arrays.asList(new RotationTarget(0.7, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
-    }
-    Logger.recordOutput("Debug OTF Paths/Reef Align", atPose);
+      if (!drive.isNearReef()) {
+        waypoints = PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, awayPose, atPose);
+        holomorphicRotations =
+            Arrays.asList(
+                new RotationTarget(1.0, awayPose.getRotation().plus(Rotation2d.kCW_90deg)),
+                new RotationTarget(1.7, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
+        if (atPose
+                    .getRotation()
+                    .minus(drive.getRotation().minus(Rotation2d.kCCW_90deg))
+                    .getDegrees()
+                <= 45
+            // && Math.abs(atPoseRobotRelative.getY()) <= 0.8
+            && Math.abs(rotatedVelocity.getDegrees()) < 80) {
+          pathConstraints = new PathConstraints(2.5, 3.15, 200, 300);
+        } else {
+          pathConstraints = new PathConstraints(1.75, 2, 150, 250);
+          // pathConstraints = new PathConstraints(0.1, 2, 150, 250);
+        }
+        constraintsZones.add(new ConstraintsZone(1, 2, new PathConstraints(1.5, 2, 180, 200)));
+      } else {
+        pathConstraints = new PathConstraints(1.5, 2, 180, 200);
+        waypoints = PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, atPose);
+        holomorphicRotations =
+            Arrays.asList(new RotationTarget(0.7, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
+      }
+      Logger.recordOutput("Debug OTF Paths/Reef Align", atPose);
 
-    pointsTooClose = drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.01;
-    shouldPID = drive.shouldEndPath();
+      pointsTooClose =
+          drive.getPose().getTranslation().getDistance(atPose.getTranslation()) <= 0.01;
+      // isPathFinished = drive.shouldEndPath();
 
-    if (!pointsTooClose && !shouldPID) {
-      PathPlannerPath path =
-          new PathPlannerPath(
-              waypoints,
-              holomorphicRotations,
-              new ArrayList<>(),
-              constraintsZones,
-              eventMarkers,
-              pathConstraints, // these numbers from last year's code
-              null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-              // be null for on-the-fly paths.
-              new GoalEndState(0, atPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90))),
-              false);
-      path.preventFlipping = true;
+      if (!pointsTooClose) {
+        PathPlannerPath path =
+            new PathPlannerPath(
+                waypoints,
+                holomorphicRotations,
+                new ArrayList<>(),
+                constraintsZones,
+                eventMarkers,
+                pathConstraints, // these numbers from last year's code
+                null, // The ideal starting state, this is only relevant for pre-planned paths, so
+                // can
+                // be null for on-the-fly paths.
+                new GoalEndState(0, atPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90))),
+                false);
+        path.preventFlipping = true;
 
-      pathCommand = AutoBuilder.followPath(path);
+        pathCommand = AutoBuilder.followPath(path);
 
-      pathCommand.initialize();
+        pathCommand.initialize();
+      }
     }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shouldPID = drive.shouldEndPath();
 
-    if (!pointsTooClose && !shouldPID) {
+    if (!pointsTooClose && !skipPath) {
+      isPathFinished = pathCommand.isFinished();
       pathCommand.execute();
     }
   }
@@ -176,16 +187,14 @@ public class ApproachReef extends Command {
   @Override
   public void end(boolean interrupted) {
     // && superStructure.atGoals()
-    if (!pointsTooClose) {
-      if (!shouldPID) {
-        pathCommand.cancel();
-      }
+    if (!pointsTooClose && !skipPath) {
+      pathCommand.cancel();
     }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !continuePath.getAsBoolean() || pointsTooClose || shouldPID;
+    return !continuePath.getAsBoolean() || pointsTooClose || isPathFinished || skipPath;
   }
 }

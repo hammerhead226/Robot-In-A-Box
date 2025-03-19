@@ -13,8 +13,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
@@ -100,6 +98,7 @@ public class AdjustToReefPost extends Command {
         scoralArm.isCANRangeConnected()
                 && superStructure.getCurrentState() != SuperStructureState.L2
             ? AlignState.ODOMETRY_SENSOR_FUSED
+            // : AlignState.ODOMETRY;
             : AlignState.ODOMETRY_SENSOR_FUSED;
 
     wiggleState = WiggleState.RIGHT;
