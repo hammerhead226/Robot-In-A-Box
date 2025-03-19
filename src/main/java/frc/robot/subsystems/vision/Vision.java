@@ -145,21 +145,21 @@ public class Vision extends SubsystemBase {
                 || observation.pose().getY() < 0.0
                 || observation.pose().getY() > aprilTagLayout.getFieldWidth();
 
-        Logger.recordOutput("Debug Vision/tagCount", observation.tagCount());
-        Logger.recordOutput("Debug Vision/ambiguity", observation.ambiguity());
-        Logger.recordOutput(
-            "Debug Vision/ambiguity above maxAmbiguity", observation.ambiguity() > maxAmbiguity);
-        Logger.recordOutput("Debug Vision/poseZ", observation.pose().getZ());
-        Logger.recordOutput(
-            "Debug Vision/poseZ above maxZError", observation.pose().getZ() > maxZError);
-        Logger.recordOutput("Debug Vision/poseX", observation.pose().getX());
-        Logger.recordOutput(
-            "Debug Vision/poseXWithinField",
-            observation.pose().getX() > aprilTagLayout.getFieldLength());
-        Logger.recordOutput("Debug Vision/poseY", observation.pose().getY());
-        Logger.recordOutput(
-            "Debug Vision/poseYWithinField",
-            observation.pose().getY() > aprilTagLayout.getFieldWidth());
+        // Logger.recordOutput("Debug Vision/tagCount", observation.tagCount());
+        // Logger.recordOutput("Debug Vision/ambiguity", observation.ambiguity());
+        // Logger.recordOutput(
+        //     "Debug Vision/ambiguity above maxAmbiguity", observation.ambiguity() > maxAmbiguity);
+        // Logger.recordOutput("Debug Vision/poseZ", observation.pose().getZ());
+        // Logger.recordOutput(
+        //     "Debug Vision/poseZ above maxZError", observation.pose().getZ() > maxZError);
+        // Logger.recordOutput("Debug Vision/poseX", observation.pose().getX());
+        // Logger.recordOutput(
+        //     "Debug Vision/poseXWithinField",
+        //     observation.pose().getX() > aprilTagLayout.getFieldLength());
+        // Logger.recordOutput("Debug Vision/poseY", observation.pose().getY());
+        // Logger.recordOutput(
+        //     "Debug Vision/poseYWithinField",
+        //     observation.pose().getY() > aprilTagLayout.getFieldWidth());
         Logger.recordOutput("Debug Vision/rejectPose", rejectPose);
 
         // Add pose to log
