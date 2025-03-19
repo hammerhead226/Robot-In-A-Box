@@ -431,7 +431,11 @@ public class RobotContainer {
         .leftTrigger()
         .onTrue(
             new AdjustToReefPost(
-                drive, scoralArm, false, () -> driveController.leftTrigger().getAsBoolean()));
+                drive,
+                scoralArm,
+                superStructure,
+                false,
+                () -> driveController.leftTrigger().getAsBoolean()));
     // driveController.b().onTrue(new SetScoralArmTarget(scoralArm, 20, 2));
   }
 
@@ -495,7 +499,11 @@ public class RobotContainer {
                     false,
                     () -> driveController.leftTrigger().getAsBoolean()),
                 new AdjustToReefPost(
-                    drive, scoralArm, false, () -> driveController.leftTrigger().getAsBoolean())));
+                    drive,
+                    scoralArm,
+                    superStructure,
+                    false,
+                    () -> driveController.leftTrigger().getAsBoolean())));
     driveController
         .rightTrigger()
         .and(() -> !driveController.leftTrigger().getAsBoolean())
@@ -508,7 +516,11 @@ public class RobotContainer {
                     true,
                     () -> driveController.rightTrigger().getAsBoolean()),
                 new AdjustToReefPost(
-                    drive, scoralArm, true, () -> driveController.rightTrigger().getAsBoolean())));
+                    drive,
+                    scoralArm,
+                    superStructure,
+                    true,
+                    () -> driveController.rightTrigger().getAsBoolean())));
 
     driveController
         .rightBumper()

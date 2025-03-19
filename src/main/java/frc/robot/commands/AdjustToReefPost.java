@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SubsystemConstants;
+import frc.robot.constants.SubsystemConstants.SuperStructureState;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.scoral.ScoralArm;
 import frc.robot.util.SlewRateLimiter;
@@ -33,6 +35,7 @@ public class AdjustToReefPost extends Command {
 
   Drive drive;
   ScoralArm scoralArm;
+  SuperStructure superStructure;
 
   boolean isRight;
   Pose2d offsetPose;
@@ -59,15 +62,20 @@ public class AdjustToReefPost extends Command {
   BooleanSupplier triggerPressed;
   ChassisSpeeds chassisSpeeds;
 
-  boolean keepPID = true;
+  boolean keepPID;
   Pose2d pidEndPose = new Pose2d();
 
   boolean isAligned;
 
   public AdjustToReefPost(
-      Drive drive, ScoralArm scoralArm, boolean isRight, BooleanSupplier triggerPressed) {
+      Drive drive,
+      ScoralArm scoralArm,
+      SuperStructure supersStructure,
+      boolean isRight,
+      BooleanSupplier triggerPressed) {
     this.drive = drive;
     this.scoralArm = scoralArm;
+    this.superStructure = supersStructure;
     this.isRight = isRight;
     this.triggerPressed = triggerPressed;
     addRequirements(drive);
@@ -79,31 +87,39 @@ public class AdjustToReefPost extends Command {
   public void initialize() {
     drive.isAutoAlignDone = false;
 
-    state = scoralArm.isCANRangeConnected() ? AlignState.BRANCH_SENSOR : AlignState.ODOMETRY;
+    state =
+        scoralArm.isCANRangeConnected()
+                && superStructure.getCurrentState() != SuperStructureState.L2
+            ? AlignState.BRANCH_SENSOR
+            : AlignState.ODOMETRY;
     // state = AlignState.BRANCH_SENSOR;
 
     isAligned = false;
+    keepPID = true;
 
     sensorForwardPID.setTolerance(0.5);
     odometryForwardPID.setTolerance(Units.inchesToMeters(0.5));
     odometrySidePID.setTolerance(Units.inchesToMeters(0.5));
-    rotationPID.setTolerance(5);
+    rotationPID.setTolerance(0.5);
 
     Pose2d reefPose = isRight ? drive.getNearestCenterRight() : drive.getNearestCenterLeft();
-    double sideOffset = isRight ? SubsystemConstants.CORRECTION_RIGHT_BRANCH_OFFSET.get() : SubsystemConstants.CORRECTION_LEFT_BRANCH_OFFSET.get();
+    double sideOffset =
+        isRight
+            ? SubsystemConstants.CORRECTION_RIGHT_BRANCH_OFFSET.get()
+            : SubsystemConstants.CORRECTION_LEFT_BRANCH_OFFSET.get();
 
     offsetPose =
         DriveCommands.rotateAndNudge(
             reefPose,
-            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, SubsystemConstants.ADJUST_OFFSET_LEFT_RIGHT_OFFSET),
+            new Translation2d(
+                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                SubsystemConstants.ADJUST_OFFSET_LEFT_RIGHT_OFFSET),
             Rotation2d.kZero);
 
     odometryTargetPose =
         DriveCommands.rotateAndNudge(
             reefPose,
-            new Translation2d(
-                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
-                sideOffset),
+            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, sideOffset),
             Rotation2d.kZero);
 
     odometryForwardPID.reset(drive.getPose().getX());
@@ -154,26 +170,34 @@ public class AdjustToReefPost extends Command {
     if (state == AlignState.ODOMETRY) {
       isAligned =
           drive.getPose().getTranslation().getDistance(odometryTargetPose.getTranslation())
-                  <= Units.inchesToMeters(0.5)
-              && Math.abs(angleToGoal) <= 5;
+                  <= Units.inchesToMeters(1)
+              && Math.abs(angleToGoal) <= 2;
       odometryForwardEffort =
           odometryForwardPID.calculate(drive.getPose().getX(), odometryTargetPose.getX());
       odometrySideEffort =
           odometrySidePID.calculate(drive.getPose().getY(), odometryTargetPose.getY());
       branchSensorForwardEffort = 0;
     } else {
-      isAligned =
-          (reefSensorDistance <= 14
-              && (branchSensorDistance >= 13 && branchSensorDistance <= 18)
-              && Math.abs(angleToGoal) <= 5);
+      if (superStructure.getCurrentState() == SuperStructureState.L4) {
+        isAligned =
+            (reefSensorDistance <= 14
+                && (branchSensorDistance >= 11 && branchSensorDistance <= 15)
+                && Math.abs(angleToGoal) <= 2);
+      } else {
+        isAligned =
+            (reefSensorDistance <= 14
+                && (branchSensorDistance >= 17 && branchSensorDistance <= 22)
+                && Math.abs(angleToGoal) <= 2);
+      }
+
       if (drive.getPose().getTranslation().getDistance(offsetPose.getTranslation())
-              >= Units.inchesToMeters(1)
+              >= Units.inchesToMeters(3)
           && keepPID) {
         odometryForwardEffort =
             odometryForwardPID.calculate(drive.getPose().getX(), offsetPose.getX());
         odometrySideEffort = odometrySidePID.calculate(drive.getPose().getY(), offsetPose.getY());
       } else if (drive.getPose().getTranslation().getDistance(offsetPose.getTranslation())
-          < Units.inchesToMeters(1)) {
+          < Units.inchesToMeters(3)) {
         pidEndPose = drive.getPose();
         keepPID = false;
         odometryForwardEffort = 0;
@@ -181,19 +205,31 @@ public class AdjustToReefPost extends Command {
       }
       if (!keepPID
           && Math.abs(pidEndPose.getTranslation().getDistance(drive.getPose().getTranslation()))
-              > Units.inchesToMeters(4)) {
+              > Units.inchesToMeters(2)) {
         odometryForwardEffort = 0;
         odometrySideEffort = 0;
         branchSensorForwardEffort = 0;
         state = AlignState.ODOMETRY;
       } else if (!keepPID
           && Math.abs(pidEndPose.getTranslation().getDistance(drive.getPose().getTranslation()))
-              <= Units.inchesToMeters(4)) {
+              <= Units.inchesToMeters(2)) {
         odometryForwardEffort = 0;
         odometrySideEffort = 0;
         branchSensorForwardEffort = -0.31;
       }
     }
+
+    Logger.recordOutput("Reef Aligning/pidEndPose", pidEndPose);
+    Logger.recordOutput("Reef Aligning/offsetPose", offsetPose);
+    Logger.recordOutput("Reef Aligning/odometryTargetPose", odometryTargetPose);
+    Logger.recordOutput("Reef Aligning/odometryForwardEffort", odometryForwardEffort);
+    Logger.recordOutput("Reef Aligning/odometrySideEffort", odometrySideEffort);
+    Logger.recordOutput("Reef Aligning/branchSensorForwardEffort", branchSensorForwardEffort);
+    Logger.recordOutput("Reef Aligning/reefSensorSideEffort", reefSensorSideEffort);
+    Logger.recordOutput(
+        "Reef Aligning/distance from offset",
+        drive.getPose().getTranslation().getDistance(offsetPose.getTranslation()));
+    Logger.recordOutput("Reef Aligning/keepPID", keepPID);
 
     chassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(

@@ -19,7 +19,8 @@ public class DistanceSensorCANRangeIO implements DistanceSensorIO {
 
     CANrangeConfiguration config = new CANrangeConfiguration();
 
-    config.FovParams.FOVRangeX = 15;
+    config.FovParams.FOVRangeX = 13;
+    config.FovParams.FOVRangeY = 13;
 
     sensor.getConfigurator().apply(config);
 

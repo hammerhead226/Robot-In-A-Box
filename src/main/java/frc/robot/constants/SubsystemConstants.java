@@ -32,7 +32,7 @@ public final class SubsystemConstants {
   public static final LoggedTunableNumber CORRECTION_RIGHT_BRANCH_OFFSET =
       new LoggedTunableNumber("Auto Align/RIGHT_BRANCH_OFFSET", -0.015);
   public static final double APPROACH_OFFSET_LEFT_RIGHT_OFFSET = -0.2;
-  public static final double ADJUST_OFFSET_LEFT_RIGHT_OFFSET = -0.1;
+  public static final double ADJUST_OFFSET_LEFT_RIGHT_OFFSET = -0.07;
 
   public static class IntakeConstants {
     public static final double CURRENT_LIMIT = 40.0;
@@ -60,8 +60,8 @@ public final class SubsystemConstants {
     public static final double L2_SETPOINT_INCHES = 7.5;
     // public static final double L3_SETPOINT_INCHES = 14.5;
     public static final double L3_SETPOINT_INCHES = 14.2;
-    public static final double L4_SETPOINT_INCHES = 27.4;
-    // public static final double L4_SETPOINT_INCHES = 27;
+    // public static final double L4_SETPOINT_INCHES = 27.4;
+    public static final double L4_SETPOINT_INCHES = 27;
     public static final double BARGE_SETPOINT = 27.5;
   }
 
@@ -83,9 +83,9 @@ public final class SubsystemConstants {
     public static final double DEFAULT_THRESHOLD = 1;
     public static final double ARM_GEAR_RATIO = (25.0 / 1) / (14.0 / 32);
 
-    public static final double STOW_SETPOINT_DEG = 95.8;
+    public static final double STOW_SETPOINT_DEG = 95.2;
     public static final double LOW_CORAL_SCORING_SETPOINT_DEG = 76.5;
-    public static final double L4_CORAL_SCORING_SETPOINT_DEG = 64;
+    public static final double L4_CORAL_SCORING_SETPOINT_DEG = 59.40;
     public static final double BARGE_BACK_SETPOINT_DEG = 74;
     public static final double BARGE_FORWARD_SETPOINT_DEG = 110;
     public static final double PROCESSOR_SETPOINT_DEG = 20;
