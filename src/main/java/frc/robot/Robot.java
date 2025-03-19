@@ -25,6 +25,7 @@ import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.TunerConstants;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.ReefPositionsUtil;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -148,6 +149,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
+    ReefPositionsUtil.printOffsetPoses();
     CameraServer.startAutomaticCapture();
   }
 
