@@ -30,6 +30,6 @@ public class ScoreCoral extends SequentialCommandGroup {
     addCommands(
         scoralRollers.runVoltsCommmand(2.6),
         new WaitCommand(0.5),
-        new GoToStow(elevator, scoralArm, scoralRollers));
+        new GoToStowTeleOp(elevator, scoralArm, scoralRollers));
   }
 }

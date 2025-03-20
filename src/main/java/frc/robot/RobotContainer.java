@@ -24,7 +24,8 @@ import frc.robot.commands.AdjustToReefPost;
 import frc.robot.commands.ApproachReef;
 import frc.robot.commands.BargeExtend;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.GoToStow;
+import frc.robot.commands.GoToStowAuto;
+import frc.robot.commands.GoToStowTeleOp;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ReinitializingCommand;
@@ -336,7 +337,7 @@ public class RobotContainer {
         "STOW",
         new SequentialCommandGroup(
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
-            new GoToStow(elevator, scoralArm, scoralRollers),
+            new GoToStowAuto(elevator, scoralArm, scoralRollers),
             new WaitCommand(0.1)));
     NamedCommands.registerCommand(
         "SCORE_CORAL",
@@ -605,8 +606,12 @@ public class RobotContainer {
         .back()
         .onTrue(
             new SequentialCommandGroup(
-                new SetElevatorTarget(elevator, SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES, 2),
-                new SetScoralArmTarget(scoralArm, SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG, 2)));
+                new SetElevatorTarget(
+                    elevator, SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES, 2),
+                new SetScoralArmTarget(
+                    scoralArm,
+                    SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG,
+                    2)));
   }
 
   private void manipControls() {

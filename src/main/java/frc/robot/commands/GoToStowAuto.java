@@ -15,25 +15,18 @@ import frc.robot.subsystems.scoral.ScoralRollers;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class GoToStow extends SequentialCommandGroup {
-  private final Elevator elevator;
-
-  private final ScoralArm scoralArm;
-  private final ScoralRollers scoralRollers;
-  /** Creates a new GoToStowL4. */
-  public GoToStow(Elevator m_elevator, ScoralArm m_scoralArm, ScoralRollers m_scoralRollers) {
+public class GoToStowAuto extends SequentialCommandGroup {
+  /** Creates a new GoToStowAuto. */
+  public GoToStowAuto(Elevator elevator, ScoralArm scoralArm, ScoralRollers scoralRollers) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    this.elevator = m_elevator;
-    this.scoralArm = m_scoralArm;
-    this.scoralRollers = m_scoralRollers;
+
 
     addCommands(
-        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG + 4, 10),
+        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 10),
         scoralRollers.stopCommand(),
         new WaitUntilCommand(() -> scoralArm.atGoal(10)),
         new SetElevatorTarget(elevator, ElevatorConstants.STOW_SETPOINT_INCH, 15),
-        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 2),
         new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG, 2));
   }
 }

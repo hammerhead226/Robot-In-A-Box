@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.BargeExtend;
-import frc.robot.commands.GoToStow;
+import frc.robot.commands.GoToStowTeleOp;
 import frc.robot.commands.GoToStowAfterProcessor;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
@@ -162,7 +162,7 @@ public class SuperStructure {
       case STOW:
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW;
-        return new GoToStow(elevator, scoralArm, scoralRollers)
+        return new GoToStowTeleOp(elevator, scoralArm, scoralRollers)
             .andThen(new InstantCommand(() -> nextState()));
       case STOW_ALGAE:
         led.setState(LED_STATE.BLUE);
@@ -233,7 +233,9 @@ public class SuperStructure {
 
       case SOURCE:
         currentState = SuperStructureState.SOURCE;
-        return new SetScoralArmTarget(scoralArm, SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2).andThen(new IntakingCoral(scoralRollers))
+        return new SetScoralArmTarget(
+                scoralArm, SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2)
+            .andThen(new IntakingCoral(scoralRollers))
             .andThen(
                 new InstantCommand(() -> led.setState(LED_STATE.BLUE))
                     .andThen(
