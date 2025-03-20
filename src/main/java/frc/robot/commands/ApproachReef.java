@@ -31,7 +31,6 @@ import org.littletonrobotics.junction.Logger;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ApproachReef extends Command {
   private final Drive drive;
-  private final SuperStructure superStructure;
   private final LED led;
   private final boolean isRight;
   private boolean pointsTooClose;
@@ -53,7 +52,6 @@ public class ApproachReef extends Command {
       BooleanSupplier continuePath) {
     this.drive = drive;
     this.led = led;
-    this.superStructure = superStructure;
     this.isRight = isRight;
     this.continuePath = continuePath;
     addRequirements(drive, led);
@@ -186,7 +184,6 @@ public class ApproachReef extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // && superStructure.atGoals()
     if (!pointsTooClose && !skipPath) {
       pathCommand.cancel();
     }
