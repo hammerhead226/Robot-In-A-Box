@@ -34,7 +34,7 @@ public class Wiggle extends Command {
   public void initialize() {
     timer.reset();
     timer.start();
-    drive.runVelocity(new ChassisSpeeds(isRight ? 2 : -2, 0, 0));
+    drive.runVelocity(new ChassisSpeeds(isRight ? 0.5 : -0.5, 0, 0));
   }
 
   // Called every time the scheduler runs while the command is scheduled.

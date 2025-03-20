@@ -63,6 +63,12 @@
           "data": {
             "name": "SCORE_CORAL_NEW"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "STOW"
+          }
         }
       ]
     }

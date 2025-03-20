@@ -31,6 +31,7 @@ import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.Rumble;
 import frc.robot.commands.ScoreAlgaeIntoBarge;
 import frc.robot.commands.ScoreCoral;
+import frc.robot.commands.SetElevatorTarget;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
 import frc.robot.commands.WiggleWiggle;
@@ -318,9 +319,12 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SOURCE_INTAKE",
         new SequentialCommandGroup(
+            new SetScoralArmTarget(
+                scoralArm, SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2),
             new InstantCommand(() -> led.setState(LED_STATE.GREY)),
-            new ParallelRaceGroup(new WaitCommand(1.5), new IntakingCoral(scoralRollers)),
+            new ParallelRaceGroup(new WaitCommand(1.25), new IntakingCoral(scoralRollers)),
             new WiggleWiggle(drive, scoralRollers),
+            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE))));
 
     NamedCommands.registerCommand(
@@ -345,7 +349,7 @@ public class RobotContainer {
         new SequentialCommandGroup(
             new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
             scoralRollers.runVoltsCommmand(2.6),
-            new WaitCommand(0.35)));
+            new WaitCommand(0.3)));
 
     NamedCommands.registerCommand(
         "INTAKE_ALGAE_FROM_REEF",
@@ -596,6 +600,13 @@ public class RobotContainer {
                             scoralRollers,
                             led)
                         .andThen(new InstantCommand(() -> superStructure.nextState()))));
+
+    driveController
+        .back()
+        .onTrue(
+            new SequentialCommandGroup(
+                new SetElevatorTarget(elevator, SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES, 2),
+                new SetScoralArmTarget(scoralArm, SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG, 2)));
   }
 
   private void manipControls() {

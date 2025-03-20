@@ -294,6 +294,7 @@ public class Drive extends SubsystemBase {
     // SwerveModuleState[] setpointStates = previouSetpoint.moduleStates();
     // Calculate module setpoints
     speeds = ChassisSpeeds.discretize(speeds, SubsystemConstants.LOOP_PERIOD_SECONDS);
+
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
 

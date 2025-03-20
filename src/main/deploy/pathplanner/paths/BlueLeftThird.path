@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.608,
-        "y": 0.667
+        "x": 1.726229508196721,
+        "y": 0.8182889344262299
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5365176752967202,
-        "y": 0.39643505183999694
+        "x": 1.654747183493441,
+        "y": 0.5477239862662268
       },
       "isLocked": false,
       "linkedName": "BlueLeftSource"
@@ -35,8 +35,8 @@
       "minWaypointRelativePos": 0,
       "maxWaypointRelativePos": 0.6827195467422082,
       "constraints": {
-        "maxVelocity": 3.5,
-        "maxAcceleration": 3.75,
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.3,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -66,7 +66,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.5,
+    "maxVelocity": 3.0,
     "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,

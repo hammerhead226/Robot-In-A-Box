@@ -29,7 +29,9 @@ public class AdjustToReefPost extends Command {
   enum AlignState {
     BRANCH_SENSOR,
     ODOMETRY,
-    ODOMETRY_SENSOR_FUSED
+    ODOMETRY_SENSOR_FUSED,
+    DONE,
+    CANCEL
   }
 
   enum WiggleState {
@@ -185,7 +187,7 @@ public class AdjustToReefPost extends Command {
     double distanceFromOdometryTargetPose =
         drive.getPose().getTranslation().getDistance(odometryTargetPose.getTranslation());
     if (alignState == AlignState.ODOMETRY_SENSOR_FUSED) {
-      isAligned = branchSensorConditions;
+      isAligned = branchSensorConditions && distanceFromOdometryTargetPose <= 6;
       odometryForwardEffort =
           odometryForwardPID.calculate(drive.getPose().getX(), odometryTargetPose.getX());
       odometrySideEffort =
@@ -258,7 +260,9 @@ public class AdjustToReefPost extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    alignState = AlignState.CANCEL;
     if (isAligned) {
+      alignState = AlignState.DONE;
       drive.isAutoAlignDone = true;
       superStructure.nextState();
     }

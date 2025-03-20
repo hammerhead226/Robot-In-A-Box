@@ -233,7 +233,7 @@ public class SuperStructure {
 
       case SOURCE:
         currentState = SuperStructureState.SOURCE;
-        return new IntakingCoral(scoralRollers)
+        return new SetScoralArmTarget(scoralArm, SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2).andThen(new IntakingCoral(scoralRollers))
             .andThen(
                 new InstantCommand(() -> led.setState(LED_STATE.BLUE))
                     .andThen(
