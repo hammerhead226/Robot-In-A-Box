@@ -25,7 +25,6 @@ import frc.robot.commands.ApproachReef;
 import frc.robot.commands.BargeExtend;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.GoToStowAuto;
-import frc.robot.commands.GoToStowTeleOp;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ReinitializingCommand;
@@ -154,8 +153,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight("limelight-reef", () -> drive.getPose().getRotation())
-                // new VisionIOLimelight("limelight 2", drive.getRawGyroRotationSupplier()),
+                new VisionIOLimelight("limelight-reef", () -> drive.getPose().getRotation()),
+                new VisionIOLimelight("limelight-bakreef", () -> drive.getPose().getRotation())
                 // new VisionIOLimelight("limelight 3", drive.getRawGyroRotationSupplier()),
                 // new VisionIOPhotonVision("photon", new Transform3d())
                 );
