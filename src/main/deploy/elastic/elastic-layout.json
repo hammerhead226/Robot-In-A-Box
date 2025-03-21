@@ -1,0 +1,415 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "Joystick0",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "AxisTypes",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick0/AxisTypes",
+                  "period": 0.06,
+                  "data_type": "int[]",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "AxisValues",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick0/AxisValues",
+                  "period": 0.06,
+                  "data_type": "float[]",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "ButtonCount",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick0/ButtonCount",
+                  "period": 0.06,
+                  "data_type": "int",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "ButtonValues",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick0/ButtonValues",
+                  "period": 0.06,
+                  "data_type": "int",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Name",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick0/Name",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "POVs",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick0/POVs",
+                  "period": 0.06,
+                  "data_type": "int[]",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Type",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick0/Type",
+                  "period": 0.06,
+                  "data_type": "int",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Xbox",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick0/Xbox",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          },
+          {
+            "title": "Joystick1",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "AxisTypes",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick1/AxisTypes",
+                  "period": 0.06,
+                  "data_type": "int[]",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "AxisValues",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick1/AxisValues",
+                  "period": 0.06,
+                  "data_type": "float[]",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "ButtonCount",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick1/ButtonCount",
+                  "period": 0.06,
+                  "data_type": "int",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "ButtonValues",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick1/ButtonValues",
+                  "period": 0.06,
+                  "data_type": "int",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Name",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick1/Name",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "POVs",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick1/POVs",
+                  "period": 0.06,
+                  "data_type": "int[]",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Type",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick1/Type",
+                  "period": 0.06,
+                  "data_type": "int",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Xbox",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/AdvantageKit/DriverStation/Joystick1/Xbox",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "title": "Alerts",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "Alerts",
+            "properties": {
+              "topic": "/SmartDashboard/Alerts",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "USB Camera 0",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 768.0,
+            "height": 768.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/USB Camera 0",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "Auto Choices",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Auto Choices",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Enable",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Button",
+            "properties": {
+              "topic": "/SmartDashboard/Enable",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Reset",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Button",
+            "properties": {
+              "topic": "/SmartDashboard/Reset",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "LedState",
+            "x": 1024.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/LEDs/LedState",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Reef LL HeartBeat",
+            "x": 768.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Vision/Camera0/HeartBeat",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Backup LL HeartBeat",
+            "x": 896.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Vision/Camera1/HeartBeat",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    },
+    {
+      "name": "Limelight Views",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "limelight-bakreef",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 768.0,
+            "height": 768.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-bakreef",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "limelight-reef",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 768.0,
+            "height": 768.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-reef",
+              "period": 0.06
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
