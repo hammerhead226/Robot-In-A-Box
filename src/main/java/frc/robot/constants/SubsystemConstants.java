@@ -76,6 +76,10 @@ public final class SubsystemConstants {
     public static final double DEPLOY_SETPOINT_DEG = -20;
   }
 
+  public static final class WinchConstants { 
+    public static final double STATOR_CURRENT_LIMIT = 60.0;
+  }
+
   public static class ScoralArmConstants {
     public static final double CURRENT_LIMIT = 50.0;
     public static final boolean CURRENT_LIMIT_ENABLED = true;
@@ -83,7 +87,7 @@ public final class SubsystemConstants {
     public static final double DEFAULT_THRESHOLD = 1;
     public static final double ARM_GEAR_RATIO = (25.0 / 1) / (14.0 / 32);
 
-    public static final double STOW_SETPOINT_DEG = 95.8;
+    public static final double STOW_SETPOINT_DEG = 95.1;
     public static final double LOW_CORAL_SCORING_SETPOINT_DEG = 76.5;
     public static final double L4_CORAL_SCORING_SETPOINT_DEG = 59.40;
     public static final double BARGE_BACK_SETPOINT_DEG = 69;

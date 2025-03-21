@@ -31,6 +31,8 @@ public class WinchIOTalonFX implements WinchIO {
     leader = new TalonFX(leadID, SubsystemConstants.CANIVORE_ID_STRING);
 
     var config = new TalonFXConfiguration();
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.WinchConstants.STATOR_CURRENT_LIMIT;
     config.CurrentLimits.SupplyCurrentLimit = 30.0;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;

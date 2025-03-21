@@ -7,135 +7,7 @@
       "grid_layout": {
         "layouts": [
           {
-            "title": "Joystick0",
-            "x": 1024.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "AxisTypes",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick0/AxisTypes",
-                  "period": 0.06,
-                  "data_type": "int[]",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "AxisValues",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick0/AxisValues",
-                  "period": 0.06,
-                  "data_type": "float[]",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "ButtonCount",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick0/ButtonCount",
-                  "period": 0.06,
-                  "data_type": "int",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "ButtonValues",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick0/ButtonValues",
-                  "period": 0.06,
-                  "data_type": "int",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Name",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick0/Name",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "POVs",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick0/POVs",
-                  "period": 0.06,
-                  "data_type": "int[]",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Type",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick0/Type",
-                  "period": 0.06,
-                  "data_type": "int",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Xbox",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick0/Xbox",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              }
-            ]
-          },
-          {
-            "title": "Joystick1",
+            "title": "Operator Controller",
             "x": 1024.0,
             "y": 256.0,
             "width": 256.0,
@@ -145,20 +17,6 @@
               "label_position": "TOP"
             },
             "children": [
-              {
-                "title": "AxisTypes",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick1/AxisTypes",
-                  "period": 0.06,
-                  "data_type": "int[]",
-                  "show_submit_button": false
-                }
-              },
               {
                 "title": "AxisValues",
                 "x": 0.0,
@@ -172,92 +30,32 @@
                   "data_type": "float[]",
                   "show_submit_button": false
                 }
-              },
+              }
+            ]
+          },
+          {
+            "title": "Driver Controller",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
               {
-                "title": "ButtonCount",
+                "title": "AxisValues",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick1/ButtonCount",
+                  "topic": "/AdvantageKit/DriverStation/Joystick0/AxisValues",
                   "period": 0.06,
-                  "data_type": "int",
+                  "data_type": "float[]",
                   "show_submit_button": false
-                }
-              },
-              {
-                "title": "ButtonValues",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick1/ButtonValues",
-                  "period": 0.06,
-                  "data_type": "int",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Name",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick1/Name",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "POVs",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick1/POVs",
-                  "period": 0.06,
-                  "data_type": "int[]",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Type",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick1/Type",
-                  "period": 0.06,
-                  "data_type": "int",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Xbox",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick1/Xbox",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
                 }
               }
             ]
@@ -269,7 +67,7 @@
             "x": 768.0,
             "y": 128.0,
             "width": 256.0,
-            "height": 384.0,
+            "height": 256.0,
             "type": "Alerts",
             "properties": {
               "topic": "/SmartDashboard/Alerts",
@@ -281,7 +79,7 @@
             "x": 0.0,
             "y": 0.0,
             "width": 768.0,
-            "height": 768.0,
+            "height": 512.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/USB Camera 0",
@@ -329,7 +127,7 @@
           },
           {
             "title": "LedState",
-            "x": 1024.0,
+            "x": 1280.0,
             "y": 384.0,
             "width": 256.0,
             "height": 128.0,
@@ -344,7 +142,7 @@
           {
             "title": "Reef LL HeartBeat",
             "x": 768.0,
-            "y": 512.0,
+            "y": 384.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -358,7 +156,7 @@
           {
             "title": "Backup LL HeartBeat",
             "x": 896.0,
-            "y": 512.0,
+            "y": 384.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -367,6 +165,65 @@
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": false
+            }
+          },
+          {
+            "title": "MatchTime",
+            "x": 1024.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/DriverStation/MatchTime",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Current State",
+            "x": 1280.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Debug Super Structure/Current State",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Wanted State",
+            "x": 1280.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Debug Super Structure/Wanted State",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "At State Goals",
+            "x": 1280.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Debug Super Structure/At State Goals",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
