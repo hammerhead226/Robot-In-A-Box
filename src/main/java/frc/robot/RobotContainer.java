@@ -565,7 +565,7 @@ public class RobotContainer {
                 new SetScoralArmTarget(scoralArm, 29, 2),
                 new SequentialCommandGroup(
                     new InstantCommand(() -> climberArm.setVoltage(-1.5)),
-                    new WaitUntilCommand(() -> climberArm.hasReachedGoal(90)),
+                    new WaitUntilCommand(() -> climberArm.hasReachedGoal(85)),
                     new InstantCommand(() -> climberArm.armStop()))));
 
     driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
