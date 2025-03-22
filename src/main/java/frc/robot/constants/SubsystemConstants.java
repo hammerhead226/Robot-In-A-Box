@@ -76,7 +76,7 @@ public final class SubsystemConstants {
     public static final double DEPLOY_SETPOINT_DEG = -20;
   }
 
-  public static final class WinchConstants { 
+  public static final class WinchConstants {
     public static final double STATOR_CURRENT_LIMIT = 60.0;
   }
 

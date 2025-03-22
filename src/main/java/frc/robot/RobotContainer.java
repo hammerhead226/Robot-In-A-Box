@@ -325,6 +325,7 @@ public class RobotContainer {
             new ParallelRaceGroup(new WaitCommand(1.25), new IntakingCoral(scoralRollers)),
             new WiggleWiggle(drive, scoralRollers),
             new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
+            new InstantCommand(() -> scoralRollers.stop()),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE))));
 
     NamedCommands.registerCommand(

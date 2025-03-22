@@ -32,7 +32,8 @@ public class WinchIOTalonFX implements WinchIO {
 
     var config = new TalonFXConfiguration();
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.WinchConstants.STATOR_CURRENT_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit =
+        SubsystemConstants.WinchConstants.STATOR_CURRENT_LIMIT;
     config.CurrentLimits.SupplyCurrentLimit = 30.0;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
