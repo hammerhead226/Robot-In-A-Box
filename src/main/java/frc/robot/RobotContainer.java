@@ -25,6 +25,7 @@ import frc.robot.commands.ApproachReef;
 import frc.robot.commands.BargeExtend;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.GoToStowAuto;
+import frc.robot.commands.GoToStowTeleOp;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ReinitializingCommand;
@@ -344,6 +345,7 @@ public class RobotContainer {
         new SequentialCommandGroup(
             new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
             new ScoreCoral(elevator, scoralArm, scoralRollers),
+            new GoToStowTeleOp(elevator, scoralArm, scoralRollers),
             new WaitCommand(0.25)));
     NamedCommands.registerCommand(
         "SCORE_CORAL_NEW",

@@ -160,10 +160,15 @@ public class SuperStructure {
     Logger.recordOutput("Debug Super Structure/counter", counter);
     switch (wantedState) {
       case STOW:
+        SequentialCommandGroup command;
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW;
-        return new GoToStowTeleOp(elevator, scoralArm, scoralRollers)
-            .andThen(new InstantCommand(() -> nextState()));
+        if (elevator.getElevatorPosition() <= 20) {
+          command = new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers);
+        } else {
+          command = new GoToStowTeleOp(elevator, scoralArm, scoralRollers);
+        }
+        return command.andThen(new InstantCommand(() -> nextState()));
       case STOW_ALGAE:
         led.setState(LED_STATE.BLUE);
         currentState = SuperStructureState.STOW_ALGAE;
@@ -249,9 +254,16 @@ public class SuperStructure {
       case SCORING_CORAL:
         currentState = SuperStructureState.SCORING_CORAL;
         led.setState(LED_STATE.FLASHING_GREEN);
+        SequentialCommandGroup stowCommand;
+        if (elevator.getElevatorPosition() <= 20) {
+          stowCommand = new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers);
+        } else {
+          stowCommand = new GoToStowTeleOp(elevator, scoralArm, scoralRollers);
+        }
         if (!algaeMode) {
           return new SequentialCommandGroup(
               new ScoreCoral(elevator, scoralArm, scoralRollers),
+              stowCommand,
               new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
               new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
               new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
