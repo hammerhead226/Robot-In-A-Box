@@ -269,7 +269,7 @@ public class RobotContainer {
                 elevator,
                 scoralArm,
                 SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES,
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG)));
+                SubsystemConstants.ScoralArmConstants.L3_CORAL_SCORING_SETPOINT_DEG)));
     NamedCommands.registerCommand(
         "L2",
         new SequentialCommandGroup(
@@ -278,7 +278,7 @@ public class RobotContainer {
                 elevator,
                 scoralArm,
                 SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES,
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG)));
+                SubsystemConstants.ScoralArmConstants.L2_CORAL_SCORING_SETPOINT_DEG)));
     NamedCommands.registerCommand(
         "L3",
         new SequentialCommandGroup(
@@ -287,7 +287,7 @@ public class RobotContainer {
                 elevator,
                 scoralArm,
                 SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES,
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG)));
+                SubsystemConstants.ScoralArmConstants.L3_CORAL_SCORING_SETPOINT_DEG)));
     NamedCommands.registerCommand(
         "L4",
         new SequentialCommandGroup(
@@ -351,7 +351,7 @@ public class RobotContainer {
         "SCORE_CORAL_NEW",
         new SequentialCommandGroup(
             new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
-            scoralRollers.runVoltsCommmand(2.6),
+            scoralRollers.runVoltsCommmand(3.5),
             new WaitCommand(0.3)));
 
     NamedCommands.registerCommand(
@@ -565,7 +565,7 @@ public class RobotContainer {
                 new SetScoralArmTarget(scoralArm, 29, 2),
                 new SequentialCommandGroup(
                     new InstantCommand(() -> climberArm.setVoltage(-1.5)),
-                    new WaitUntilCommand(() -> climberArm.hasReachedGoal(85)),
+                    new WaitUntilCommand(() -> climberArm.hasReachedGoal(80)),
                     new InstantCommand(() -> climberArm.armStop()))));
 
     driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));

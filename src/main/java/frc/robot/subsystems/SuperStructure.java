@@ -103,15 +103,16 @@ public class SuperStructure {
       case L1:
         return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
             && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+                SubsystemConstants.ScoralArmConstants.L3_CORAL_SCORING_SETPOINT_DEG);
       case L2:
         return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
             && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+                SubsystemConstants.ScoralArmConstants.L2_CORAL_SCORING_SETPOINT_DEG);
+        // return true;
       case L3:
         return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES)
             && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+                SubsystemConstants.ScoralArmConstants.L3_CORAL_SCORING_SETPOINT_DEG);
       case L4:
         return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES)
             && scoralArm.hasReachedGoal(
@@ -177,7 +178,7 @@ public class SuperStructure {
                 elevator,
                 scoralArm,
                 ElevatorConstants.L2_SETPOINT_INCHES,
-                ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG),
+                ScoralArmConstants.L3_CORAL_SCORING_SETPOINT_DEG),
             scoralRollers.runVoltsCommmand(-0.9));
       case BARGE_EXTEND:
         currentState = SuperStructureState.BARGE_EXTEND;
@@ -216,7 +217,9 @@ public class SuperStructure {
             elevator,
             scoralArm,
             SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES,
-            SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+            SubsystemConstants.ScoralArmConstants.L2_CORAL_SCORING_SETPOINT_DEG);
+        // return new SequentialCommandGroup(
+        // new SetElevatorTarget(elevator, 6.8, 2), new SetScoralArmTarget(scoralArm, 71, 2));
 
       case L3:
         currentState = SuperStructureState.L3;
@@ -225,7 +228,7 @@ public class SuperStructure {
             elevator,
             scoralArm,
             SubsystemConstants.ElevatorConstants.L3_SETPOINT_INCHES,
-            SubsystemConstants.ScoralArmConstants.LOW_CORAL_SCORING_SETPOINT_DEG);
+            SubsystemConstants.ScoralArmConstants.L3_CORAL_SCORING_SETPOINT_DEG);
 
       case L4:
         currentState = SuperStructureState.L4;

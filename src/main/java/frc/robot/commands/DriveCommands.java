@@ -266,6 +266,7 @@ public class DriveCommands {
                   new ChassisSpeeds(0, 0, rotationAssistEffort), drive.getRotation());
 
           ChassisSpeeds finalInputSpeed = inputSpeeds.plus(assistSpeeds).times(scale);
+
           drive.runVelocity(
               new ChassisSpeeds(
                   forwardSlewRateLimiter.calculate(finalInputSpeed.vxMetersPerSecond),
