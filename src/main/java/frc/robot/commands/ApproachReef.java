@@ -184,6 +184,7 @@ public class ApproachReef extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    drive.stop();
     if (!pointsTooClose && !skipPath) {
       pathCommand.cancel();
     }

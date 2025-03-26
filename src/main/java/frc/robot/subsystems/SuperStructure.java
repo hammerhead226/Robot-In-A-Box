@@ -102,8 +102,7 @@ public class SuperStructure {
             && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
       case L1:
         return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L1_SETPOINT_INCHES)
-            && scoralArm.hasReachedGoal(
-                SubsystemConstants.ScoralArmConstants.L3_CORAL_SCORING_SETPOINT_DEG);
+            && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
       case L2:
         return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
             && scoralArm.hasReachedGoal(

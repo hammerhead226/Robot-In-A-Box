@@ -517,7 +517,7 @@ public class RobotContainer {
     driveController
         .leftTrigger()
         .and(() -> !driveController.rightTrigger().getAsBoolean())
-        .onTrue(
+        .whileTrue(
             new SequentialCommandGroup(
                 new ApproachReef(
                     drive,
@@ -525,6 +525,8 @@ public class RobotContainer {
                     superStructure,
                     false,
                     () -> driveController.leftTrigger().getAsBoolean()),
+                    new WaitUntilCommand(
+                        () -> superStructure.atGoals() && superStructure.isCurrentAReefState()),    
                 new AdjustToReefPost(
                     drive,
                     scoralArm,
@@ -534,7 +536,7 @@ public class RobotContainer {
     driveController
         .rightTrigger()
         .and(() -> !driveController.leftTrigger().getAsBoolean())
-        .onTrue(
+        .whileTrue(
             new SequentialCommandGroup(
                 new ApproachReef(
                     drive,
@@ -542,6 +544,8 @@ public class RobotContainer {
                     superStructure,
                     true,
                     () -> driveController.rightTrigger().getAsBoolean()),
+                new WaitUntilCommand(
+                    () -> superStructure.atGoals() && superStructure.isCurrentAReefState()),
                 new AdjustToReefPost(
                     drive,
                     scoralArm,
@@ -570,10 +574,10 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 new SetScoralArmTarget(scoralArm, 29, 2),
                 new SetClimberArmTarget(climberArm, 90, 2)));
-                // new SequentialCommandGroup(
-                    // new InstantCommand(() -> climberArm.setVoltage(-1.5)),
-                    // new WaitUntilCommand(() -> climberArm.hasReachedGoal(80)),
-                    // new InstantCommand(() -> climberArm.armStop()))));
+    // new SequentialCommandGroup(
+    // new InstantCommand(() -> climberArm.setVoltage(-1.5)),
+    // new WaitUntilCommand(() -> climberArm.hasReachedGoal(80)),
+    // new InstantCommand(() -> climberArm.armStop()))));
 
     // driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
 

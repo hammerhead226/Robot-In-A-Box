@@ -630,6 +630,7 @@ public class Drive extends SubsystemBase {
             .getTranslation()
             .getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center))
         <= 2.5;
+        // <= 0.5;
   }
 
   public boolean shouldEndPath() {

@@ -255,6 +255,14 @@ public class AdjustToReefPost extends Command {
                 sidewaysSlewRateLimiter.calculate(chassisSpeeds.vyMetersPerSecond),
                 chassisSpeeds.omegaRadiansPerSecond)
             .plus(new ChassisSpeeds(branchSensorForwardEffort, reefSensorSideEffort, 0)));
+
+    // if (isAligned) {
+    //   alignState = AlignState.DONE;
+    // }
+
+    // if (!triggerPressed.getAsBoolean()) {
+    //   alignState = AlignState.CANCEL;
+    // }
   }
 
   // Called once the command ends or is interrupted.
@@ -266,6 +274,7 @@ public class AdjustToReefPost extends Command {
       drive.isAutoAlignDone = true;
       superStructure.nextState();
     }
+    Logger.recordOutput("Aligning State", alignState);
     drive.stop();
   }
 
