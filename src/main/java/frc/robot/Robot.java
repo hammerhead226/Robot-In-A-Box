@@ -200,7 +200,7 @@ public class Robot extends LoggedRobot {
     }
     robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
     robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
-
+    robotContainer.getScoralArm().setConstraints(150, 300);
     LimelightHelpers.SetIMUMode("limelight-reef", 1);
 
     robotContainer

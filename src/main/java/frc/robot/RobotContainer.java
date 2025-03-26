@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -27,7 +26,6 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.GoToStowAuto;
 import frc.robot.commands.GoToStowTeleOp;
 import frc.robot.commands.IntakeAlgaeFromReef;
-import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.Rumble;
 import frc.robot.commands.ScoreAlgaeIntoBarge;
@@ -35,7 +33,6 @@ import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetElevatorTarget;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
-import frc.robot.commands.WiggleWiggle;
 import frc.robot.constants.RobotMap;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
@@ -264,6 +261,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L1",
         new SequentialCommandGroup(
+            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
             new InstantCommand(() -> led.setState(LED_STATE.RED)),
             new ToReefHeight(
                 elevator,
@@ -273,6 +271,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L2",
         new SequentialCommandGroup(
+            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
             new InstantCommand(() -> led.setState(LED_STATE.RED)),
             new ToReefHeight(
                 elevator,
@@ -282,6 +281,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L3",
         new SequentialCommandGroup(
+            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
             new InstantCommand(() -> led.setState(LED_STATE.RED)),
             new ToReefHeight(
                 elevator,
@@ -291,6 +291,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L4",
         new SequentialCommandGroup(
+            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
             new InstantCommand(() -> led.setState(LED_STATE.RED)),
             new ToReefHeight(
                 elevator,
@@ -323,11 +324,15 @@ public class RobotContainer {
             new SetScoralArmTarget(
                 scoralArm, SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG, 2),
             new InstantCommand(() -> led.setState(LED_STATE.GREY)),
-            new ParallelRaceGroup(new WaitCommand(1.25), new IntakingCoral(scoralRollers)),
-            new WiggleWiggle(drive, scoralRollers),
-            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
-            new InstantCommand(() -> scoralRollers.stop()),
+            // new IntakingCoral(scoralRollers).withTimeout(0.25),
+            new InstantCommand(() -> scoralRollers.runVolts(1.4)),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE))));
+    NamedCommands.registerCommand(
+        "SEE_CORAL",
+        new SequentialCommandGroup(
+            // new WaitCommand(1.5),
+            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
+            new InstantCommand(() -> scoralRollers.stop())));
 
     NamedCommands.registerCommand(
         "ALGAE_INTAKE",
@@ -352,7 +357,7 @@ public class RobotContainer {
         new SequentialCommandGroup(
             new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
             scoralRollers.runVoltsCommmand(3.5),
-            new WaitCommand(0.3)));
+            new WaitCommand(0.2)));
 
     NamedCommands.registerCommand(
         "INTAKE_ALGAE_FROM_REEF",
@@ -608,12 +613,15 @@ public class RobotContainer {
         .back()
         .onTrue(
             new SequentialCommandGroup(
+                new InstantCommand(() -> superStructure.setCurrentState(SuperStructureState.L4)),
                 new SetElevatorTarget(
                     elevator, SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES, 2),
                 new SetScoralArmTarget(
                     scoralArm,
                     SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG,
-                    2)));
+                    2),
+                new InstantCommand(
+                    () -> superStructure.setWantedState(SuperStructureState.SCORING_CORAL))));
   }
 
   private void manipControls() {

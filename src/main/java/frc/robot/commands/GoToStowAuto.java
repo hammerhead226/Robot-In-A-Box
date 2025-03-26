@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.constants.SubsystemConstants.ElevatorConstants;
@@ -22,7 +23,9 @@ public class GoToStowAuto extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
+        new InstantCommand(() -> scoralArm.setConstraints(300, 600)),
         new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 10),
+        new InstantCommand(() -> scoralArm.setConstraints(150, 300)),
         scoralRollers.stopCommand(),
         new WaitUntilCommand(() -> scoralArm.atGoal(10)),
         new SetElevatorTarget(elevator, ElevatorConstants.STOW_SETPOINT_INCH, 15),
