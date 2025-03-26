@@ -30,6 +30,7 @@ import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.Rumble;
 import frc.robot.commands.ScoreAlgaeIntoBarge;
 import frc.robot.commands.ScoreCoral;
+import frc.robot.commands.SetClimberArmTarget;
 import frc.robot.commands.SetElevatorTarget;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
@@ -568,12 +569,13 @@ public class RobotContainer {
         .onTrue(
             new ParallelCommandGroup(
                 new SetScoralArmTarget(scoralArm, 29, 2),
-                new SequentialCommandGroup(
-                    new InstantCommand(() -> climberArm.setVoltage(-1.5)),
-                    new WaitUntilCommand(() -> climberArm.hasReachedGoal(80)),
-                    new InstantCommand(() -> climberArm.armStop()))));
+                new SetClimberArmTarget(climberArm, 90, 2)));
+                // new SequentialCommandGroup(
+                    // new InstantCommand(() -> climberArm.setVoltage(-1.5)),
+                    // new WaitUntilCommand(() -> climberArm.hasReachedGoal(80)),
+                    // new InstantCommand(() -> climberArm.armStop()))));
 
-    driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
+    // driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
 
     driveController.b().onTrue(new InstantCommand(() -> climberArm.setVoltage(2)));
     driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
