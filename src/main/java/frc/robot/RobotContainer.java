@@ -607,7 +607,7 @@ public class RobotContainer {
                             scoralArm,
                             scoralRollers,
                             led)
-                        .andThen(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW_ALGAE)))));
+                        .andThen(new InstantCommand(() -> superStructure.nextState()))));
 
     driveController
         .leftBumper()
