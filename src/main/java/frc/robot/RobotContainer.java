@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -108,10 +109,11 @@ public class RobotContainer {
 
   public final Trigger elevatorBrakeTrigger;
   private Trigger slowModeTrigger;
-  private final Trigger autoAlignTrigger;
-  private final Trigger rumbleTrigger;
+  private final Trigger reefAutoAlignTrigger;
+  private final Trigger autoAlignDoneRumbleTrigger;
   private Trigger resetLimelight;
   private Trigger turnLimelightON;
+  private Trigger autoAlignRelease;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -413,20 +415,22 @@ public class RobotContainer {
 
     slowModeTrigger = new Trigger(() -> superStructure.shouldSlowMode());
 
-    autoAlignTrigger =
+    reefAutoAlignTrigger =
         new Trigger(
             () ->
                 drive.shouldRunReefCommand()
                     && (driveController.rightTrigger().getAsBoolean()
                         || driveController.leftTrigger().getAsBoolean()));
-    rumbleTrigger =
+    autoAlignDoneRumbleTrigger =
         new Trigger(
             () ->
-                drive.isAutoAlignDone
+                (drive.isReefAutoAlignDone
                     && superStructure.atGoals()
-                    && superStructure.isCurrentAReefState());
+                    && superStructure.isCurrentAReefState()) || (drive.isBargeAutoAlignDone));
     resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
     turnLimelightON = new Trigger(() -> SmartDashboard.getBoolean("Enable", false));
+
+    autoAlignRelease = new Trigger(() -> driveController.leftTrigger().getAsBoolean() || driveController.rightTrigger().getAsBoolean());
 
     configureButtonBindings();
     // test();
@@ -470,7 +474,7 @@ public class RobotContainer {
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
 
-    autoAlignTrigger.onTrue(
+    reefAutoAlignTrigger.onTrue(
         new ReinitializingCommand(
             () -> {
               superStructure.setWantedState(superStructure.getLastReefState());
@@ -478,7 +482,7 @@ public class RobotContainer {
               return superStructure.getSuperStructureCommand();
             }));
 
-    rumbleTrigger.onTrue(new Rumble(driveController));
+    autoAlignDoneRumbleTrigger.onTrue(new InstantCommand(() -> led.setState(LED_STATE.PAPAYA_ORANGE)).andThen(new Rumble(driveController)).andThen(new InstantCommand(() -> drive.isBargeAutoAlignDone = false)).andThen(new InstantCommand(() -> drive.isReefAutoAlignDone = false)));
 
     elevatorBrakeTrigger.onTrue(
         new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
@@ -548,6 +552,8 @@ public class RobotContainer {
                     true,
                     () -> driveController.rightTrigger().getAsBoolean())));
 
+    autoAlignRelease.onTrue(new InstantCommand(() -> led.setState(LED_STATE.RED)));
+
     driveController
         .rightBumper()
         .onTrue(
@@ -585,8 +591,14 @@ public class RobotContainer {
     driveController
         .leftBumper()
         .whileTrue(
+            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.BARGE_EXTEND)).andThen(
             new AlignToBarge(
-                drive, led, superStructure, () -> driveController.leftBumper().getAsBoolean()));
+                drive, led, superStructure, () -> driveController.leftBumper().getAsBoolean())));
+
+    driveController
+    .leftBumper()
+    .onFalse(
+        new InstantCommand(() -> led.setState(LED_STATE.PINK_LAVENDER)));
 
     // driveController
     //     .x()

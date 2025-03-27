@@ -94,7 +94,7 @@ public class AdjustToReefPost extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    drive.isAutoAlignDone = false;
+    drive.isReefAutoAlignDone = false;
 
     alignState =
         scoralArm.isCANRangeConnected()
@@ -271,7 +271,7 @@ public class AdjustToReefPost extends Command {
     alignState = AlignState.CANCEL;
     if (isAligned) {
       alignState = AlignState.DONE;
-      drive.isAutoAlignDone = true;
+      drive.isReefAutoAlignDone = true;
       superStructure.nextState();
     }
     Logger.recordOutput("Aligning State", alignState);

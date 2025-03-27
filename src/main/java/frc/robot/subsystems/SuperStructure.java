@@ -76,6 +76,8 @@ public class SuperStructure {
       led.setState(LED_STATE.GREY);
     } else if (wantedState == SuperStructureState.PROCESSOR) {
       led.setState(LED_STATE.YELLOW);
+    } else if (wantedState == SuperStructureState.BARGE_EXTEND) {
+      led.setState(LED_STATE.PINK_LAVENDER);
     }
     this.wantedState = wantedState;
   }

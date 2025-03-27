@@ -108,6 +108,7 @@ public final class SubsystemConstants {
     GREEN,
     GREY,
     PURPLE,
+    PINK_LAVENDER,
     PAPAYA_ORANGE,
     FLASHING_GREEN,
     FLASHING_RED,

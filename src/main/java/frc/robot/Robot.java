@@ -136,6 +136,18 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     robotContainer.getScoralRollers().stop();
+    robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
+    robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
+    robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
+    robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
+    robotContainer.getScoralArm().setConstraints(150, 300);
+    robotContainer
+        .getElevator()
+        .setElevatorCurrent(robotContainer.getElevator().getElevatorPosition());
+    robotContainer
+        .getElevator()
+        .setElevatorGoal(robotContainer.getElevator().getElevatorPosition());
+        
     robotContainer.getLED().setState(LED_STATE.FIRE);
     LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50);
     LimelightHelpers.SetIMUMode("limelight-reef", 1);
@@ -199,12 +211,14 @@ public class Robot extends LoggedRobot {
       autonomousCommand.cancel();
     }
 
+    LimelightHelpers.SetIMUMode("limelight-reef", 1);
+
     robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
     robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
     robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
     robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
     robotContainer.getScoralArm().setConstraints(150, 300);
-    LimelightHelpers.SetIMUMode("limelight-reef", 1);
+    
 
     robotContainer
         .getElevator()
