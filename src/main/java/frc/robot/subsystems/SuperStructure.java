@@ -303,6 +303,16 @@ public class SuperStructure {
               new InstantCommand(() -> this.enableAlgaeMode(false)));
         }
 
+      case INTAKE_ALGAE:
+        currentState = SuperStructureState.INTAKE_ALGAE;
+        double height1 =
+            drive.getNearestParition(6) % 2 == 0
+                ? 6.5
+                : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
+        double height2 = drive.getNearestParition(6) % 2 == 0 ? 9 : 2;
+        return new IntakeAlgaeFromReef(
+            drive, scoralArm, scoralRollers, elevator, led, height1, height2);
+
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(

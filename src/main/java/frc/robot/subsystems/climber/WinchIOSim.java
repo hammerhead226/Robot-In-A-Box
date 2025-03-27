@@ -8,48 +8,63 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.constants.SubsystemConstants;
 
 public class WinchIOSim implements WinchIO {
-  private final DCMotor motor = DCMotor.getKrakenX60(1);
-  // Corrected measurementStdDevs array with 2 elements
+  // CHANGE THESE VALUES TO MATCH YOUR MOTOR AND GEARBOX
+  private int gearBoxMotorCount = 1;
+  private double gearing = 1.5;
+  //  private double momentOfInertia = 1;
+  private DCMotor motor = DCMotor.getKrakenX60Foc(gearBoxMotorCount);
+  //  private double[] stds = {1, 2, 3};
+
   private DCMotorSim sim =
-      new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 1, 1), motor, 0.0, 0.0);
+      new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 0.004, gearing), motor);
 
-  private PIDController pid = new PIDController(0, 0, 0);
+  private PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
+  private boolean closedLoop = false;
   private double ffVolts = 0.0;
   private double appliedVolts = 0.0;
-  private double velocitySetpointRPS = 0;
+
+  private double clampedValueLowVolts = -12.0;
+  private double clampedValueHighVolts = 12.0;
 
   @Override
   public void updateInputs(WinchIOInputs inputs) {
-    appliedVolts =
-        MathUtil.clamp(pid.calculate(sim.getAngularVelocityRPM() / 60) + ffVolts, -12.0, 12.0);
-
-    sim.setInputVoltage(appliedVolts);
-
+    if (closedLoop) {
+      appliedVolts =
+          MathUtil.clamp(
+              pid.calculate(sim.getAngularVelocityRadPerSec()) + ffVolts,
+              clampedValueLowVolts,
+              clampedValueHighVolts);
+      sim.setInputVoltage(appliedVolts);
+    }
+    // sim.setInputVoltage(appliedVolts);
     sim.update(SubsystemConstants.LOOP_PERIOD_SECONDS);
 
-    inputs.velocitySetpointRPM = velocitySetpointRPS * 60.;
-    inputs.winchVelocityRPM = sim.getAngularVelocityRPM();
+    inputs.positionRad = 0.0;
+    // inputs.velocityRadPerSec =
+    // Units.radiansPerSecondToRotationsPerMinute(sim.getAngularVelocityRadPerSec());
+    inputs.velocityRadPerSec = sim.getAngularVelocityRPM();
     inputs.appliedVolts = appliedVolts;
     inputs.statorCurrentAmps = sim.getCurrentDrawAmps();
   }
 
   @Override
   public void setVoltage(double volts) {
+    closedLoop = false;
     appliedVolts = volts;
     sim.setInputVoltage(volts);
   }
 
   @Override
-  public void setVelocityRPM(double velocityRPS, double ffVolts) {
+  public void setVelocity(double velocityRadPerSec, double ffVolts) {
+    closedLoop = true;
+    pid.setSetpoint(velocityRadPerSec);
     this.ffVolts = ffVolts;
-    this.velocitySetpointRPS = velocityRPS;
-    pid.setSetpoint(velocityRPS);
   }
 
   @Override
   public void stop() {
-    setVelocityRPM(0, 0);
+    setVoltage(0.0);
   }
 
   @Override

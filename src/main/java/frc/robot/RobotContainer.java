@@ -425,12 +425,17 @@ public class RobotContainer {
         new Trigger(
             () ->
                 (drive.isReefAutoAlignDone
-                    && superStructure.atGoals()
-                    && superStructure.isCurrentAReefState()) || (drive.isBargeAutoAlignDone));
+                        && superStructure.atGoals()
+                        && superStructure.isCurrentAReefState())
+                    || (drive.isBargeAutoAlignDone));
     resetLimelight = new Trigger(() -> SmartDashboard.getBoolean("Reset", false));
     turnLimelightON = new Trigger(() -> SmartDashboard.getBoolean("Enable", false));
 
-    autoAlignRelease = new Trigger(() -> driveController.leftTrigger().getAsBoolean() || driveController.rightTrigger().getAsBoolean());
+    autoAlignRelease =
+        new Trigger(
+            () ->
+                driveController.leftTrigger().getAsBoolean()
+                    || driveController.rightTrigger().getAsBoolean());
 
     configureButtonBindings();
     // test();
@@ -482,7 +487,11 @@ public class RobotContainer {
               return superStructure.getSuperStructureCommand();
             }));
 
-    autoAlignDoneRumbleTrigger.onTrue(new InstantCommand(() -> led.setState(LED_STATE.PAPAYA_ORANGE)).andThen(new Rumble(driveController)).andThen(new InstantCommand(() -> drive.isBargeAutoAlignDone = false)).andThen(new InstantCommand(() -> drive.isReefAutoAlignDone = false)));
+    autoAlignDoneRumbleTrigger.onTrue(
+        new InstantCommand(() -> led.setState(LED_STATE.PAPAYA_ORANGE))
+            .andThen(new Rumble(driveController))
+            .andThen(new InstantCommand(() -> drive.isBargeAutoAlignDone = false))
+            .andThen(new InstantCommand(() -> drive.isReefAutoAlignDone = false)));
 
     elevatorBrakeTrigger.onTrue(
         new InstantCommand(() -> elevator.setBrake(false)).ignoringDisable(true));
@@ -572,48 +581,49 @@ public class RobotContainer {
     driveController
         .a()
         .onTrue(
-            new ParallelCommandGroup(
-                new SetScoralArmTarget(scoralArm, 29, 2),
-                new SetClimberArmTarget(climberArm, 90, 2)));
-    // new SequentialCommandGroup(
-    // new InstantCommand(() -> climberArm.setVoltage(-1.5)),
-    // new WaitUntilCommand(() -> climberArm.hasReachedGoal(80)),
-    // new InstantCommand(() -> climberArm.armStop()))));
+            new ConditionalCommand(
+                new InstantCommand(() -> winch.runVolts(-6)),
+                new ParallelCommandGroup(
+                    new SetScoralArmTarget(scoralArm, 29, 2),
+                    new SetClimberArmTarget(climberArm, 90, 2)),
+                () -> scoralArm.hasReachedGoal(29) && climberArm.hasReachedGoal(90)));
 
-    // driveController.a().onFalse(new InstantCommand(() -> climberArm.armStop()));
+    driveController.a().onFalse(new InstantCommand(() -> winch.stop()));
 
-    driveController.b().onTrue(new InstantCommand(() -> climberArm.setVoltage(2)));
-    driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
+    // driveController.b().onTrue(new InstantCommand(() -> climberArm.setVoltage(2)));
+    // driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
 
-    driveController.x().onTrue(new InstantCommand(() -> winch.runVolts(-6)));
-    driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
+    // driveController.x().onTrue(new InstantCommand(() -> winch.runVolts(-6)));
+    // driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
+    driveController
+        .y()
+        .whileTrue(
+            new InstantCommand(
+                    () -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE))
+                .andThen(
+                    new ReinitializingCommand(
+                            () -> superStructure.getSuperStructureCommand(),
+                            elevator,
+                            scoralArm,
+                            scoralRollers,
+                            led)
+                        .andThen(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW_ALGAE)))));
 
     driveController
         .leftBumper()
         .whileTrue(
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.BARGE_EXTEND)).andThen(
-            new AlignToBarge(
-                drive, led, superStructure, () -> driveController.leftBumper().getAsBoolean())));
+            new InstantCommand(
+                    () -> superStructure.setWantedState(SuperStructureState.BARGE_EXTEND))
+                .andThen(
+                    new AlignToBarge(
+                        drive,
+                        led,
+                        superStructure,
+                        () -> driveController.leftBumper().getAsBoolean())));
 
     driveController
-    .leftBumper()
-    .onFalse(
-        new InstantCommand(() -> led.setState(LED_STATE.PINK_LAVENDER)));
-
-    // driveController
-    //     .x()
-    //     .onTrue(new InstantCommand(() ->
-    // superStructure.setWantedState(SuperStructureState.SOURCE)));
-    // driveController
-    //     .y()
-    //     .onTrue(new InstantCommand(() ->
-    // superStructure.setWantedState(SuperStructureState.PROCESSOR)));
-    // driveController
-    //     .a()
-    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L2)));
-    // driveController
-    //     .b()
-    //     .onTrue(new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.L1)));
+        .leftBumper()
+        .onFalse(new InstantCommand(() -> led.setState(LED_STATE.PINK_LAVENDER)));
 
     driveController
         .povDown()
