@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -270,17 +271,28 @@ public class SuperStructure {
               new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
               new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
         } else {
+
           double height1 =
               drive.getNearestParition(6) % 2 == 0
                   ? 6.5
                   : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
           double height2 = drive.getNearestParition(6) % 2 == 0 ? 9 : 2;
+
+          Command scoralArmCommand;
+          if (elevator.getElevatorPosition() >= 20) {
+            scoralArmCommand =
+                new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG + 4, 2);
+          } else {
+            scoralArmCommand =
+                new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 4, 2);
+          }
           // double height1 = drive.getNearestParition(6) % 2 == 0 ? 6 : 6.5;
           // double height2 = drive.getNearestParition(6) % 2 == 0 ? 8 : 9;
+
           return new SequentialCommandGroup(
               scoralRollers.runVoltsCommmand(2.6),
               new WaitCommand(0.5),
-              new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG + 4, 10),
+              scoralArmCommand,
               scoralRollers.stopCommand(),
               new InstantCommand(() -> this.setCurrentState(SuperStructureState.INTAKE_ALGAE)),
               new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW_ALGAE)),

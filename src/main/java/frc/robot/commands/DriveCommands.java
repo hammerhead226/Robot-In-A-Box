@@ -37,7 +37,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -104,10 +103,7 @@ public class DriveCommands {
       LED led,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier,
-      BooleanSupplier reefRightSupplier,
-      BooleanSupplier reefLeftSupplier,
-      BooleanSupplier angleAssistSupplier) {
+      DoubleSupplier omegaSupplier) {
     // BooleanSupplier sourceAlignSupplier,
     // BooleanSupplier processorAlignSupplier,
     // BooleanSupplier anchorAlignSupplier) {
@@ -145,7 +141,7 @@ public class DriveCommands {
           double speedDebuff = 0.75;
           targetPose = null;
 
-          if (angleAssistSupplier.getAsBoolean()) {
+          if (2 == 1) {
             if (superStructure.getWantedState() == SuperStructureState.SOURCE) {
               targetPose = drive.getNearestSource();
               targetPose =

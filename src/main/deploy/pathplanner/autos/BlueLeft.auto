@@ -103,9 +103,34 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "BlueLeftSixth"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BlueLeftSeventh"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SEE_CORAL"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "STOW"
+            "name": "SCORE_CORAL_NEW"
           }
         }
       ]

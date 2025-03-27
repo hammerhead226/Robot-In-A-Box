@@ -93,7 +93,7 @@ public final class SubsystemConstants {
     public static final double L2_CORAL_SCORING_SETPOINT_DEG = 76.5;
     public static final double L4_CORAL_SCORING_SETPOINT_DEG = 59.40;
     public static final double BARGE_BACK_SETPOINT_DEG = 69;
-    public static final double BARGE_FORWARD_SETPOINT_DEG = 110;
+    public static final double BARGE_FORWARD_SETPOINT_DEG = 125;
     public static final double PROCESSOR_SETPOINT_DEG = 20;
   }
 

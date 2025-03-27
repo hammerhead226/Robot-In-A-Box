@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AdjustToReefPost;
+import frc.robot.commands.AlignToBarge;
 import frc.robot.commands.ApproachReef;
 import frc.robot.commands.BargeExtend;
 import frc.robot.commands.DriveCommands;
@@ -449,10 +450,7 @@ public class RobotContainer {
             led,
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
-            () -> -driveController.getRightX(),
-            () -> driveController.rightTrigger().getAsBoolean(),
-            () -> driveController.leftTrigger().getAsBoolean(),
-            () -> driveController.leftBumper().getAsBoolean()));
+            () -> -driveController.getRightX()));
 
     driveController
         .leftTrigger()
@@ -509,10 +507,7 @@ public class RobotContainer {
             led,
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
-            () -> -driveController.getRightX(),
-            () -> driveController.rightTrigger().getAsBoolean(),
-            () -> driveController.leftTrigger().getAsBoolean(),
-            () -> driveController.leftBumper().getAsBoolean()));
+            () -> -driveController.getRightX()));
 
     driveController
         .leftTrigger()
@@ -525,8 +520,8 @@ public class RobotContainer {
                     superStructure,
                     false,
                     () -> driveController.leftTrigger().getAsBoolean()),
-                    new WaitUntilCommand(
-                        () -> superStructure.atGoals() && superStructure.isCurrentAReefState()),    
+                new WaitUntilCommand(
+                    () -> superStructure.atGoals() && superStructure.isCurrentAReefState()),
                 new AdjustToReefPost(
                     drive,
                     scoralArm,
@@ -586,6 +581,12 @@ public class RobotContainer {
 
     driveController.x().onTrue(new InstantCommand(() -> winch.runVolts(-6)));
     driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
+
+    driveController
+        .leftBumper()
+        .whileTrue(
+            new AlignToBarge(
+                drive, led, superStructure, () -> driveController.leftBumper().getAsBoolean()));
 
     // driveController
     //     .x()

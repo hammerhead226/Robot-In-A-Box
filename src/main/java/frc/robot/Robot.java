@@ -198,6 +198,9 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
+    robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
     robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
     robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
     robotContainer.getScoralArm().setConstraints(150, 300);

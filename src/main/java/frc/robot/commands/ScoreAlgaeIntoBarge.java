@@ -31,9 +31,9 @@ public class ScoreAlgaeIntoBarge extends SequentialCommandGroup {
     this.scoralRollers = m_scoralRollers;
 
     addCommands(
-        new InstantCommand(() -> scoralArm.setConstraints(180, 500)),
-        new SetScoralArmTarget(scoralArm, ScoralArmConstants.BARGE_FORWARD_SETPOINT_DEG, 20),
-        scoralRollers.runVoltsCommmand(5),
+        new InstantCommand(() -> scoralArm.setConstraints(200, 650)),
+        new SetScoralArmTarget(scoralArm, ScoralArmConstants.BARGE_FORWARD_SETPOINT_DEG, 38),
+        scoralRollers.runVoltsCommmand(3.5),
         new InstantCommand(() -> scoralArm.setConstraints(150, 300)),
         new WaitCommand(0.5),
         new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers));

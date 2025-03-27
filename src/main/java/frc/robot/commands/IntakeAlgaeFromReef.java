@@ -46,7 +46,9 @@ public class IntakeAlgaeFromReef extends SequentialCommandGroup {
     addCommands(
         new InstantCommand(() -> led.setState(LED_STATE.PURPLE)),
         new ParallelCommandGroup(
-            new SetElevatorTarget(elevator, height1, 15), new MoveToReefCenter(drive)),
+            new SetElevatorTarget(elevator, height1, 15),
+            new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG, 2),
+            new MoveToReefCenter(drive)),
         new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 2),
         new WaitUntilCommand(() -> elevator.hasReachedGoal(height1)),
         new SetScoralArmTarget(scoralArm, 78, 2),
