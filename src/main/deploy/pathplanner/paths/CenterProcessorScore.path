@@ -4,41 +4,34 @@
     {
       "anchor": {
         "x": 5.97,
-        "y": 0.8305921052631584
+        "y": 0.91
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.675204918032787,
-        "y": 1.3023031708369293
+        "x": 5.98185996798156,
+        "y": 0.6551074646309993
       },
       "isLocked": false,
-      "linkedName": "CenterProcessorExit"
+      "linkedName": "CenterProcessor23"
     },
     {
       "anchor": {
-        "x": 3.847866661460311,
-        "y": 2.838352104104398
+        "x": 5.97,
+        "y": 0.5900493421052636
       },
       "prevControl": {
-        "x": 4.11159616965703,
-        "y": 0.8483930877109549
+        "x": 5.871463434955036,
+        "y": 0.8198112740024769
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CenterProcessorScoreExit"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "STOW_AFTER_PROCESSOR",
-      "waypointRelativePos": 0.09011627906976699,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -49,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Center Processor",

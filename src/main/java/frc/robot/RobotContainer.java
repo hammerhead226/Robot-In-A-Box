@@ -367,18 +367,14 @@ public class RobotContainer {
             new WaitCommand(0.2)));
 
     NamedCommands.registerCommand(
-        "PROCESSOR_SETPOINTS",
-        new MoveToProcessorSetpoints(scoralArm, elevator));
+        "PROCESSOR_SETPOINTS", new MoveToProcessorSetpoints(scoralArm, elevator));
 
-        NamedCommands.registerCommand(
-            "SCORE_PROCESSOR",
-            new SequentialCommandGroup(
-            scoralRollers.runVoltsCommmand(2),
-            new WaitCommand(0.5)));
+    NamedCommands.registerCommand(
+        "SCORE_PROCESSOR",
+        new SequentialCommandGroup(scoralRollers.runVoltsCommmand(2), new WaitCommand(0.5)));
 
-            NamedCommands.registerCommand(
-            "STOW_AFTER_PROCESSOR",
-            new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers));
+    NamedCommands.registerCommand(
+        "STOW_AFTER_PROCESSOR", new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers));
 
     NamedCommands.registerCommand(
         "INTAKE_ALGAE_FROM_REEF",
@@ -400,6 +396,7 @@ public class RobotContainer {
     autos.addOption("BlueLeft", AutoBuilder.buildAuto("BlueLeft"));
     // autos.addOption("BlueLeftPush", AutoBuilder.buildAuto("BlueLeftPush"));
     autos.addOption("CenterBarge", AutoBuilder.buildAuto("CenterBarge"));
+    autos.addOption("CenterProcessor", AutoBuilder.buildAuto("CenterProcessor"));
     // autos.addOption("BlueMiddleLeft", AutoBuilder.buildAuto("BlueMiddleLeft"));
     // autos.addOption("BlueMiddleRight", AutoBuilder.buildAuto("BlueMiddleRight"));
     autos.addOption("BlueRight", AutoBuilder.buildAuto("BlueRight"));
@@ -596,7 +593,7 @@ public class RobotContainer {
                 .andThen(new InstantCommand(() -> superStructure.nextState())));
 
     driveController
-        .a()
+        .x()
         .onTrue(
             new ConditionalCommand(
                 new WinchClimb(winch, climberArm, () -> driveController.a().getAsBoolean()),
@@ -605,7 +602,7 @@ public class RobotContainer {
                     new SetClimberArmTarget(climberArm, 90, 2)),
                 () -> scoralArm.hasReachedGoal(29) && climberArm.hasReachedGoal(90)));
 
-    driveController.a().onFalse(new InstantCommand(() -> winch.stop()));
+    driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
 
     // driveController.b().onTrue(new InstantCommand(() -> climberArm.setVoltage(2)));
     // driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
@@ -613,7 +610,7 @@ public class RobotContainer {
     // driveController.x().onTrue(new InstantCommand(() -> winch.runVolts(-6)));
     // driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
     driveController
-        .y()
+        .b()
         .whileTrue(
             new InstantCommand(
                     () -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE))
