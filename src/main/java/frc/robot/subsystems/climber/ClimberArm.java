@@ -169,9 +169,9 @@ public class ClimberArm extends SubsystemBase {
         armProfile.calculate(
             SubsystemConstants.LOOP_PERIOD_SECONDS, armCurrentStateDegrees, armGoalStateDegrees);
 
-    if (!isWinching) {
+    // if (!isWinching) {
       setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
-    }
+    // }
 
     Logger.processInputs("Climber Arm", pInputs);
     // Logger.recordOutput("Debug Climb Arm/arm error", getArmError());

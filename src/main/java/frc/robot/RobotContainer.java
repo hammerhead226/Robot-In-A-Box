@@ -596,7 +596,7 @@ public class RobotContainer {
         .x()
         .onTrue(
             new ConditionalCommand(
-                new WinchClimb(winch, climberArm, () -> driveController.a().getAsBoolean()),
+                new WinchClimb(winch, climberArm, () -> driveController.x().getAsBoolean()),
                 new ParallelCommandGroup(
                     new SetScoralArmTarget(scoralArm, 29, 2),
                     new SetClimberArmTarget(climberArm, 90, 2)),
@@ -604,6 +604,10 @@ public class RobotContainer {
 
     driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
 
+    // driveController.a().onTrue(new InstantCommand(() -> winch.runVolts(-2)));
+    // driveController.a().onFalse(new InstantCommand(() -> winch.stop()));
+
+    
     // driveController.b().onTrue(new InstantCommand(() -> climberArm.setVoltage(2)));
     // driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
 
