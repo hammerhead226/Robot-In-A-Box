@@ -29,7 +29,7 @@ public class ClimberArm extends SubsystemBase {
   private static double maxVelocityDegPerSec;
   private static double maxAccelerationDegPerSecSquared;
 
-  private boolean closedLoop = true;
+  public boolean isWinching;
 
   private TrapezoidProfile armProfile;
   private TrapezoidProfile.Constraints armConstraints;
@@ -74,6 +74,8 @@ public class ClimberArm extends SubsystemBase {
 
     armFFModel = new ArmFeedforward(0, 0.01, 0.015);
 
+    isWinching = false;
+
     // CHANGE PER ARM
     maxVelocityDegPerSec = 60;
     maxAccelerationDegPerSecSquared = 100;
@@ -115,7 +117,7 @@ public class ClimberArm extends SubsystemBase {
   }
 
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
-    closedLoop = true;
+    // isWinching = false;
     // positionDegs = MathUtil.clamp(positionDegs, 33, 120);
     arm.setPositionSetpointDegs(
         positionDegs,
@@ -151,7 +153,7 @@ public class ClimberArm extends SubsystemBase {
   }
 
   public void setVoltage(double volts) {
-    closedLoop = false;
+    // isWinching = false;
     arm.setVoltage(volts);
   }
 
@@ -167,9 +169,9 @@ public class ClimberArm extends SubsystemBase {
         armProfile.calculate(
             SubsystemConstants.LOOP_PERIOD_SECONDS, armCurrentStateDegrees, armGoalStateDegrees);
 
-    // if (closedLoop) {
-    setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
-    // }
+    if (!isWinching) {
+      setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
+    }
 
     Logger.processInputs("Climber Arm", pInputs);
     // Logger.recordOutput("Debug Climb Arm/arm error", getArmError());

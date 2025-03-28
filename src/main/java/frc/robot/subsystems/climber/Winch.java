@@ -76,6 +76,10 @@ public class Winch extends SubsystemBase {
     io.setVoltage(volts);
   }
 
+  public double getStatorCurrentAmps() {
+    return inputs.statorCurrentAmps;
+  }
+
   /** Run closed loop at the specified velocity. */
   public void runVelocity(double velocityRPM) {
     var velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(velocityRPM);

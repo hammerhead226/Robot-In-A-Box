@@ -68,7 +68,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
           (climbCoder.getAbsolutePosition().getValueAsDouble() + Units.degreesToRotations(50))
               * CLIMBER_ARM_GEAR_RATIO);
     } else {
-      leader.setPosition(Units.degreesToRotations(90) * CLIMBER_ARM_GEAR_RATIO);
+      leader.setPosition(Units.degreesToRotations(117) * CLIMBER_ARM_GEAR_RATIO);
     }
 
     leaderPositionDegs = leader.getPosition();

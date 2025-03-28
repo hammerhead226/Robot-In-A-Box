@@ -36,6 +36,7 @@ import frc.robot.commands.SetClimberArmTarget;
 import frc.robot.commands.SetElevatorTarget;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
+import frc.robot.commands.WinchClimb;
 import frc.robot.constants.RobotMap;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
@@ -582,7 +583,7 @@ public class RobotContainer {
         .a()
         .onTrue(
             new ConditionalCommand(
-                new InstantCommand(() -> winch.runVolts(-6)),
+                new WinchClimb(winch, climberArm, () -> driveController.a().getAsBoolean()),
                 new ParallelCommandGroup(
                     new SetScoralArmTarget(scoralArm, 29, 2),
                     new SetClimberArmTarget(climberArm, 90, 2)),
