@@ -34,10 +34,10 @@ public class WinchClimb extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climberArm.isWinching = true;
+    // climberArm.isWinching = true;
     voltageSlewRateLimiter = new SlewRateLimiter(0.2);
-    timeTest = Timer.getFPGATimestamp();
-    climberArm.setArmGoal(140);
+    // timeTest = Timer.getFPGATimestamp();
+    // climberArm.setArmGoal(140);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
