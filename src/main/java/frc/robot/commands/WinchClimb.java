@@ -26,7 +26,6 @@ public class WinchClimb extends Command {
     this.winch = winch;
     this.continueWinching = continueWinching;
 
-    
     addRequirements(winch, climberArm);
     // Use addRequirements() here to declare subsystem dependencies.
   }

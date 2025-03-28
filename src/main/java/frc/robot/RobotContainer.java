@@ -25,9 +25,11 @@ import frc.robot.commands.AlignToBarge;
 import frc.robot.commands.ApproachReef;
 import frc.robot.commands.BargeExtend;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.GoToStowAfterProcessor;
 import frc.robot.commands.GoToStowAuto;
 import frc.robot.commands.GoToStowTeleOp;
 import frc.robot.commands.IntakeAlgaeFromReef;
+import frc.robot.commands.MoveToProcessorSetpoints;
 import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.Rumble;
 import frc.robot.commands.ScoreAlgaeIntoBarge;
@@ -363,6 +365,20 @@ public class RobotContainer {
             new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
             scoralRollers.runVoltsCommmand(3.5),
             new WaitCommand(0.2)));
+
+    NamedCommands.registerCommand(
+        "PROCESSOR_SETPOINTS",
+        new MoveToProcessorSetpoints(scoralArm, elevator));
+
+        NamedCommands.registerCommand(
+            "SCORE_PROCESSOR",
+            new SequentialCommandGroup(
+            scoralRollers.runVoltsCommmand(2),
+            new WaitCommand(0.5)));
+
+            NamedCommands.registerCommand(
+            "STOW_AFTER_PROCESSOR",
+            new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers));
 
     NamedCommands.registerCommand(
         "INTAKE_ALGAE_FROM_REEF",

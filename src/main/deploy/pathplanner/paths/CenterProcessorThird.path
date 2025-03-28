@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.191432119205298,
-        "y": 3.877
+        "x": 5.97,
+        "y": 0.91
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.891212104182085,
-        "y": 3.8914344422190115
+        "x": 4.675204918032787,
+        "y": 1.381711065573771
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CenterProcessor23"
     },
     {
       "anchor": {
-        "x": 5.701,
-        "y": 3.8766
+        "x": 3.847866661460311,
+        "y": 2.838352104104398
       },
       "prevControl": {
-        "x": 5.950217649911276,
-        "y": 3.8568373338665967
+        "x": 4.11159616965703,
+        "y": 0.8483930877109547
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterBarge12"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,15 +33,15 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "L4",
-      "waypointRelativePos": 0.34195839675292966,
+      "name": "STOW_AFTER_PROCESSOR",
+      "waypointRelativePos": 0.35688121402406286,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -49,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -29.999999999999996
   },
   "reversed": false,
-  "folder": "Center Barge",
+  "folder": "Center Processor",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 180.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

@@ -3,38 +3,43 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.191432119205298,
-        "y": 3.877
+        "x": 5.742110655737705,
+        "y": 3.971055327868852
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.891212104182085,
-        "y": 3.8914344422190115
+        "x": 8.331454918031557,
+        "y": 3.935092213117688
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.701,
-        "y": 3.8766
+        "x": 5.97,
+        "y": 0.91
       },
       "prevControl": {
-        "x": 5.950217649911276,
-        "y": 3.8568373338665967
+        "x": 5.981864754097131,
+        "y": 1.66941598360949
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterBarge12"
+      "linkedName": "CenterProcessor23"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.26626192541197463,
+      "rotationDegrees": 90.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "L4",
-      "waypointRelativePos": 0.34195839675292966,
+      "name": "PROCESSOR_SETPOINTS",
+      "waypointRelativePos": 0.46991104133961276,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -49,10 +54,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Center Barge",
+  "folder": "Center Processor",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0

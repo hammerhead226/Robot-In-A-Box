@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.701,
+        "x": 5.7401,
         "y": 3.8766
       },
       "prevControl": {
-        "x": 5.950217649911276,
+        "x": 5.989317649911277,
         "y": 3.8568373338665967
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterBarge12"
+      "linkedName": "CenterProcessor12"
     }
   ],
   "rotationTargets": [],
@@ -52,7 +52,7 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Center Barge",
+  "folder": "Center Processor",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0

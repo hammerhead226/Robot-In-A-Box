@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterBargeFirst"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SCORE_CORAL_NEW"
+            "pathName": "CenterProcessorFirst"
           }
         },
         {
@@ -31,31 +25,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterBargeSecond"
+            "pathName": "CenterProcessorSecond"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "BARGE_EXTEND"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "BARGE_SCORE"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
+            "name": "SCORE_PROCESSOR"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CenterBargeThird"
+            "pathName": "CenterProcessorThird"
           }
         },
         {
@@ -73,25 +55,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterBargeFourth"
+            "pathName": "CenterProcessorFourth"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "BARGE_EXTEND"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "BARGE_SCORE"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
+            "name": "SCORE_PROCESSOR"
           }
         }
       ]

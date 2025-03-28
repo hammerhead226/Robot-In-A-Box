@@ -10,22 +10,26 @@ import frc.robot.constants.SubsystemConstants;
 public class ReefPositionsUtil {
   public static final String ASCII_ART_BLUE_REEF =
       """
-      K  J
-    L      I
-  A          H
-  B          G
-    C      F
-      D  E
+      K   ^   J
+    L   /   \\   I
+      /       \\
+  A |           | H
+  B |           | G
+      \\       /
+    C   \\   /   F
+      D   v   E
   """;
 
   public static final String ASCII_ART_RED_REEF =
       """
-      E  D
-    F      C
-  G          B
-  H          A
-    I      L
-      J  K
+      E   ^   D
+    F   /   \\   C
+      /       \\
+  G |           | B
+  H |           | A
+      \\       /
+    I   \\   /   L
+      J   v   K
   """;
 
   /*
@@ -41,7 +45,7 @@ public class ReefPositionsUtil {
     Pose2d[] result = new Pose2d[12];
     for (int i = 0; i < 12; i++) {
       // account for FieldConstants ordering
-      int index = -i + (isRed ? 1 : 7);
+      int index = -i + (isRed ? 7 : 1);
 
       // take postive mod to stay in range
       index = index % 12;
@@ -62,6 +66,9 @@ public class ReefPositionsUtil {
   public static final String ROUND_FORM = "%." + DIGITS + "f";
 
   public static void printOffsetPoses() {
+    System.out.println("----- blue reef -----");
+    System.out.println("blue side <-> red side");
+    System.out.println();
     System.out.println(ASCII_ART_BLUE_REEF);
     System.out.println("x, y, angle");
     for (int i = 0; i < 12; i++) {
@@ -70,8 +77,8 @@ public class ReefPositionsUtil {
               BLUE_REEF_POSE2DS[i],
               new Translation2d(
                   SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                  // SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
                   SubsystemConstants.CORRECTION_LEFT_BRANCH_OFFSET.get()),
-              // SubsystemConstants.APPROACH_OFFSET_LEFT_RIGHT_OFFSET),
               Rotation2d.kZero);
 
       System.out.println((char) ('A' + i) + " -");
