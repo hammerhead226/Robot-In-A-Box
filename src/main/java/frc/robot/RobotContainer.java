@@ -371,7 +371,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "SCORE_PROCESSOR",
-        new SequentialCommandGroup(scoralRollers.runVoltsCommmand(2), new WaitCommand(0.5)));
+        new SequentialCommandGroup(scoralRollers.runVoltsCommmand(2), new WaitCommand(0.2)));
 
     NamedCommands.registerCommand(
         "STOW_AFTER_PROCESSOR", new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers));

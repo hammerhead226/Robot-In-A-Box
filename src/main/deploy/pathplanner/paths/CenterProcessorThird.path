@@ -4,37 +4,58 @@
     {
       "anchor": {
         "x": 5.97,
-        "y": 0.8305921052631584
+        "y": 0.5900493421052636
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.675204918032787,
-        "y": 1.3023031708369293
+        "x": 6.005840163934426,
+        "y": 1.153944672131147
       },
       "isLocked": false,
-      "linkedName": "CenterProcessorExit"
+      "linkedName": "CenterProcessorScoreExit"
     },
     {
       "anchor": {
-        "x": 3.847866661460311,
-        "y": 2.838352104104398
+        "x": 5.97,
+        "y": 1.2498463114754088
       },
       "prevControl": {
-        "x": 4.11159616965703,
-        "y": 0.8483930877109549
+        "x": 5.993852459016393,
+        "y": 0.8302766393442611
+      },
+      "nextControl": {
+        "x": 5.946147540983606,
+        "y": 1.6694159836065565
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.8360655737704916,
+        "y": 2.8801741803278684
+      },
+      "prevControl": {
+        "x": 4.801198770491803,
+        "y": 2.220850409836065
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "STOW_AFTER_PROCESSOR",
-      "waypointRelativePos": 0.09011627906976699,
+      "waypointRelativePos": 1.0026164311878565,
       "endWaypointRelativePos": null,
       "command": null
     }
