@@ -43,19 +43,7 @@
         {
           "type": "named",
           "data": {
-            "name": "BARGE_EXTEND"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "BARGE_SCORE"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
           }
         },
         {
@@ -85,19 +73,13 @@
         {
           "type": "named",
           "data": {
-            "name": "BARGE_EXTEND"
+            "name": "BARGE_SCORE"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "BARGE_SCORE"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
+            "name": "STOW"
           }
         }
       ]

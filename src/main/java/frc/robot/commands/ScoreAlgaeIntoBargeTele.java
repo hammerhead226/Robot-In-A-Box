@@ -15,14 +15,14 @@ import frc.robot.subsystems.scoral.ScoralRollers;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ScoreAlgaeIntoBarge extends SequentialCommandGroup {
+public class ScoreAlgaeIntoBargeTele extends SequentialCommandGroup {
   /** Creates a new ScoreAlgaeIntoBarge. */
   private final ScoralArm scoralArm;
 
   private final ScoralRollers scoralRollers;
   private final Elevator elevator;
 
-  public ScoreAlgaeIntoBarge(
+  public ScoreAlgaeIntoBargeTele(
       Elevator m_elevator, ScoralArm m_scoralArm, ScoralRollers m_scoralRollers) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());

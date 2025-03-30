@@ -29,12 +29,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "PROCESSOR_SETPOINTS"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "CenterProcessorScore"
@@ -68,12 +62,6 @@
           "type": "path",
           "data": {
             "pathName": "CenterProcessorFourth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PROCESSOR_SETPOINTS"
           }
         },
         {

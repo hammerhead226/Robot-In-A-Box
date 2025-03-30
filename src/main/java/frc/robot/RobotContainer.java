@@ -32,7 +32,8 @@ import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.MoveToProcessorSetpoints;
 import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.Rumble;
-import frc.robot.commands.ScoreAlgaeIntoBarge;
+import frc.robot.commands.ScoreAlgaeIntoBargeAuto;
+import frc.robot.commands.ScoreAlgaeIntoBargeTele;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetClimberArmTarget;
 import frc.robot.commands.SetElevatorTarget;
@@ -321,10 +322,7 @@ public class RobotContainer {
         "BARGE_SCORE",
         new SequentialCommandGroup(
             new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
-            new ScoreAlgaeIntoBarge(elevator, scoralArm, scoralRollers),
-            new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
-            new InstantCommand(() -> superStructure.setCurrentState(SuperStructureState.STOW)),
-            new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))));
+            new ScoreAlgaeIntoBargeAuto(elevator, scoralArm, scoralRollers)));
 
     // NamedCommands.registerCommand(
     //     "SOURCE_INTAKE",
@@ -350,11 +348,6 @@ public class RobotContainer {
             new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
             new InstantCommand(() -> scoralRollers.stop())));
 
-    NamedCommands.registerCommand(
-        "ALGAE_INTAKE",
-        new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE))
-            .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
-            .andThen(superStructure.getSuperStructureCommand()));
     NamedCommands.registerCommand(
         "STOW",
         new SequentialCommandGroup(
@@ -387,6 +380,8 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "INTAKE_ALGAE_FROM_REEF",
+        new SequentialCommandGroup(
+        new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
         new ReinitializingCommand(
             () -> {
               double height1 =
@@ -396,7 +391,7 @@ public class RobotContainer {
               double height2 = drive.getNearestParition(6) % 2 == 0 ? 9 : 2;
               return new IntakeAlgaeFromReef(
                   drive, scoralArm, scoralRollers, elevator, led, height1, height2);
-            }));
+            })));
 
     climbStateMachine = new ClimbStateMachine();
 
@@ -476,7 +471,7 @@ public class RobotContainer {
             () ->
                 driveController.leftTrigger().getAsBoolean()
                     || driveController.rightTrigger().getAsBoolean());
-   
+
     configureButtonBindings();
     // test();
   }
@@ -656,7 +651,8 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
                 .andThen(
-                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY))).andThen(new InstantCommand(() -> scoralArm.setConstraints(150, 300)))
+                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY)))
+                .andThen(new InstantCommand(() -> scoralArm.setConstraints(150, 300)))
                 .andThen(
                     new ReinitializingCommand(
                             () -> superStructure.getSuperStructureCommand(),
@@ -700,7 +696,8 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
                 .andThen(
-                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY))).andThen(new InstantCommand(() -> scoralArm.setConstraints(150, 300)))
+                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY)))
+                .andThen(new InstantCommand(() -> scoralArm.setConstraints(150, 300)))
                 .andThen(
                     new ReinitializingCommand(
                         () -> superStructure.getSuperStructureCommand(),

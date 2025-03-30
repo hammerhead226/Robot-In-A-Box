@@ -49,7 +49,7 @@ public class MoveToReefCenter extends Command {
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), atPose);
     Logger.recordOutput("Debug OTF Paths/Reef Align", atPose);
     List<RotationTarget> holomorphicRotations =
-        Arrays.asList(new RotationTarget(0.9, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
+        Arrays.asList(new RotationTarget(0.5, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
 
     PathPlannerPath path =
         new PathPlannerPath(

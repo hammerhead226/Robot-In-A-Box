@@ -55,9 +55,14 @@
   "eventMarkers": [
     {
       "name": "STOW_AFTER_PROCESSOR",
-      "waypointRelativePos": 1.0026164311878565,
+      "waypointRelativePos": 0.9954614220877458,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "STOW_AFTER_PROCESSOR"
+        }
+      }
     }
   ],
   "globalConstraints": {

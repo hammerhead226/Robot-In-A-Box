@@ -41,7 +41,12 @@
       "name": "PROCESSOR_SETPOINTS",
       "waypointRelativePos": 0.3275771847200468,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "PROCESSOR_SETPOINTS"
+        }
+      }
     }
   ],
   "globalConstraints": {

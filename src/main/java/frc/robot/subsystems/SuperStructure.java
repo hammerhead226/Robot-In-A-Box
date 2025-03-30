@@ -11,7 +11,7 @@ import frc.robot.commands.GoToStowTeleOp;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.MoveToProcessorSetpoints;
-import frc.robot.commands.ScoreAlgaeIntoBarge;
+import frc.robot.commands.ScoreAlgaeIntoBargeTele;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetElevatorTarget;
 import frc.robot.commands.SetScoralArmTarget;
@@ -193,7 +193,7 @@ public class SuperStructure {
         currentState = SuperStructureState.BARGE_SCORE;
         led.setState(LED_STATE.FLASHING_GREEN);
         return new SequentialCommandGroup(
-            new ScoreAlgaeIntoBarge(elevator, scoralArm, scoralRollers),
+            new ScoreAlgaeIntoBargeTele(elevator, scoralArm, scoralRollers),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
             new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
             new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
