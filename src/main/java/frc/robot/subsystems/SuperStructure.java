@@ -130,7 +130,7 @@ public class SuperStructure {
         return true;
       case INTAKE_ALGAE:
         return true;
-      case STOW_ALGAE:
+      case EJECT_ALGAE:
         return true;
       case BARGE_EXTEND:
         return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.BARGE_SETPOINT)
@@ -176,16 +176,17 @@ public class SuperStructure {
           command = new GoToStowTeleOp(elevator, scoralArm, scoralRollers);
         }
         return command.andThen(new InstantCommand(() -> nextState()));
-      case STOW_ALGAE:
+      case EJECT_ALGAE:
         led.setState(LED_STATE.BLUE);
-        currentState = SuperStructureState.STOW_ALGAE;
+        currentState = SuperStructureState.EJECT_ALGAE;
         return new SequentialCommandGroup(
-            new ToReefHeight(
-                elevator,
-                scoralArm,
-                ElevatorConstants.L2_SETPOINT_INCHES,
-                ScoralArmConstants.L3_CORAL_SCORING_SETPOINT_DEG),
-            scoralRollers.runVoltsCommmand(-0.9));
+            new InstantCommand(() -> scoralRollers.runVolts(2))
+            // new ToReefHeight(
+            //     elevator,
+            //     scoralArm,
+            //     ElevatorConstants.L2_SETPOINT_INCHES,
+            //     ScoralArmConstants.L3_CORAL_SCORING_SETPOINT_DEG),
+            );
       case BARGE_EXTEND:
         currentState = SuperStructureState.BARGE_EXTEND;
         return new BargeExtend(elevator, scoralArm);
@@ -301,7 +302,7 @@ public class SuperStructure {
               scoralArmCommand,
               scoralRollers.stopCommand(),
               new InstantCommand(() -> this.setCurrentState(SuperStructureState.INTAKE_ALGAE)),
-              new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW_ALGAE)),
+              new InstantCommand(() -> this.setWantedState(SuperStructureState.EJECT_ALGAE)),
               new IntakeAlgaeFromReef(
                   drive, scoralArm, scoralRollers, elevator, led, height1, height2),
               new InstantCommand(() -> this.enableAlgaeMode(false)));
@@ -341,11 +342,11 @@ public class SuperStructure {
       case L1, L2, L3, L4:
         setWantedState(SuperStructureState.SCORING_CORAL);
         break;
-      case SCORING_CORAL, PROCESSOR_SCORE:
+      case SCORING_CORAL, PROCESSOR_SCORE, EJECT_ALGAE:
         setWantedState(SuperStructureState.STOW);
         break;
       case INTAKE_ALGAE:
-        setWantedState(SuperStructureState.STOW_ALGAE);
+        setWantedState(SuperStructureState.EJECT_ALGAE);
         break;
       case PROCESSOR:
         setWantedState(SuperStructureState.PROCESSOR_SCORE);

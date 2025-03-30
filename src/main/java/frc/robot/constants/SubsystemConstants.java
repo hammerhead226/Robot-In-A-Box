@@ -175,7 +175,7 @@ public final class SubsystemConstants {
   public static enum SuperStructureState {
     // NONE,
     STOW,
-    STOW_ALGAE,
+    EJECT_ALGAE,
     SOURCE,
     PROCESSOR,
     BARGE_EXTEND,
