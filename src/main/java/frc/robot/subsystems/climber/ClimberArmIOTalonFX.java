@@ -42,7 +42,7 @@ public class ClimberArmIOTalonFX implements ClimberArmIO {
     config.CurrentLimits.StatorCurrentLimit = SubsystemConstants.ScoralArmConstants.CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable =
         SubsystemConstants.ScoralArmConstants.CURRENT_LIMIT_ENABLED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     // config.Feedback.FeedbackRemoteSensorID = canCoderID;
     // config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;

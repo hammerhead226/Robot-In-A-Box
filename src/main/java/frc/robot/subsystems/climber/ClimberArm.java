@@ -52,7 +52,7 @@ public class ClimberArm extends SubsystemBase {
       case REAL:
         // RETUNE
         kG.initDefault(0.0);
-        kV.initDefault(0.6);
+        kV.initDefault(0.65);
         kP.initDefault(0.8);
         break;
       case REPLAY:
@@ -113,7 +113,11 @@ public class ClimberArm extends SubsystemBase {
   }
 
   public boolean hasReachedGoal(double goalDegs) {
-    return (Math.abs(pInputs.positionDegs - goalDegs) <= 2);
+    return (Math.abs(pInputs.positionDegs - goalDegs) <= 4);
+  }
+
+  public boolean shouldWinch() {
+    return (Math.abs(pInputs.positionDegs - 90) <= 4);
   }
 
   public void setPositionDegs(double positionDegs, double velocityDegsPerSec) {
@@ -169,9 +173,9 @@ public class ClimberArm extends SubsystemBase {
         armProfile.calculate(
             SubsystemConstants.LOOP_PERIOD_SECONDS, armCurrentStateDegrees, armGoalStateDegrees);
 
-    // if (!isWinching) {
+    if (!isWinching) {
       setPositionDegs(armCurrentStateDegrees.position, armCurrentStateDegrees.velocity);
-    // }
+    }
 
     Logger.processInputs("Climber Arm", pInputs);
     // Logger.recordOutput("Debug Climb Arm/arm error", getArmError());

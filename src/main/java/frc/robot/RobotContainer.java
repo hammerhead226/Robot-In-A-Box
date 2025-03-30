@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -47,6 +47,8 @@ import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.ClimbStateMachine;
+import frc.robot.subsystems.ClimbStateMachine.CLIMB_STATES;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.climber.ClimberArm;
 import frc.robot.subsystems.climber.ClimberArmIO;
@@ -83,6 +85,7 @@ import frc.robot.subsystems.scoral.ScoralRollersIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import java.util.Map;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -102,6 +105,8 @@ public class RobotContainer {
   private final Winch winch;
   private final Vision vision;
   private final SuperStructure superStructure;
+  private final ClimbStateMachine climbStateMachine;
+  private Command climbCommands;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -122,6 +127,10 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
   private final SendableChooser<Command> autos;
   private DigitalInput brakeSwitch;
+
+  private CLIMB_STATES climbSelect() {
+    return climbStateMachine.getTargetState();
+  }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -389,6 +398,23 @@ public class RobotContainer {
                   drive, scoralArm, scoralRollers, elevator, led, height1, height2);
             }));
 
+    climbStateMachine = new ClimbStateMachine();
+
+    climbCommands =
+        new SelectCommand<>(
+            Map.ofEntries(
+                Map.entry(
+                    CLIMB_STATES.DEPLOY,
+                    new ParallelCommandGroup(
+                            new SetScoralArmTarget(scoralArm, 29, 2),
+                            new SetClimberArmTarget(climberArm, 90, 2))
+                        .andThen(climbStateMachine::advanceTargetState, elevator)),
+                Map.entry(
+                    CLIMB_STATES.WINCH,
+                    new WinchClimb(winch, climberArm, () -> driveController.x().getAsBoolean())
+                        .andThen(climbStateMachine::advanceTargetState, elevator))),
+            this::climbSelect);
+
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
     autos = new SendableChooser<>();
@@ -450,7 +476,20 @@ public class RobotContainer {
             () ->
                 driveController.leftTrigger().getAsBoolean()
                     || driveController.rightTrigger().getAsBoolean());
-
+    // climbCommands = new SelectCommand<>(Map.ofEntries(
+    //     Map.entry(
+    //         ,
+    //         new SetPivotTarget(90, pivot)
+    //             .andThen(climbStateMachine::advanceTargetState, elevator)),
+    //     Map.entry(
+    //         CLIMB_STATES.EXTEND,
+    //         new SetElevatorTarget(
+    //                 Constants.ElevatorConstants.EXTEND_SETPOINT_INCH, 1.5, elevator)
+    //             .andThen(climbStateMachine::advanceTargetState, elevator)),
+    //     Map.entry(
+    //         CLIMB_STATES.RETRACT,
+    //         new SetElevatorTarget(0, 1.5, elevator)
+    //             .andThen(climbStateMachine::advanceTargetState, elevator))), null);
     configureButtonBindings();
     // test();
   }
@@ -592,22 +631,28 @@ public class RobotContainer {
                 .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
                 .andThen(new InstantCommand(() -> superStructure.nextState())));
 
-    driveController
-        .x()
-        .onTrue(
-            new ConditionalCommand(
-                new WinchClimb(winch, climberArm, () -> driveController.x().getAsBoolean()),
-                new ParallelCommandGroup(
-                    new SetScoralArmTarget(scoralArm, 29, 2),
-                    new SetClimberArmTarget(climberArm, 90, 2)),
-                () -> scoralArm.hasReachedGoal(29) && climberArm.hasReachedGoal(90)));
+    driveController.x().onTrue(climbCommands);
+    // driveController
+    // .x()
+    // .onTrue(
+    // new ConditionalCommand(
+    // new InstantCommand(() -> winch.runVolts(-5)));
+    // new ParallelCommandGroup(
+    // new SetScoralArmTarget(scoralArm, 29, 2),
+    // new SetClimberArmTarget(climberArm, 90, 2)),
+    // () -> true));
+    // () -> superStructure.shouldWinch()));
 
     driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
 
-    // driveController.a().onTrue(new InstantCommand(() -> winch.runVolts(-2)));
+    // driveController
+    //     .a()
+    //     .onTrue(
+    //         new ParallelCommandGroup(
+    //             new SetScoralArmTarget(scoralArm, 29, 2),
+    //             new SetClimberArmTarget(climberArm, 90, 2)));
     // driveController.a().onFalse(new InstantCommand(() -> winch.stop()));
 
-    
     // driveController.b().onTrue(new InstantCommand(() -> climberArm.setVoltage(2)));
     // driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
 
@@ -647,6 +692,8 @@ public class RobotContainer {
         .povDown()
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+                .andThen(
+                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY)))
                 .andThen(
                     new ReinitializingCommand(
                             () -> superStructure.getSuperStructureCommand(),
@@ -689,6 +736,8 @@ public class RobotContainer {
         .povDown()
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
+                .andThen(
+                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY)))
                 .andThen(
                     new ReinitializingCommand(
                         () -> superStructure.getSuperStructureCommand(),

@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.climber.ClimberArm;
 import frc.robot.subsystems.climber.Winch;
@@ -26,7 +24,6 @@ public class WinchClimb extends Command {
     this.climberArm = climberArm;
     this.winch = winch;
     this.continueWinching = continueWinching;
-
     addRequirements(winch, climberArm);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -34,8 +31,8 @@ public class WinchClimb extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // climberArm.isWinching = true;
-    voltageSlewRateLimiter = new SlewRateLimiter(0.2);
+    climberArm.isWinching = true;
+    // voltageSlewRateLimiter = new SlewRateLimiter(0.2);
     // timeTest = Timer.getFPGATimestamp();
     // climberArm.setArmGoal(140);
   }
@@ -44,16 +41,22 @@ public class WinchClimb extends Command {
   @Override
   public void execute() {
     // if (winch.getStatorCurrentAmps() < 25 || climberArm.getArmPositionDegs() < 110) {
-      // if (Math.abs(timeTest - Timer.getFPGATimestamp()) < 3) {
-      // winch.runVolts(-6);
+    // if (Math.abs(timeTest - Timer.getFPGATimestamp()) < 3) {
+    // winch.runVolts(-2);
     // } else {
-      winch.runVolts(getWinchVoltage(climberArm.getArmPositionDegs()));
+    if (winch.getStatorCurrentAmps() > 25) {
+      winch.runVolts(-2);
+    } else {
+      winch.runVolts(-6);
+    }
+    // winch.runVolts(getWinchVoltage(climberArm.getArmPositionDegs()));
     // }
   }
 
-  public double getWinchVoltage(double climberArmDegs) {
-    return MathUtil.clamp(14.809-0.4535*climberArmDegs+0.00259*Math.pow(climberArmDegs, 2), -6, -0.5);
-  }
+  // public double getWinchVoltage(double climberArmDegs) {
+  // return MathUtil.clamp(
+  // 14.809 - 0.4535 * climberArmDegs + 0.00259 * Math.pow(climberArmDegs, 2), -6, -0.5);
+  // }
 
   // Called once the command ends or is interrupted.
   @Override

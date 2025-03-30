@@ -98,6 +98,10 @@ public class SuperStructure {
     return elevator.shouldSlowMode();
   }
 
+  public boolean shouldWinch() {
+    return climberArm.shouldWinch() && scoralArm.shouldWinch();
+  }
+
   public boolean atGoals() {
     switch (currentState) {
       case STOW:

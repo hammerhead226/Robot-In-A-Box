@@ -128,6 +128,10 @@ public class ScoralArm extends SubsystemBase {
     return (Math.abs(saInputs.positionDegs - goalDegs) <= 8);
   }
 
+  public boolean shouldWinch() {
+    return (Math.abs(saInputs.positionDegs - 29) <= 8);
+  }
+
   private double getArmError() {
     return saInputs.positionSetpointDegs - saInputs.positionDegs;
   }
