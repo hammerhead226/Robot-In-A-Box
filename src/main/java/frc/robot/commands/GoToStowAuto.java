@@ -24,7 +24,7 @@ public class GoToStowAuto extends SequentialCommandGroup {
 
     addCommands(
         new InstantCommand(() -> scoralArm.setConstraints(300, 600)),
-        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 10),
+        new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 20),
         new InstantCommand(() -> scoralArm.setConstraints(150, 300)),
         scoralRollers.stopCommand(),
         new WaitUntilCommand(() -> scoralArm.atGoal(10)),

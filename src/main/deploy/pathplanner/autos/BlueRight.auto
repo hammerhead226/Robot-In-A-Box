@@ -103,9 +103,46 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "BlueRightSixth"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "STOW"
+            "name": "SOURCE_INTAKE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BlueRightSeventh"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SEE_CORAL"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL_NEW"
           }
         }
       ]

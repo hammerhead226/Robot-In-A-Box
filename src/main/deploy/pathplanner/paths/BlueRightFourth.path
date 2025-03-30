@@ -49,7 +49,7 @@
     {
       "name": "STOW",
       "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": 0.503225806451614,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "sequential",
         "data": {

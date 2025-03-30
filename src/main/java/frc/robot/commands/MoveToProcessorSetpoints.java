@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.SubsystemConstants.ElevatorConstants;
 import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
@@ -13,7 +14,7 @@ import frc.robot.subsystems.scoral.ScoralArm;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class MoveToProcessorSetpoints extends SequentialCommandGroup {
+public class MoveToProcessorSetpoints extends ParallelCommandGroup {
   private final ScoralArm scoralArm;
   private final Elevator elevator;
 

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.3317746419487992,
-        "y": 3.1955800723781325
+        "x": 3.4640870076008037,
+        "y": 3.219951245033581
       },
       "isLocked": false,
       "linkedName": "BlueLeftSource"
@@ -20,8 +20,8 @@
         "y": 3.8032274590163935
       },
       "prevControl": {
-        "x": 3.0445255394785575,
-        "y": 3.6299074600748433
+        "x": 3.092929780481516,
+        "y": 3.5907691022863992
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.260623229461752,
+      "minWaypointRelativePos": 0.3851744186046514,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 3.5,

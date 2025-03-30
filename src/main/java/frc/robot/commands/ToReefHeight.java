@@ -26,7 +26,7 @@ public class ToReefHeight extends SequentialCommandGroup {
 
     addCommands(
         new SequentialCommandGroup(
-            new SetElevatorTarget(elevator, heightInch, 12),
+            new SetElevatorTarget(elevator, heightInch, 15),
             new SetScoralArmTarget(scoralArm, pitchDegs, 2)));
     // new WaitUntilCommand(() -> elevator.atGoal(2)),
     // scoralArm.setArmTarget(pitchDegs, 2)));

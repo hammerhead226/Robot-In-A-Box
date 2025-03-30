@@ -372,8 +372,8 @@ public class RobotContainer {
         "SCORE_CORAL_NEW",
         new SequentialCommandGroup(
             new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
-            scoralRollers.runVoltsCommmand(3.5),
-            new WaitCommand(0.2)));
+            scoralRollers.runVoltsCommmand(5),
+            new WaitCommand(0.14)));
 
     NamedCommands.registerCommand(
         "PROCESSOR_SETPOINTS", new MoveToProcessorSetpoints(scoralArm, elevator));
@@ -476,20 +476,7 @@ public class RobotContainer {
             () ->
                 driveController.leftTrigger().getAsBoolean()
                     || driveController.rightTrigger().getAsBoolean());
-    // climbCommands = new SelectCommand<>(Map.ofEntries(
-    //     Map.entry(
-    //         ,
-    //         new SetPivotTarget(90, pivot)
-    //             .andThen(climbStateMachine::advanceTargetState, elevator)),
-    //     Map.entry(
-    //         CLIMB_STATES.EXTEND,
-    //         new SetElevatorTarget(
-    //                 Constants.ElevatorConstants.EXTEND_SETPOINT_INCH, 1.5, elevator)
-    //             .andThen(climbStateMachine::advanceTargetState, elevator)),
-    //     Map.entry(
-    //         CLIMB_STATES.RETRACT,
-    //         new SetElevatorTarget(0, 1.5, elevator)
-    //             .andThen(climbStateMachine::advanceTargetState, elevator))), null);
+   
     configureButtonBindings();
     // test();
   }
@@ -632,32 +619,8 @@ public class RobotContainer {
                 .andThen(new InstantCommand(() -> superStructure.nextState())));
 
     driveController.x().onTrue(climbCommands);
-    // driveController
-    // .x()
-    // .onTrue(
-    // new ConditionalCommand(
-    // new InstantCommand(() -> winch.runVolts(-5)));
-    // new ParallelCommandGroup(
-    // new SetScoralArmTarget(scoralArm, 29, 2),
-    // new SetClimberArmTarget(climberArm, 90, 2)),
-    // () -> true));
-    // () -> superStructure.shouldWinch()));
-
     driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
 
-    // driveController
-    //     .a()
-    //     .onTrue(
-    //         new ParallelCommandGroup(
-    //             new SetScoralArmTarget(scoralArm, 29, 2),
-    //             new SetClimberArmTarget(climberArm, 90, 2)));
-    // driveController.a().onFalse(new InstantCommand(() -> winch.stop()));
-
-    // driveController.b().onTrue(new InstantCommand(() -> climberArm.setVoltage(2)));
-    // driveController.b().onFalse(new InstantCommand(() -> climberArm.armStop()));
-
-    // driveController.x().onTrue(new InstantCommand(() -> winch.runVolts(-6)));
-    // driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
     driveController
         .b()
         .whileTrue(
@@ -693,7 +656,7 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
                 .andThen(
-                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY)))
+                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY))).andThen(new InstantCommand(() -> scoralArm.setConstraints(150, 300)))
                 .andThen(
                     new ReinitializingCommand(
                             () -> superStructure.getSuperStructureCommand(),
@@ -737,7 +700,7 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
                 .andThen(
-                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY)))
+                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY))).andThen(new InstantCommand(() -> scoralArm.setConstraints(150, 300)))
                 .andThen(
                     new ReinitializingCommand(
                         () -> superStructure.getSuperStructureCommand(),

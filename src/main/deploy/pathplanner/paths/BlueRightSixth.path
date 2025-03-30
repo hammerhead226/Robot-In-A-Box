@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.653,
-        "y": 7.353
+        "x": 1.7382172131147542,
+        "y": 7.183760245901639
       },
       "prevControl": {
-        "x": 1.8406476951892417,
-        "y": 7.187808164577769
+        "x": 1.9258649083039958,
+        "y": 7.018568410479408
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "BlueRightSource"
     }
   ],
   "rotationTargets": [],
@@ -49,7 +49,7 @@
     {
       "name": "STOW",
       "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": 0.5048387096774186,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "sequential",
         "data": {
@@ -75,7 +75,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -143.1
+    "rotation": -143.10280615323285
   },
   "reversed": false,
   "folder": "BlueRight",

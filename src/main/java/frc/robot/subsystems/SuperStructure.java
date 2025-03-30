@@ -258,7 +258,7 @@ public class SuperStructure {
 
       case PROCESSOR:
         currentState = SuperStructureState.PROCESSOR;
-        return new MoveToProcessorSetpoints(scoralArm, elevator);
+        return new SequentialCommandGroup(new MoveToProcessorSetpoints(scoralArm, elevator));
 
       case SCORING_CORAL:
         currentState = SuperStructureState.SCORING_CORAL;
