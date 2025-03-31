@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.ConstraintsZone;
 import com.pathplanner.lib.path.EventMarker;
 import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.RotationTarget;
@@ -83,12 +84,12 @@ public class ApproachReef extends Command {
 
     ChassisSpeeds fieldRelChassisSpeeds =
         ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), drive.getRotation());
-    double chassisSpeedSingular =
+    double chassisLinearSpeedSingular =
         Math.hypot(
             fieldRelChassisSpeeds.vxMetersPerSecond, fieldRelChassisSpeeds.vyMetersPerSecond);
 
     Pose2d currentPoseFacingVelocity;
-    if (chassisSpeedSingular >= 0.2) {
+    if (chassisLinearSpeedSingular >= 0.2) {
       currentPoseFacingVelocity =
           new Pose2d(
               drive.getPose().getTranslation(),
@@ -157,7 +158,7 @@ public class ApproachReef extends Command {
                 constraintsZones,
                 eventMarkers,
                 pathConstraints, // these numbers from last year's code
-                null, // The ideal starting state, this is only relevant for pre-planned paths, so
+                new IdealStartingState(chassisLinearSpeedSingular, drive.getRotation()), // The ideal starting state, this is only relevant for pre-planned paths, so
                 // can
                 // be null for on-the-fly paths.
                 new GoalEndState(0, atPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90))),
