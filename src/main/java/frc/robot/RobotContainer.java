@@ -33,19 +33,18 @@ import frc.robot.commands.MoveToProcessorSetpoints;
 import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.Rumble;
 import frc.robot.commands.ScoreAlgaeIntoBargeAuto;
-import frc.robot.commands.ScoreAlgaeIntoBargeTele;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetClimberArmTarget;
 import frc.robot.commands.SetElevatorTarget;
 import frc.robot.commands.SetScoralArmTarget;
 import frc.robot.commands.ToReefHeight;
-import frc.robot.commands.WinchClimb;
 import frc.robot.constants.RobotMap;
 import frc.robot.constants.SimConstants;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.constants.SubsystemConstants.AlgaeState;
 import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
+import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.ClimbStateMachine;
@@ -364,7 +363,11 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SCORE_CORAL_NEW",
         new SequentialCommandGroup(
-            new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
+            new WaitUntilCommand(
+                () ->
+                    elevator.atGoal(2)
+                        && scoralArm.hasReachedGoal(
+                            ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG)),
             scoralRollers.runVoltsCommmand(5),
             new WaitCommand(0.14)));
 
@@ -381,17 +384,17 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "INTAKE_ALGAE_FROM_REEF",
         new SequentialCommandGroup(
-        new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
-        new ReinitializingCommand(
-            () -> {
-              double height1 =
-                  drive.getNearestParition(6) % 2 == 0
-                      ? 6.5
-                      : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
-              double height2 = drive.getNearestParition(6) % 2 == 0 ? 9 : 2;
-              return new IntakeAlgaeFromReef(
-                  drive, scoralArm, scoralRollers, elevator, led, height1, height2);
-            })));
+            new WaitUntilCommand(() -> elevator.atGoal(2) && scoralArm.atGoal(2)),
+            new ReinitializingCommand(
+                () -> {
+                  double height1 =
+                      drive.getNearestParition(6) % 2 == 0
+                          ? 6.5
+                          : SubsystemConstants.ElevatorConstants.STOW_SETPOINT_INCH;
+                  double height2 = drive.getNearestParition(6) % 2 == 0 ? 9 : 2;
+                  return new IntakeAlgaeFromReef(
+                      drive, scoralArm, scoralRollers, elevator, led, height1, height2);
+                })));
 
     climbStateMachine = new ClimbStateMachine();
 
@@ -406,7 +409,9 @@ public class RobotContainer {
                         .andThen(climbStateMachine::advanceTargetState, elevator)),
                 Map.entry(
                     CLIMB_STATES.WINCH,
-                    new WinchClimb(winch, climberArm, () -> driveController.x().getAsBoolean())
+                    new InstantCommand(() -> winch.runVolts(-5))
+                        // new WinchClimb(winch, climberArm, () ->
+                        // driveController.x().getAsBoolean())
                         .andThen(climbStateMachine::advanceTargetState, elevator))),
             this::climbSelect);
 
@@ -613,8 +618,14 @@ public class RobotContainer {
                 .andThen(new WaitUntilCommand(() -> superStructure.atGoals()))
                 .andThen(new InstantCommand(() -> superStructure.nextState())));
 
-    driveController.x().onTrue(climbCommands);
-    driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
+    // driveController.x().onTrue(climbCommands);
+    // driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
+    driveController.a().onTrue(new ParallelCommandGroup(
+        new SetScoralArmTarget(scoralArm, 29, 2),
+        new SetClimberArmTarget(climberArm, 90, 2)));
+
+    driveController.x().onTrue(new InstantCommand(() -> winch.runVolts(-5)));
+    driveController.x().onTrue(new InstantCommand(() -> winch.stop()));
 
     driveController
         .b()

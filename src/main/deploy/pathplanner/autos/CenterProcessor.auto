@@ -13,6 +13,18 @@
         {
           "type": "named",
           "data": {
+            "name": "SCORE_CORAL_NEW"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "STOW"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "INTAKE_ALGAE_FROM_REEF"
           }
         },

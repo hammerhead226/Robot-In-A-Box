@@ -130,7 +130,7 @@ public class ApproachReef extends Command {
                 <= 45
             // && Math.abs(atPoseRobotRelative.getY()) <= 0.8
             && Math.abs(rotatedVelocity.getDegrees()) < 80) {
-          pathConstraints = new PathConstraints(2.5, 2.6, 200, 300);
+          pathConstraints = new PathConstraints(2.1, 2.5, 200, 300);
         } else {
           pathConstraints = new PathConstraints(1.75, 2, 150, 250);
           // pathConstraints = new PathConstraints(0.1, 2, 150, 250);
