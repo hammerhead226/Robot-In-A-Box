@@ -131,14 +131,14 @@ public class ApproachReef extends Command {
                 <= 45
             // && Math.abs(atPoseRobotRelative.getY()) <= 0.8
             && Math.abs(rotatedVelocity.getDegrees()) < 80) {
-          pathConstraints = new PathConstraints(2.1, 2.5, 200, 300);
+          pathConstraints = new PathConstraints(1.75, 2.2, 200, 300);
         } else {
           pathConstraints = new PathConstraints(1.75, 2, 150, 250);
           // pathConstraints = new PathConstraints(0.1, 2, 150, 250);
         }
-        constraintsZones.add(new ConstraintsZone(1, 2, new PathConstraints(1.5, 2, 180, 200)));
+        constraintsZones.add(new ConstraintsZone(1, 2, new PathConstraints(1, 1.5, 180, 200)));
       } else {
-        pathConstraints = new PathConstraints(1.5, 2, 180, 200);
+        pathConstraints = new PathConstraints(1, 1.5, 180, 200);
         waypoints = PathPlannerPath.waypointsFromPoses(currentPoseFacingVelocity, atPose);
         holomorphicRotations =
             Arrays.asList(new RotationTarget(0.7, atPose.getRotation().plus(Rotation2d.kCW_90deg)));
