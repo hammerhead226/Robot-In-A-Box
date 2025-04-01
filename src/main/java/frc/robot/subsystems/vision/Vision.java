@@ -194,13 +194,13 @@ public class Vision extends SubsystemBase {
           angularStdDev *= cameraStdDevFactors[cameraIndex];
         }
 
-        Logger.recordOutput("Debug Vision/averageTagDistance", observation.averageTagDistance());
-        Logger.recordOutput("Debug Vision/stdDevFactor", stdDevFactor);
-        Logger.recordOutput("Debug Vision/linearStdDev", linearStdDev);
-        Logger.recordOutput("Debug Vision/angularStdDev", angularStdDev);
-        Logger.recordOutput("Debug Vision/angularStdDevBaseline", angularStdDevBaseline);
-        Logger.recordOutput(
-            "Debug Vision/angularStdDevMegatag2Factor", angularStdDevMegatag2Factor);
+        // Logger.recordOutput("Debug Vision/averageTagDistance", observation.averageTagDistance());
+        // Logger.recordOutput("Debug Vision/stdDevFactor", stdDevFactor);
+        // Logger.recordOutput("Debug Vision/linearStdDev", linearStdDev);
+        // Logger.recordOutput("Debug Vision/angularStdDev", angularStdDev);
+        // Logger.recordOutput("Debug Vision/angularStdDevBaseline", angularStdDevBaseline);
+        // Logger.recordOutput(
+        //     "Debug Vision/angularStdDevMegatag2Factor", angularStdDevMegatag2Factor);
 
         // Send vision observation
         consumer.accept(
@@ -229,16 +229,16 @@ public class Vision extends SubsystemBase {
     }
 
     // Log summary data
-    Logger.recordOutput(
-        "Vision Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
-    Logger.recordOutput(
-        "Vision Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
-    Logger.recordOutput(
-        "Vision Summary/RobotPosesAccepted",
-        allRobotPosesAccepted.toArray(new Pose3d[allRobotPosesAccepted.size()]));
-    Logger.recordOutput(
-        "Vision Summary/RobotPosesRejected",
-        allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+    // Logger.recordOutput(
+    //     "Vision Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
+    // Logger.recordOutput(
+    //     "Vision Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
+    // Logger.recordOutput(
+    //     "Vision Summary/RobotPosesAccepted",
+    //     allRobotPosesAccepted.toArray(new Pose3d[allRobotPosesAccepted.size()]));
+    // Logger.recordOutput(
+    //     "Vision Summary/RobotPosesRejected",
+    //     allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
   }
 
   // rejecting old positions
