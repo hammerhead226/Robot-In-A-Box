@@ -47,8 +47,6 @@ import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.SubsystemConstants.ScoralArmConstants;
 import frc.robot.constants.SubsystemConstants.SuperStructureState;
 import frc.robot.constants.TunerConstants;
-import frc.robot.subsystems.ClimbStateMachine;
-import frc.robot.subsystems.ClimbStateMachine.CLIMB_STATES;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.climber.ClimberArm;
 import frc.robot.subsystems.climber.ClimberArmIO;
@@ -105,7 +103,6 @@ public class RobotContainer {
   private final Winch winch;
   private final Vision vision;
   private final SuperStructure superStructure;
-  private final ClimbStateMachine climbStateMachine;
   private Command climbCommands;
 
   // Controller
@@ -127,10 +124,6 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
   private final SendableChooser<Command> autos;
   private DigitalInput brakeSwitch;
-
-  private CLIMB_STATES climbSelect() {
-    return climbStateMachine.getTargetState();
-  }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -396,25 +389,6 @@ public class RobotContainer {
                       drive, scoralArm, scoralRollers, elevator, led, height1, height2);
                 })));
 
-    climbStateMachine = new ClimbStateMachine();
-
-    climbCommands =
-        new SelectCommand<>(
-            Map.ofEntries(
-                Map.entry(
-                    CLIMB_STATES.DEPLOY,
-                    new ParallelCommandGroup(
-                            new SetScoralArmTarget(scoralArm, 29, 2),
-                            new SetClimberArmTarget(climberArm, 90, 2))
-                        .andThen(climbStateMachine::advanceTargetState, elevator)),
-                Map.entry(
-                    CLIMB_STATES.WINCH,
-                    new InstantCommand(() -> winch.runVolts(-5))
-                        // new WinchClimb(winch, climberArm, () ->
-                        // driveController.x().getAsBoolean())
-                        .andThen(climbStateMachine::advanceTargetState, elevator))),
-            this::climbSelect);
-
     // NamedCommands.registerCommand("Stow", new Stow(elevator, csArm));
 
     autos = new SendableChooser<>();
@@ -664,8 +638,6 @@ public class RobotContainer {
         .povDown()
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
-                .andThen(
-                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY)))
                 .andThen(new InstantCommand(() -> scoralArm.setConstraints(150, 300)))
                 .andThen(
                     new ReinitializingCommand(
@@ -709,8 +681,6 @@ public class RobotContainer {
         .povDown()
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.STOW))
-                .andThen(
-                    new InstantCommand(() -> climbStateMachine.setClimbState(CLIMB_STATES.DEPLOY)))
                 .andThen(new InstantCommand(() -> scoralArm.setConstraints(150, 300)))
                 .andThen(
                     new ReinitializingCommand(

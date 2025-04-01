@@ -234,8 +234,8 @@ public class AdjustToReefPost extends Command {
       }
     }
 
-    Logger.recordOutput("Reef Aligning/pidEndPose", pidEndPose);
-    Logger.recordOutput("Reef Aligning/offsetPose", offsetPose);
+    // Logger.recordOutput("Reef Aligning/pidEndPose", pidEndPose);
+    // Logger.recordOutput("Reef Aligning/offsetPose", offsetPose);
     Logger.recordOutput("Reef Aligning/odometryTargetPose", odometryTargetPose);
     Logger.recordOutput("Reef Aligning/odometryForwardEffort", odometryForwardEffort);
     Logger.recordOutput("Reef Aligning/odometrySideEffort", odometrySideEffort);
