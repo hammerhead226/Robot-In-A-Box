@@ -179,10 +179,10 @@ public class AdjustToReefPost extends Command {
         superStructure.getCurrentState() == SuperStructureState.L4
             ? (reefSensorDistance <= 14
                 && (branchSensorDistance >= 9.5 && branchSensorDistance <= 15)
-                && Math.abs(angleToGoal) <= angleTolerance)
+                && Math.abs(angleToGoal) <= angleTolerance) && scoralArm.getCANRangeDistanceStd() <= 5
             : (reefSensorDistance <= 14
                 && (branchSensorDistance >= 17 && branchSensorDistance <= 22)
-                && Math.abs(angleToGoal) <= angleTolerance);
+                && Math.abs(angleToGoal) <= angleTolerance) && scoralArm.getCANRangeDistanceStd() <= 5;
 
     double distanceFromOdometryTargetPose =
         drive.getPose().getTranslation().getDistance(odometryTargetPose.getTranslation());
@@ -255,14 +255,6 @@ public class AdjustToReefPost extends Command {
                 sidewaysSlewRateLimiter.calculate(chassisSpeeds.vyMetersPerSecond),
                 chassisSpeeds.omegaRadiansPerSecond)
             .plus(new ChassisSpeeds(branchSensorForwardEffort, reefSensorSideEffort, 0)));
-
-    // if (isAligned) {
-    //   alignState = AlignState.DONE;
-    // }
-
-    // if (!triggerPressed.getAsBoolean()) {
-    //   alignState = AlignState.CANCEL;
-    // }
   }
 
   // Called once the command ends or is interrupted.

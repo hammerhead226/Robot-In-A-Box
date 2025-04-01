@@ -181,8 +181,8 @@ public class ScoralArm extends SubsystemBase {
     return dInputs.connected;
   }
 
-  public double getCANRangeSignalStrength() {
-    return dInputs.signalStrength;
+  public double getCANRangeDistanceStd() {
+    return dInputs.distanceStd;
   }
 
   @Override
