@@ -620,12 +620,15 @@ public class RobotContainer {
 
     // driveController.x().onTrue(climbCommands);
     // driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
-    driveController.a().onTrue(new ParallelCommandGroup(
-        new SetScoralArmTarget(scoralArm, 29, 2),
-        new SetClimberArmTarget(climberArm, 88, 2)));
+    driveController
+        .a()
+        .onTrue(
+            new ParallelCommandGroup(
+                new SetScoralArmTarget(scoralArm, 29, 2),
+                new SetClimberArmTarget(climberArm, 78, 2)));
 
     driveController.x().onTrue(new InstantCommand(() -> winch.runVolts(-5)));
-    driveController.x().onTrue(new InstantCommand(() -> winch.stop()));
+    driveController.x().onFalse(new InstantCommand(() -> winch.stop()));
 
     driveController
         .b()
