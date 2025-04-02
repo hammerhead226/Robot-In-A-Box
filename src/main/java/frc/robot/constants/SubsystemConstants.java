@@ -29,10 +29,10 @@ public final class SubsystemConstants {
   // public static final double LEFT_RIGHT_BRANCH_OFFSET = -0.015;
   public static final LoggedTunableNumber CORRECTION_LEFT_BRANCH_OFFSET =
       new LoggedTunableNumber("Auto Align/LEFT_BRANCH_OFFSET", -0.015);
-      // new LoggedTunableNumber("Auto Align/LEFT_BRANCH_OFFSET", -0.023);
+  // new LoggedTunableNumber("Auto Align/LEFT_BRANCH_OFFSET", -0.023);
   public static final LoggedTunableNumber CORRECTION_RIGHT_BRANCH_OFFSET =
       new LoggedTunableNumber("Auto Align/RIGHT_BRANCH_OFFSET", -0.015);
-      // new LoggedTunableNumber("Auto Align/RIGHT_BRANCH_OFFSET", -0.023);
+  // new LoggedTunableNumber("Auto Align/RIGHT_BRANCH_OFFSET", -0.023);
   public static final double APPROACH_OFFSET_LEFT_RIGHT_OFFSET = -0.2;
   public static final double ADJUST_OFFSET_LEFT_RIGHT_OFFSET = -0.07;
 

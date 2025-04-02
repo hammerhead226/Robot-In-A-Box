@@ -630,7 +630,7 @@ public class Drive extends SubsystemBase {
     return getPose()
             .getTranslation()
             .getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center))
-        <= 2.5;
+        <= 2;
     // <= 0.5;
   }
 
