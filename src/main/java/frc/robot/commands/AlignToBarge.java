@@ -60,7 +60,7 @@ public class AlignToBarge extends Command {
 
     PathConstraints pathConstraints;
 
-    pathConstraints = new PathConstraints(2.5, 2.25, 180, 200);
+    pathConstraints = new PathConstraints(2.5, 2.25, Math.toRadians(180), Math.toRadians(200));
 
     Logger.recordOutput("Debug OTF Paths/Barge Align", targetPose);
 

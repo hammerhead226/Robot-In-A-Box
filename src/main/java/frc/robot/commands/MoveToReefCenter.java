@@ -58,7 +58,11 @@ public class MoveToReefCenter extends Command {
             new ArrayList<>(),
             new ArrayList<>(),
             new ArrayList<>(),
-            new PathConstraints(2.5, 2.5, 100, 180), // these numbers from last year's code
+            new PathConstraints(
+                2.5,
+                2.5,
+                Math.toRadians(100),
+                Math.toRadians(180)), // these numbers from last year's code
             null, // The ideal starting state, this is only relevant for pre-planned paths, so can
             // be null for on-the-fly paths.
             new GoalEndState(0, atPose.getRotation().rotateBy(Rotation2d.fromDegrees(-90))),

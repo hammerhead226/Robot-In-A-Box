@@ -178,16 +178,19 @@ public class AdjustToReefPost extends Command {
     boolean branchSensorConditions =
         superStructure.getCurrentState() == SuperStructureState.L4
             ? (reefSensorDistance <= 14
-                && (branchSensorDistance >= 9.5 && branchSensorDistance <= 15)
-                && Math.abs(angleToGoal) <= angleTolerance) && scoralArm.getCANRangeDistanceStd() <= 5
+                    && (branchSensorDistance >= 9 && branchSensorDistance <= 13)
+                    && Math.abs(angleToGoal) <= angleTolerance)
+                && scoralArm.getCANRangeDistanceStd() <= 0.08
             : (reefSensorDistance <= 14
-                && (branchSensorDistance >= 17 && branchSensorDistance <= 22)
-                && Math.abs(angleToGoal) <= angleTolerance) && scoralArm.getCANRangeDistanceStd() <= 5;
+                    && (branchSensorDistance >= 18 && branchSensorDistance <= 23.5)
+                    && Math.abs(angleToGoal) <= angleTolerance)
+                && scoralArm.getCANRangeDistanceStd() <= 0.08;
 
     double distanceFromOdometryTargetPose =
         drive.getPose().getTranslation().getDistance(odometryTargetPose.getTranslation());
     if (alignState == AlignState.ODOMETRY_SENSOR_FUSED) {
-      isAligned = branchSensorConditions && distanceFromOdometryTargetPose <= 6;
+      isAligned =
+          branchSensorConditions && distanceFromOdometryTargetPose <= Units.inchesToMeters(6);
       odometryForwardEffort =
           odometryForwardPID.calculate(drive.getPose().getX(), odometryTargetPose.getX());
       odometrySideEffort =
