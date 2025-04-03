@@ -6,7 +6,6 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -14,7 +13,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.SubsystemConstants;
 import frc.robot.util.Conversions;
@@ -22,7 +20,7 @@ import frc.robot.util.Conversions;
 public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX leader;
   private final TalonFX follower;
-  private final CANrange distanceSensor;
+  // private final CANrange distanceSensor;
 
   private double positionSetpoint;
   private final StatusSignal<Angle> elevatorPosition;
@@ -32,9 +30,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final StatusSignal<Current> leaderSupplyCurrentAmps;
   private final StatusSignal<Current> followerStatorCurrentAmps;
   private final StatusSignal<Current> followerSupplyCurrentAmps;
-  private final StatusSignal<Distance> canRangeDistance;
+  // private final StatusSignal<Distance> canRangeDistance;
 
-  public ElevatorIOTalonFX(int lead, int follow, int canRangeID) {
+  public ElevatorIOTalonFX(int lead, int follow) {
     TalonFXConfiguration leadConfig = new TalonFXConfiguration();
     leadConfig.CurrentLimits.StatorCurrentLimit =
         SubsystemConstants.ElevatorConstants.CURRENT_LIMIT;
@@ -46,7 +44,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     leader = new TalonFX(lead, SubsystemConstants.CANIVORE_ID_STRING);
     follower = new TalonFX(follow, SubsystemConstants.CANIVORE_ID_STRING);
-    distanceSensor = new CANrange(canRangeID, SubsystemConstants.CANIVORE_ID_STRING);
+    // distanceSensor = new CANrange(canRangeID, SubsystemConstants.CANIVORE_ID_STRING);
 
     leader.getConfigurator().apply(leadConfig);
 
@@ -65,10 +63,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     leaderSupplyCurrentAmps = leader.getSupplyCurrent();
     followerStatorCurrentAmps = follower.getStatorCurrent();
     followerSupplyCurrentAmps = follower.getSupplyCurrent();
-    canRangeDistance = distanceSensor.getDistance();
+    // canRangeDistance = distanceSensor.getDistance();
     BaseStatusSignal.setUpdateFrequencyForAll(
         100,
-        canRangeDistance,
         elevatorPosition,
         elevatorVelocity,
         appliedVolts,
@@ -81,7 +78,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        canRangeDistance,
         elevatorPosition,
         elevatorVelocity,
         appliedVolts,
@@ -93,7 +89,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     // Logger.recordOutput(
     //     "Debug Elevator/Elevator CANRage Distance Inch",
     //     distanceSensor.getDistance().getValueAsDouble());
-    inputs.CANrangeDistanceInches = canRangeDistance.getValueAsDouble();
+    // inputs.CANrangeDistanceInches = canRangeDistance.getValueAsDouble();
     // Logger.recordOutput(
     //     "Debug Elevator/Left Motor Stator Current",
     // leader.getStatorCurrent().getValueAsDouble());

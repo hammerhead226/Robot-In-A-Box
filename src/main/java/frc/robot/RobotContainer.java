@@ -134,9 +134,7 @@ public class RobotContainer {
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
-                    RobotMap.ElevatorIDs.leftElevatorID,
-                    RobotMap.ElevatorIDs.rightElevatorID,
-                    RobotMap.ElevatorIDs.elevatorCANrangeID));
+                    RobotMap.ElevatorIDs.leftElevatorID, RobotMap.ElevatorIDs.rightElevatorID));
 
         winch = new Winch(new WinchIOTalonFX(RobotMap.WinchIDs.leftWinchID));
         drive =
