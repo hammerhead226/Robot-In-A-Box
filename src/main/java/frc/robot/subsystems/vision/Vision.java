@@ -179,15 +179,15 @@ public class Vision extends SubsystemBase {
 
         // Calculate standard deviations
         double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+            Math.pow(observation.averageTagDistance(), 2.0) / ((double) observation.tagCount());
         double linearStdDev = linearStdDevBaseline * stdDevFactor;
         double angularStdDev = angularStdDevBaseline * stdDevFactor;
         if (observation.type() == PoseObservationType.MEGATAG_2) {
           linearStdDev *= linearStdDevMegatag2Factor;
           angularStdDev *= angularStdDevMegatag2Factor;
         } else if (observation.type() == PoseObservationType.MEGATAG_1) {
-          linearStdDev = 0.5 * stdDevFactor;
-          angularStdDev = 4.3 * stdDevFactor;
+          linearStdDev = 1.323 * stdDevFactor;
+          angularStdDev = 0.7 * stdDevFactor;
         }
         if (cameraIndex < cameraStdDevFactors.length) {
           linearStdDev *= cameraStdDevFactors[cameraIndex];

@@ -58,7 +58,7 @@ public final class SubsystemConstants {
     public static final double CANRAGE_ZERO_SETPOINT_INCHES = 2;
 
     // TODO:: NEED TO FIND
-    public static final double L1_SETPOINT_INCHES = 2;
+    public static final double L1_SETPOINT_INCHES = 4;
     public static final double L2_SETPOINT_INCHES = 7.5;
     // public static final double L2_SETPOINT_INCHES = 6.8;
     // public static final double L3_SETPOINT_INCHES = 14.5;
@@ -91,6 +91,7 @@ public final class SubsystemConstants {
     public static final double ARM_GEAR_RATIO = (25.0 / 1) / (14.0 / 32);
 
     public static final double STOW_SETPOINT_DEG = 95.1;
+    public static final double L1_CORAL_SCORING_SETPOINT_DEG = 97;
     public static final double L3_CORAL_SCORING_SETPOINT_DEG = 76.5;
     public static final double L2_CORAL_SCORING_SETPOINT_DEG = 76.5;
     public static final double L4_CORAL_SCORING_SETPOINT_DEG = 58;

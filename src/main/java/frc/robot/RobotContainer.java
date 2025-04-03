@@ -354,13 +354,14 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SCORE_CORAL_NEW",
         new SequentialCommandGroup(
-            new WaitUntilCommand(
-                () ->
-                    elevator.atGoal(2)
-                        && scoralArm.hasReachedGoal(
-                            ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG)),
-            scoralRollers.runVoltsCommmand(5),
-            new WaitCommand(0.14)).withTimeout(0.5));
+                new WaitUntilCommand(
+                    () ->
+                        elevator.atGoal(2)
+                            && scoralArm.hasReachedGoal(
+                                ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG)),
+                scoralRollers.runVoltsCommmand(5),
+                new WaitCommand(0.14))
+            .withTimeout(0.5));
 
     NamedCommands.registerCommand(
         "PROCESSOR_SETPOINTS", new MoveToProcessorSetpoints(scoralArm, elevator));
