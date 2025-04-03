@@ -18,6 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -69,7 +70,7 @@ public class Robot extends LoggedRobot {
         Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
         // new PowerDistribution(1, ModuleType.kRev);
-        CameraServer.startAutomaticCapture();
+        // CameraServer.startAutomaticCapture();
         // Running on a real robot, log to a USB stick ("/U/logs")
         Logger.addDataReceiver(new WPILOGWriter("/logs"));
 
@@ -162,7 +163,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
     ReefPositionsUtil.printOffsetPoses();
-    CameraServer.startAutomaticCapture();
+    UsbCamera cam = CameraServer.startAutomaticCapture();
+
+    cam.setResolution(640, 480);
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
