@@ -298,13 +298,14 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L4",
         new SequentialCommandGroup(
-            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
-            new InstantCommand(() -> led.setState(LED_STATE.RED)),
-            new ToReefHeight(
-                elevator,
-                scoralArm,
-                SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES,
-                SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG)));
+                new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
+                new InstantCommand(() -> led.setState(LED_STATE.RED)),
+                new ToReefHeight(
+                    elevator,
+                    scoralArm,
+                    SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES,
+                    SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG))
+            .withTimeout(4));
 
     NamedCommands.registerCommand("BARGE_EXTEND", new BargeExtend(elevator, scoralArm));
 

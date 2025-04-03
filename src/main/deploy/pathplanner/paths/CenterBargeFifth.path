@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.166858552631578,
-        "y": 5.1411184210526315
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 6.265123623568116,
-        "y": 5.566703534986827
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
         "x": 7.447203947368421,
         "y": 6.15139802631579
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.788975150087359,
+        "y": 6.107468034590793
+      },
+      "isLocked": false,
+      "linkedName": "CenterBargeEnd"
+    },
+    {
+      "anchor": {
+        "x": 6.005840163934426,
+        "y": 6.260706967213114
+      },
       "prevControl": {
-        "x": 6.339304962988446,
-        "y": 5.685033792437224
+        "x": 6.265033395995197,
+        "y": 6.2463091682338305
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterBargeEnd"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,15 +33,10 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "BARGE_EXTEND",
-      "waypointRelativePos": 0.2859304084720116,
+      "name": "STOW",
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "BARGE_EXTEND"
-        }
-      }
+      "command": null
     }
   ],
   "globalConstraints": {
@@ -60,7 +55,7 @@
   "folder": "Center Barge",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 150.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

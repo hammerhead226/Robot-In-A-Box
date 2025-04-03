@@ -100,6 +100,7 @@ public class AdjustToReefPost extends Command {
         scoralArm.isCANRangeConnected()
                 && superStructure.getCurrentState() != SuperStructureState.L2
             ? AlignState.ODOMETRY_SENSOR_FUSED
+            // ? AlignState.ODOMETRY
             : AlignState.ODOMETRY;
     // : AlignState.ODOMETRY_SENSOR_FUSED;
 
@@ -178,11 +179,11 @@ public class AdjustToReefPost extends Command {
     boolean branchSensorConditions =
         superStructure.getCurrentState() == SuperStructureState.L4
             ? (reefSensorDistance <= 14
-                    && (branchSensorDistance >= 9 && branchSensorDistance <= 13)
+                    && (branchSensorDistance >= 9 && branchSensorDistance <= 14)
                     && Math.abs(angleToGoal) <= angleTolerance)
                 && scoralArm.getCANRangeDistanceStd() <= 0.08
             : (reefSensorDistance <= 14
-                    && (branchSensorDistance >= 18 && branchSensorDistance <= 23.5)
+                    && (branchSensorDistance >= 17 && branchSensorDistance <= 22)
                     && Math.abs(angleToGoal) <= angleTolerance)
                 && scoralArm.getCANRangeDistanceStd() <= 0.08;
 
