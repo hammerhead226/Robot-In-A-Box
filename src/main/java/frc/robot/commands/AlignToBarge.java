@@ -54,7 +54,7 @@ public class AlignToBarge extends Command {
     targetPose =
         DriverStation.getAlliance().get() == Alliance.Red
             ? new Pose2d(
-                10, MathUtil.clamp(drive.getPose().getY(), 0.5, 2.87), Rotation2d.fromDegrees(90))
+                10, MathUtil.clamp(drive.getPose().getY(), 0.5, 2.87), Rotation2d.fromDegrees(270))
             : new Pose2d(
                 7.6, MathUtil.clamp(drive.getPose().getY(), 5, 7.5), Rotation2d.fromDegrees(90));
 

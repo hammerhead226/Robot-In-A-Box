@@ -128,6 +128,8 @@ public class SuperStructure {
             && scoralArm.hasReachedGoal(SubsystemConstants.ScoralArmConstants.STOW_SETPOINT_DEG);
       case SCORING_CORAL:
         return true;
+      case L1_SCORING_CORAL:
+        return true;
       case INTAKE_ALGAE:
         return true;
       case EJECT_ALGAE:
@@ -260,7 +262,16 @@ public class SuperStructure {
       case PROCESSOR:
         currentState = SuperStructureState.PROCESSOR;
         return new SequentialCommandGroup(new MoveToProcessorSetpoints(scoralArm, elevator));
-
+      case L1_SCORING_CORAL:
+        currentState = SuperStructureState.L1_SCORING_CORAL;
+        led.setState(LED_STATE.FLASHING_GREEN);
+        return new SequentialCommandGroup(
+            scoralRollers.runVoltsCommmand(2.7),
+            new WaitCommand(0.5),
+            new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers),
+            new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
+            new InstantCommand(() -> this.setCurrentState(SuperStructureState.STOW)),
+            new InstantCommand(() -> this.setWantedState(SuperStructureState.STOW)));
       case SCORING_CORAL:
         currentState = SuperStructureState.SCORING_CORAL;
         led.setState(LED_STATE.FLASHING_GREEN);
@@ -339,10 +350,13 @@ public class SuperStructure {
       case SOURCE:
         setWantedState(lastReefState);
         break;
-      case L1, L2, L3, L4:
+      case L2, L3, L4:
         setWantedState(SuperStructureState.SCORING_CORAL);
         break;
-      case SCORING_CORAL, PROCESSOR_SCORE, EJECT_ALGAE:
+      case L1:
+        setWantedState(SuperStructureState.L1_SCORING_CORAL);
+        break;
+      case SCORING_CORAL, PROCESSOR_SCORE, EJECT_ALGAE, L1_SCORING_CORAL:
         setWantedState(SuperStructureState.STOW);
         break;
       case INTAKE_ALGAE:
