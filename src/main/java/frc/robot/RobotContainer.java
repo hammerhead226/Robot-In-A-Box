@@ -353,6 +353,12 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SCORE_CORAL_NEW",
         new SequentialCommandGroup(
+                new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
+                new ToReefHeight(
+                    elevator,
+                    scoralArm,
+                    SubsystemConstants.ElevatorConstants.L4_SETPOINT_INCHES,
+                    SubsystemConstants.ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG),
                 new WaitUntilCommand(
                     () ->
                         elevator.atGoal(2)
@@ -360,7 +366,7 @@ public class RobotContainer {
                                 ScoralArmConstants.L4_CORAL_SCORING_SETPOINT_DEG)),
                 scoralRollers.runVoltsCommmand(5),
                 new WaitCommand(0.14))
-            .withTimeout(2));
+            .withTimeout(3.5));
 
     NamedCommands.registerCommand(
         "PROCESSOR_SETPOINTS", new MoveToProcessorSetpoints(scoralArm, elevator));
@@ -391,6 +397,7 @@ public class RobotContainer {
 
     autos = new SendableChooser<>();
 
+    autos.addOption("hello", AutoBuilder.buildAuto("hello"));
     autos.addOption("Processor", AutoBuilder.buildAuto("Processor"));
     // autos.addOption("BlueLeftPush", AutoBuilder.buildAuto("BlueLeftPush"));
     autos.addOption("CenterBarge", AutoBuilder.buildAuto("CenterBarge"));
