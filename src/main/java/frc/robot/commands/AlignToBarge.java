@@ -6,13 +6,11 @@ package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
@@ -35,6 +33,9 @@ public class AlignToBarge extends Command {
 
   double distanceToTarget;
 
+  private boolean useMovingOffset = false;
+  public static double movingOffset = 0;
+
   /** Creates a new ApproachReef. */
   public AlignToBarge(
       Drive drive, LED led, SuperStructure superStructure, BooleanSupplier continuePath) {
@@ -52,11 +53,15 @@ public class AlignToBarge extends Command {
     led.setState(LED_STATE.FLASHING_RED);
 
     targetPose =
-        DriverStation.getAlliance().get() == Alliance.Red
-            ? new Pose2d(
-                10, MathUtil.clamp(drive.getPose().getY(), 0.5, 2.87), Rotation2d.fromDegrees(270))
-            : new Pose2d(
-                7.6, MathUtil.clamp(drive.getPose().getY(), 5, 7.5), Rotation2d.fromDegrees(90));
+        new Pose2d(
+            7.6,
+            Math.min(Drive.transformPerAlliance(drive.getPose()).getY(), FieldConstants.Barge.alignMax),
+            Rotation2d.fromDegrees(90));
+    if (targetPose.getY() < FieldConstants.Barge.alignMin) {
+      useMovingOffset = true;
+      targetPose = new Pose2d(targetPose.getX(), FieldConstants.Barge.alignMin+movingOffset, targetPose.getRotation());
+    }
+    targetPose = Drive.transformPerAlliance(targetPose);
 
     PathConstraints pathConstraints;
 
@@ -88,6 +93,10 @@ public class AlignToBarge extends Command {
   @Override
   public void end(boolean interrupted) {
     drive.stop();
+    if (useMovingOffset && isPathFinished) {
+      movingOffset += 0.2;
+      movingOffset %= FieldConstants.Barge.alignMax-FieldConstants.Barge.alignMin;
+    }
     if (!pointsTooClose) {
       pathCommand.cancel();
       if (distanceToTarget <= Units.inchesToMeters(4)) {
