@@ -724,6 +724,13 @@ public class RobotContainer {
             new InstantCommand(
                 () -> superStructure.setWantedState(SuperStructureState.CORAL_INTAKE_ALGAE)));
 
+    manipController
+        .leftTrigger()
+        .onTrue(
+            new ParallelCommandGroup(
+                new SetScoralArmTarget(scoralArm, 29, 2),
+                new SetClimberArmTarget(climberArm, 60, 2)));
+
     // not sure if it works
     // manipController
     //     .start()
