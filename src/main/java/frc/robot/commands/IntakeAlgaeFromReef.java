@@ -52,7 +52,7 @@ public class IntakeAlgaeFromReef extends SequentialCommandGroup {
         new SetScoralArmTarget(scoralArm, ScoralArmConstants.STOW_SETPOINT_DEG - 6, 2),
         new WaitUntilCommand(() -> elevator.hasReachedGoal(height1)),
         new InstantCommand(() -> scoralArm.setConstraints(300, 600)),
-        new SetScoralArmTarget(scoralArm, 78, 2),
+        new SetScoralArmTarget(scoralArm, 78, 5),
         new InstantCommand(() -> scoralArm.setConstraints(150, 300)),
         scoralRollers.runVoltsCommmand(-2),
         new SetElevatorTarget(elevator, height2, 1.5));

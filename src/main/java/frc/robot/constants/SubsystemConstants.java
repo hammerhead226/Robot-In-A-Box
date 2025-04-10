@@ -67,6 +67,7 @@ public final class SubsystemConstants {
     public static final double L4_SETPOINT_INCHES = 27.4;
     // public static final double L4_SETPOINT_INCHES = 27;
     public static final double BARGE_SETPOINT = 27.5;
+    public static final double GROUND_CORAL_ALGAE_SETPOINT_INCHES = -0.02;
   }
 
   public static final class ClimberConstants {
@@ -99,6 +100,7 @@ public final class SubsystemConstants {
     public static final double BARGE_BACK_SETPOINT_DEG = 69;
     public static final double BARGE_FORWARD_SETPOINT_DEG = 125;
     public static final double PROCESSOR_SETPOINT_DEG = 20;
+    public static final double GROUND_CORAL_ALGAE_SETPOINT_DEG = 38;
   }
 
   public static class LEDConstants {
@@ -191,7 +193,9 @@ public final class SubsystemConstants {
     L4,
     SCORING_CORAL,
     L1_SCORING_CORAL,
-    INTAKE_ALGAE
+    REEF_INTAKE_ALGAE,
+    CORAL_INTAKE_ALGAE,
+    STOW_ALGAE
   }
 
   public static final double CORAL_DIST = 4.0; // 1300; // CHANGE THIS

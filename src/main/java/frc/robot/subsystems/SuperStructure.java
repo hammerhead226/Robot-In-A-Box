@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.BargeExtend;
 import frc.robot.commands.GoToStowAfterProcessor;
 import frc.robot.commands.GoToStowTeleOp;
+import frc.robot.commands.IntakeAlgaeFromGroundCoral;
 import frc.robot.commands.IntakeAlgaeFromReef;
 import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.MoveToProcessorSetpoints;
@@ -73,7 +74,8 @@ public class SuperStructure {
       lastReefState = wantedState;
     } else if (wantedState == SuperStructureState.SOURCE) {
       led.setState(LED_STATE.GREY);
-    } else if (wantedState == SuperStructureState.PROCESSOR) {
+    } else if (wantedState == SuperStructureState.PROCESSOR
+        || wantedState == SuperStructureState.CORAL_INTAKE_ALGAE) {
       led.setState(LED_STATE.YELLOW);
     } else if (wantedState == SuperStructureState.BARGE_EXTEND) {
       led.setState(LED_STATE.PINK_LAVENDER);
@@ -130,7 +132,7 @@ public class SuperStructure {
         return true;
       case L1_SCORING_CORAL:
         return true;
-      case INTAKE_ALGAE:
+      case REEF_INTAKE_ALGAE:
         return true;
       case EJECT_ALGAE:
         return true;
@@ -140,6 +142,12 @@ public class SuperStructure {
                 SubsystemConstants.ScoralArmConstants.BARGE_BACK_SETPOINT_DEG);
       case PROCESSOR:
         return elevator.hasReachedGoal(4) && scoralArm.hasReachedGoal(20);
+      case CORAL_INTAKE_ALGAE:
+        return true;
+      case STOW_ALGAE:
+        return elevator.hasReachedGoal(SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES)
+            && scoralArm.hasReachedGoal(
+                SubsystemConstants.ScoralArmConstants.L2_CORAL_SCORING_SETPOINT_DEG);
       case PROCESSOR_SCORE:
         return true;
       case BARGE_SCORE:
@@ -204,7 +212,7 @@ public class SuperStructure {
         currentState = SuperStructureState.PROCESSOR_SCORE;
         led.setState(LED_STATE.FLASHING_GREEN);
         return new SequentialCommandGroup(
-            scoralRollers.runVoltsCommmand(2),
+            new InstantCommand(() -> scoralRollers.runVolts(2)),
             new WaitCommand(0.5),
             new GoToStowAfterProcessor(elevator, scoralArm, scoralRollers),
             new InstantCommand(() -> led.setState(LED_STATE.BLUE)),
@@ -312,15 +320,15 @@ public class SuperStructure {
               new WaitCommand(0.5),
               scoralArmCommand,
               scoralRollers.stopCommand(),
-              new InstantCommand(() -> this.setCurrentState(SuperStructureState.INTAKE_ALGAE)),
+              new InstantCommand(() -> this.setCurrentState(SuperStructureState.REEF_INTAKE_ALGAE)),
               new InstantCommand(() -> this.setWantedState(SuperStructureState.EJECT_ALGAE)),
               new IntakeAlgaeFromReef(
                   drive, scoralArm, scoralRollers, elevator, led, height1, height2),
               new InstantCommand(() -> this.enableAlgaeMode(false)));
         }
 
-      case INTAKE_ALGAE:
-        currentState = SuperStructureState.INTAKE_ALGAE;
+      case REEF_INTAKE_ALGAE:
+        currentState = SuperStructureState.REEF_INTAKE_ALGAE;
         double height1 =
             drive.getNearestParition(6) % 2 == 0
                 ? 6.5
@@ -328,7 +336,19 @@ public class SuperStructure {
         double height2 = drive.getNearestParition(6) % 2 == 0 ? 9 : 2;
         return new IntakeAlgaeFromReef(
             drive, scoralArm, scoralRollers, elevator, led, height1, height2);
-
+      case CORAL_INTAKE_ALGAE:
+        currentState = SuperStructureState.CORAL_INTAKE_ALGAE;
+        return new IntakeAlgaeFromGroundCoral(scoralArm, elevator, scoralRollers);
+      case STOW_ALGAE:
+        currentState = SuperStructureState.STOW_ALGAE;
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> scoralArm.setConstraints(150, 150)),
+            new ToReefHeight(
+                elevator,
+                scoralArm,
+                SubsystemConstants.ElevatorConstants.L2_SETPOINT_INCHES,
+                SubsystemConstants.ScoralArmConstants.L2_CORAL_SCORING_SETPOINT_DEG),
+            new InstantCommand(() -> scoralArm.setConstraints(150, 300)));
       default:
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -347,6 +367,9 @@ public class SuperStructure {
           setWantedState(SuperStructureState.SOURCE);
         }
         break;
+      case CORAL_INTAKE_ALGAE:
+        setWantedState(SuperStructureState.STOW_ALGAE);
+        break;
       case SOURCE:
         setWantedState(lastReefState);
         break;
@@ -359,7 +382,7 @@ public class SuperStructure {
       case SCORING_CORAL, PROCESSOR_SCORE, EJECT_ALGAE, L1_SCORING_CORAL:
         setWantedState(SuperStructureState.STOW);
         break;
-      case INTAKE_ALGAE:
+      case REEF_INTAKE_ALGAE, STOW_ALGAE:
         setWantedState(SuperStructureState.EJECT_ALGAE);
         break;
       case PROCESSOR:

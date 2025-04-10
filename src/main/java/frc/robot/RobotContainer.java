@@ -615,7 +615,7 @@ public class RobotContainer {
         .b()
         .whileTrue(
             new InstantCommand(
-                    () -> superStructure.setWantedState(SuperStructureState.INTAKE_ALGAE))
+                    () -> superStructure.setWantedState(SuperStructureState.REEF_INTAKE_ALGAE))
                 .andThen(
                     new ReinitializingCommand(
                             () -> superStructure.getSuperStructureCommand(),
@@ -717,6 +717,12 @@ public class RobotContainer {
         .povRight()
         .onTrue(
             new InstantCommand(() -> superStructure.setWantedState(SuperStructureState.PROCESSOR)));
+
+    manipController
+        .leftBumper()
+        .onTrue(
+            new InstantCommand(
+                () -> superStructure.setWantedState(SuperStructureState.CORAL_INTAKE_ALGAE)));
 
     // not sure if it works
     // manipController

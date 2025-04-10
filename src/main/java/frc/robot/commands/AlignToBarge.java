@@ -55,11 +55,16 @@ public class AlignToBarge extends Command {
     targetPose =
         new Pose2d(
             7.6,
-            Math.min(Drive.transformPerAlliance(drive.getPose()).getY(), FieldConstants.Barge.alignMax),
+            Math.min(
+                Drive.transformPerAlliance(drive.getPose()).getY(), FieldConstants.Barge.alignMax),
             Rotation2d.fromDegrees(90));
     if (targetPose.getY() < FieldConstants.Barge.alignMin) {
       useMovingOffset = true;
-      targetPose = new Pose2d(targetPose.getX(), FieldConstants.Barge.alignMin+movingOffset, targetPose.getRotation());
+      targetPose =
+          new Pose2d(
+              targetPose.getX(),
+              FieldConstants.Barge.alignMin + movingOffset,
+              targetPose.getRotation());
     }
     targetPose = Drive.transformPerAlliance(targetPose);
 
@@ -95,7 +100,7 @@ public class AlignToBarge extends Command {
     drive.stop();
     if (useMovingOffset && isPathFinished) {
       movingOffset += 0.2;
-      movingOffset %= FieldConstants.Barge.alignMax-FieldConstants.Barge.alignMin;
+      movingOffset %= FieldConstants.Barge.alignMax - FieldConstants.Barge.alignMin;
     }
     if (!pointsTooClose) {
       pathCommand.cancel();
