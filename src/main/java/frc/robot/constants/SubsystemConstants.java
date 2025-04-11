@@ -67,7 +67,7 @@ public final class SubsystemConstants {
     public static final double L4_SETPOINT_INCHES = 27.4;
     // public static final double L4_SETPOINT_INCHES = 27;
     public static final double BARGE_SETPOINT = 27.5;
-    public static final double GROUND_CORAL_ALGAE_SETPOINT_INCHES = -0.02;
+    public static final double GROUND_CORAL_ALGAE_SETPOINT_INCHES = 0.5;
   }
 
   public static final class ClimberConstants {

@@ -98,14 +98,15 @@ public class AlignToBarge extends Command {
   @Override
   public void end(boolean interrupted) {
     drive.stop();
-    if (useMovingOffset && isPathFinished) {
-      movingOffset += 0.2;
-      movingOffset %= FieldConstants.Barge.alignMax - FieldConstants.Barge.alignMin;
-    }
     if (!pointsTooClose) {
       pathCommand.cancel();
+
       if (distanceToTarget <= Units.inchesToMeters(4)) {
         drive.isBargeAutoAlignDone = true;
+        if (useMovingOffset) {
+          movingOffset += 0.8;
+          movingOffset %= FieldConstants.Barge.alignMax - FieldConstants.Barge.alignMin;
+        }
       }
     }
   }
