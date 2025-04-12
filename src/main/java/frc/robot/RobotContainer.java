@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -28,6 +29,7 @@ import frc.robot.commands.GoToStowAfterProcessor;
 import frc.robot.commands.GoToStowAuto;
 import frc.robot.commands.GoToStowTeleOp;
 import frc.robot.commands.IntakeAlgaeFromReef;
+import frc.robot.commands.IntakingCoral;
 import frc.robot.commands.MoveToProcessorSetpoints;
 import frc.robot.commands.ReinitializingCommand;
 import frc.robot.commands.Rumble;
@@ -499,14 +501,15 @@ public class RobotContainer {
     turnLimelightON.onTrue(vision.activateLimelight().ignoringDisable(true));
     slowModeTrigger.onTrue(new InstantCommand(() -> drive.enableSlowMode(true)));
     slowModeTrigger.onFalse(new InstantCommand(() -> drive.enableSlowMode(false)));
-
     reefAutoAlignTrigger.onTrue(
-        new ReinitializingCommand(
-            () -> {
-              superStructure.setWantedState(superStructure.getLastReefState());
+        new SequentialCommandGroup(
+            new WaitUntilCommand(() -> scoralRollers.seesCoral() == CoralState.SENSOR),
+            new ReinitializingCommand(
+                () -> {
+                  superStructure.setWantedState(superStructure.getLastReefState());
 
-              return superStructure.getSuperStructureCommand();
-            }));
+                  return superStructure.getSuperStructureCommand();
+                })));
 
     autoAlignDoneRumbleTrigger.onTrue(
         new InstantCommand(() -> led.setState(LED_STATE.PAPAYA_ORANGE))
@@ -547,40 +550,50 @@ public class RobotContainer {
         .leftTrigger()
         .and(() -> !driveController.rightTrigger().getAsBoolean())
         .whileTrue(
-            new SequentialCommandGroup(
-                new ApproachReef(
-                    drive,
-                    led,
-                    superStructure,
-                    false,
-                    () -> driveController.leftTrigger().getAsBoolean()),
-                new WaitUntilCommand(
-                    () -> superStructure.atGoals() && superStructure.isCurrentAReefState()),
-                new AdjustToReefPost(
-                    drive,
-                    scoralArm,
-                    superStructure,
-                    false,
-                    () -> driveController.leftTrigger().getAsBoolean())));
+            new ParallelCommandGroup(
+                new ConditionalCommand(
+                    new IntakingCoral(scoralRollers),
+                    new InstantCommand(),
+                    () -> scoralRollers.seesCoral() != CoralState.SENSOR),
+                new SequentialCommandGroup(
+                    new ApproachReef(
+                        drive,
+                        led,
+                        superStructure,
+                        false,
+                        () -> driveController.leftTrigger().getAsBoolean()),
+                    new WaitUntilCommand(
+                        () -> superStructure.atGoals() && superStructure.isCurrentAReefState()),
+                    new AdjustToReefPost(
+                        drive,
+                        scoralArm,
+                        superStructure,
+                        false,
+                        () -> driveController.leftTrigger().getAsBoolean()))));
     driveController
         .rightTrigger()
         .and(() -> !driveController.leftTrigger().getAsBoolean())
         .whileTrue(
-            new SequentialCommandGroup(
-                new ApproachReef(
-                    drive,
-                    led,
-                    superStructure,
-                    true,
-                    () -> driveController.rightTrigger().getAsBoolean()),
-                new WaitUntilCommand(
-                    () -> superStructure.atGoals() && superStructure.isCurrentAReefState()),
-                new AdjustToReefPost(
-                    drive,
-                    scoralArm,
-                    superStructure,
-                    true,
-                    () -> driveController.rightTrigger().getAsBoolean())));
+            new ParallelCommandGroup(
+                new ConditionalCommand(
+                    new IntakingCoral(scoralRollers),
+                    new InstantCommand(),
+                    () -> scoralRollers.seesCoral() != CoralState.SENSOR),
+                new SequentialCommandGroup(
+                    new ApproachReef(
+                        drive,
+                        led,
+                        superStructure,
+                        true,
+                        () -> driveController.rightTrigger().getAsBoolean()),
+                    new WaitUntilCommand(
+                        () -> superStructure.atGoals() && superStructure.isCurrentAReefState()),
+                    new AdjustToReefPost(
+                        drive,
+                        scoralArm,
+                        superStructure,
+                        true,
+                        () -> driveController.rightTrigger().getAsBoolean()))));
 
     autoAlignRelease.onTrue(new InstantCommand(() -> led.setState(LED_STATE.RED)));
 
