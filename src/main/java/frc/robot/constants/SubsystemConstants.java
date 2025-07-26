@@ -24,15 +24,16 @@ public final class SubsystemConstants {
   public static final boolean tuningMode = true;
 
   // public static final double NEAR_FAR_AT_REEF_OFFSET = -0.47;
-  public static final double NEAR_FAR_AT_REEF_OFFSET = -0.482;
+  public static final LoggedTunableNumber NEAR_FAR_AT_REEF_OFFSET =
+      new LoggedTunableNumber("Auto Align/NEAR_FAR_AT_REEF_OFFSET", -0.525); // -0.482;
   public static final double NEAR_FAR_AWAY_REEF_OFFSET = -0.9;
   // more neg moves it to the right
   // public static final double LEFT_RIGHT_BRANCH_OFFSET = -0.015;
   public static final LoggedTunableNumber CORRECTION_LEFT_BRANCH_OFFSET =
-      new LoggedTunableNumber("Auto Align/LEFT_BRANCH_OFFSET", 0.0);
+      new LoggedTunableNumber("Auto Align/LEFT_BRANCH_OFFSET", -0.045);
   // new LoggedTunableNumber("Auto Align/LEFT_BRANCH_OFFSET", -0.023);
   public static final LoggedTunableNumber CORRECTION_RIGHT_BRANCH_OFFSET =
-      new LoggedTunableNumber("Auto Align/RIGHT_BRANCH_OFFSET", 0.0);
+      new LoggedTunableNumber("Auto Align/RIGHT_BRANCH_OFFSET", -0.045);
   // new LoggedTunableNumber("Auto Align/RIGHT_BRANCH_OFFSET", -0.023);
   public static final double APPROACH_OFFSET_LEFT_RIGHT_OFFSET = -0.2;
   public static final double ADJUST_OFFSET_LEFT_RIGHT_OFFSET = -0.07;
@@ -60,10 +61,10 @@ public final class SubsystemConstants {
 
     // TODO:: NEED TO FIND
     public static final double L1_SETPOINT_INCHES = 3.8;
-    public static final double L2_SETPOINT_INCHES = 7.5;
+    public static final double L2_SETPOINT_INCHES = 6.8; // 7.5;
     // public static final double L2_SETPOINT_INCHES = 6.8;
     // public static final double L3_SETPOINT_INCHES = 14.5;
-    public static final double L3_SETPOINT_INCHES = 14.2;
+    public static final double L3_SETPOINT_INCHES = 13.7; // 14.2;
     public static final double L4_SETPOINT_INCHES = 27.4;
     // public static final double L4_SETPOINT_INCHES = 27;
     public static final double BARGE_SETPOINT = 27.5;

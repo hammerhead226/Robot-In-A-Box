@@ -43,7 +43,7 @@ public class MoveToReefCenter extends Command {
                 (drive.getNearestCenterLeft().getX() + drive.getNearestCenterRight().getX()) / 2.,
                 (drive.getNearestCenterLeft().getY() + drive.getNearestCenterRight().getY()) / 2.,
                 drive.getNearestCenterLeft().getRotation()),
-            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, -0.025),
+            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET.get(), -0.025),
             Rotation2d.kZero);
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(drive.getPose(), atPose);

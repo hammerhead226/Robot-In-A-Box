@@ -76,7 +76,7 @@ public class ReefPositionsUtil {
           DriveCommands.rotateAndNudge(
               BLUE_REEF_POSE2DS[i],
               new Translation2d(
-                  SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                  SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET.get(),
                   // SubsystemConstants.LEFT_RIGHT_BRANCH_OFFSET),
                   SubsystemConstants.CORRECTION_LEFT_BRANCH_OFFSET.get()),
               Rotation2d.kZero);

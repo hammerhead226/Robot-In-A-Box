@@ -136,6 +136,10 @@ public class ScoralArm extends SubsystemBase {
     return saInputs.positionSetpointDegs - saInputs.positionDegs;
   }
 
+  public boolean armAtSetpoint(double thresholdDegrees) {
+    return (Math.abs(getArmError()) <= thresholdDegrees);
+  }
+
   public void setConstraints(
       double maxVelocityDegreesPerSec, double maxAccelerationDegreesPerSecSquared) {
     armConstraints =

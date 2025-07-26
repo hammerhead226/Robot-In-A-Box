@@ -112,6 +112,10 @@ public class ClimberArm extends SubsystemBase {
     return pInputs.positionSetpointDegs - pInputs.positionDegs;
   }
 
+  public boolean armAtSetpoint(double thresholdDegrees) {
+    return (Math.abs(getArmError()) <= thresholdDegrees);
+  }
+
   public boolean hasReachedGoal(double goalDegs) {
     return (Math.abs(pInputs.positionDegs - goalDegs) <= 4);
   }

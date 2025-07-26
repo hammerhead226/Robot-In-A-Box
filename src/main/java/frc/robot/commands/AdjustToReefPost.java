@@ -123,14 +123,14 @@ public class AdjustToReefPost extends Command {
         DriveCommands.rotateAndNudge(
             reefPose,
             new Translation2d(
-                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET,
+                SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET.get(),
                 SubsystemConstants.ADJUST_OFFSET_LEFT_RIGHT_OFFSET),
             Rotation2d.kZero);
 
     odometryTargetPose =
         DriveCommands.rotateAndNudge(
             reefPose,
-            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, sideOffset),
+            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET.get(), sideOffset),
             Rotation2d.kZero);
 
     odometryForwardPID.reset(drive.getPose().getX());

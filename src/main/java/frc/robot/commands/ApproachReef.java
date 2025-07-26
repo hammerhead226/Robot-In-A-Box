@@ -78,7 +78,7 @@ public class ApproachReef extends Command {
     atPose =
         DriveCommands.rotateAndNudge(
             reefPose,
-            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET, sideOffset),
+            new Translation2d(SubsystemConstants.NEAR_FAR_AT_REEF_OFFSET.get(), sideOffset),
             // SubsystemConstants.APPROACH_OFFSET_LEFT_RIGHT_OFFSET),
             Rotation2d.kZero);
 

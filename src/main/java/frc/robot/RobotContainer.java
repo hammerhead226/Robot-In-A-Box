@@ -174,7 +174,9 @@ public class RobotContainer {
                 new DistanceSensorCANRangeIO(
                     RobotMap.CoralScorerArmIDs.coralScorerCANrangeID, "rio"),
                 CoralState.DEFAULT,
-                AlgaeState.DEFAULT);
+                Alg
+                
+                eState.DEFAULT);
         led = new LED(new LED_IOCANdle(RobotMap.ledIDs.CANdleID, "CAN Bus 2"));
         superStructure =
             new SuperStructure(drive, elevator, scoralArm, scoralRollers, led, climberArm, winch);
