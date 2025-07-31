@@ -69,18 +69,6 @@
           "data": {
             "pathName": "CenterBargeFourth"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "BARGE_SCORE"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CenterBargeFifth"
-          }
         }
       ]
     }
