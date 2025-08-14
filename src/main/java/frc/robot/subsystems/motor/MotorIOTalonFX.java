@@ -1,4 +1,4 @@
-package frc.robot.subsystems.scoral;
+package frc.robot.subsystems.motor;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -13,9 +13,9 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.subsystems.commoniolayers.FlywheelIO;
+import frc.robot.subsystems.commoniolayers.MotorIO;
 
-public class ScoralRollersIOTalonFX implements FlywheelIO {
+public class MotorIOTalonFX implements MotorIO {
   private static final double GEAR_RATIO = 1.5;
 
   private final TalonFX leader;
@@ -26,7 +26,7 @@ public class ScoralRollersIOTalonFX implements FlywheelIO {
   private final StatusSignal<Current> leaderStatorCurrentAmps;
   private final StatusSignal<Current> leaderSupplyCurrentAmps;
 
-  public ScoralRollersIOTalonFX(int id) {
+  public MotorIOTalonFX(int id) {
 
     leader = new TalonFX(id);
     var config = new TalonFXConfiguration();
@@ -52,7 +52,7 @@ public class ScoralRollersIOTalonFX implements FlywheelIO {
   }
 
   @Override
-  public void updateInputs(FlywheelIOInputs inputs) {
+  public void updateInputs(MotorIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         leaderPosition,
         leaderVelocity,

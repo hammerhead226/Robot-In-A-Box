@@ -17,16 +17,11 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.SimConstants;
-import frc.robot.constants.SubsystemConstants.LED_STATE;
 import frc.robot.constants.TunerConstants;
-import frc.robot.util.LimelightHelpers;
-import frc.robot.util.ReefPositionsUtil;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -135,72 +130,18 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {
-    robotContainer.getScoralRollers().stop();
-    robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
-    robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
-    robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
-    robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
-    robotContainer.getScoralArm().setConstraints(150, 300);
-    robotContainer
-        .getElevator()
-        .setElevatorCurrent(robotContainer.getElevator().getElevatorPosition());
-    robotContainer
-        .getElevator()
-        .setElevatorGoal(robotContainer.getElevator().getElevatorPosition());
-
-    robotContainer.getLED().setState(LED_STATE.FIRE);
-    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50);
-    LimelightHelpers.SetIMUMode("limelight-reef", 1);
-  }
+  public void disabledInit() {}
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {
-    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 50);
-
-    if (!robotContainer.getScoralArm().armAtSetpoint(10.0)) {
-      robotContainer
-          .getScoralArm()
-          .setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
-      robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
-    }
-
-    if (!robotContainer.getClimber().armAtSetpoint(10.0)) {
-      robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
-      robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
-    }
-  }
+  public void disabledPeriodic() {}
 
   @Override
-  public void robotInit() {
-    ReefPositionsUtil.printOffsetPoses();
-    UsbCamera cam = CameraServer.startAutomaticCapture();
-
-    cam.setResolution(640, 480);
-  }
+  public void robotInit() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-
-    autonomousCommand = robotContainer.getAutonomousCommand();
-
-    if (autonomousCommand != null) {
-      autonomousCommand.schedule();
-    }
-    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 1);
-    LimelightHelpers.SetIMUMode("limelight-reef", 1);
-
-    // robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
-    // robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
-
-    robotContainer
-        .getElevator()
-        .setElevatorCurrent(robotContainer.getElevator().getElevatorPosition());
-    robotContainer
-        .getElevator()
-        .setElevatorGoal(robotContainer.getElevator().getElevatorPosition());
 
     // robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
     // robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
@@ -208,54 +149,15 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-    Logger.recordOutput(
-        "Debug Super Structure/Wanted State", robotContainer.getSuperStructure().getWantedState());
-    Logger.recordOutput(
-        "Debug Super Structure/Current State",
-        robotContainer.getSuperStructure().getCurrentState());
-    Logger.recordOutput(
-        "Debug Super Structure/At State Goals", robotContainer.getSuperStructure().atGoals());
-  }
+  public void autonomousPeriodic() {}
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {
-    LimelightHelpers.setLimelightNTDouble("limelight-reef", "throttle_set", 1);
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
-    }
-
-    LimelightHelpers.SetIMUMode("limelight-reef", 1);
-
-    // robotContainer.getClimber().setArmCurrent(robotContainer.getClimber().getArmPositionDegs());
-    // robotContainer.getClimber().setArmGoal(robotContainer.getClimber().getArmPositionDegs());
-    // robotContainer.getScoralArm().setArmCurrent(robotContainer.getScoralArm().getArmPositionDegs());
-    // robotContainer.getScoralArm().setArmGoal(robotContainer.getScoralArm().getArmPositionDegs());
-    robotContainer.getScoralArm().setConstraints(150, 300);
-
-    robotContainer
-        .getElevator()
-        .setElevatorCurrent(robotContainer.getElevator().getElevatorPosition());
-    robotContainer
-        .getElevator()
-        .setElevatorGoal(robotContainer.getElevator().getElevatorPosition());
-  }
+  public void teleopInit() {}
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-
-    Logger.recordOutput(
-        "Debug Super Structure/Wanted State", robotContainer.getSuperStructure().getWantedState());
-    Logger.recordOutput(
-        "Debug Super Structure/Current State",
-        robotContainer.getSuperStructure().getCurrentState());
-    Logger.recordOutput(
-        "Debug Super Structure/At State Goals", robotContainer.getSuperStructure().atGoals());
-
-    Logger.recordOutput("algaeMode", robotContainer.getSuperStructure().getAlgaeMode());
-  }
+  public void teleopPeriodic() {}
 
   /** This function is called once when test mode is enabled. */
   @Override

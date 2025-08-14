@@ -1,4 +1,4 @@
-package frc.robot.subsystems.scoral;
+package frc.robot.subsystems.motor;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -6,9 +6,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.constants.SubsystemConstants;
-import frc.robot.subsystems.commoniolayers.FlywheelIO;
+import frc.robot.subsystems.commoniolayers.MotorIO;
 
-public class ScoralRollersIOSim implements FlywheelIO {
+public class MotorIOSim implements MotorIO {
   // CHANGE THESE VALUES TO MATCH YOUR MOTOR AND GEARBOX
   private int gearBoxMotorCount = 1;
   private double gearing = 1.5;
@@ -29,7 +29,7 @@ public class ScoralRollersIOSim implements FlywheelIO {
   private double clampedValueHighVolts = 12.0;
 
   @Override
-  public void updateInputs(FlywheelIOInputs inputs) {
+  public void updateInputs(MotorIOInputs inputs) {
     if (closedLoop) {
       appliedVolts =
           MathUtil.clamp(

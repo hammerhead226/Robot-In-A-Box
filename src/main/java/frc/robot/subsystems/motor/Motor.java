@@ -1,8 +1,4 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
-package frc.robot.subsystems.climber;
+package frc.robot.subsystems.motor;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -13,38 +9,41 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
+import frc.robot.constants.SubsystemConstants.AlgaeState;
+import frc.robot.constants.SubsystemConstants.CoralState;
+import frc.robot.subsystems.commoniolayers.MotorIO;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Winch extends SubsystemBase {
-  private final WinchIO io;
-  private final WinchIOInputsAutoLogged inputs = new WinchIOInputsAutoLogged();
+public class Motor extends SubsystemBase {
+  private final MotorIO motor;
+  private final MotorIOInputsAutoLogged inputs = new MotorIOInputsAutoLogged();
   private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
-  private static final LoggedTunableNumber kV = new LoggedTunableNumber("Winch/kV", 1);
-  private static final LoggedTunableNumber kS = new LoggedTunableNumber("Winch/kS", 1);
-  private static final LoggedTunableNumber kA = new LoggedTunableNumber("Winch/kA", 1);
+  private AlgaeState lastAlgaeState;
 
-  // private final DistanceSensorIOInputsAutoLogged sInputs = new
-  // DistanceSensorIOInputsAutoLogged();
+  private static final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 1);
+  private static final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 1);
+  private static final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 1);
+
+  private CoralState lastCoralState;
+
   /** Creates a new Flywheel. */
-  public Winch(WinchIO io) {
-    this.io = io;
+  public Motor(MotorIO motor) {
+    this.motor = motor;
 
     // Switch constants based on mode (the physics simulator is treated as a
     // separate robot with different tuning)
     switch (SimConstants.currentMode) {
       case REAL:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.01);
-        io.configurePID(0.0, 0.0, 0.0);
-        break;
       case REPLAY:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.01);
-        io.configurePID(0.0, 0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.0);
+        motor.configurePID(0.0, 0.0, 0.0);
         break;
       case SIM:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.3);
-        io.configurePID(0.0, 0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.1);
+        motor.configurePID(0, 0.0, 0.0);
         break;
       default:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);
@@ -58,7 +57,7 @@ public class Winch extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("Winch Debug/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput("Flywheel/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
 
     updateTunableNumbers();
@@ -66,46 +65,50 @@ public class Winch extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Climber Winch", inputs);
+    motor.updateInputs(inputs);
+    Logger.processInputs("Scoral Rollers", inputs);
     updateTunableNumbers();
   }
 
   /** Run open loop at the specified voltage. */
   public void runVolts(double volts) {
-    io.setVoltage(volts);
-  }
-
-  public double getStatorCurrentAmps() {
-    return inputs.statorCurrentAmps;
+    motor.setVoltage(volts);
   }
 
   /** Run closed loop at the specified velocity. */
   public void runVelocity(double velocityRPM) {
     var velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(velocityRPM);
-    io.setVelocityRPM(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
+    motor.setVelocity(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
 
     // Log flywheel setpoint
-    Logger.recordOutput("Winch Debug/SetpointRPM", velocityRPM);
+    Logger.recordOutput("Debug Rollers/SetpointRPM", velocityRPM);
   }
 
   public Command runVoltsCommmand(double volts) {
-
+    // Elastic.sendNotification(
+    // new Notification(
+    // NotificationLevel.INFO, "Notice", "Flywheel is being run at " + volts + "
+    // volts."));
     return new InstantCommand(() -> runVolts(volts), this);
   }
 
   public Command runVelocityCommand(double velocityRPM) {
 
-    return new InstantCommand(() -> runVelocity(velocityRPM), this);
+    return new InstantCommand(() -> runVelocity(velocityRPM), this).withTimeout(5);
   }
 
-  public Command stopWinch() {
+  public Command flywheelStop() {
     return new InstantCommand(() -> stop(), this);
   }
 
-  /** Stops the Winch. */
+  /** Stops the flywheel. */
   public void stop() {
-    io.stop();
+    motor.stop();
+  }
+
+  public Command stopCommand() {
+
+    return new InstantCommand(() -> stop(), this);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
@@ -118,20 +121,38 @@ public class Winch extends SubsystemBase {
     return sysId.dynamic(direction);
   }
 
+  public AlgaeState seesAlgae() {
+    Logger.recordOutput("Debug Rollers/see algae val", "default");
+    if (inputs.leaderStatorCurrentAmps > 9) {
+      Logger.recordOutput("Debug Rollers/see algae val", "current");
+      lastAlgaeState = AlgaeState.CURRENT;
+      return AlgaeState.CURRENT;
+
+    } else {
+      Logger.recordOutput("Debug Rollers/see algae val", "no algae");
+      lastAlgaeState = AlgaeState.NO_ALGAE;
+      return AlgaeState.NO_ALGAE;
+    }
+  }
+
   /** Returns the current velocity in RPM. */
-  // @AutoLogOutput
-  // public double getVelocityRPM() {
-  //   return Units.radiansPerSecondToRotationsPerMinute(inputs.velocityRadPerSec);
-  // }
+  @AutoLogOutput(key = "Debug Rollers/Velocity RPM")
+  public double getVelocityRPM() {
+    return Units.radiansPerSecondToRotationsPerMinute(inputs.velocityRadPerSec);
+  }
 
   /** Returns the current velocity in radians per second. */
   public double getCharacterizationVelocity() {
-    return Units.rotationsPerMinuteToRadiansPerSecond(inputs.winchVelocityRPM);
+    return inputs.velocityRadPerSec;
+  }
+
+  public void zero() {
+    motor.stop();
   }
 
   private void updateTunableNumbers() {
     if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
-      ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get(), 1);
+      ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
     }
   }
 }
