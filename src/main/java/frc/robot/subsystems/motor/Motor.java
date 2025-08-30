@@ -62,7 +62,7 @@ public class Motor extends SubsystemBase {
   @Override
   public void periodic() {
     motor.updateInputs(inputs);
-    Logger.processInputs("Scoral Rollers", inputs);
+    Logger.processInputs("Test Motor", inputs);
     updateTunableNumbers();
   }
 
@@ -93,13 +93,9 @@ public class Motor extends SubsystemBase {
     return new InstantCommand(() -> runVelocity(velocityRPM), this).withTimeout(5);
   }
 
-  public Command flywheelStop() {
-    return new InstantCommand(() -> stop(), this);
-  }
-
   /** Stops the flywheel. */
-  public void stop() {
-    motor.stop();
+  public Command stop() {
+    return stopCommand();
   }
 
   public Command stopCommand() {

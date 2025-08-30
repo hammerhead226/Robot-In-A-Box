@@ -11,7 +11,7 @@ import frc.robot.subsystems.commoniolayers.MotorIO;
 public class MotorIOSim implements MotorIO {
   // CHANGE THESE VALUES TO MATCH YOUR MOTOR AND GEARBOX
   private int gearBoxMotorCount = 1;
-  private double gearing = 1.5;
+  private double gearing = 1;
   //  private double momentOfInertia = 1;
   private DCMotor motor = DCMotor.getKrakenX60Foc(gearBoxMotorCount);
   //  private double[] stds = {1, 2, 3};
