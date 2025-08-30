@@ -14,6 +14,7 @@ import frc.robot.subsystems.commoniolayers.MotorIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Motor extends SubsystemBase {
   private final MotorIO motor;
@@ -21,18 +22,33 @@ public class Motor extends SubsystemBase {
   private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
 
-  private static final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 1);
-  private static final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 1);
-  private static final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 1);
+  private static final LoggedTunableNumber kV =
+      new LoggedTunableNumber("TestMotor/Feedforward/kV", 1);
+  private static final LoggedTunableNumber kS =
+      new LoggedTunableNumber("TestMotor/Feedforward/kS", 1);
+  private static final LoggedTunableNumber kA =
+      new LoggedTunableNumber("TestMotor/Feedforward/kA", 1);
+
+  private static final LoggedTunableNumber kP = new LoggedTunableNumber("TestMotor/Feedback/kP", 1);
+  private static final LoggedTunableNumber kI = new LoggedTunableNumber("TestMotor/Feedback/kI", 1);
+  private static final LoggedTunableNumber kD = new LoggedTunableNumber("TestMotor/Feedback/kD", 1);
+
+  private final LoggedDashboardChooser<String> controlLoopType;
 
   /** Creates a new Flywheel. */
   public Motor(MotorIO motor) {
+    controlLoopType = new LoggedDashboardChooser<>("Control Type");
+    controlLoopType.addDefaultOption("Default", "Both");
+    controlLoopType.addOption("Feedforward", "kSkVkA");
+    controlLoopType.addOption("Feedback", "PID");
     this.motor = motor;
 
     // Switch constants based on mode (the physics simulator is treated as a
     // separate robot with different tuning)
     switch (SimConstants.currentMode) {
       case REAL:
+        ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
+        motor.configurePID(kP.get(), kI.get(), kD.get());
       case REPLAY:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);
         motor.configurePID(0.0, 0.0, 0.0);
@@ -129,8 +145,21 @@ public class Motor extends SubsystemBase {
   }
 
   private void updateTunableNumbers() {
-    if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
-      ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
-    }
+    // if (controlLoopType.get().equals("kSkVkA")) {
+    //   if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
+    //     ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
+    //   }
+    // } else if (controlLoopType.get().equals("PID")) {
+    //   if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
+    //     motor.configurePID(kP.get(), kI.get(), kD.get());
+    //   }
+    // } else {
+    //   if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
+    //     motor.configurePID(kP.get(), kI.get(), kD.get());
+    //   }
+    //   if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
+    //     ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
+    //   }
+    // }
   }
 }

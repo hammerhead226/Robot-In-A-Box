@@ -4,6 +4,7 @@ import static frc.robot.constants.RobotMap.motorID;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.constants.SimConstants;
 import frc.robot.subsystems.motor.Motor;
 import frc.robot.subsystems.motor.MotorIOTalonFX;
 
@@ -25,26 +26,26 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    motor = new Motor(new MotorIOTalonFX(motorID));
-    // switch (SimConstants.currentMode) {
-    //   case REAL:
-    //     motor = new Motor(new MotorIOTalonFX(11)); // Test Motor CAN ID: 11.
-    //     break;
-    //   case SIM:
-    //     motor = new Motor(new MotorIOTalonFX(11)); // Test Motor CAN ID: 11.
-    //     break;
 
-    //   default:
-    //     motor = new Motor(new MotorIOTalonFX(11)); // Test Motor CAN ID: 11.
-    //     break;
-    // }
+    switch (SimConstants.currentMode) {
+      case REAL:
+        motor = new Motor(new MotorIOTalonFX(motorID)); // Test Motor CAN ID: 11.
+        break;
+      case SIM:
+        motor = new Motor(new MotorIOTalonFX(motorID)); // Test Motor CAN ID: 11.
+        break;
+
+      default:
+        motor = new Motor(new MotorIOTalonFX(motorID)); // Test Motor CAN ID: 11.
+        break;
+    }
     testBindings();
   }
 
   private void testBindings() {
     testController
         .a()
-        .onTrue(new InstantCommand(() -> motor.runVolts(4)))
+        .onTrue(new InstantCommand(() -> motor.runVelocity(20)))
         .onFalse(new InstantCommand(() -> motor.stop()));
   }
 

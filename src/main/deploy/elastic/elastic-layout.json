@@ -3,58 +3,114 @@
   "grid_size": 128,
   "tabs": [
     {
-      "name": "Teleoperated",
+      "name": "Tuning",
       "grid_layout": {
         "layouts": [
           {
-            "title": "Operator Controller",
-            "x": 1024.0,
-            "y": 256.0,
+            "title": "Feedback",
+            "x": 0.0,
+            "y": 0.0,
             "width": 256.0,
-            "height": 128.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
             },
             "children": [
               {
-                "title": "AxisValues",
+                "title": "kD",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick1/AxisValues",
+                  "topic": "Tunables/SmartDashboard/TestMotor/Feedback/kD",
                   "period": 0.06,
-                  "data_type": "float[]",
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "kI",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "Tunables/SmartDashboard/TestMotor/Feedback/kI",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "kP",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "Tunables/SmartDashboard/TestMotor/Feedback/kP",
+                  "period": 0.06,
+                  "data_type": "double",
                   "show_submit_button": false
                 }
               }
             ]
           },
           {
-            "title": "Driver Controller",
-            "x": 1024.0,
-            "y": 128.0,
+            "title": "Feedforward",
+            "x": 256.0,
+            "y": 0.0,
             "width": 256.0,
-            "height": 128.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
             },
             "children": [
               {
-                "title": "AxisValues",
+                "title": "kA",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/AdvantageKit/DriverStation/Joystick0/AxisValues",
+                  "topic": "Tunables/SmartDashboard/TestMotor/Feedforward/kA",
                   "period": 0.06,
-                  "data_type": "float[]",
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "kS",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "Tunables/SmartDashboard/TestMotor/Feedforward/kS",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "kV",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "Tunables/SmartDashboard/TestMotor/Feedforward/kV",
+                  "period": 0.06,
+                  "data_type": "double",
                   "show_submit_button": false
                 }
               }
@@ -63,206 +119,16 @@
         ],
         "containers": [
           {
-            "title": "Alerts",
-            "x": 768.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Alerts",
-            "properties": {
-              "topic": "/SmartDashboard/Alerts",
-              "period": 0.06
-            }
-          },
-          {
-            "title": "USB Camera 0",
+            "title": "Control Type",
             "x": 0.0,
-            "y": 0.0,
-            "width": 768.0,
-            "height": 512.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/USB Camera 0",
-              "period": 0.06
-            }
-          },
-          {
-            "title": "Auto Choices",
-            "x": 768.0,
-            "y": 0.0,
-            "width": 256.0,
+            "y": 256.0,
+            "width": 512.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
-              "topic": "/SmartDashboard/Auto Choices",
+              "topic": "/SmartDashboard/Control Type",
               "period": 0.06,
               "sort_options": false
-            }
-          },
-          {
-            "title": "Enable",
-            "x": 1024.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Toggle Button",
-            "properties": {
-              "topic": "/SmartDashboard/Enable",
-              "period": 0.06,
-              "data_type": "boolean"
-            }
-          },
-          {
-            "title": "Reset",
-            "x": 1152.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Toggle Button",
-            "properties": {
-              "topic": "/SmartDashboard/Reset",
-              "period": 0.06,
-              "data_type": "boolean"
-            }
-          },
-          {
-            "title": "LedState",
-            "x": 1280.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/LEDs/LedState",
-              "period": 0.06,
-              "data_type": "string",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Reef LL HeartBeat",
-            "x": 768.0,
-            "y": 384.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/Vision/Camera0/HeartBeat",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Backup LL HeartBeat",
-            "x": 896.0,
-            "y": 384.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/Vision/Camera1/HeartBeat",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "MatchTime",
-            "x": 1024.0,
-            "y": 384.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/DriverStation/MatchTime",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Current State",
-            "x": 1280.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Debug Super Structure/Current State",
-              "period": 0.06,
-              "data_type": "string",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Wanted State",
-            "x": 1280.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Debug Super Structure/Wanted State",
-              "period": 0.06,
-              "data_type": "string",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "At State Goals",
-            "x": 1280.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Debug Super Structure/At State Goals",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Autonomous",
-      "grid_layout": {
-        "layouts": [],
-        "containers": []
-      }
-    },
-    {
-      "name": "Limelight Views",
-      "grid_layout": {
-        "layouts": [],
-        "containers": [
-          {
-            "title": "limelight-bakreef",
-            "x": 768.0,
-            "y": 0.0,
-            "width": 768.0,
-            "height": 768.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/limelight-bakreef",
-              "period": 0.06
-            }
-          },
-          {
-            "title": "limelight-reef",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 768.0,
-            "height": 768.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/limelight-reef",
-              "period": 0.06
             }
           }
         ]
