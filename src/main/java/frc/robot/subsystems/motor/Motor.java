@@ -93,8 +93,6 @@ public class Motor extends SubsystemBase {
     return new InstantCommand(() -> runVelocity(velocityRPM), this).withTimeout(5);
   }
 
-
-
   /** Stops the flywheel. */
   public void stop() {
     motor.stop();

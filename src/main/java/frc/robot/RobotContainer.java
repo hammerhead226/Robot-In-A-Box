@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static frc.robot.constants.RobotMap.motorID;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.motor.Motor;
@@ -23,7 +25,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    motor = new Motor(new MotorIOTalonFX(11));
+    motor = new Motor(new MotorIOTalonFX(motorID));
     // switch (SimConstants.currentMode) {
     //   case REAL:
     //     motor = new Motor(new MotorIOTalonFX(11)); // Test Motor CAN ID: 11.
