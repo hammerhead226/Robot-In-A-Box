@@ -9,9 +9,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.SimConstants;
-import frc.robot.constants.SubsystemConstants.AlgaeState;
-import frc.robot.constants.SubsystemConstants.CoralState;
 import frc.robot.subsystems.commoniolayers.MotorIO;
+import frc.robot.subsystems.commoniolayers.MotorIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -21,13 +20,10 @@ public class Motor extends SubsystemBase {
   private final MotorIOInputsAutoLogged inputs = new MotorIOInputsAutoLogged();
   private SimpleMotorFeedforward ffModel;
   private final SysIdRoutine sysId;
-  private AlgaeState lastAlgaeState;
 
   private static final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 1);
   private static final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 1);
   private static final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 1);
-
-  private CoralState lastCoralState;
 
   /** Creates a new Flywheel. */
   public Motor(MotorIO motor) {
@@ -119,20 +115,6 @@ public class Motor extends SubsystemBase {
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysId.dynamic(direction);
-  }
-
-  public AlgaeState seesAlgae() {
-    Logger.recordOutput("Debug Rollers/see algae val", "default");
-    if (inputs.leaderStatorCurrentAmps > 9) {
-      Logger.recordOutput("Debug Rollers/see algae val", "current");
-      lastAlgaeState = AlgaeState.CURRENT;
-      return AlgaeState.CURRENT;
-
-    } else {
-      Logger.recordOutput("Debug Rollers/see algae val", "no algae");
-      lastAlgaeState = AlgaeState.NO_ALGAE;
-      return AlgaeState.NO_ALGAE;
-    }
   }
 
   /** Returns the current velocity in RPM. */

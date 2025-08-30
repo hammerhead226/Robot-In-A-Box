@@ -1,7 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.constants.SimConstants;
 import frc.robot.subsystems.motor.Motor;
 import frc.robot.subsystems.motor.MotorIOTalonFX;
 
@@ -23,27 +23,27 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    switch (SimConstants.currentMode) {
-      case REAL:
-        motor = new Motor(new MotorIOTalonFX(11)); // Test Motor CAN ID: 11.
-        break;
-      case SIM:
-        motor = new Motor(new MotorIOTalonFX(11)); // Test Motor CAN ID: 11.
-        break;
+    motor = new Motor(new MotorIOTalonFX(11));
+    // switch (SimConstants.currentMode) {
+    //   case REAL:
+    //     motor = new Motor(new MotorIOTalonFX(11)); // Test Motor CAN ID: 11.
+    //     break;
+    //   case SIM:
+    //     motor = new Motor(new MotorIOTalonFX(11)); // Test Motor CAN ID: 11.
+    //     break;
 
-      default:
-        motor = new Motor(new MotorIOTalonFX(11)); // Test Motor CAN ID: 11.
-        break;
-    }
-
+    //   default:
+    //     motor = new Motor(new MotorIOTalonFX(11)); // Test Motor CAN ID: 11.
+    //     break;
+    // }
     testBindings();
   }
 
   private void testBindings() {
-    testController.a().onTrue(motor.runVelocityCommand(20));
+    testController.leftBumper().onTrue(new InstantCommand(() -> motor.runVelocity(10)));
   }
 
-  public Motor getScoralRollers() {
+  public Motor getMotor() {
     return motor;
   }
 }
