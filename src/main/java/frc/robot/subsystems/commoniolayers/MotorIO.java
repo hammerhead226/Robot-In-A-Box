@@ -26,7 +26,7 @@ public interface MotorIO {
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(MotorIOInputs inputs) {}
+  public __________ void updateInputs(MotorIOInputs inputs) {}
 
   /** Run open loop at the specified voltage. */
   public default void setVoltage(double volts) {}
@@ -34,8 +34,8 @@ public interface MotorIO {
   /** Run closed loop at the specified velocity. */
   public default void setVelocity(double velocityRadPerSec, double ffVolts) {}
 
-  /** Stop in open loop. */
-  public default void stop() {}
+  /** Write a method stop() */
+  ____________________
 
   /** Set velocity PID constants. */
   public default void configurePID(double kP, double kI, double kD) {}

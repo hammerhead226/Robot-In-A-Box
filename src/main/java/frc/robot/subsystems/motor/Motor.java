@@ -1,3 +1,4 @@
+//Fill out the blank lines!
 package frc.robot.subsystems.motor;
 
 import static edu.wpi.first.units.Units.Volts;
@@ -16,7 +17,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-public class Motor extends SubsystemBase {
+public class Motor _______________ {
   private final MotorIO motor;
   private final MotorIOInputsAutoLogged inputs = new MotorIOInputsAutoLogged();
   private SimpleMotorFeedforward ffModel;
@@ -90,7 +91,7 @@ public class Motor extends SubsystemBase {
   /** Run closed loop at the specified velocity. */
   public void runVelocity(double velocityRPM) {
     var velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(velocityRPM);
-    motor.setVelocity(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
+    _____.setVelocity(velocityRadPerSec, ffModel.calculate(velocityRadPerSec));
 
     // Log flywheel setpoint
     Logger.recordOutput("Debug Rollers/SetpointRPM", velocityRPM);
@@ -111,7 +112,7 @@ public class Motor extends SubsystemBase {
 
   /** Stops the flywheel. */
   public void stop() {
-    motor.stop();
+    _______________
   }
 
   public Command motorStop() {
