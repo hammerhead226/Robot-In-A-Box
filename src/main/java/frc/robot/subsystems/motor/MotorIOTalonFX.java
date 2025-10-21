@@ -13,7 +13,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.subsystems.commoniolayers.MotorIO;
 
 public class MotorIOTalonFX implements MotorIO {
   private static final double GEAR_RATIO = 1.5;
