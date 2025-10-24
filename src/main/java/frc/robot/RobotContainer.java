@@ -45,7 +45,7 @@ public class RobotContainer {
   private void testBindings() {
     testController
         .a()
-        .onTrue(new InstantCommand(() -> motor.runVelocity(20)))
+        .onTrue(new InstantCommand(() -> motor.runVolts(4)))
         .onFalse(new InstantCommand(() -> motor.stop()));
   }
 

@@ -45,8 +45,12 @@ public class Motor extends SubsystemBase {
     // separate robot with different tuning)
     switch (SimConstants.currentMode) {
       case REAL:
-        ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
-        motor.configurePID(kP.get(), kI.get(), kD.get());
+        kV.initDefault(0.01);
+        kP.initDefault(0.1);
+        kS.initDefault(0);
+        kA.initDefault(0);
+        kI.initDefault(0);
+        kD.initDefault(0);
       case REPLAY:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);
         motor.configurePID(0.0, 0.0, 0.0);
@@ -143,6 +147,8 @@ public class Motor extends SubsystemBase {
   }
 
   private void updateTunableNumbers() {
+    motor.configurePID(kP.get(), kI.get(), kD.get());
+    ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
     // if (controlLoopType.get().equals("kSkVkA")) {
     //   if (kV.hasChanged(hashCode()) || kA.hasChanged(hashCode()) || kS.hasChanged(hashCode())) {
     //     ffModel = new SimpleMotorFeedforward(kS.get(), kV.get(), kA.get());
